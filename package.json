@@ -125,7 +125,7 @@
     "build": "react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "ftp-deploy --server 43.228.126.245 --username smartcon --password \"tTK4BSMG6yj3a36M\""
+    "deploy": "ftp-deploy --server 43.228.126.245 --username ftp_pyramid --password \"NmFbbS52MrMYXdYa\""
   },
   "eslintConfig": {
     "extends": [
