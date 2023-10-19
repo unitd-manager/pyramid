@@ -18,8 +18,7 @@ import '../form-editor/editor.scss';
 import api from '../../constants/api';
 import LeaveMainDetails from '../../components/LeaveTable/LeaveMainDetails';
 import ApiButton from '../../components/ApiButton';
-import Tab from '../../components/project/Tab';
-
+import Tab from '../../components/ProjectTabs/Tab';
 
 const LeavesEdit = () => {
   //Const Variables

@@ -34,7 +34,7 @@ import ViewNote from '../../components/Tender/ViewNote';
 import AddNote from '../../components/Tender/AddNote';
 import JobTermination from '../../components/JobInformation/JobInformationTermination';
 import JobBank from '../../components/JobInformation/Job';
-import Tab from '../../components/project/Tab';
+import Tab from '../../components/ProjectTabs/Tab';
 
 const JobInformationEdit = () => {
   //All state variable

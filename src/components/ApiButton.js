@@ -5,12 +5,13 @@ import PropTypes from 'prop-types';
 import { HasAccess ,usePermify} from '@permify/react-role';
 import ComponentCardV2 from './ComponentCardV2';
 
-const ApiButton = ({ editData, navigate, applyChanges, backToList, module }) => {
+const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
   ApiButton.propTypes = {
     editData: PropTypes.func,
     navigate: PropTypes.any,
-    applyChanges: PropTypes.func,
+    //applyChanges: PropTypes.func,
     backToList: PropTypes.func,
+    deleteData: PropTypes.func,
     module: PropTypes.string,
   };
   const { isAuthorized, isLoading } = usePermify();
@@ -40,8 +41,11 @@ const ApiButton = ({ editData, navigate, applyChanges, backToList, module }) => 
         >
                 <Button
                   onClick={() => {
-                    editData();
-                    navigate('/Leave');
+                    editData()
+                      setTimeout(()=>{
+                        backToList();
+                      },1000)
+                    
                   }}
                   color="primary">
                   Save
@@ -57,7 +61,7 @@ const ApiButton = ({ editData, navigate, applyChanges, backToList, module }) => 
                 <Button
                   onClick={() => {
                     editData();
-                    applyChanges();
+                    //applyChanges();
                   }}
                   color="primary"
                 >
@@ -79,8 +83,13 @@ const ApiButton = ({ editData, navigate, applyChanges, backToList, module }) => 
               <HasAccess
                 roles={null}
                 permissions={`${module}-remove`}
-                renderAuthFailed={<p>You are not authorized to access!</p>}>
-                <Button color="danger" onClick={() => {}}>
+                renderAuthFailed={<p></p>}
+              >
+                <Button color="danger" onClick={() => {deleteData();
+                //  setTimeout(()=>{
+                //   //backToList();
+                // },1000)
+                }}>
                   Delete
                 </Button>
               </HasAccess>

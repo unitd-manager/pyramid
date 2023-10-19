@@ -112,7 +112,7 @@ console.log('filtermonth',filterPeriod.month)
           </Row>
         </ModalBody>
         <ModalFooter>
-          <PdfAllPayslip payrollsYear={filterPeriod.year} payrollsMonth={filterPeriod.month}></PdfAllPayslip>
+         {filterPeriod.year && filterPeriod.month && <PdfAllPayslip payrollsYear={filterPeriod.year} payrollsMonth={filterPeriod.month}></PdfAllPayslip>}
           <Button
             color="dark"
             className="shadow-none"

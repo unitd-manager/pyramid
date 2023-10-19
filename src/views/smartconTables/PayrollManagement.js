@@ -100,7 +100,7 @@ const Payrollmanagement = () => {
         }, 300);
       })
       .catch(() => {
-        message('Unable to edit record.', 'error');
+        //message('Unable to edit record.', 'error');
       });
   };
 
@@ -251,12 +251,12 @@ const Payrollmanagement = () => {
           const selectedEmployeeId = obj.employee_id;
           const payrollyear = obj.payroll_year;
           const basicpays = obj.basic_pay;
-          
+         
 
-          //console.log('spryear', spryear);
+          
           console.log('payrollyear', basicpays);
           console.log('payrollyear', payrollyear);
-          //console.log('payrollyear1', spryear);
+          
 
           api
             .post('/payrollmanagement/getCpfCalc', {
@@ -264,7 +264,7 @@ const Payrollmanagement = () => {
 
               payroll_year: payrollyear,
               basic_pay: basicpays,
-              
+         
             })
             .then((res) => {
               const { byEmployee, byEmployer } = res.data.data[0];
@@ -402,7 +402,8 @@ const Payrollmanagement = () => {
                 .post('/payrollmanagement/insertpayroll_management', obj)
                 .then(() => {
                   // generatecpfcalculator();
-                  message('Payrolls created successfully.', 'success');
+                  
+                 // message('Payrolls created successfully.', 'success');
                   // setLoading(false);
                 })
                 .catch(() => {
@@ -411,6 +412,7 @@ const Payrollmanagement = () => {
             });
         });
     });
+    getAllPayrollManagements();
   };
 
   // generate payslip
@@ -609,8 +611,8 @@ const Payrollmanagement = () => {
                     <td>{element.payroll_year}</td>
                     <td>{element.basic_pay}</td>
                     <td>{element.ot_amount}</td>
-                    <td>{element.cpf_employee}</td>
                     <td>{element.cpf_employer}</td>
+                    <td>{element.cpf_employee}</td>
                     <td>{element.total_alowance}</td>
                     <td>{element.total_deductions}</td>
                     <td>{element.net_total}</td>
