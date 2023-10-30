@@ -9,7 +9,7 @@ import 'datatables.net-buttons/js/buttons.colVis';
 import 'datatables.net-buttons/js/buttons.flash';
 import 'datatables.net-buttons/js/buttons.html5';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Form, Table } from 'reactstrap';
 import ComponentCard from '../ComponentCard';
 import message from '../Message';
@@ -18,6 +18,7 @@ import api from '../../constants/api';
 const SupplierHistory = () => {
   const [history, setHistory] = useState();
   const { id } = useParams();
+  const navigate = useNavigate()
   // Get  By Id
   const getHistoryById = () => {
     api
@@ -62,7 +63,7 @@ const SupplierHistory = () => {
       if (result.isConfirmed) {
         api.put('/supplier/updateSupplierPaymentsAndPurchaseOrder', { supplier_receipt_id: subConPaymentsId,purchase_order_id: id }).then(() => {
           Swal.fire('Cancelled!');
-          getHistoryById();
+          navigate(-1);
         });
       }
     });
@@ -88,7 +89,7 @@ const SupplierHistory = () => {
                     history.map((element) => {
                       return (
                         <tr key={element.supplier_receipt_id}>
-                          <td>{moment(element.date).format('YYYY-MM-DD')}</td>
+                          <td>{element.date ? moment(element.date).format('DD-MM-YYYY') : ''}</td>
                           <td>{element.amount}</td>
                           <td>{element.mode_of_payment}</td>
                           <td>
