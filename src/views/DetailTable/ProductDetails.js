@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -7,40 +7,43 @@ import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
 
 const ProductDetails = () => {
   //All const variables
-  const [itemcode, setItemcode] = useState();
   const navigate = useNavigate();
   const [productDetails, setProductDetails] = useState({
     title: '',
-    item_code: '',
-    site_id: 0,
   });
   //setting data in ProductDetails
   const handleInputs = (e) => {
     setProductDetails({ ...productDetails, [e.target.name]: e.target.value });
   };
-  //getting maximum of itemcode
-  const getMaxItemcode = () => {
-    api.get('/product/getMaxItemCode').then((res) => {
-      setItemcode(res.data.data[0].itemc);
-    });
-  };
+  //get staff details
+  const { loggedInuser } = useContext(AppContext);
   //Insert Product Data
-  const insertProductData = () => {
-    productDetails.item_code = parseFloat(itemcode) + 1;
-    if (productDetails.title !== '' && productDetails.item_code !== '') {
+  const insertProductData = (ProductCode, ItemCode) => {
+    if (productDetails.title.trim() !== '') {
+      productDetails.product_code = ProductCode;
+      productDetails.item_code = ItemCode;
       productDetails.creation_date = creationdatetime;
+      productDetails.created_by= loggedInuser.first_name;   
       api
         .post('/product/insertProduct', productDetails)
         .then((res) => {
           const insertedDataId = res.data.data.insertId;
           message('Product inserted successfully.', 'success');
           api
-            .post('/inventory/insertinventory', { product_id: insertedDataId })
+          .post('/product/getCodeValue', { type: 'InventoryCode' })
+            .then((res1) => {
+              const InventoryCode = res1.data.data;
+              message('inventory created successfully.', 'success');
+              api
+              .post('/inventory/insertinventory', { product_id: insertedDataId, inventory_code:InventoryCode  })
+            
             .then(() => {
               message('inventory created successfully.', 'success');
+            })
             })
             .catch(() => {
               message('Unable to create inventory.', 'error');
@@ -56,9 +59,29 @@ const ProductDetails = () => {
       message('Please fill all required fields.', 'warning');
     }
   };
+
+
+  //Auto generation code
+  const generateCode = () => {
+    api
+      .post('/product/getCodeValue', { type: 'ProductCode' })
+      .then((res) => {
+        const ProductCode = res.data.data
+      api
+      .post('/product/getCodeValue', { type: 'ItemCode' })
+      .then((response) => {
+        const ItemCode = response.data.data
+        insertProductData(ProductCode, ItemCode);
+      })
+      })
+      .catch(() => {
+        insertProductData('');
+      });
+  };
+
   //useeffect
   useEffect(() => {
-    getMaxItemcode();
+    
   }, []);
 
   return (
@@ -89,7 +112,7 @@ const ProductDetails = () => {
                       className="shadow-none"
                       color="primary"
                       onClick={() => {
-                        insertProductData();
+                        generateCode();
                       }}
                     >
                       Save & Continue

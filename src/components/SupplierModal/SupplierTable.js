@@ -32,6 +32,8 @@ export default function SupplierTable({ purchaseOrder }) {
     },
   ];
 
+
+  
   return (
     <ComponentCard title="Purchase Order Linked">
       <Form>
@@ -58,9 +60,7 @@ export default function SupplierTable({ purchaseOrder }) {
                         </td>
                         <td>{element.po_value}</td>
                         <td>
-                        {element.po_value
-                            ? parseFloat(element.po_value) - parseFloat(element.prev_amount) 
-                            : 0}
+                        {parseFloat ? element.po_value - parseFloat(element.prev_amount) : 0}
                         </td>
                         <td>{element.payment_status}</td>
                         <td>

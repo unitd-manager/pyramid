@@ -19,7 +19,7 @@ const Project = () => {
 
   const getProject = () => {
     api
-      .get('project/getProjects')
+      .get('project/getProject')
       .then((res) => {
         setProject(res.data.data);
         $('#example').DataTable({

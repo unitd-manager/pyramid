@@ -118,7 +118,7 @@ function ProjectSummaryChart() {
   };
 
   useEffect(() => {
-    api.get('project/getProjects').then((res) => {
+    api.get('project/getProject').then((res) => {
       setProject(res.data.data);
     });
   }, []);

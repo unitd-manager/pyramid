@@ -25,7 +25,7 @@ const Projects = () => {
   const tableRef = useRef(null);
   const getTableData = () => {
     api 
-      .get('/api/getProjects')
+      .get('/api/getProject')
       .then((res) => {
         console.log(res.data);
         // console.log(res.data);

@@ -33,10 +33,11 @@ import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
-import TenderButtons from '../../components/TenderTable/TenderButtons';
+//import TenderButtons from '../../components/TenderTable/TenderButtons';
 import PdfQuote from '../../components/PDF/PdfQuote';
 import AddCostingSummaryModal from '../../components/Tender/AddCostingSummaryModal';
 import Tab from '../../components/project/Tab';
+import ApiButton from '../../components/ApiButton';
 
 const TenderEdit = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -78,7 +79,7 @@ const TenderEdit = () => {
   });
   const { id } = useParams();
   const navigate = useNavigate();
-  const applyChanges = () => {};
+  //const applyChanges = () => {};
   const backToList = () => {
     navigate('/Tender');
   };
@@ -332,12 +333,19 @@ const TenderEdit = () => {
   return (
     <>
       <BreadCrumbs heading={tenderDetails && tenderDetails.title} />
-      <TenderButtons
+      {/* <TenderButtons
         editTenderData={editTenderData}
         navigate={navigate}
         applyChanges={applyChanges}
         backToList={backToList}
-      ></TenderButtons>
+      ></TenderButtons> */}
+      <ApiButton
+              editData={editTenderData}
+              navigate={navigate}
+              applyChanges={editTenderData}
+              backToList={backToList}
+              module="Tender"
+            ></ApiButton>
       <Form>
         <FormGroup>
           <ComponentCard
