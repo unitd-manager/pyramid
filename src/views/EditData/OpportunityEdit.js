@@ -1,30 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Row,
-  Col,
-  FormGroup,
-  Label,
-  TabContent,
-  TabPane,
-  Button,
-} from 'reactstrap';
-import { ToastContainer } from 'react-toastify';
+import { TabContent, TabPane, Col, Label ,FormGroup, Row,Button } from 'reactstrap';
+// import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
-import AttachmentModal from '../../components/Tender/AttachmentModal';
-import ViewFileComponent from '../../components/ProjectModal/ViewFileComponent';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
-import TenderButtons from '../../components/TenderTable/TenderButtons';
+//import TenderButtons from '../../components/TenderTable/TenderButtons';
 import PdfQuote from '../../components/PDF/PdfQuote';
+import creationdatetime from '../../constants/creationdatetime';
 import AddCostingSummaryModal from '../../components/TenderTable/AddCostingSummaryModal';
 import EditCostingSummaryModal from '../../components/TenderTable/EditCostingSummaryModal';
 import TenderQuotation from '../../components/TenderTable/TenderQuotation';
 import TenderMoreDetails from '../../components/TenderTable/TenderMoreDetails';
+import TenderAttachment from '../../components/TenderTable/TenderAttachment';
 import Tab from '../../components/project/Tab';
+import ApiButton from '../../components/ApiButton';
 
 const OpportunityEdit = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -48,7 +42,6 @@ const OpportunityEdit = () => {
   const [addCostingSummaryModel, setAddCostingSummaryModel] = useState(false);
   const [costingcostingDetails, setCostingChargesDetails] = useState();
   const [quotationsModal, setquotationsModal] = useState(false);
-  const [attachmentModal, setAttachmentModal] = useState(false);
   const [viewLineModal, setViewLineModal] = useState(false);
   const [addContactModal, setAddContactModal] = useState(false);
   const [addCompanyModal, setAddCompanyModal] = useState(false);
@@ -68,9 +61,9 @@ const OpportunityEdit = () => {
   });
   const { id } = useParams();
   const navigate = useNavigate();
-  const applyChanges = () => {};
+  // const applyChanges = () => {};
   const backToList = () => {
-    navigate('/Opportunity');
+    navigate('/Tender');
   };
 
   const viewLineToggle = () => {
@@ -168,7 +161,7 @@ const OpportunityEdit = () => {
   const editTenderById = () => {
     api.post('/tender/getTendersById', { opportunity_id: id }).then((res) => {
       setTenderDetails(res.data.data);
-      getContact(res.data.data.company_id);
+      //getContact(res.data.data.company_id);
     });
   };
 
@@ -179,6 +172,7 @@ const OpportunityEdit = () => {
   //Logic for edit data in db
 
   const editTenderData = () => {
+    tenderDetails.modification_date = creationdatetime;
     api
       .post('/tender/edit-Tenders', tenderDetails)
       .then(() => {
@@ -189,16 +183,6 @@ const OpportunityEdit = () => {
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
-      });
-  };
-
-  const getCostingSummaryChargesById = () => {
-    api
-      .post('/tender/getTabOpportunityCostingSummary', {
-        opportunity_id: id,
-      })
-      .then((res) => {
-        setCostingChargesDetails(res.data.data);
       });
   };
 
@@ -224,20 +208,15 @@ const OpportunityEdit = () => {
     newDataWithCompanyId.company_id = selectedCompany;
     if (
       newDataWithCompanyId.salutation !== '' &&
-      newDataWithCompanyId.first_name !== '' &&
-      newDataWithCompanyId.email !== '' &&
-      newDataWithCompanyId.position !== '' &&
-      newDataWithCompanyId.department !== '' &&
-      newDataWithCompanyId.phone_direct !== '' &&
-      newDataWithCompanyId.fax !== '' &&
-      newDataWithCompanyId.mobile !== ''
+      newDataWithCompanyId.first_name !== ''
+
     ) {
       api
         .post('/tender/insertContact', newDataWithCompanyId)
         .then(() => {
           getContact(newDataWithCompanyId.company_id);
           message('Contact Inserted Successfully', 'success');
-          window.location.reload();
+          //window.location.reload();
         })
         .catch(() => {
           message('Unable to add Contact! try again later', 'error');
@@ -247,8 +226,8 @@ const OpportunityEdit = () => {
     }
   };
 
-   //Api for getting all countries
-   const getAllCountries = () => {
+  //Api for getting all countries
+  const getAllCountries = () => {
     api.get('/clients/getCountry').then((res) => {
       setallCountries(res.data.data);
     });
@@ -258,7 +237,6 @@ const OpportunityEdit = () => {
   const getLineItem = (quotationId) => {
     api.post('/tender/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
       setLineItem(res.data.data);
-      //setViewLineModal(true);
     });
   };
 
@@ -273,11 +251,11 @@ const OpportunityEdit = () => {
 
     api.post('/tender/insertquote', newQuoteId).then(() => {
       message('Quote inserted successfully.', 'success');
-      //window.location.reload();
+      window.location.reload();
     });
   };
-   //QUOTE GENERATED CODE
-   const generateCode = () => {
+  //QUOTE GENERATED CODE
+  const generateCode = () => {
     api
       .post('/tender/getCodeValue', { type: 'quote' })
       .then((res) => {
@@ -289,7 +267,7 @@ const OpportunityEdit = () => {
   };
 
   const getProject = () => {
-    api.get('project/getProject').then((res) => {
+    api.get('project/getOppProject').then((res) => {
       setProject(res.data.data);
     });
   };
@@ -298,14 +276,23 @@ const OpportunityEdit = () => {
     const newDataWithCompanyId = tenderDetails;
     newDataWithCompanyId.quote_id = quote.quote_id;
     newDataWithCompanyId.project_code = code;
-    api.post('/project/insertProject', newDataWithCompanyId)
-    .then(() => {
+    api.post('/project/insertProject', newDataWithCompanyId).then(() => {
       message('Project Converted Successfully', 'success');
       //window.location.reload();
     });
   };
-   //Project GENERATED CODE
-   const generateCodes = () => {
+
+  const getCostingSummaryChargesById = () => {
+    api
+      .post('/tender/getTabOpportunityCostingSummary', {
+        opportunity_id: id,
+      })
+      .then((res) => {
+        setCostingChargesDetails(res.data.data);
+      });
+  };
+  //Project GENERATED CODE
+  const generateCodes = () => {
     api
       .post('/tender/getCodeValue', { type: 'opportunityproject' })
       .then((res) => {
@@ -330,13 +317,20 @@ const OpportunityEdit = () => {
   return (
     <>
       <BreadCrumbs heading={tenderDetails && tenderDetails.title} />
-      <TenderButtons
+      {/* <TenderButtons
         editTenderData={editTenderData}
         navigate={navigate}
         applyChanges={applyChanges}
         backToList={backToList}
-      ></TenderButtons>
-     <TenderMoreDetails
+      ></TenderButtons> */}
+      <ApiButton
+        editData={editTenderData}
+        navigate={navigate}
+        applyChanges={editTenderData}
+        backToList={backToList}
+        module="Tender"
+      ></ApiButton>
+      <TenderMoreDetails
         companyInsertData={companyInsertData}
         newContactData={newContactData}
         handleInputs={handleInputs}
@@ -358,12 +352,9 @@ const OpportunityEdit = () => {
         getContact={getContact}
       ></TenderMoreDetails>
 
-      <ComponentCard title="More Details">
-        <ToastContainer></ToastContainer>
-
-        {/* Call Edit Costing Summary Modal */}
-
-        <EditCostingSummaryModal
+      <ComponentCard>
+       
+      <EditCostingSummaryModal
           editCostingSummaryModel={editCostingSummaryModel}
           setEditCostingSummaryModel={setEditCostingSummaryModel}
           costingsummary={costingsummary}
@@ -526,9 +517,8 @@ const OpportunityEdit = () => {
               </Row>
             )}
           </TabPane>
-          <TabPane tabId="2">
             {/* Tender Quotation */}
-
+            <TabPane tabId="2">
             <TenderQuotation
               tenderId={id}
               quote={quote}
@@ -554,26 +544,7 @@ const OpportunityEdit = () => {
           </TabPane>
 
           <TabPane tabId="3">
-            <Row>
-              <Col xs="12" md="3" className="mb-3">
-                <Button
-                  color="primary"
-                  className="shadow-none"
-                  onClick={() => {
-                    setAttachmentModal(true);
-                  }}
-                >
-                  Add
-                </Button>
-              </Col>
-            </Row>
-
-            <AttachmentModal
-              opportunityId={id}
-              attachmentModal={attachmentModal}
-              setAttachmentModal={setAttachmentModal}
-            />
-            <ViewFileComponent opportunityId={id} />
+            <TenderAttachment></TenderAttachment>
           </TabPane>
         </TabContent>
       </ComponentCard>

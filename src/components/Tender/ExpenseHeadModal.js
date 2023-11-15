@@ -36,9 +36,9 @@ const ExpenseHeadModal = ({ expenseData, ExpenseSuphead, SetExpenseSuphead }) =>
       .post('/expensehead/editsubExpenseHead', Expense)
       .then(() => {
         message('Record editted successfully', 'success');
-        setTimeout(() => {
-          window.location.reload();
-        }, 300);
+         setTimeout(() => {
+        window.location.reload();
+         }, 300);
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
@@ -108,5 +108,4 @@ const ExpenseHeadModal = ({ expenseData, ExpenseSuphead, SetExpenseSuphead }) =>
     </>
   );
 };
-
 export default ExpenseHeadModal;

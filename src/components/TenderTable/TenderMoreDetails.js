@@ -47,8 +47,7 @@ export default function TenderMoreDetails({
       {' '}
       <Form>
         <FormGroup>
-          <ComponentCard
-            title={`Key Details | Code: ${tenderDetails && tenderDetails.opportunity_code}`}
+          <ComponentCard title="Opportunity Details"  creationModificationDate={tenderDetails}
           >
             <Row>
               <Col md="3">
@@ -256,7 +255,6 @@ export default function TenderMoreDetails({
                     <option value="Follow-up">Follow-up</option>
                     <option value="Awarded">Awarded</option>
                     <option value="Not Awarded">Not Awarded</option>
-                    <option value="Enquiry">Enquiry</option>
                     <option value="Cancelled">Cancelled</option>
                     <option selected="selected" value="Converted to Project">
                       Converted to Project
@@ -264,6 +262,19 @@ export default function TenderMoreDetails({
                   </Input>
                 </FormGroup>
               </Col>
+              <Col md="3">
+                <FormGroup>
+                  <Label>Actual Closing Date</Label>
+                  <Input
+                    type="date"
+                    value={tenderDetails && tenderDetails.actual_closing}
+                    onChange={handleInputs}
+                    name="actual_closing"
+                  />
+                </FormGroup>
+              </Col>
+              </Row>
+              <Row>
               <Col md="3">
                 <FormGroup>
                   <Label>Email</Label>
@@ -275,8 +286,6 @@ export default function TenderMoreDetails({
                   />
                 </FormGroup>
               </Col>
-            </Row>
-            <Row>
               <Col md="3">
                 <FormGroup>
                   <Label>Price</Label>

@@ -32,7 +32,6 @@ const EditCostingSummaryModal = ({
   const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
   const { id } = useParams();
   const [totalLabour, setTotalLabour] = useState();
-  const [totalCharges, setTotalCharges] = useState();
   //edit Tab Costing Summary Form
   const handleCostingSummeryInputs = (e) => {
     seteditCostingSummaryData({ ...editCostingSummaryData, [e.target.name]: e.target.value });
@@ -43,47 +42,17 @@ const EditCostingSummaryModal = ({
     if (!noofdaysworked) noofdaysworked = 0;
     if (!labourratesperday) labourratesperday = 0;
     if (!totallabourcharges) totallabourcharges = 0;
-    
-    
 
     setTotalLabour(
       parseFloat(noofworkerused) * parseFloat(noofdaysworked) * parseFloat(labourratesperday),
-     
-    );
-  };
-  const handleCalc1 = (totalcost,transportcharges,salesmancommission,financecharges,officeoverheads,othercharges) => {
-  
-    if (!totalcost) totalcost = 0;
-    if (!transportcharges) transportcharges = 0;
-    if (!salesmancommission) salesmancommission = 0;
-    if (!financecharges) financecharges = 0;
-    if (!officeoverheads) officeoverheads = 0;
-    if (!othercharges) othercharges = 0;
-    
-
-    setTotalCharges(
-  
-parseFloat(transportcharges) + parseFloat(salesmancommission)+ parseFloat(financecharges) +
-parseFloat(officeoverheads) +
-parseFloat(othercharges)  ,
     );
   };
   const EditCostingSummary = () => {
     editCostingSummaryData.opportunity_id = id;
-    //editCostingSummaryData.total_cost=totalLabour;
-    editCostingSummaryData.total_labour_charges =
-      parseFloat(editCostingSummaryData.no_of_days_worked) *
-      parseFloat(editCostingSummaryData.no_of_worker_used) *
-      parseFloat(editCostingSummaryData.labour_rates_per_day);      
-      editCostingSummaryData.total_cost = 
-      parseFloat(editCostingSummaryData.transportcharges) +
-      parseFloat(editCostingSummaryData.salesmancommission) +
-      parseFloat(editCostingSummaryData.financecharges) +
-      parseFloat(editCostingSummaryData.officeoverheads) +
-      parseFloat(editCostingSummaryData.othercharges) ;
+    editCostingSummaryData.total_labour_charges = totalLabour;
     api.post('/tender/edit-TabCostingSummaryForm', editCostingSummaryData).then(() => {
       setEditCostingSummaryModel(false);
-      //window.location.reload();
+      window.location.reload();
     });
   };
 
@@ -125,7 +94,6 @@ parseFloat(othercharges)  ,
                               costingsummary.no_of_days_worked,
                               costingsummary.labour_rates_per_day,
                               costingsummary.total_labour_charges,
-                              
                             );
                           }}
                           defaultValue={costingsummary && costingsummary.no_of_worker_used}
@@ -146,7 +114,6 @@ parseFloat(othercharges)  ,
                               e.target.value,
                               costingsummary.labour_rates_per_day,
                               costingsummary.total_labour_charges,
-                              
                             );
                           }}
                           defaultValue={costingsummary && costingsummary.no_of_days_worked}
@@ -167,7 +134,6 @@ parseFloat(othercharges)  ,
                               costingsummary.no_of_days_worked,
                               e.target.value,
                               costingsummary.total_labour_charges,
-                             
                             );
                           }}
                           defaultValue={costingsummary && costingsummary.labour_rates_per_day}
@@ -178,14 +144,14 @@ parseFloat(othercharges)  ,
 
                     <Col md="4">
                       <FormGroup>
-                        <Label>Total Price (S$ W/o GST)</Label>
+                        <Label>Total Price (S$ W/o VAT)</Label>
                         <Input
                           type="number"
                           onChange={(e) => {
                             handleCostingSummeryInputs(e);
                           }}
-                          defaultValue={costingsummary && costingsummary.invoiced_price}
-                          name="invoiced_price"
+                          defaultValue={costingsummary && costingsummary.po_price}
+                          name="po_price"
                         />
                       </FormGroup>
                     </Col>
@@ -235,7 +201,6 @@ parseFloat(othercharges)  ,
                       <Label>Total Material</Label>
                       <Input
                         type="number"
-                        disabled
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
                         }}
@@ -252,15 +217,6 @@ parseFloat(othercharges)  ,
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
-                          handleCalc1(
-                            e.target.value,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            costingsummary.total_cost,
-                          );
-                          
                         }}
                         defaultValue={costingsummary && costingsummary.transport_charges}
                         name="transport_charges"
@@ -281,10 +237,9 @@ parseFloat(othercharges)  ,
                             costingsummary.no_of_days_worked,
                             costingsummary.labour_rates_per_day,
                             e.target.value,
-                         
                           );
                         }}
-                        value={totalLabour || costingsummary && costingsummary.total_labour_charges}
+                        value={totalLabour || costingsummary.total_labour_charges}
                         name="total_labour_charges"
                       />
                     </FormGroup>
@@ -299,14 +254,6 @@ parseFloat(othercharges)  ,
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
-                          handleCalc1(
-                            costingsummary.transport_charges,
-                            e.target.value,
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            costingsummary.total_cost,
-                          );
                         }}
                         defaultValue={costingsummary && costingsummary.salesman_commission}
                         name="salesman_commission"
@@ -321,15 +268,6 @@ parseFloat(othercharges)  ,
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
-                          handleCalc1(
-                            costingsummary.transport_charges,
-                            costingsummary.salesman_commission,
-                            e.target.value,
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            costingsummary.total_cost,
-                            
-                          );
                         }}
                         defaultValue={costingsummary && costingsummary.finance_charges}
                         name="finance_charges"
@@ -344,15 +282,6 @@ parseFloat(othercharges)  ,
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
-                          handleCalc1(
-                            costingsummary.transport_charges,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
-                            e.target.value,
-                            costingsummary.other_charges,
-                            costingsummary.total_cost,
-                            
-                          );
                         }}
                         defaultValue={costingsummary && costingsummary.office_overheads}
                         name="office_overheads"
@@ -369,18 +298,8 @@ parseFloat(othercharges)  ,
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
-                          handleCalc1(
-                            costingsummary.transport_charges,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
-                            e.target.value,
-                            costingsummary.total_cost,
-                            
-                          );
                         }}
                         defaultValue={costingsummary && costingsummary.other_charges}
-                        
                         name="other_charges"
                       />
                     </FormGroup>
@@ -391,26 +310,12 @@ parseFloat(othercharges)  ,
                       <Label>TOTAL COST</Label>
                       <Input
                         type="number"
+                        name="total_cost"
                         disabled
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
-                         
-                          handleCalc1(
-                            costingsummary.transport_charges,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            e.target.value,
-                            
-                          );
                         }}
-                        value={totalCharges || costingsummary && costingsummary.total_cost}
-                       
-                        // value={costingsummary && costingsummary.total_cost}
-                        name="total_cost"
-                          
-                        
+                        value={costingsummary && costingsummary.total_cost}
                       />
                     </FormGroup>
                   </Col>

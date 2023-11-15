@@ -124,19 +124,18 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
           <Form>
             <FormGroup>
               <Row>
-                <Col md="3">
+                <Col md="4">
                   <FormGroup>
                     <Label>Quote Date</Label>
                     <Input
                       type="date"
                       name="quote_date"
                       value={quoteData ? moment(quoteData.quote_date).format('YYYY-MM-DD') : ''}
-                      
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
-                <Col md="3">
+                <Col md="4">
                   <FormGroup>
                     <Label> Quote Status</Label>
                     <Input
@@ -155,7 +154,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col md="3">
+                <Col md="4">
                   <FormGroup>
                     <Label>Discount</Label>
                     <Input
@@ -166,32 +165,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     />
                   </FormGroup>
                 </Col>
-                <Col md="3">
-                  <Label>Show Project Manager</Label>
-                  <FormGroup>
-                    <Input
-                      type="radio"
-                      name="show_project_manager"
-                      value="1"
-                      onChange={handleData}
-                      defaultChecked={quoteData && quoteData.show_project_manager === 1 && true}
-                    ></Input>
-                    &nbsp;&nbsp;
-                    <Label>Yes</Label>&nbsp;&nbsp;
-                    <Input
-                      type="radio"
-                      name="show_project_manager"
-                      value="0"
-                      onChange={handleData}
-                      defaultChecked={quoteData && quoteData.show_project_manager === 0 && true}
-                    ></Input>
-                    &nbsp;&nbsp;
-                    <Label>No</Label>
-                  </FormGroup>
-                </Col>
               </Row>
               <Row>
-                <Col md="3">
+                <Col md="4">
                   <FormGroup>
                     <Label>Project Location</Label>
                     <Input
@@ -202,7 +178,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     />
                   </FormGroup>
                 </Col>
-                <Col md="3">
+                <Col md="4">
                   <FormGroup>
                     <Label>Project Reference</Label>
                     <Input
@@ -213,7 +189,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     />
                   </FormGroup>
                 </Col>
-                <Col md="3">
+                <Col md="4">
                   <FormGroup>
                     <Label>Mode of Payment</Label>
                     <Input
@@ -232,7 +208,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col md="3">
+              </Row>
+              <Row>
+                <Col md="4">
                   <FormGroup>
                     <Label>Our Reference</Label>
                     <Input
@@ -243,9 +221,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     />
                   </FormGroup>
                 </Col>
-              </Row>
-              <Row>
-                <Col md="3">
+                <Col md="4">
                   <FormGroup>
                     <Label>Ref No</Label>
                     <Input
@@ -256,7 +232,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     />
                   </FormGroup>
                 </Col>
-                <Col md="3">
+                <Col md="4">
                   <FormGroup>
                     <Label>Quote Revision</Label>
                     <Input

@@ -15,9 +15,11 @@ const QuoteLogViewLineItems = ({ quoteLogViewLineItem, setQuoteLogViewLineItem, 
     api
       .get('/projecttabquote/getTabQuoteLineItems', {
         project_id: id,
+        // sub_con_work_order_id: subCon,
       })
       .then((res) => {
         setQuotelogLineItems(res.data.data);
+        console.log('SubConWorkOrderPortal', res.data.data);
       })
       .catch(() => {
         message(' SubCon Work Order Data not found', 'info');

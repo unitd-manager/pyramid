@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Card,
-  CardBody,
+  // Card,
   Row,
   Col,
   Form,
@@ -13,103 +12,135 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import * as $ from 'jquery';
+// import Select from 'react-select';
 import random from 'random';
 import api from '../../constants/api';
 import message from '../Message';
 
-const LineItemData = ({ quotelineItem, setQuoteLineItem, projectId, quote }) => {
-  LineItemData.propTypes = {
-    quotelineItem: PropTypes.bool,
-    setQuoteLineItem: PropTypes.func,
-    projectId: PropTypes.any,
-    quote: PropTypes.any,
+const ViewLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, quoteLine }) => {
+  ViewLineItemModal.propTypes = {
+    addLineItemModal: PropTypes.bool,
+    setAddLineItemModal: PropTypes.func,
+    projectInfo: PropTypes.any,
+    quoteLine: PropTypes.any,
   };
-
+  //All state Varible
   const [totalAmount, setTotalAmount] = useState(0);
   const [addLineItem, setAddLineItem] = useState([
     {
       id: random.int(1, 99),
-      title: '',
+      unit: '',
       quantity: '',
       unit_price: '',
       amount: '',
+      remarks: '',
+      title: '',
       description: '',
     },
   ]);
+  const [unitdetails, setUnitDetails] = useState();
+  // Fetch data from API
+  const getUnit = () => {
+    api.get('/product/getUnitFromValueList', unitdetails).then((res) => {
+      const items = res.data.data;
+      const finaldat = [];
+      items.forEach((item) => {
+        finaldat.push({ value: item.value, label: item.value });
+      });
+      setUnitDetails(finaldat);
+    });
+  };
+  // //onchange function
+  // const onchangeItem = (selectedValue) => {
+  //   const updatedItems = addLineItem.map((item) => {
+  //     if (item.unit === selectedValue.value) {
+  //       // Compare with selectedValue.value
+  //       return {
+  //         ...item,
+  //         unit: selectedValue.value, // Update the unit with the selected option's value
+  //         value: selectedValue.value, // Update the value with the selected option's value
+  //       };
+  //     }
+  //     return item;
+  //   });
+
+  //   setAddLineItem(updatedItems);
+  // };
   //Insert Invoice Item
   const addLineItemApi = (obj) => {
-    obj.project_id = projectId;
-    obj.quote_items_id = quote;
+    obj.project_id = projectInfo;
+    obj.quote_id = quoteLine;
     api
-      .post('/projecttabquote/insertQuoteItems', obj)
+      .post('/project/insertQuoteItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
+        window.location.reload();
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
       });
   };
-
   //Add new line item
   const AddNewLineItem = () => {
     setAddLineItem([
       ...addLineItem,
       {
         id: new Date().getTime().toString(),
-        title: '',
+        unit: '',
         quantity: '',
         unit_price: '',
+        remarks: '',
         amount: '',
+        title: '',
         description: '',
       },
     ]);
   };
-
   //Invoice item values
   const getAllValues = () => {
     const result = [];
-    $('.lineitem tbody tr').each(() => {
+    $('.lineitem tbody tr').each(function input() {
       const allValues = {};
       $(this)
         .find('input')
-        .each(() => {
+        .each(function output() {
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
         });
       result.push(allValues);
     });
-    console.log(result);
     setTotalAmount(0);
+    console.log(result);
     result.forEach((element) => {
       addLineItemApi(element);
     });
+    console.log(result);
   };
   //Invoice Items Calculation
-  const calculateTotal = () => {
-    let totalValue = 0;
-    const result = [];
-    $('.lineitem tbody tr').each(() => {
-      const allValues = {};
-      $(this)
-        .find('input')
-        .each(() => {
-          const fieldName = $(this).attr('name');
-          allValues[fieldName] = $(this).val();
-          allValues.amount = allValues.quantity * allValues.unit_price;
-        });
-      result.push(allValues);
-    });
-    result.forEach((e) => {
-      if (e.amount) {
-        totalValue += parseFloat(e.amount);
-      }
-    });
-    setAddLineItem(result);
-    setTotalAmount(totalValue);
-  };
-
+  // const calculateTotal = () => {
+  //   let totalValue = 0;
+  //   const result = [];
+  //   $('.lineitem tbody tr').each(function input() {
+  //     const allValues = {};
+  //     $(this)
+  //       .find('input')
+  //       .each(function output() {
+  //         const fieldName = $(this).attr('name');
+  //         allValues[fieldName] = $(this).val();
+  //         allValues.amount = allValues.quantity * allValues.unit_price;
+  //       });
+  //     result.push(allValues);
+  //   });
+  //   result.forEach((e) => {
+  //     if (e.amount) {
+  //       totalValue += parseFloat(e.amount);
+  //     }
+  //   });
+  //   console.log(result);
+  //   setAddLineItem(result);
+  //   setTotalAmount(totalValue);
+  // };
   // Clear row value
   const ClearValue = (ind) => {
     setAddLineItem((current) =>
@@ -122,16 +153,21 @@ const LineItemData = ({ quotelineItem, setQuoteLineItem, projectId, quote }) => 
       setTotalAmount(finalTotal);
     }
   };
+
+  React.useEffect(() => {
+    getUnit();
+  }, []);
+
   return (
     <>
-      <Modal size="xl" isOpen={quotelineItem}>
+      <Modal size="xl" isOpen={addLineItemModal}>
         <ModalHeader>
-          Add Line Item
+          Add Quote Items
           <Button
             className="shadow-none"
             color="secondary"
             onClick={() => {
-              setQuoteLineItem(false);
+              setAddLineItemModal(false);
             }}
           >
             X
@@ -140,133 +176,142 @@ const LineItemData = ({ quotelineItem, setQuoteLineItem, projectId, quote }) => 
         <ModalBody>
           <Row>
             <Col md="12">
-              <Card>
-                <CardBody>
-                  <Form>
-                    <Card>
-                      <Row>
-                        <Row>
-                          <Col md="3">
-                            <Button
-                              className="shadow-none"
-                              color="primary"
-                              type="button"
-                              onClick={() => {
-                                AddNewLineItem();
-                              }}
-                            >
-                              Add Line Item
-                            </Button>
-                          </Col>
-                        </Row>
+              <Form>
+                <Row>
+                  <Row>
+                    <Col md="3">
+                      <Button
+                        className="shadow-none mb-3" 
+                        color="primary"
+                        type="button"
+                        onClick={() => {
+                          AddNewLineItem();
+                        }}
+                      >
+                        Add Line Item
+                      </Button>
+                      
+                    </Col>
+                  </Row>
+                
+                  {/* Invoice Item */}
+                  {/* <Card> */}
+                  
+                    <table className="lineitem">
+                      <thead>
+                        <tr>
+                          <th scope="col">Title </th>
+                          <th scope="col">Description </th>
+                          {/* <th scope="col">Unit </th> */}
+                          <th scope="col">Quantity</th>
+                          {/* <th scope="col">Unit Price</th> */}
+                          <th scope="col">Amount</th>
+                          {/* <th scope="col">Remarks</th> */}
+                          <th scope="col"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {addLineItem &&
+                          addLineItem.map((item) => {
+                            return (
+                              <tr key={item.id}>
+                                <td data-label="Title">
+                                  <Input Value={item.title} type="text" name="title" />
+                                </td>
+                                <td data-label="Description">
+                                  <Input Value={item.description} type="text" name="description" />
+                                </td>
+                                {/* <td data-label="Unit">
+                                  <Select
+                                    name="unit"
+                                    onChange={(selectedOption) => {
+                                      onchangeItem(selectedOption);
+                                    }}
+                                    options={unitdetails}
+                                  /> */}
 
-                        {/* Invoice Item */}
-
-                        <table className="lineitem">
-                          <thead>
-                            <tr>
-                              <th scope="col">Title </th>
-                              <th scope="col">Description </th>
-                              <th scope="col">Qty</th>
-                              <th scope="col">UOM</th>
-                              <th scope="col">Unit Price</th>
-                              <th scope="col">Amount</th>
-                              <th scope="col"></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {addLineItem.map((item) => {
-                              return (
-                                <tr key={item.id}>
-                                  <td data-label="Title">
-                                    <Input defaultValue={item.title} type="text" name="title" />
-                                  </td>
-                                  <td data-label="Description">
-                                    <Input
-                                      defaultValue={item.description}
-                                      type="text"
-                                      name="description"
-                                    />
-                                  </td>
-
-                                  <td data-label="Qty">
-                                    <Input
-                                      defaultValue={item.quantity}
-                                      type="number"
-                                      name="quantity"
-                                    />
-                                  </td>
-                                  <td data-label="Unit">
-                                    <Input defaultValue={item.unit} type="number" name="unit" />
-                                  </td>
-                                  <td data-label="Unit Price">
-                                    <Input
-                                      defaultValue={item.unit_price}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
-                                      type="number"
-                                      name="unit_price"
-                                    />
-                                  </td>
-                                  <td data-label="Amount">
-                                    <Input
-                                      defaultValue={item.amount}
-                                      type="text"
-                                      name="amount"
-                                      disabled
-                                    />
-                                  </td>
-                                  <td data-label="Action">
-                                    <Link to="">
-                                      <Input type="hidden" name="id" defaultValue={item.id}></Input>
-                                      <span
-                                        onClick={() => {
-                                          ClearValue(item);
-                                        }}
-                                      >
-                                        Clear
-                                      </span>
-                                    </Link>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </Row>
-                    </Card>
-                  </Form>
-                </CardBody>
-              </Card>
+                                  {/* <Input
+                  type="select"
+                  name="unit"
+                  onChange={handleInputs}
+                  value={item && item.unit}
+                >
+                  <option defaultValue="selected">Please Select</option>
+                  {unitdetails &&
+                    unitdetails.map((ele) => {
+                      return (
+                        <option key={ele.value} value={ele.value}>
+                          {ele.value}
+                        </option>
+                      );
+                    })}
+                </Input> */}
+                                  {/* <Input Value={item.unit} type="text" name="unit" /> */}
+                                {/* </td> */}
+                                <td data-label="Quantity">
+                                  <Input Value={item.quantity} type="number" name="quantity" />
+                                </td>
+                                {/* <td data-label="Unit Price">
+                                  <Input
+                                    Value={item.unit_price}
+                                    onBlur={() => {
+                                      calculateTotal();
+                                    }}
+                                    type="number"
+                                    name="unit_price"
+                                  />
+                                </td> */}
+                                <td data-label="Amount">
+                                  <Input Value={item.amount} type="text" name="amount" />
+                                </td>
+                                {/* <td data-label="Remarks">
+                                  <Input Value={item.remarks} type="text" name="remarks" />
+                                </td> */}
+                                <td data-label="Action">
+                                  <Input type="hidden" name="id" Value={item.id}></Input>
+                                  <span
+                                    className="addline"
+                                    onClick={() => {
+                                      ClearValue(item);
+                                    }}
+                                  >
+                                    Clear
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  {/* </Card> */}
+                  <ModalFooter>
+                    <Button
+                      className="shadow-none"
+                      color="primary"
+                      onClick={() => {
+                        getAllValues();
+                      }}
+                    >
+                      {' '}
+                      Submit{' '}
+                    </Button>
+                    <Button
+                      className="shadow-none"
+                      color="secondary"
+                      onClick={() => {
+                        setAddLineItemModal(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </ModalFooter>
+                </Row>
+              </Form>
             </Col>
           </Row>
         </ModalBody>
-
-        <ModalFooter>
-          <Button
-            className="shadow-none"
-            color="primary"
-            onClick={() => {
-              getAllValues();
-            }}
-          >
-            {' '}
-            Submit{' '}
-          </Button>
-          <Button
-            className="shadow-none"
-            color="secondary"
-            onClick={() => {
-              setQuoteLineItem(false);
-            }}
-          >
-            Cancel
-          </Button>
-        </ModalFooter>
       </Modal>
     </>
   );
 };
-
-export default LineItemData;
+export default ViewLineItemModal;

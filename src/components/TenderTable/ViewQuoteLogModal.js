@@ -128,7 +128,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
                           <FormGroup>
                             <Label>
                               {element.quote_date
-                                ? moment(element.quote_date).format('YYYY-MM-DD')
+                                ? moment(element.quote_date).format('DD-MM-YYYY')
                                 : ''}
                             </Label>
                           </FormGroup>

@@ -12,8 +12,10 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+import { useParams } from 'react-router-dom';
 import api from '../../constants/api';
 import message from '../Message';
+
 
 const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData }) => {
   EditLineItemModal.propTypes = {
@@ -21,20 +23,31 @@ const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData 
     setEditLineModal: PropTypes.func,
     FetchLineItemData: PropTypes.object,
   };
-
+const {id}=useParams();
   const [lineItemData, setLineItemData] = useState(null);
+  const [totalAmount, setTotalAmount] = useState();
 
   const handleData = (e) => {
     setLineItemData({ ...lineItemData, [e.target.name]: e.target.value });
   };
+  const handleCalc = (Qty, UnitPrice, TotalPrice) => {
+    if (!Qty) Qty = 0;
+    if (!UnitPrice) UnitPrice = 0;
+    if (!TotalPrice) TotalPrice = 0;
+
+    setTotalAmount(parseFloat(Qty) * parseFloat(UnitPrice));
+  };
 
   const UpdateData = () => {
+    lineItemData.quote_id=id;
+    //lineItemData.amount=totalAmount;
+    lineItemData.amount = parseFloat(lineItemData.quantity) * parseFloat(lineItemData.unit_price) 
     api
       .post('/tender/edit-TabQuoteLine', lineItemData)
       .then((res) => {
         console.log('edit Line Item', res.data.data);
         message('Edit Line Item Udated Successfully.', 'success');
-        //window.location.reload()
+        window.location.reload()
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');
@@ -84,7 +97,10 @@ const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData 
                   type="textarea"
                   name="quantity"
                   defaultValue={lineItemData && lineItemData.quantity}
-                  onChange={handleData}
+                  onChange={(e)=>{handleData(e);
+                    handleCalc(e.target.value, lineItemData.unit_price,lineItemData.amount
+                      )}}
+                 
                 />
               </Col>
             </Row>
@@ -110,7 +126,9 @@ const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData 
                   type="text"
                   name="unit_price"
                   defaultValue={lineItemData && lineItemData.unit_price}
-                  onChange={handleData}
+                  onChange={(e)=>{handleData(e);
+                    handleCalc(lineItemData.quantity,e.target.value,lineItemData.amount)
+                  }}
                 />
               </Col>
             </Row>
@@ -122,8 +140,11 @@ const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData 
                 <Input
                   type="text"
                   name="amount"
-                  defaultValue={lineItemData && lineItemData.amount}
-                  onChange={handleData}
+                  value={totalAmount || lineItemData && lineItemData.amount}
+                  onChange={(e)=>{handleData(e);
+                    handleCalc(lineItemData.quantity,lineItemData.unit_price,e.target.value)
+                  }}
+                  disabled
                 />
               </Col>
             </Row>

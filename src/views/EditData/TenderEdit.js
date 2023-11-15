@@ -1153,7 +1153,6 @@ const TenderEdit = () => {
                     <option value="Follow-up">Follow-up</option>
                     <option value="Awarded">Awarded</option>
                     <option value="Not Awarded">Not Awarded</option>
-                    <option value="Enquiry">Enquiry</option>
                     <option value="Cancelled">Cancelled</option>
                     <option selected="selected" value="Converted to Project">
                       Converted to Project

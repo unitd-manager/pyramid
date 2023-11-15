@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Row, Col, Button, CardTitle, Table } from 'reactstrap';
+import { Row, Col, Button, CardTitle, Table, Form } from 'reactstrap';
 import PropTypes from 'prop-types';
-import FinanceInvoiceData from '../Finance/FinanceInvoiceData';
-import FinanceReceiptData from '../Finance/FinanceReceiptData';
-import InvoiceModal from '../Finance/InvoiceModal';
-import ReceiptModal from '../Finance/ReceiptModal';
-import CustomerFinanceInvoice from '../Finance/CustomerFinanceInvoice';
-import CustomerFinanceReceipt from '../Finance/CustomerFinanceReceipt';
+import FinanceInvoiceData from '../FinanceTable/FinanceInvoiceData';
+import FinanceReceiptData from '../FinanceTable/FinanceReceiptData';
+import InvoiceModal from '../FinanceTable/InvoiceModal';
+import ReceiptModal from '../FinanceTable/ReceiptModal';
+import CustomerFinanceInvoice from '../FinanceTable/FinanceInvoiceModal';
+import CustomerFinanceReceipt from '../FinanceTable/CustomerFinanceReceipt';
 import api from '../../constants/api';
 import message from '../Message';
-import CreateFinance from '../Finance/CreateFinance';
+import CreateFinance from '../FinanceTable/CreateFinance';
 
 export default function FinanceTab({ projectDetail }) {
   FinanceTab.propTypes = {
-    projectDetail: PropTypes.any
+    projectDetail: PropTypes.bool,
   };
   const [financeModal, setFinanceModal] = useState(false);
   const { id } = useParams();
@@ -32,6 +32,7 @@ export default function FinanceTab({ projectDetail }) {
   const [editInvoiceModal, setEditInvoiceModal] = useState(false);
   const [editReceiptModal, setEditReceiptModal] = useState(false);
   const [editReceiptDataModal, setReceiptDataModal] = useState(false);
+  const [invoiceDatas, setInvoiceDatas] = useState({});
   const getInvoiceById = () => {
     api
       .post('/invoice/getProjectInvoiceById', { project_id: id })
@@ -39,17 +40,17 @@ export default function FinanceTab({ projectDetail }) {
         setCreateInvoice(res.data.data);
       })
       .catch(() => {
-        message('Cannot get Invoice Data', 'error');
+       
       });
   };
   const getAmountById = () => {
     api
-      .post('/project/getAmountByProjectId', { project_id: id })
+      .post('/project/getAmountByProjectIds', { project_id: id })
       .then((res) => {
         setReceiveble(res.data.data);
       })
       .catch(() => {
-        message('Cannot get Invoice Data', 'error');
+       
       });
   };
   const getSupplierById = () => {
@@ -59,7 +60,7 @@ export default function FinanceTab({ projectDetail }) {
         setSupplierAmount(res.data.data);
       })
       .catch(() => {
-        message('Cannot get Invoice Data', 'error');
+       
       });
   };
   const getSubconById = () => {
@@ -69,7 +70,7 @@ export default function FinanceTab({ projectDetail }) {
         setSubConAmount(res.data.data);
       })
       .catch(() => {
-        message('Cannot get Invoice Data', 'error');
+        
       });
   };
 
@@ -79,9 +80,17 @@ export default function FinanceTab({ projectDetail }) {
       .then((res) => {
         setOrderId(res.data.data[0].order_id);
         console.log('order', res.data.data);
+        api
+      .post('/invoice/getProjectReceiptById', { order_id:res.data.data[0].order_id })
+      .then((resp) => {
+        setReceipt(resp.data.data);
       })
       .catch(() => {
-        message('Cannot get Invoice Data', 'error');
+       
+      });
+      })
+      .catch(() => {
+        
       });
   };
   const getInvoiceCancel = () => {
@@ -91,7 +100,7 @@ export default function FinanceTab({ projectDetail }) {
         setCancelInvoice(res.data.data);
       })
       .catch(() => {
-        message('Cannot get Invoice Data', 'error');
+       
       });
   };
   const invoiceCancel = (obj) => {
@@ -114,18 +123,18 @@ export default function FinanceTab({ projectDetail }) {
         setCancelReceipt(res.data.data);
       })
       .catch(() => {
-        message('Cannot get Invoice Data', 'error');
+        
       });
   };
   const getReceiptById = () => {
-    api
-      .post('/invoice/getProjectReceiptById', { project_id: id })
-      .then((res) => {
-        setReceipt(res.data.data);
-      })
-      .catch(() => {
-        message('Cannot get Receipt Data', 'error');
-      });
+    // api
+    //   .post('/invoice/getProjectReceiptById', { order_id:orderId })
+    //   .then((res) => {
+    //     setReceipt(res.data.data);
+    //   })
+    //   .catch(() => {
+       
+    //   });
   };
   //receipt Cancel
   const receiptCancel = (obj) => {
@@ -134,6 +143,7 @@ export default function FinanceTab({ projectDetail }) {
       .post('/Finance/editTabReceiptPortalDisplay', obj)
       .then(() => {
         message('Record editted successfully', 'success');
+        window.location.reload()
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
@@ -165,6 +175,7 @@ export default function FinanceTab({ projectDetail }) {
         projectId={id}
         projectDetail={projectDetail}
         setFinanceModal={setFinanceModal}
+        getOrdersById={getOrdersById}
       />
       <Row className="mb-4">
         {!orderId && (
@@ -184,7 +195,7 @@ export default function FinanceTab({ projectDetail }) {
 
         {orderId && (
           <Col md="3">
-            <Link to={`/FinanceEdit/${orderId}?tab=1`}>
+            <Link to={`/FinanceEdit/${orderId}?tab=3`}>
               {' '}
               <Button color="primary" className="shadow-none">
                 Go to order
@@ -193,7 +204,7 @@ export default function FinanceTab({ projectDetail }) {
           </Col>
         )}
       </Row>
-      <Row style={{ alignItems: 'flex-start' }}>
+      <Row>
         <Col lg="6">
           <CardTitle tag="h4" className="border-bottom p-3 mb-0">
             {' '}
@@ -217,7 +228,7 @@ export default function FinanceTab({ projectDetail }) {
                 <td>Total Invoice Raised(Total PO Amount : ) </td>
                 <td>
                   {' '}
-                  <span>{receiveble && receiveble.totalInvoice} </span>{' '}
+                  <span>{receiveble && receiveble.amount} </span>{' '}
                 </td>
                 <td></td>
               </tr>
@@ -229,6 +240,7 @@ export default function FinanceTab({ projectDetail }) {
                 </td>
               </tr>
             </tbody>
+            <br />
           </Table>
         </Col>
         <Col lg="6">
@@ -297,6 +309,7 @@ export default function FinanceTab({ projectDetail }) {
           editCreateReceipt={editCreateReceipt}
           setEditCreateReceipt={setEditCreateReceipt}
           orderId={orderId}
+          projectInfo={id}
         />
       )}
 
@@ -328,6 +341,8 @@ export default function FinanceTab({ projectDetail }) {
         editModal={editModal}
         setEditModal={setEditModal}
         editInvoiceModal={editInvoiceModal}
+        setInvoiceDatas={setInvoiceDatas}
+        invoiceDatas={invoiceDatas}
       />
       <ReceiptModal
         editReceiptModal={editReceiptModal}
@@ -341,16 +356,22 @@ export default function FinanceTab({ projectDetail }) {
         </CardTitle>
       </Row>
 
-      <Row className="border-bottom mb-3">
-        <CustomerFinanceInvoice
-          createInvoice={createInvoice}
-          cancelInvoice={cancelInvoice}
-          invoiceCancel={invoiceCancel}
-          setEditModal={setEditModal}
-          setEditInvoiceModal={setEditInvoiceModal}
-        ></CustomerFinanceInvoice>
-      </Row>
-
+      <Form className="mt-4">
+        <Row className="border-bottom mb-3">
+          <CustomerFinanceInvoice
+            createInvoice={createInvoice}
+            cancelInvoice={cancelInvoice}
+            invoiceCancel={invoiceCancel}
+            setEditModal={setEditModal}
+            setEditInvoiceModal={setEditInvoiceModal}
+            setInvoiceDatas={setInvoiceDatas}
+            projectDetail={projectDetail}
+          
+            
+            
+          ></CustomerFinanceInvoice>
+        </Row>
+      </Form>
       <Row className="mt-4">
         <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
           {' '}
@@ -358,15 +379,18 @@ export default function FinanceTab({ projectDetail }) {
         </CardTitle>
       </Row>
 
-      <Row className="border-bottom mb-3">
-        <CustomerFinanceReceipt
-          receipt={receipt}
-          cancelReceipt={cancelReceipt}
-          receiptCancel={receiptCancel}
-          setEditReceiptModal={setEditReceiptModal}
-          setReceiptDataModal={setReceiptDataModal}
-        ></CustomerFinanceReceipt>
-      </Row>
+      <Form className="mt-4">
+        <Row className="border-bottom mb-3">
+          <CustomerFinanceReceipt
+            receipt={receipt}
+            projectDetail={projectDetail}
+            cancelReceipt={cancelReceipt}
+            receiptCancel={receiptCancel}
+            setEditReceiptModal={setEditReceiptModal}
+            setReceiptDataModal={setReceiptDataModal}
+          ></CustomerFinanceReceipt>
+        </Row>
+      </Form>
     </>
   );
 }

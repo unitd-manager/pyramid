@@ -15,19 +15,22 @@ import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
 
+
 //VehicleFuelModal From VehicleEdit
 const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsModal }) => {
-  OfficeOverheadsModal.propTypes = {
-    addOfficeOverheadsModal: PropTypes.bool,
-    setAddOfficeOverheadsModal: PropTypes.func,
+    OfficeOverheadsModal.propTypes = {
+        addOfficeOverheadsModal: PropTypes.bool,
+        setAddOfficeOverheadsModal: PropTypes.func,
+        
   };
 
   // All State Variable
   const { id } = useParams();
   const [officeoverheadsdetails, setOfficeOverheadsDetails] = useState();
+  //const [gTotal, setGtotal] = useState(0);
   const [officeoverheadsinsertdetails, setOfficeOverheadsInsertDetails] = useState({
     costing_summary_id: id,
-    date: new Date().toISOString().slice(0, 10),
+    date: new Date().toISOString().slice(0,10)
   });
 
   //Setting Data in Vehicle Fuel
@@ -44,6 +47,8 @@ const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsMo
       .post('/projecttabcostingsummary/getOtherChargesById', { costing_summary_id: id })
       .then((res) => {
         setOfficeOverheadsDetails(res.data.data);
+        
+        
       })
       .catch(() => {
         message('Costing Summary Data Not Found', 'info');
@@ -52,17 +57,18 @@ const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsMo
 
   //Api call for Insert transport charges Data
   const insertOfficeOverheads = () => {
-    if (officeoverheadsinsertdetails.amount && officeoverheadsinsertdetails.amount !== '') {
-      api
-        .post('/projecttabcostingsummary/insertOtherCharges', officeoverheadsinsertdetails)
-        .then((res) => {
-          setOfficeOverheadsInsertDetails(res.data.data);
-          message('Transport Charges Data Inserted Successfully', 'success');
-        })
-        .catch(() => {
-          message('Transport Charges Data Not Found', 'info');
-        });
-    } else {
+    if (officeoverheadsinsertdetails.amount && officeoverheadsinsertdetails.amount !=='') {
+    api
+      .post('/projecttabcostingsummary/insertOtherCharges', officeoverheadsinsertdetails)
+      .then((res) => {
+        setOfficeOverheadsInsertDetails(res.data.data);
+        message('Transport Charges Data Inserted Successfully', 'success');
+      })
+      .catch(() => {
+        message('Transport Charges Data Not Found', 'info');
+      });
+    }
+    else {
       message('Please fill all required fields', 'warning');
     }
   };
@@ -74,13 +80,13 @@ const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsMo
 
   return (
     <>
-      <Modal size="md" isOpen={addOfficeOverheadsModal}>
+      <Modal size="md" isOpen={addOfficeOverheadsModal} > 
         <ModalHeader>
           Add Actual Charges
           <Button
             color="secondary"
             onClick={() => {
-              setAddOfficeOverheadsModal(false);
+                setAddOfficeOverheadsModal(false);
             }}
           >
             X
@@ -94,9 +100,7 @@ const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsMo
               <thead>
                 <tr>
                   <th scope="col">Date</th>
-                  <th scope="col">
-                    Amount<span className="required"> *</span>
-                  </th>
+                  <th scope="col">Amount<span className='required'> *</span></th>
                   <th scope="col">Description</th>
                 </tr>
               </thead>
@@ -108,8 +112,7 @@ const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsMo
                       name="date"
                       onChange={OfficeOverheadshandleInputs}
                       value={
-                        officeoverheadsinsertdetails &&
-                        moment(officeoverheadsinsertdetails.date).format('YYYY-MM-DD')
+                        officeoverheadsinsertdetails && moment(officeoverheadsinsertdetails.date).format('YYYY-MM-DD')
                       }
                     />
                   </td>
@@ -118,7 +121,10 @@ const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsMo
                       type="text"
                       name="amount"
                       onChange={OfficeOverheadshandleInputs}
-                      value={officeoverheadsinsertdetails && officeoverheadsinsertdetails.amount}
+                      value={
+                        officeoverheadsinsertdetails &&
+                        officeoverheadsinsertdetails.amount
+                      } 
                     />
                   </td>
                   <td data-label="Description">
@@ -150,8 +156,9 @@ const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsMo
           <Button
             className="shadow-none"
             onClick={() => {
-              insertOfficeOverheads();
-              setAddOfficeOverheadsModal(false);
+                insertOfficeOverheads();
+                setAddOfficeOverheadsModal(false);
+                
             }}
           >
             Submit
@@ -159,7 +166,7 @@ const OfficeOverheadsModal = ({ addOfficeOverheadsModal, setAddOfficeOverheadsMo
           <Button
             color="secondary"
             onClick={() => {
-              setAddOfficeOverheadsModal(false);
+                setAddOfficeOverheadsModal(false);
             }}
           >
             Cancel

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Form, Col, Label, FormGroup } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import api from '../../constants/api';
+import message from '../Message';
 import EditWorkOrder from './EditWorkOrder';
 import WorkOrderViewLineItem from './WorkOrderViewLineItem';
 import PdfProjectWorkOrder from '../PDF/PdfProjectWorkOrder';
@@ -29,6 +31,9 @@ function SubConWorkOrderPortal({ projectId }) {
       .then((res) => {
         setSubConWorkOrdeData(res.data.data);
       })
+      .catch(() => {
+        message(' SubCon Work Order Data not found', 'info');
+      });
   };
   useEffect(() => {
     SubConWorkOrder();
@@ -146,7 +151,7 @@ function SubConWorkOrderPortal({ projectId }) {
                 <Col>
                   <FormGroup>
                     <Label>
-                      <div className="anchor">
+                      <Link to="">
                         <span
                           onClick={() => {
                             setSubCon(element.sub_con_work_order_id);
@@ -155,14 +160,14 @@ function SubConWorkOrderPortal({ projectId }) {
                         >
                           View Line Items
                         </span>
-                      </div>
+                      </Link>
                     </Label>
                   </FormGroup>
                 </Col>
                 <Col>
                   <FormGroup>
                     <Label>
-                      <div className="anchor">
+                      <Link to="">
                         <span
                           onClick={() => {
                             setSubCon(element.sub_con_work_order_id);
@@ -171,7 +176,7 @@ function SubConWorkOrderPortal({ projectId }) {
                         >
                           Payment History
                         </span>
-                      </div>
+                      </Link>
                     </Label>
                   </FormGroup>
                 </Col>
@@ -180,7 +185,7 @@ function SubConWorkOrderPortal({ projectId }) {
                     <Row>
                       <Col md="2">
                         <Label>
-                          <div className="anchor">
+                          <Link to="">
                             <span
                               onClick={() => {
                                 setWorkData(element);
@@ -189,7 +194,7 @@ function SubConWorkOrderPortal({ projectId }) {
                             >
                               <Icon.Edit />
                             </span>
-                          </div>
+                          </Link>
                         </Label>
                       </Col>
                       <Col md="2">
@@ -203,7 +208,7 @@ function SubConWorkOrderPortal({ projectId }) {
                       </Col>
                       <Col md="2">
                         <Label>
-                          <div className="anchor">
+                          <Link to="">
                             {' '}
                             <span
                               onClick={() => {
@@ -213,7 +218,7 @@ function SubConWorkOrderPortal({ projectId }) {
                             >
                               <Icon.PlusCircle />
                             </span>{' '}
-                          </div>
+                          </Link>
                         </Label>
                       </Col>
                     </Row>

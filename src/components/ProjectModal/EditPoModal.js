@@ -28,7 +28,7 @@ const EditPoModal = ({ editPo, setEditPo, data }) => {
 
   //Get Supplier
   const getSupplier = () => {
-    api.get('/purchaseorder/suppliers').then((res) => {
+    api.get('/purchaseorder/getSupplier').then((res) => {
       setGetSupplierValue(res.data.data);
     });
   };
@@ -38,6 +38,7 @@ const EditPoModal = ({ editPo, setEditPo, data }) => {
       .post('/purchaseorder/getPurchaseOrderById', { purchase_order_id: data[0].purchase_order_id })
       .then((res) => {
         setEditMaterialTabPurchaseOrder(res.data.data[0]);
+        console.log('editpo',res.data.data[0])
       })
       .catch(() => {
         message('', 'info');

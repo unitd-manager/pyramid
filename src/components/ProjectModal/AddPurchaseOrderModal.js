@@ -28,9 +28,16 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
 
   const [productDetails, setProductDetails] = useState({
     title: '',
-    item_code: '',
+    product_code: '',
     site_id: 0,
+    price:'',
+    qty_in_stock:'',
+    unit:'',
+    product_type:'',
+
+
   });
+ // const [gstAmount, setGstAmount] = useState('');
 
   //setting data in ProductDetails
   const handleNewProductDetails = (e) => {
@@ -41,11 +48,13 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     supplier_id: '',
     purchase_order_date: '',
     gst: 0,
-    po_no: '',
+    po_code: '',
   });
   const [addNewProductModal, setAddNewProductModal] = useState(false);
-  const [itemcode, setItemcode] = useState();
+  //const [ItemCode, setItemcode] = useState();
   const [getProductValue, setProductValue] = useState();
+  const [gstValue, setGstValue] = useState();
+  const gstPercentageValue = parseInt(gstValue?.value, 10) || 0; 
   const [addMoreItem, setMoreItem] = useState([
     {
       id: random.int(1, 99).toString(),
@@ -82,6 +91,13 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
   //handle inputs
   const handleInputs = (e) => {
     setPurchaseDetails({ ...purchaseDetails, [e.target.name]: e.target.value });
+  };
+ console.log("5",gstValue);
+  const getGstValue = () => {
+    api.get('/finance/getGst').then((res) => {
+      setGstValue(res.data.data);
+      
+      });
   };
 
   // Getting suppliers
@@ -146,13 +162,28 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     payment: '0',
     project: '',
   });
+  console.log("percentage",gstPercentageValue);
+  // const handleRadioGst = (radioVal,  gstValue1, ) => {
+  //   /* eslint-disable */
+   
+  //   if (gstValue1 == '') {
+  //     gstValue1 = 0;
+  //   }
+  //   let calculatedGstAmount = 0;
+  //   if (radioVal === '1') {
+  //     calculatedGstAmount = gstPercentageValue;
+  //   }
+  
+  //   // setGstAmount(calculatedGstAmount);
+      
+  // };
 
   //getting maximum of itemcode
-  const getMaxItemcode = () => {
-    api.get('/product/getMaxItemCode').then((res) => {
-      setItemcode(res.data.data[0].itemc);
-    });
-  };
+  // const getMaxItemcode = () => {
+  //   api.get('/product/getMaxItemCode').then((res) => {
+  //     setItemcode(res.data.data[0].itemc);
+  //   });
+  // };
 
   //   Get Products
   const getProduct = () => {
@@ -182,14 +213,16 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
         message('Tab Purchase Order not found', 'info');
       });
   };
+
   const poProduct = (PurchaseOrderId, itemObj) => {
+    
     api
       .post('/purchaseorder/insertPoProduct', {
         purchase_order_id: PurchaseOrderId,
         item_title: itemObj.Item,
         quantity: Number(itemObj.qty).toFixed(2),
         unit: itemObj.unit,
-        amount: 0,
+        amount: itemObj.amount,
         description: itemObj.description,
         creation_date: new Date(),
         modification_date: new Date(),
@@ -210,15 +243,20 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
         price: Number(itemObj.price).toFixed(2),
       })
       .then(() => {
+        //setAddPurchaseOrderModal(false);
         message('Product Added!', 'success');
+        window.location.reload();
       })
       .catch(() => {
         message('Unable to add Product!', 'error');
       });
+    
   };
+  
 
   const getAllValues = () => {
     const result = [];
+    const oldArray = addMoreItem;
     $('.lineitem tbody tr').each(() => {
       const allValues = {};
       $(this)
@@ -230,52 +268,96 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
       result.push(allValues);
     });
     purchaseDetails.project_id = projectId;
-    api.post('/purchaseorder/insertPurchaseOrder', purchaseDetails).then((res) => {
-      message('Purchase Order Added!', 'success');
-      setAddPurchaseOrderModal(false);
-      addMoreItem.forEach((obj) => {
-        // if (obj.qty !== '') {
-        poProduct(res.data.data.insertId, obj);
-        // }
+    if (purchaseDetails.supplier_id !== '' && purchaseDetails.purchase_order_date !== '' && purchaseDetails.po_code !=='') {
+      
+        if (purchaseDetails.gst === '1') {
+          purchaseDetails.gst_percentage = gstPercentageValue;
+        } else {
+          purchaseDetails.gst_percentage = null; // Set gst_percentage to null when gst is 0
+        }
+      api.post('/purchaseorder/insertPurchaseOrder', purchaseDetails).then((res) => {
+      //message('Purchase Order Added!', 'success');
+      
+      // result.forEach((obj) => {
+      //   if (obj.qty !== '' || !obj.qty) {
+      //     poProduct(res.data.data.insertId, obj);
+      //     }
+      // });
+     
+      // getProduct();
+      oldArray.forEach((obj) => {
+        if (obj.id) {
+          /* eslint-disable */
+          // const objId = parseInt(obj.id)
+          const foundObj = oldArray.find((el) => el.id === obj.id);
+          if (foundObj) {
+            obj.product_id = foundObj.product_id;
+            obj.title = foundObj.title;
+            obj.item_title = foundObj.item_title;
+          }
+          if(obj.unit){
+            poProduct(res.data.data.insertId,foundObj);
+             
+            // setTimeout(()=>{
+            //   setAddPurchaseOrderModal(false);
+            //   window.location.reload()
+            // },1300)
+            }
+        }
       });
-      getProduct();
     });
+  } else {
+    message('Please fill all required fields.', 'warning');
+  }
+    //setAddPurchaseOrderModal(false);
   };
 
-  const insertPurchaseOrder = () => {
-    purchaseDetails.project_id = projectId;
-    api.post('/purchaseorder/insertPurchaseOrder', purchaseDetails).then((res) => {
-      poProduct(res.data.data.insertId);
-      getProduct();
-      message('Purchase Order Added!', 'success');
-      setAddPurchaseOrderModal(false);
-    });
-  };
+  // const insertPurchaseOrder = () => {
+  //   purchaseDetails.project_id = projectId;
+  //   api.post('/purchaseorder/insertPurchaseOrder', purchaseDetails).then((res) => {
+  //     poProduct(res.data.data.insertId);
+  //     getProduct();
+  //     message('Purchase Order Added!', 'success');
+  //     setAddPurchaseOrderModal(false);
+  //   });
+  // };
 
   function updateState(index, property, e) {
     const copyDeliverOrderProducts = [...addMoreItem];
+    //const amount = (parseFloat(item.qty) || 0) * (parseFloat(item.cost_price) || 0);
     const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e.target.value };
     copyDeliverOrderProducts[index] = updatedObject;
     setMoreItem(copyDeliverOrderProducts);
   }
-
-  const getTotalOfPurchase = () => {
-    let total = 0;
-    addMoreItem.forEach((a) => {
-      total += parseInt(a.qty, 10) * parseFloat(a.cost_price, 10);
-    });
-    return total;
+  const updateAmount = (index) => {
+    const item = addMoreItem[index];
+    const amount = (parseFloat(item.qty) || 0) * (parseFloat(item.cost_price) || 0);
+    const updatedItems = [...addMoreItem];
+    updatedItems[index] = { ...item, amount: amount.toFixed(2) };
+    setMoreItem(updatedItems);
   };
 
+  // const getTotalOfPurchase = () => {
+  //   let total = 0;
+  //   addMoreItem.forEach((a) => {
+  //     total += parseInt(a.qty, 10) * parseFloat(a.cost_price, 10);
+  //   });
+  //   return total;
+  // };
+
   //Insert Product Data
-  const insertProductData = () => {
-    productDetails.item_code = parseFloat(itemcode) + 1;
+  const insertProductData = (ProductCode,ItemCode) => {
+    productDetails.product_code = ProductCode;
+    productDetails.item_code = ItemCode;
+    //productDetails.item_code = parseFloat(itemcode) + 1;
     if (productDetails.title !== '' && productDetails.item_code !== '') {
       api
         .post('/product/insertProduct', productDetails)
         .then(() => {
           // const insertedDataId = res.data.data.insertId;
           message('Product inserted successfully.', 'success');
+          getProduct();
+          setAddNewProductModal(false);
           // api.post('/inventory/insertinventory', {product_id:insertedDataId})
           // .then(() => { message('inventory created successfully.','success')})
           // .catch(() => {
@@ -292,10 +374,28 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
       message('Please fill all required fields.', 'warning');
     }
   };
+  const generateCode = () => {
+    api
+      .post('/product/getCodeValue', { type: 'ProductCode' })
+      .then((res) => {
+        const ProductCode = res.data.data
+      api
+      .post('/product/getCodeValue', { type: 'ItemCode' })
+      .then((response) => {
+        const ItemCode = response.data.data
+        insertProductData(ProductCode, ItemCode);
+      })
+      })
+      .catch(() => {
+        insertProductData('');
+      });
+  };
+
 
   useEffect(() => {
     getProduct();
-    getMaxItemcode();
+    getGstValue();
+    //getMaxItemcode();
     TabMaterialsPurchased();
     getSupplier();
   }, []);
@@ -383,7 +483,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                   </Col>
                   <Col md="2">
                     <FormGroup>
-                      <Label>Supplier Name</Label>
+                      <Label>Supplier Name <span className="required"> *</span></Label>
                       <Input
                         type="select"
                         onChange={handleInputs}
@@ -404,7 +504,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                   </Col>
                   <Col md="2">
                     <FormGroup>
-                      <Label>Po_Date</Label>
+                      <Label>Po_Date <span className="required"> *</span></Label>
                       <Input
                         type="date"
                         name="purchase_order_date"
@@ -417,7 +517,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                   </Col>
                   <Col md="2">
                     <FormGroup>
-                      <Label>Po_No</Label>
+                      <Label>Po_No <span className="required"> *</span></Label>
                       <Input
                         type="text"
                         name="po_code"
@@ -428,7 +528,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                   </Col>
                   <Col md="3">
                     <FormGroup>
-                      <Label>Gst</Label>
+                      <Label>VAT</Label>
                       <br></br>
                       <Label>Yes</Label>
                       &nbsp;
@@ -437,7 +537,10 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                         value="1"
                         type="radio"
                         defaultChecked={purchaseDetails && purchaseDetails.gst === 1 && true}
-                        onChange={handleInputs}
+                        onChange={(e) => {
+                          handleInputs(e);
+                          
+                        }}
                       />
                       &nbsp; &nbsp;
                       <Label>No</Label>
@@ -447,25 +550,28 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                         value="0"
                         type="radio"
                         defaultChecked={purchaseDetails && purchaseDetails.gst === 0 && true}
-                        onChange={handleInputs}
+                        onChange={(e) => {
+                          handleInputs(e);
+                          
+                        }}
                       />
                     </FormGroup>
                   </Col>
                 </Row>
                 <br />
-                <Row>
+                {/* <Row>
                   <FormGroup className="mt-3">
                     {' '}
                     Total Amount : {getTotalOfPurchase() || 0}{' '}
                   </FormGroup>
-                </Row>
+                </Row> */}
               </Col>
             </Row>
 
             <table className="lineitem">
               <thead>
                 <tr>
-                  <th scope="col">Product</th>
+                  <th scope="col">Product <span className="required"> *</span></th>
                   <th scope="col">UoM</th>
                   <th scope="col">Quantity</th>
                   <th scope="col">Unit Price</th>
@@ -525,7 +631,14 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                           onChange={(e) => updateState(index, 'cost_price', e)}
                         />
                       </td>
-                      <td data-label="Total Price">{el.cost_price * el.qty || 0}</td>
+                      <td data-label="Total Price">
+                      <Input
+                          type="text"
+                          name="amount"
+                          value={el.amount}
+                          onChange={(e) => updateAmount(index, 'amount', e)}
+                        />
+                        </td>
                       <td data-label="Remarks">
                         <Input
                           type="textarea"
@@ -570,10 +683,13 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
             color="primary"
             className="shadow-none"
             onClick={() => {
-              insertPurchaseOrder();
+             
               // insertlineItem(res.data.data.insertId);
               getAllValues();
-              getProduct();
+               getProduct();
+               
+             
+    
             }}
           >
             Submit
@@ -612,6 +728,22 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                           value={productDetails.title}
                         />
                       </Col>
+                      <Label sm="3">
+                        Product Type <span className="required"> *</span>
+                      </Label>
+                      <Col sm="8">
+                        <Input
+                          type="select"
+                          name="product_type"
+                          onChange={handleNewProductDetails}
+                          value={productDetails.product_type}
+                        >
+                          <option value="">Please Select</option>
+                          <option value="Material">Materials</option>
+                          <option value="Tools">Tools</option>
+                            
+                        </Input>
+                      </Col>
                     </Row>
                   </FormGroup>
                 </Row>
@@ -624,9 +756,11 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
             color="primary"
             className="shadow-none"
             onClick={() => {
-              insertProductData();
-              // getProduct();
-              setAddNewProductModal(false);
+              //insertProductData();
+              generateCode();
+              //getProduct();
+              //setAddNewProductModal(false);
+              
             }}
           >
             Submit

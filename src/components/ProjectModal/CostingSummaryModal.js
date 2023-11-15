@@ -9,6 +9,8 @@ import {
   Table,
   Input,
   Form,
+  Card,
+  CardBody,
   Row,
   Col,
 } from 'reactstrap';
@@ -19,20 +21,23 @@ import api from '../../constants/api';
 import message from '../Message';
 
 //VehicleFuelModal From VehicleEdit
-const CostingSummaryModal = ({ addCostingSummaryModal, setAddCostingSummaryModal, type }) => {
+const CostingSummaryModal = ({ addCostingSummaryModal, setAddCostingSummaryModal, type,getCostingbySummary }) => {
   CostingSummaryModal.propTypes = {
     addCostingSummaryModal: PropTypes.bool,
     setAddCostingSummaryModal: PropTypes.func,
     type: PropTypes.string,
+    getCostingbySummary:PropTypes.func
   };
 
   // All State Variable
   const { id } = useParams();
   const [costingsummarydetails, setCostingSummaryDetails] = useState();
+  //const [transportcharges, setTransportCharges] = useState();
+  //const [othercharges, setOtherCharges] = useState();
   const [costingsummaryinsertdetails, setCostingSummaryInsertDetails] = useState({
     project_id: id,
     title: type,
-    date: new Date().toISOString().slice(0, 10),
+    date: new Date().toISOString().slice(0, 10)
   });
 
   //Setting Data in Vehicle Fuel
@@ -42,15 +47,13 @@ const CostingSummaryModal = ({ addCostingSummaryModal, setAddCostingSummaryModal
       [e.target.name]: e.target.value,
     });
   };
+  
 
   //Api call for getting Vehicle Fuel Data By ID
   const getsummaryChargesById = () => {
     api
-      .post('/projecttabcostingsummary/getCostingSummaryChargesById', {
-        project_id: id,
-        title: type,
-      })
-
+      .post('/projecttabcostingsummary/getCostingSummaryChargesById', { project_id: id ,title: type })
+      
       .then((res) => {
         setCostingSummaryDetails(res.data.data);
       })
@@ -58,8 +61,8 @@ const CostingSummaryModal = ({ addCostingSummaryModal, setAddCostingSummaryModal
         message('Costing Summary Data Not Found', 'info');
       });
   };
-
-  //Api call for Insert transport charges Data
+  
+    //Api call for Insert transport charges Data
   const insertCharges = () => {
     if (costingsummaryinsertdetails.amount && costingsummaryinsertdetails.amount !== '') {
       api
@@ -100,10 +103,12 @@ const CostingSummaryModal = ({ addCostingSummaryModal, setAddCostingSummaryModal
         <ModalBody>
           <Row>
             <Col md="12">
+              <Card>
+                <CardBody>
                   <Form>
                     <FormGroup>
                       {type}
-                      <br />
+                      <br/>
                       <Table bordered className="lineitem">
                         <thead>
                           <tr>
@@ -163,6 +168,8 @@ const CostingSummaryModal = ({ addCostingSummaryModal, setAddCostingSummaryModal
                       </Table>
                     </FormGroup>
                   </Form>
+                </CardBody>
+              </Card>
             </Col>
           </Row>
         </ModalBody>
@@ -170,13 +177,13 @@ const CostingSummaryModal = ({ addCostingSummaryModal, setAddCostingSummaryModal
         <ModalFooter>
           <Button
             className="shadow-none"
-            color='primary'
             onClick={() => {
               insertCharges();
+              getCostingbySummary();
               setAddCostingSummaryModal(false);
             }}
           >
-            Save & Continue
+            Submit
           </Button>
           <Button
             color="secondary"

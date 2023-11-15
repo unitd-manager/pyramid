@@ -116,7 +116,7 @@ const ProjectEdit = () => {
   // Get Project By Id
   const getProjectById = () => {
     api
-      .post('/project/getProjectById', { project_id: id })
+      .post('/project/getProjectsByID', { project_id: id })
       .then((res) => {
         setProjectDetail(res.data.data[0]);
       })

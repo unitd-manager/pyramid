@@ -90,7 +90,7 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed }) => {
             value: item.product_id,
             label: item.title,
             type: item.product_type,
-            stock: item.qty_in_stock,
+            stock: item.actual_stock,
           });
         });
         setTabMaterialsPurchased(finaldat);
@@ -124,8 +124,11 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed }) => {
           obj.title = foundObj.title;
           obj.product_type = foundObj.product_type;
           obj.product_id = foundObj.itemId;
+          obj.stock = foundObj.stock;
         }
+        if(obj.qty){
         submitData(foundObj);
+        }
       }
     });
   };
@@ -151,9 +154,28 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed }) => {
           remark: itemObj.description,
         })
         .then(() => {
+          const elem={};
+          elem.product_id =itemObj.product_id;
+          elem.qty_in_stock = parseFloat(itemObj.qty_in_stock)-parseFloat(itemObj.qty);
+          api.post('/product/edit-ProductQty', elem)
+            .then(() => {
+              
+              api
+                .post('/inventory/editInventoryStock', elem)
+                .then(() => {
+                  message('Quantity updated in inventory successfully.', 'success');
+                })
+                .catch(() => {
+                  message('unable to update quantity in inventory.', 'danger');
+                });
+              message('Quantity added successfully.', 'success');
+            })
+            .catch(() => {
+              message('unable to add quantity.', 'danger');
+            });
           message('Product Added!', 'success');
           setTimeout(() => {
-            window.location.reload();
+            // window.location.reload();
           }, 300);
         })
         .catch(() => {
@@ -258,7 +280,7 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed }) => {
                       <td data-label="stock">{item.qty_in_stock}</td>
                       <td data-label="uom">
                         <Input
-                          type="number"
+                          type="text"
                           name="uom"
                           onChange={(e) => updateState(index, 'uom', e)}
                           defaultValue={item.uom}
