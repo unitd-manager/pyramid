@@ -372,7 +372,7 @@ const SupportEdit = () => {
                   className="shadow-none"
                   color="primary"
                   onClick={() => {
-                    setRoomName('Booking');
+                    setRoomName('Support');
                     setFileTypes(['JPG', 'PNG', 'GIF', 'PDF', 'CSV', 'XLS']);
                     dataForAttachment();
                     setAttachmentModal(true);
@@ -388,12 +388,12 @@ const SupportEdit = () => {
               setAttachmentModal={setAttachmentModal}
               roomName={roomName}
               fileTypes={fileTypes}
-              altTagData="BookingRelated Data"
-              desc="BookingRelated Data"
+              altTagData="Support Data"
+              desc="Support Data"
               recordType="RelatedPicture"
               mediaType={attachmentData.modelType}
             />
-            <ViewFileComponentV2 moduleId={id} roomName="Booking" recordType="RelatedPicture" />
+            <ViewFileComponentV2 moduleId={id} roomName="Support" recordType="RelatedPicture" />
           </TabPane>
           {/* ADD NODE */}
           <TabPane tabId="3">

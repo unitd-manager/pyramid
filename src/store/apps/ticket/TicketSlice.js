@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createSlice } from '@reduxjs/toolkit';
 
-const API_URL = 'http://43.228.126.245:3001/support/getSupport';
+const API_URL = 'http://43.228.126.245:4011/support/getSupport';
 
 const initialState = {
   tickets: [],
