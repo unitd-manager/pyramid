@@ -15,6 +15,7 @@ const SupportDetails = () => {
   const [supportDetails, setSupportDetails] = useState({
     support_id: '',
     title: '',
+    description:'',
     date: currentDate,
     value: 'new',
     record_type: 'Change Request',
