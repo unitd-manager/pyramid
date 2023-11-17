@@ -95,20 +95,26 @@ const InvoiceSummary = () => {
     });
   };
   const handleSearch = () => {
-    const newData = report
-      .filter((y) => y.selling_company === (companyName === '' ? y.selling_company : companyName))
-      .filter((x) =>
-        endDate && startDate
-          ? new Date(x.invoice_date) <=
-              (endDate === '' ? new Date(x.invoice_date) : new Date(endDate)) &&
-            new Date(x.invoice_date) >=
-              (startDate === '' ? new Date(x.invoice_date) : new Date(startDate))
-          : startDate
-          ? x.invoice_date === (startDate === '' ? x.invoice_date : startDate)
-          : x.invoice_date === (endDate === '' ? x.invoice_date : endDate),
-      );
+    let newData = [...report];
+  
+    // Apply month filter
+    newData = newData.filter((x) =>
+      endDate && startDate
+        ? new Date(x.invoice_date) <= (endDate === '' ? new Date(x.invoice_date) : new Date(endDate)) &&
+          new Date(x.invoice_date) >= (startDate === '' ? new Date(x.invoice_date) : new Date(startDate))
+        : startDate
+        ? x.invoice_date === (startDate === '' ? x.invoice_date : startDate)
+        : x.invoice_date === (endDate === '' ? x.invoice_date : endDate),
+    );
+  
+    // Apply company filter if companyName is not empty
+
+      newData = newData.filter((y) => y.company_name === companyName);
+    
+  
     setUserSearchData(newData);
   };
+  
 
   const [page, setPage] = useState(0);
 
@@ -159,7 +165,7 @@ const InvoiceSummary = () => {
     },
     {
       name: 'Company Name',
-      selector: 'selling_company',
+      selector: 'company_name',
       sortable: true,
       grow: 0,
       wrap: true,
@@ -279,7 +285,7 @@ const InvoiceSummary = () => {
                       {el.invoice_due_date ? moment(el.invoice_due_date).format('DD-MM-YYYY') : ''}
                     </td>
                     <td>{el.invoice_code}</td>
-                    <td>{el.selling_company}</td>
+                    <td>{el.company_name}</td>
                     <td>{el.status}</td>
                     <td>{el.invoice_amount}</td>
                     <td>{el.gst_value}</td>

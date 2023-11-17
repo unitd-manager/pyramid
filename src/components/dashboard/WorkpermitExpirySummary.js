@@ -48,7 +48,7 @@ const WorkpermitExpirySummary = () => {
                 remainderLists.map((elem) => {
                   return (
                     <tr key={elem.employee_id_duplicate}>
-                      <td>{elem.first_name}</td>
+                      <td>{elem.employee_name}</td>
                       <td>{moment(elem.work_permit_expiry_date).format('DD-MM-YYYY')}</td>
                     </tr>
                   );
