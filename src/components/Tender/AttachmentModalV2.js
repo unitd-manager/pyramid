@@ -58,11 +58,17 @@ const AttachmentModalV2 = ({
         })
         .then(() => {
           message('Files Uploaded Successfully', 'success');
+          setUploaded(null)
+          setHandleValue()
+          setFile([])
           
           setAttachmentModal(false);
           setUpdate(!update)
         })
         .catch(() => {
+          setUploaded(null)
+          setHandleValue()
+          setFile([])
           setAttachmentModal(false);
           message('Unable to upload File', 'error');
           setUpdate(!update)

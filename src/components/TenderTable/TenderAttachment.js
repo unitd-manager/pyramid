@@ -5,10 +5,11 @@ import {  useParams } from 'react-router-dom';
 import AttachmentModalV2 from '../Tender/AttachmentModalV2';
 import ViewFileComponentV2 from '../ProjectModal/ViewFileComponentV2';
 
-export default function TenderAttachments() {
-    TenderAttachments.propTypes = {
+export default function TenderAttachment() {
+    TenderAttachment.propTypes = {
     }
     const { id } = useParams();
+    const [update, setUpdate] = useState(false);
     const [attachmentModal, setAttachmentModal] = useState(false);
     const [RoomName, setRoomName] = useState('');
   const [fileTypes, setFileTypes] = useState('');
@@ -34,6 +35,7 @@ export default function TenderAttachments() {
           setFileTypes(['JPG', 'JPEG', 'PNG', 'GIF', 'PDF']);
           dataForAttachment();
           setAttachmentModal(true);
+          
         }}
       >
         <Icon.File className="rounded-circle" width="20" />
@@ -50,7 +52,10 @@ export default function TenderAttachments() {
     desc="TenderRelated Data"
     recordType="RelatedPicture"
     mediaType={attachmentData.modelType}
+    update={update}
+    setUpdate={setUpdate}
   />
-  <ViewFileComponentV2 moduleId={id} roomName="Tender" recordType="RelatedPicture" /></div>
+  <ViewFileComponentV2 moduleId={id} roomName="Tender" recordType="RelatedPicture" update={update}
+    setUpdate={setUpdate} /></div>
   )
 }

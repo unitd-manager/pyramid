@@ -15,11 +15,13 @@ import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
 
+
 //VehicleFuelModal From VehicleEdit
 const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissionModal }) => {
-  OtherChargesModal.propTypes = {
-    addSalesmanCommissionModal: PropTypes.bool,
-    setAddSalesmanCommissionModal: PropTypes.func,
+    OtherChargesModal.propTypes = {
+        addSalesmanCommissionModal: PropTypes.bool,
+        setAddSalesmanCommissionModal: PropTypes.func,
+        
   };
 
   // All State Variable
@@ -27,7 +29,7 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
   const [salesmancommissiondetails, setSalesmanCommissionDetails] = useState();
   const [salesmancomissioninsertdetails, setSalesmanCommissionInsertDetails] = useState({
     costing_summary_id: id,
-    date3: new Date().toISOString().slice(0, 10),
+    date3: new Date().toISOString().slice(0,10)
   });
 
   //Setting Data in Vehicle Fuel
@@ -44,6 +46,8 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
       .post('/projecttabcostingsummary/getsalesmancommissionById', { costing_summary_id: id })
       .then((res) => {
         setSalesmanCommissionDetails(res.data.data);
+        
+        
       })
       .catch(() => {
         message('Sales commission Data Not Found', 'info');
@@ -51,18 +55,19 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
   };
 
   //Api call for Insert transport charges Data
-  const insertSalesmanCommission = () => {
-    if (salesmancomissioninsertdetails.amount && salesmancomissioninsertdetails.amount !== '') {
-      api
-        .post('/projecttabcostingsummary/insertSalesmanCommission', salesmancomissioninsertdetails)
-        .then((res) => {
-          setSalesmanCommissionInsertDetails(res.data.data);
-          message('Sales commission Data Inserted Successfully', 'success');
-        })
-        .catch(() => {
-          message('Sales commission Data Not Found', 'info');
-        });
-    } else {
+  const insertSalesmanCommission= () => {
+    if (salesmancomissioninsertdetails.amount && salesmancomissioninsertdetails.amount !=='') {
+    api
+      .post('/projecttabcostingsummary/insertSalesmanCommission', salesmancomissioninsertdetails)
+      .then((res) => {
+        setSalesmanCommissionInsertDetails(res.data.data);
+        message('Sales commission Data Inserted Successfully', 'success');
+      })
+      .catch(() => {
+        message('Sales commission Data Not Found', 'info');
+      });
+    }
+    else {
       message('Please fill all required fields', 'warning');
     }
   };
@@ -74,13 +79,13 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
 
   return (
     <>
-      <Modal size="md" isOpen={addSalesmanCommissionModal}>
+      <Modal size="md" isOpen={addSalesmanCommissionModal} > 
         <ModalHeader>
           Add Actual Charges
           <Button
             color="secondary"
             onClick={() => {
-              setAddSalesmanCommissionModal(false);
+                setAddSalesmanCommissionModal(false);
             }}
           >
             X
@@ -94,9 +99,7 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
               <thead>
                 <tr>
                   <th scope="col">Date</th>
-                  <th scope="col">
-                    Amount<span className="required"> *</span>
-                  </th>
+                  <th scope="col">Amount<span className='required'> *</span></th>
                   <th scope="col">Description</th>
                 </tr>
               </thead>
@@ -108,8 +111,7 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
                       name="date3"
                       onChange={OtherChargeshandleInputs}
                       value={
-                        salesmancomissioninsertdetails &&
-                        moment(salesmancomissioninsertdetails.date3).format('YYYY-MM-DD')
+                        salesmancomissioninsertdetails && moment(salesmancomissioninsertdetails.date3).format('YYYY-MM-DD')
                       }
                     />
                   </td>
@@ -119,8 +121,9 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
                       name="amount3"
                       onChange={OtherChargeshandleInputs}
                       value={
-                        salesmancomissioninsertdetails && salesmancomissioninsertdetails.amount3
-                      }
+                        salesmancomissioninsertdetails &&
+                        salesmancomissioninsertdetails.amount3
+                      } 
                     />
                   </td>
                   <td data-label="Description">
@@ -129,8 +132,7 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
                       name="description3"
                       onChange={OtherChargeshandleInputs}
                       value={
-                        salesmancomissioninsertdetails &&
-                        salesmancomissioninsertdetails.description3
+                        salesmancomissioninsertdetails && salesmancomissioninsertdetails.description3
                       }
                     />
                   </td>
@@ -153,8 +155,9 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
           <Button
             className="shadow-none"
             onClick={() => {
-              insertSalesmanCommission();
-              setAddSalesmanCommissionModal(false);
+                insertSalesmanCommission();
+                setAddSalesmanCommissionModal(false);
+                
             }}
           >
             Submit
@@ -162,7 +165,7 @@ const OtherChargesModal = ({ addSalesmanCommissionModal, setAddSalesmanCommissio
           <Button
             color="secondary"
             onClick={() => {
-              setAddSalesmanCommissionModal(false);
+                setAddSalesmanCommissionModal(false);
             }}
           >
             Cancel

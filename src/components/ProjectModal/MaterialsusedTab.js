@@ -7,6 +7,7 @@ import api from '../../constants/api';
 import EditMaterialused from './EditMaterialused';
 import PdfMaterialUsed from '../PDF/PdfMaterialUsed';
 import ReturnStockModal from './ReturnStockModal';
+import ReturnStockLogsModal from './ReturnStockLogsModal';
 
 const MaterialsusedTab = ({ projectId }) => {
   MaterialsusedTab.propTypes = { 
@@ -19,7 +20,7 @@ const MaterialsusedTab = ({ projectId }) => {
   const [materialusedportal, setMaterialusedportal] = useState();
   const [returnStockModal, setReturnStockModal] = useState(false);
   const [returnItem, setReturnItem] = useState({});
-
+  const [returnItemLogsModal, setReturnItemLogsModal] = useState(false);
 
   const getTableData = () => {
  // Get Material Used Portal Data
@@ -54,6 +55,14 @@ const MaterialsusedTab = ({ projectId }) => {
           returnItem={returnItem}
         />
       )}
+       {returnItemLogsModal && (
+        <ReturnStockLogsModal
+        returnItemLogsModal={returnItemLogsModal}
+        setReturnItemLogsModal={setReturnItemLogsModal}
+        returnItem={returnItem}
+        />
+      )}
+      <br/>
       <Row className="mb-4">
         <Col>
           <PdfMaterialUsed
@@ -69,14 +78,14 @@ const MaterialsusedTab = ({ projectId }) => {
         </Col>
       </Row>
       <Row>
-        <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
+        <CardTitle tag="h5" className="border-bottom bg-secondary p-2 mb-0 text-white">
           {' '}
           Materials used{' '}
         </CardTitle>
       </Row>
 
       <Form className="mt-4">
-        <Row className="border-bottom mb-3">
+        <Row className="border-bottom mb-1">
           <Col>
             <FormGroup>
               <Label>Title</Label>{' '}
@@ -157,7 +166,10 @@ const MaterialsusedTab = ({ projectId }) => {
                       <Label>
                         <div className="anchor">
                           {' '}
-                          <span>
+                          <span onClick={()=>{
+                             setReturnItem(res);
+                            setReturnItemLogsModal(true);
+                          }}>
                             <Icon.Eye />
                           </span>{' '}
                         </div>
@@ -177,13 +189,13 @@ const MaterialsusedTab = ({ projectId }) => {
                         </div>
                       </Label>
                     </Col>
-                    <Col md="8">
+                    {/* <Col md="8">
                       <Label>
                         <div className="anchor">
                           <span>View</span>
                         </div>
                       </Label>
-                    </Col>
+                    </Col> */}
                   </Row>
                 </FormGroup>
               </Col>

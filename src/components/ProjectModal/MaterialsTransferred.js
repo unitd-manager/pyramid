@@ -26,13 +26,14 @@ function MaterialsTransferred({ projectId }) {
 
   return (
     <>
+    <br></br>
       <Row>
-        <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
+        <CardTitle tag="h5" className="border-bottom bg-secondary p-2 mb-0 text-white">
           Materials Transferred From Other Projects{' '}
         </CardTitle>
       </Row>
       <Form className="mt-4">
-        <Row className="border-bottom mb-3">
+        <Row className="border-bottom mb-2">
           <Col>
             <FormGroup>
               <Label>Ref Project</Label>{' '}
@@ -48,11 +49,7 @@ function MaterialsTransferred({ projectId }) {
               <Label>Quantity</Label>{' '}
             </FormGroup>
           </Col>
-          <Col>
-            <FormGroup>
-              <Label>To Project</Label>{' '}
-            </FormGroup>
-          </Col>
+         
           <Col>
             <FormGroup>
               <Label>Updated By</Label>{' '}
@@ -65,7 +62,9 @@ function MaterialsTransferred({ projectId }) {
             return (
               <Row key={e.to_project_id}>
                 <Col>
-                  <FormGroup></FormGroup>
+                  <FormGroup>
+                    <Label>{e.pro_name}</Label>
+                  </FormGroup>
                 </Col>
                 <Col>
                   <FormGroup>
@@ -77,11 +76,7 @@ function MaterialsTransferred({ projectId }) {
                     <Label>{e.quantity}</Label>
                   </FormGroup>
                 </Col>
-                <Col>
-                  <FormGroup>
-                    <Label>{e.pro_name}</Label>
-                  </FormGroup>
-                </Col>
+               
                 <Col>
                   <FormGroup>
                     <Label></Label>

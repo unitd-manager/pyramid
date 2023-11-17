@@ -38,6 +38,7 @@ function EditQuote({
   };
 
   //   Get Quote Edited Value
+
   const [quoteData, setQuoteData] = useState({
     quote_date: '',
     quote_code: '',
@@ -51,7 +52,6 @@ function EditQuote({
 
   const handleData = (e) => {
     console.log(setQuoteData({ ...quoteData, [e.target.name]: e.target.value }));
-    //setQuoteData({...quoteData, [e.target.name]:e.target.value});
   };
 
   const GetEditQuote = () => {};
@@ -171,22 +171,10 @@ function EditQuote({
                   <Row>
                     <Label>Intro Line Items</Label>
                   </Row>
-                  {/* <Editor
-                            wrapperClassName="demo-wrapper mb-0"
-                            editorClassName="demo-editor border mb-4 edi-height"
-                            name="intro_drawing_quote"
-                            value={introDrawingQuote}
-                            onChange={handleData}
-                        /> */}
+
                   <Row>
                     <Label>Terms & Condition</Label>
                   </Row>
-                  {/* <Editor
-                            wrapperClassName="demo-wrapper mb-0"
-                            editorClassName="demo-editor border mb-4 edi-height"
-                            name="terms_condition"
-                            value={condition}
-                        /> */}
 
                   <Row>
                     <div className="pt-3 mt-3 d-flex align-items-center gap-2">

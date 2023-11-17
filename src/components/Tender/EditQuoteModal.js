@@ -19,6 +19,8 @@ import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import api from '../../constants/api';
 import message from '../Message';
 
+const ComponentCard = React.lazy(() => import('../ComponentCard'));
+
 const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, existingQuote }) => {
   EditQuoteModal.propTypes = {
     editQuoteModal: PropTypes.bool,
@@ -38,22 +40,13 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, existingQuote }) =>
   const GetEditQuote = () => {
     api
       .post('/tender/edit-TabQuote', quoteData)
-      .then(() => {
+      .then((res) => {
+        console.log('edit quote', res.data.data);
         message('Quote Edited Successfully.', 'success');
+        window.location.reload();
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');
-      });
-  };
-
-  const insertquote = () => {
-    api
-      .post('/tender/insertQuote', quoteData)
-      .then(() => {
-        message('quote inserted successfully.', 'success');
-      })
-      .catch(() => {
-        message('Network connection error.', 'error');
       });
   };
 
@@ -107,7 +100,10 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, existingQuote }) =>
           </Button>
         </ModalHeader>
         <ModalBody>
+          <FormGroup>
+            <Form>
               <FormGroup>
+                <ComponentCard>
                   <Row>
                     <Col md="3">
                       <FormGroup>
@@ -267,12 +263,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, existingQuote }) =>
                         type="button"
                         color="primary"
                         className="btn shadow-none mr-2"
-                        onClick={() => {
-                          GetEditQuote();
-                          insertquote();
-                        }}
+                        onClick={GetEditQuote}
                       >
-                        Submit
+                        Save & Continue
                       </Button>
                       <Button
                         color="secondary"
@@ -285,7 +278,10 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, existingQuote }) =>
                       </Button>
                     </div>
                   </Row>
+                </ComponentCard>
               </FormGroup>
+            </Form>
+          </FormGroup>
         </ModalBody>
       </Modal>
       {/* END Edit Quote Modal */}

@@ -75,11 +75,12 @@ export default function QuotationMoreDetails({
       if (result.isConfirmed) {
         api.post('/project/deleteEditItem', { quote_items_id: deleteID }).then(() => {
           Swal.fire('Deleted!', 'Your Line Items has been deleted.', 'success');
-          window.location.reload();
         });
       }
     });
   };
+  console.log(quoteDatas);
+
 
   return (
     <>
@@ -156,7 +157,7 @@ export default function QuotationMoreDetails({
                   <Col>
                     <FormGroup>
                       <Label>
-                        {element.quote_date ? moment(element.quote_date).format('DD-MM-YYYY') : ''}
+                        {element.quote_date ? moment(element.quote_date).format('YYYY-MM-DD') : ''}
                       </Label>
                     </FormGroup>
                   </Col>
@@ -184,7 +185,7 @@ export default function QuotationMoreDetails({
                   <Col>
                     <FormGroup>
                       <BlueLabel>
-                        <span
+                        <span 
                           onClick={() => {
                             getLineItem(element.quote_id);
                             setViewLineModal(true);
@@ -204,10 +205,7 @@ export default function QuotationMoreDetails({
                             <tr>
                               <th scope="col">Title </th>
                               <th scope="col">Description </th>
-                              <th scope="col">Qty </th>
-                              <th scope="col">Unit Price </th>
                               <th scope="col">Amount</th>
-                              <th scope="col">Updated By </th>
                               <th scope="col">Action</th>
                             </tr>
                           </thead>
@@ -218,13 +216,9 @@ export default function QuotationMoreDetails({
                                   <tr>
                                     <td data-label="Title">{e.title}</td>
                                     <td data-label="Description">{e.description}</td>
-                                    <td data-label="Quantity">{e.quantity}</td>
-                                    <td data-label="Unit Price">{e.unit_price}</td>
                                     <td data-label="Amount">{e.amount}</td>
-                                    <td data-label="Updated By"></td>
                                     <td data-label="Action">
-                                      <span
-                                        className="addline"
+                                      <span className='addline'
                                         onClick={() => {
                                           setEditLineModelItem(e);
                                           setEditLineModal(true);
@@ -233,8 +227,7 @@ export default function QuotationMoreDetails({
                                         <Icon.Edit2 />
                                       </span>
 
-                                      <span
-                                        className="addline"
+                                      <span className='addline'
                                         onClick={() => {
                                           deleteRecord(e.quote_items_id);
                                         }}
@@ -256,8 +249,7 @@ export default function QuotationMoreDetails({
                       <Row>
                         <Col md="2">
                           <Label>
-                            <span
-                              className="addline"
+                            <span className='addline'
                               onClick={() => {
                                 getLineItem(element.quote_id);
                                 setQuoteData(lineItem.quote_id);
@@ -278,8 +270,7 @@ export default function QuotationMoreDetails({
                         <Col md="2">
                           <Label>
                             {' '}
-                            <span
-                              className="addline"
+                            <span className='addline'
                               onClick={() => {
                                 setQuoteLine(element.quote_id);
                                 setAddLineItemModal(true);
@@ -304,7 +295,6 @@ export default function QuotationMoreDetails({
                         quotationsModal={quotationsModal}
                         setquotationsModal={setquotationsModal}
                         quoteId={element.quote_id}
-                        id={id}
                       />
                     )}
                     {addLineItemModal && (
@@ -317,7 +307,7 @@ export default function QuotationMoreDetails({
                     )}
 
                     <EditQuotation
-                      projectInfo={id}
+                    projectInfo={id}
                       editQuoteModal={editQuoteModal}
                       setEditQuoteModal={setEditQuoteModal}
                       quoteDatas={quoteDatas}

@@ -15,11 +15,12 @@ import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
 
+
 //VehicleFuelModal From VehicleEdit
 const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModal }) => {
-  TransportCharges.propTypes = {
-    addTransportChargesModal: PropTypes.bool,
-    setAddTransportChargesModal: PropTypes.func,
+    TransportCharges.propTypes = {
+        addTransportChargesModal: PropTypes.bool,
+        setAddTransportChargesModal: PropTypes.func,
   };
 
   // All State Variable
@@ -27,7 +28,7 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
   const [costingsummarydetails, setCostingSummary] = useState();
   const [costingsummaryinsertdetails, setCostingSummaryInsertDetails] = useState({
     costing_summary_id: id,
-    date: new Date().toISOString().slice(0, 10),
+    date: new Date().toISOString().slice(0,10)
   });
 
   //Setting Data in Vehicle Fuel
@@ -51,18 +52,19 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
   };
 
   //Api call for Insert transport charges Data
-  const insertTransportCharges = () => {
-    if (costingsummaryinsertdetails.amount && costingsummaryinsertdetails.amount !== '') {
-      api
-        .post('/projecttabcostingsummary/insertTransportCharges', costingsummaryinsertdetails)
-        .then((res) => {
-          setCostingSummaryInsertDetails(res.data.data);
-          message('Transport Charges Data Inserted Successfully', 'success');
-        })
-        .catch(() => {
-          message('Transport Charges Data Not Found', 'info');
-        });
-    } else {
+  const insertTransportCharges= () => {
+    if (costingsummaryinsertdetails.amount && costingsummaryinsertdetails.amount !=='') {
+    api
+      .post('/projecttabcostingsummary/insertTransportCharges', costingsummaryinsertdetails)
+      .then((res) => {
+        setCostingSummaryInsertDetails(res.data.data);
+        message('Transport Charges Data Inserted Successfully', 'success');
+      })
+      .catch(() => {
+        message('Transport Charges Data Not Found', 'info');
+      });
+    }
+    else {
       message('Please fill all required fields', 'warning');
     }
   };
@@ -74,13 +76,13 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
 
   return (
     <>
-      <Modal size="md" isOpen={addTransportChargesModal}>
+      <Modal size="md" isOpen={addTransportChargesModal} > 
         <ModalHeader>
           Add Transport Charges
           <Button
             color="secondary"
             onClick={() => {
-              setAddTransportChargesModal(false);
+                setAddTransportChargesModal(false);
             }}
           >
             X
@@ -94,9 +96,7 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
               <thead>
                 <tr>
                   <th scope="col">Date</th>
-                  <th scope="col">
-                    Amount<span className="required"> *</span>
-                  </th>
+                  <th scope="col">Amount<span className='required'> *</span></th>
                   <th scope="col">Description</th>
                 </tr>
               </thead>
@@ -108,8 +108,7 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
                       name="date"
                       onChange={TransportChargeshandleInputs}
                       value={
-                        costingsummaryinsertdetails &&
-                        moment(costingsummaryinsertdetails.date).format('YYYY-MM-DD')
+                        costingsummaryinsertdetails && moment(costingsummaryinsertdetails.date).format('YYYY-MM-DD')
                       }
                     />
                   </td>
@@ -118,7 +117,10 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
                       type="text"
                       name="amount"
                       onChange={TransportChargeshandleInputs}
-                      value={costingsummaryinsertdetails && costingsummaryinsertdetails.amount}
+                      value={
+                        costingsummaryinsertdetails &&
+                        costingsummaryinsertdetails.amount
+                      } 
                     />
                   </td>
                   <td data-label="Description">
@@ -126,7 +128,9 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
                       type="text"
                       name="description"
                       onChange={TransportChargeshandleInputs}
-                      value={costingsummaryinsertdetails && costingsummaryinsertdetails.description}
+                      value={
+                        costingsummaryinsertdetails && costingsummaryinsertdetails.description
+                      }
                     />
                   </td>
                 </tr>
@@ -148,8 +152,9 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
           <Button
             className="shadow-none"
             onClick={() => {
-              insertTransportCharges();
-              setAddTransportChargesModal(false);
+                insertTransportCharges();
+                setAddTransportChargesModal(false);
+                
             }}
           >
             Submit
@@ -157,7 +162,7 @@ const TransportCharges = ({ addTransportChargesModal, setAddTransportChargesModa
           <Button
             color="secondary"
             onClick={() => {
-              setAddTransportChargesModal(false);
+                setAddTransportChargesModal(false);
             }}
           >
             Cancel

@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import message from '../Message';
 import api from '../../constants/api';
+import AppContext from '../../context/AppContext';
 
 function TransferModal({ transferModal, setTransferModal, transferItem }) {
   TransferModal.propTypes = {
@@ -22,7 +23,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
     setTransferModal: PropTypes.func,
     transferItem: PropTypes.object,
   };
-
+  const { loggedInuser } = React.useContext(AppContext);
   const [project, setProject] = useState([]);
   const [addLineItem, setAddLineItem] = useState([
     {
@@ -64,6 +65,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
   const insertTransferItems = (elem) => {
     elem.product_id = transferItem.product_id;
     elem.from_project_id = id;
+    elem.created_by = loggedInuser.name;
     api
       .post('/projecttabmaterialstransferredportal/insertstock_transfer', elem)
       .then(() => {
@@ -118,7 +120,17 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
               <Row>
                 <Col md="3">
                   <FormGroup>
-                    <Button onClick={() => AddNewLineItem}>Add More Items</Button>
+                  <Button
+                        className="shadow-none"
+                        color="primary"
+                        type="button"
+                        onClick={() => {
+                          AddNewLineItem();
+                        }}
+                      >
+                        Add More Item
+                      </Button>
+                    {/* <Button onClick={() => AddNewLineItem}>Add More Items</Button> */}
                   </FormGroup>
                 </Col>
                 <Col md="3">

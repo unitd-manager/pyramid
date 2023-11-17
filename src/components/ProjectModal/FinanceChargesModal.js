@@ -15,19 +15,22 @@ import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
 
+
 //VehicleFuelModal From VehicleEdit
 const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal }) => {
-  FinanceChargesModal.propTypes = {
-    addFinanceChargesModal: PropTypes.bool,
-    setAddFinanceChargesModal: PropTypes.func,
+    FinanceChargesModal.propTypes = {
+        addFinanceChargesModal: PropTypes.bool,
+        setAddFinanceChargesModal: PropTypes.func,
+        
   };
 
   // All State Variable
   const { id } = useParams();
   const [financechargesdetails, setFinanceChargesDetails] = useState();
+  //const [gTotal, setGtotal] = useState(0);
   const [financechargesinsertdetails, setFinanceChargesInsertDetails] = useState({
     costing_summary_id: id,
-    date: new Date().toISOString().slice(0, 10),
+    date: new Date().toISOString().slice(0,10)
   });
 
   //Setting Data in Vehicle Fuel
@@ -44,6 +47,8 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
       .post('/projecttabcostingsummary/getOtherChargesById', { costing_summary_id: id })
       .then((res) => {
         setFinanceChargesDetails(res.data.data);
+        
+        
       })
       .catch(() => {
         message('Costing Summary Data Not Found', 'info');
@@ -51,18 +56,19 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
   };
 
   //Api call for Insert transport charges Data
-  const insertFinanceCharges = () => {
-    if (financechargesinsertdetails.amount && financechargesinsertdetails.amount !== '') {
-      api
-        .post('/projecttabcostingsummary/insertOtherCharges', financechargesinsertdetails)
-        .then((res) => {
-          setFinanceChargesInsertDetails(res.data.data);
-          message('Transport Charges Data Inserted Successfully', 'success');
-        })
-        .catch(() => {
-          message('Transport Charges Data Not Found', 'info');
-        });
-    } else {
+  const insertFinanceCharges= () => {
+    if (financechargesinsertdetails.amount && financechargesinsertdetails.amount !=='') {
+    api
+      .post('/projecttabcostingsummary/insertOtherCharges', financechargesinsertdetails)
+      .then((res) => {
+        setFinanceChargesInsertDetails(res.data.data);
+        message('Transport Charges Data Inserted Successfully', 'success');
+      })
+      .catch(() => {
+        message('Transport Charges Data Not Found', 'info');
+      });
+    }
+    else {
       message('Please fill all required fields', 'warning');
     }
   };
@@ -74,13 +80,13 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
 
   return (
     <>
-      <Modal size="md" isOpen={addFinanceChargesModal}>
+      <Modal size="md" isOpen={addFinanceChargesModal} > 
         <ModalHeader>
           Add Actual Charges
           <Button
             color="secondary"
             onClick={() => {
-              setAddFinanceChargesModal(false);
+                setAddFinanceChargesModal(false);
             }}
           >
             X
@@ -94,9 +100,7 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
               <thead>
                 <tr>
                   <th scope="col">Date</th>
-                  <th scope="col">
-                    Amount<span className="required"> *</span>
-                  </th>
+                  <th scope="col">Amount<span className='required'> *</span></th>
                   <th scope="col">Description</th>
                 </tr>
               </thead>
@@ -108,8 +112,7 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
                       name="date"
                       onChange={OfficeOverheadshandleInputs}
                       value={
-                        financechargesinsertdetails &&
-                        moment(financechargesinsertdetails.date).format('YYYY-MM-DD')
+                        financechargesinsertdetails && moment(financechargesinsertdetails.date).format('YYYY-MM-DD')
                       }
                     />
                   </td>
@@ -118,7 +121,10 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
                       type="text"
                       name="amount"
                       onChange={OfficeOverheadshandleInputs}
-                      value={financechargesinsertdetails && financechargesinsertdetails.amount}
+                      value={
+                        financechargesinsertdetails &&
+                        financechargesinsertdetails.amount
+                      } 
                     />
                   </td>
                   <td data-label="Description">
@@ -126,7 +132,9 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
                       type="text"
                       name="description"
                       onChange={OfficeOverheadshandleInputs}
-                      value={financechargesinsertdetails && financechargesinsertdetails.description}
+                      value={
+                        financechargesinsertdetails && financechargesinsertdetails.description
+                      }
                     />
                   </td>
                 </tr>
@@ -148,8 +156,9 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
           <Button
             className="shadow-none"
             onClick={() => {
-              insertFinanceCharges();
-              setAddFinanceChargesModal(false);
+                insertFinanceCharges();
+                setAddFinanceChargesModal(false);
+                
             }}
           >
             Submit
@@ -157,7 +166,7 @@ const FinanceChargesModal = ({ addFinanceChargesModal, setAddFinanceChargesModal
           <Button
             color="secondary"
             onClick={() => {
-              setAddFinanceChargesModal(false);
+                setAddFinanceChargesModal(false);
             }}
           >
             Cancel

@@ -149,7 +149,7 @@ export default function TenderQuotation({
 
         {quote && QuoteProject !== undefined && (
           <Col md="2" className="mb-4 d-flex justify-content-between">
-            <Link to={`/ProjectEdit/${QuoteProject && QuoteProject.project_id}`}>
+            <Link to={`/ProjectEdit/${QuoteProject && QuoteProject.project_id}?tab=1`}>
               {' '}
               <Button color="primary" className="shadow-none">
                 Go to Project

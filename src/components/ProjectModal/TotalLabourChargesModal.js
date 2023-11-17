@@ -15,11 +15,13 @@ import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
 
+
 //VehicleFuelModal From VehicleEdit
 const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesModal }) => {
-  LabourChargesModal.propTypes = {
-    addTotalLabourChargesModal: PropTypes.bool,
-    setAddLabourChargesModal: PropTypes.func,
+    LabourChargesModal.propTypes = {
+        addTotalLabourChargesModal: PropTypes.bool,
+        setAddLabourChargesModal: PropTypes.func,
+        
   };
 
   // All State Variable
@@ -27,7 +29,7 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
   const [labourchargesdetails, setLabourChargesDetails] = useState();
   const [labourchargesinsertdetails, setLabourChargesInsertDetails] = useState({
     costing_summary_id: id,
-    date: new Date().toISOString().slice(0, 10),
+    date: new Date().toISOString().slice(0,10)
   });
 
   //Setting Data in Vehicle Fuel
@@ -44,6 +46,8 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
       .post('/projecttabcostingsummary/getOtherChargesById', { costing_summary_id: id })
       .then((res) => {
         setLabourChargesDetails(res.data.data);
+        
+        
       })
       .catch(() => {
         message('Labour charges Data Not Found', 'info');
@@ -52,17 +56,18 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
 
   //Api call for Insert transport charges Data
   const insertLabourCharges = () => {
-    if (labourchargesinsertdetails.amount && labourchargesinsertdetails.amount !== '') {
-      api
-        .post('/projecttabcostingsummary/insertOtherCharges', labourchargesinsertdetails)
-        .then((res) => {
-          setLabourChargesInsertDetails(res.data.data);
-          message('Labour Charges Data Inserted Successfully', 'success');
-        })
-        .catch(() => {
-          message('Labour Charges Data Not Found', 'info');
-        });
-    } else {
+    if (labourchargesinsertdetails.amount && labourchargesinsertdetails.amount !=='') {
+    api
+      .post('/projecttabcostingsummary/insertOtherCharges', labourchargesinsertdetails)
+      .then((res) => {
+        setLabourChargesInsertDetails(res.data.data);
+        message('Labour Charges Data Inserted Successfully', 'success');
+      })
+      .catch(() => {
+        message('Labour Charges Data Not Found', 'info');
+      });
+    }
+    else {
       message('Please fill all required fields', 'warning');
     }
   };
@@ -74,13 +79,13 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
 
   return (
     <>
-      <Modal size="md" isOpen={addTotalLabourChargesModal}>
+      <Modal size="md" isOpen={addTotalLabourChargesModal} > 
         <ModalHeader>
           Add Actual Charges
           <Button
             color="secondary"
             onClick={() => {
-              setAddLabourChargesModal(false);
+                setAddLabourChargesModal(false);
             }}
           >
             X
@@ -94,9 +99,7 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
               <thead>
                 <tr>
                   <th scope="col">Date</th>
-                  <th scope="col">
-                    Amount<span className="required"> *</span>
-                  </th>
+                  <th scope="col">Amount<span className='required'> *</span></th>
                   <th scope="col">Description</th>
                 </tr>
               </thead>
@@ -108,8 +111,7 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
                       name="date"
                       onChange={labourchargeshandleInputs}
                       value={
-                        labourchargesinsertdetails &&
-                        moment(labourchargesinsertdetails.date).format('YYYY-MM-DD')
+                        labourchargesinsertdetails && moment(labourchargesinsertdetails.date).format('YYYY-MM-DD')
                       }
                     />
                   </td>
@@ -118,7 +120,10 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
                       type="text"
                       name="amount"
                       onChange={labourchargeshandleInputs}
-                      value={labourchargesinsertdetails && labourchargesinsertdetails.amount}
+                      value={
+                        labourchargesinsertdetails &&
+                        labourchargesinsertdetails.amount
+                      } 
                     />
                   </td>
                   <td data-label="Description">
@@ -126,7 +131,9 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
                       type="text"
                       name="description"
                       onChange={labourchargeshandleInputs}
-                      value={labourchargesinsertdetails && labourchargesinsertdetails.description}
+                      value={
+                        labourchargesinsertdetails && labourchargesinsertdetails.description
+                      }
                     />
                   </td>
                 </tr>
@@ -148,8 +155,9 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
           <Button
             className="shadow-none"
             onClick={() => {
-              insertLabourCharges();
-              setAddLabourChargesModal(false);
+                insertLabourCharges();
+                setAddLabourChargesModal(false);
+                
             }}
           >
             Submit
@@ -157,7 +165,7 @@ const LabourChargesModal = ({ addTotalLabourChargesModal, setAddLabourChargesMod
           <Button
             color="secondary"
             onClick={() => {
-              setAddLabourChargesModal(false);
+                setAddLabourChargesModal(false);
             }}
           >
             Cancel

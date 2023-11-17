@@ -1,181 +1,180 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Row,
   Col,
+  Modal,
+  ModalHeader,
+  ModalBody,
   FormGroup,
   Label,
   Input,
   Button,
-  ModalBody,
   ModalFooter,
-  Modal,
-  ModalHeader,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import ComponentCard from '../ComponentCard';
-import message from '../Message';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import '../../views/form-editor/editor.scss';
-
+import { useParams } from 'react-router-dom';
 import api from '../../constants/api';
+import message from '../Message';
 
-const QuotationViewLineItems = ({ quoteLine, quoteData, setQuoteData }) => {
-  QuotationViewLineItems.propTypes = {
-    quoteLine: PropTypes.object,
-    quoteData: PropTypes.bool,
-    setQuoteData: PropTypes.func,
+
+const QuoteViewEditItem = ({ editLineModal, setEditLineModal, FetchLineItemData }) => {
+  QuoteViewEditItem.propTypes = {
+    editLineModal: PropTypes.bool,
+    setEditLineModal: PropTypes.func,
+    FetchLineItemData: PropTypes.object,
+  };
+const {id}=useParams();
+  const [lineItemData, setLineItemData] = useState(null);
+  const [totalAmount, setTotalAmount] = useState();
+
+  const handleData = (e) => {
+    setLineItemData({ ...lineItemData, [e.target.name]: e.target.value });
+  };
+  const handleCalc = (Qty, UnitPrice, TotalPrice) => {
+    if (!Qty) Qty = 0;
+    if (!UnitPrice) UnitPrice = 0;
+    if (!TotalPrice) TotalPrice = 0;
+
+    setTotalAmount(parseFloat(Qty) * parseFloat(UnitPrice));
   };
 
-  const [quoteedit, setQuoteEdit] = useState(null);
-  const handleInputs = (e) => {
-    setQuoteEdit({ ...quoteedit, [e.target.name]: e.target.value });
-  };
-
-  //Logic for edit data in db
-
-  const editquoteLineData = () => {
+  const UpdateData = () => {
+    lineItemData.quote_id=id;
+    //lineItemData.amount=totalAmount;
+    lineItemData.amount = parseFloat(lineItemData.quantity) * parseFloat(lineItemData.unit_price) 
     api
-      .post('/projecttabquote/editTabQuoteLineItems', quoteedit)
-      .then(() => {
-        message('Record editted successfully', 'success');
+      .post('/tender/edit-TabQuoteLine', lineItemData)
+      .then((res) => {
+        console.log('edit Line Item', res.data.data);
+        message('Edit Line Item Udated Successfully.', 'success');
+        window.location.reload()
       })
       .catch(() => {
-        message('Unable to edit record.', 'error');
+        message('Unable to edit quote. please fill all fields', 'error');
       });
   };
 
-  const insertquoteLog = () => {
-    api
-      .post('/projecttabquote/insertQuoteitemsLog', quoteedit)
-      .then(() => {
-        message('quote inserted successfully.', 'success');
-      })
-      .catch(() => {
-        message('Network connection error.', 'error');
-      });
-  };
-  useEffect(() => {
-    setQuoteEdit(quoteLine);
-  }, [quoteLine]);
+  React.useEffect(() => {
+    setLineItemData(FetchLineItemData);
+  }, [FetchLineItemData]);
 
   return (
     <>
-      <Modal size="lg" isOpen={quoteData}>
-        <ModalHeader>
-          Edit display{' '}
+      <Modal isOpen={editLineModal}>
+        <ModalHeader>Line Items</ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <Row>
+              <Label sm="2">Title</Label>
+              <Col sm="10">
+                <Input
+                  type="text"
+                  name="title"
+                  defaultValue={lineItemData && lineItemData.title}
+                  onChange={handleData}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">Description</Label>
+              <Col sm="10">
+                <Input
+                  type="textarea"
+                  name="description"
+                  defaultValue={lineItemData && lineItemData.description}
+                  onChange={handleData}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">Qty</Label>
+              <Col sm="10">
+                <Input
+                  type="text"
+                  name="quantity"
+                  defaultValue={lineItemData && lineItemData.quantity}
+                  onChange={(e)=>{handleData(e);
+                    handleCalc(e.target.value, lineItemData.unit_price,lineItemData.amount
+                      )}}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">UOM</Label>
+              <Col sm="10">
+                <Input
+                  type="textarea"
+                  name="unit"
+                  defaultValue={lineItemData && lineItemData.unit}
+                  onChange={handleData}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">Unit Price</Label>
+              <Col sm="10">
+                <Input
+                  type="text"
+                  name="unit_price"
+                  defaultValue={lineItemData && lineItemData.unit_price}
+                  onChange={(e)=>{handleData(e);
+                    handleCalc(lineItemData.quantity,e.target.value,lineItemData.amount)
+                  }}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">Total Price</Label>
+              <Col sm="10">
+                <Input
+                  type="text"
+                  name="amount"
+                  value={totalAmount || lineItemData && lineItemData.amount}
+                  onChange={(e)=>{handleData(e);
+                    handleCalc(lineItemData.quantity,lineItemData.unit_price,e.target.value)
+                  }}
+                  disabled
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
           <Button
-            color="secondary"
+            color="primary"
+            className="shadow-none"
+            type="button"
             onClick={() => {
-              setQuoteData(false);
+              UpdateData();
+              setEditLineModal(false);
             }}
           >
-            X
+            Save & Continue
           </Button>
-        </ModalHeader>
-
-        <ModalBody>
-          <Row>
-            <Col md="3" className="mb-4 d-flex justify-content-between"></Col>
-          </Row>
-          <Row>
-            <Col md="2">
-              <FormGroup>
-                <Label>Title </Label>
-                <Input
-                  type="text"
-                  onChange={handleInputs}
-                  value={quoteedit && quoteedit.title}
-                  name="title"
-                />
-              </FormGroup>
-            </Col>
-            <Col md="2">
-              <FormGroup>
-                <Label>Description </Label>
-                <Input
-                  type="text"
-                  onChange={handleInputs}
-                  value={quoteedit && quoteedit.description}
-                  name="description"
-                />
-              </FormGroup>
-            </Col>
-            <Col md="2">
-              <FormGroup>
-                <Label>Quantity </Label>
-                <Input
-                  type="text"
-                  onChange={handleInputs}
-                  value={quoteedit && quoteedit.quantity}
-                  name="quantity"
-                />
-              </FormGroup>
-            </Col>
-
-            <Col md="2">
-              <FormGroup>
-                <Label>UOM </Label>
-                <Input
-                  type="text"
-                  onChange={handleInputs}
-                  value={quoteedit && quoteedit.unit}
-                  name="unit"
-                />
-              </FormGroup>
-            </Col>
-            <Col md="2">
-              <FormGroup>
-                <Label>Unit Price </Label>
-                <Input
-                  type="text"
-                  onChange={handleInputs}
-                  value={quoteedit && quoteedit.unit_price}
-                  name="unit_price"
-                />
-              </FormGroup>
-            </Col>
-
-            <Col md="2">
-              <FormGroup>
-                <Label>Total Price </Label>
-                <Input
-                  type="text"
-                  onChange={handleInputs}
-                  value={quoteedit && quoteedit.amount}
-                  name="amount"
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-        </ModalBody>
-
-        <ModalFooter>
-          <Row>
-            <div className="pt-3 mt-3 d-flex align-items-center gap-2">
-              <Button
-                color="primary"
-                onClick={() => {
-                  editquoteLineData();
-                  insertquoteLog();
-                }}
-              >
-                Submit
-              </Button>
-              <Button
-                color="secondary"
-                onClick={() => {
-                  setQuoteData(false);
-                }}
-              >
-                Cancel
-              </Button>
-            </div>
-          </Row>
+          <Button
+            color="secondary"
+            className="shadow-none"
+            onClick={() => {
+              setEditLineModal(false);
+            }}
+          >
+            {' '}
+            Cancel{' '}
+          </Button>
         </ModalFooter>
-
-        <ComponentCard></ComponentCard>
       </Modal>
     </>
   );
 };
-export default QuotationViewLineItems;
+
+export default QuoteViewEditItem;

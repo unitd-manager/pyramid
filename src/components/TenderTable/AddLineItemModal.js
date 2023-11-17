@@ -12,7 +12,6 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import * as $ from 'jquery';
 import random from 'random';
 import api from '../../constants/api';
@@ -47,7 +46,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
       .post('/tender/insertQuoteItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
-        //window.location.reload();
+        window.location.reload();
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
@@ -208,16 +207,15 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                                   <Input Value={item.remarks} type="text" name="remarks" />
                                 </td>
                                 <td data-label="Action">
-                                  <Link to="">
+                                  
                                     <Input type="hidden" name="id" Value={item.id}></Input>
-                                    <span
+                                    <span className='addline'
                                       onClick={() => {
                                         ClearValue(item);
                                       }}
                                     >
                                       Clear
                                     </span>
-                                  </Link>
                                 </td>
                               </tr>
                             );
