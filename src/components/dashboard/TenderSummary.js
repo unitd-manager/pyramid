@@ -82,13 +82,7 @@ const TenderSummary = () => {
       grow: 2,
       wrap: true,
     },
-    {
-      name: 'Remarks',
-      selector: 'status',
-      sortable: true,
-      grow: 2,
-      wrap: true,
-    },
+   
   ];
 
   return (
@@ -104,19 +98,22 @@ const TenderSummary = () => {
         <tbody>
           {tenders &&
             tenders.map((element,i) => {
+              const status = element.quote_status === 'Submitted' ? 'Yes' : '';
+              const awardingStatus = element.projectId > 0 ? 'Yes' : '';
+
               return (
                 <tr key={element.opportunity_id}>
                   <td>{i + 1}</td>
-                  <td>{element.quote_ref}</td>
+                  <td>{element.quote_code}</td>
                   <td>{element.title}</td>
                   <td>{element.company_name}</td>
                   <td>{element.contact_name}</td>
                   <td>{element.actual_submission_date}</td>
                   <td>{element.price}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td>{status}</td>
+                  <td>{awardingStatus}</td>
+                  <td>{element.createdBy}</td>
+                
                 </tr>
               );
             })}

@@ -211,15 +211,21 @@ function ProjectSummaryChart() {
     <>
       <Row>
         <Col>
-          <ComponentCard title="Project Summary">
+        <ComponentCard title="Project Summary">
             <Label>Select Project Name</Label>
             <Input
               type="select"
               name="project_id"
               onChange={(e) => {
-                getProjectSummary(e.target.value);
-                getProjectedCostingbySummary(e.target.value);
-                getActualCostingbySummary(e.target.value);
+                if (e.target.value) {
+                  getProjectSummary(e.target.value);
+                  getProjectedCostingbySummary(e.target.value);
+                  getActualCostingbySummary(e.target.value);
+                } else {
+                  setData(null); // Clear data when "Please Select" is chosen
+                  setprojected(null);
+                  setActual(null);
+                }
               }}
             >
               <option value="">Please Select</option>
@@ -276,7 +282,7 @@ function ProjectSummaryChart() {
                     </Row>
                   );
                 })}
-            </CardBody>
+              </CardBody>
             {actual && projected ? (
               <Chart options={optionscolumn} series={seriescolumn} type="bar" height="280" />
             ) : (
