@@ -1,6 +1,5 @@
 import React,{useEffect,useState} from 'react';
 import * as Icon from 'react-feather';
-// import Swal from 'sweetalert2'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
@@ -19,7 +18,6 @@ const Project = () => {
 
     const [project,setProject] = useState(null);
     const [loading,setLoading] = useState(null);
-
 
     const getProject = () =>{
       api.get('project/getProjects')
@@ -42,8 +40,6 @@ const Project = () => {
         });
       };
     useEffect(() => {
-        
-    
         getProject()
 
     }, [])
@@ -65,14 +61,6 @@ const Project = () => {
             button:true,
             sortable:false,
         },
-        // {
-        //     name:'Del',
-        //     selector: "delete",
-        //     cell: () => <Icon.Trash />,
-        //     grow:0,
-        //     width:'auto',
-        //     wrap: true
-        // },
         {
           name: "Code",
           selector: "project_code",
@@ -99,7 +87,6 @@ const Project = () => {
             sortable: true,
             width:'auto',
             grow:3,
-            // cell: d => <span>{d.closing.join(", ")}</span>
           },
           {
             name: "Category",
@@ -151,7 +138,6 @@ const Project = () => {
                         <Icon.Edit2 />
                       </Link>
                     </td>
-                {/* <td><Link to=""><span ><Icon.Trash2 /></span></Link></td> */}
                 <td>{element.project_code}</td>
                 <td>{element.title}</td>
                 <td>{element.company_name}</td>
@@ -161,9 +147,7 @@ const Project = () => {
                 </tr>)
             })}
           </tbody>
-
-</CommonTable>
-       
+</CommonTable> 
       </div>
     </div>)
 }

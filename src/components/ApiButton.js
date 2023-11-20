@@ -34,11 +34,11 @@ const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
           <Row>
             <Col >
          
-              <HasAccess
+              {/* <HasAccess
                 roles={null}
                 permissions={`${module}-edit`}
                 renderAuthFailed={<p></p>}
-        >
+        > */}
                 <Button
                   onClick={() => {
                     editData()
@@ -50,14 +50,14 @@ const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
                   color="primary">
                   Save
                 </Button>
-              </HasAccess>
+              {/* </HasAccess> */}
             </Col>
             <Col >
-              <HasAccess
+              {/* <HasAccess
                 roles={null}
                 permissions={`${module}-edit`}
                 renderAuthFailed={<p></p>}
-              >
+              > */}
                 <Button
                   onClick={() => {
                     editData();
@@ -67,7 +67,7 @@ const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
                 >
                   Apply
                 </Button>
-              </HasAccess>
+              {/* </HasAccess> */}
             </Col>
             <Col>
               <Button
@@ -80,11 +80,11 @@ const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
               </Button>
             </Col>
             <Col>
-              <HasAccess
+              {/* <HasAccess
                 roles={null}
                 permissions={`${module}-remove`}
                 renderAuthFailed={<p></p>}
-              >
+              > */}
                 <Button color="danger" onClick={() => {deleteData();
                 //  setTimeout(()=>{
                 //   //backToList();
@@ -92,7 +92,7 @@ const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
                 }}>
                   Delete
                 </Button>
-              </HasAccess>
+              {/* </HasAccess> */}
             </Col>
           </Row>
         </ComponentCardV2>

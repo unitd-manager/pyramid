@@ -132,7 +132,7 @@ function DeliveryOrderEditModal({
                                     <option value="sent to supplier">sent to supplier</option>
                                     <option value="order acknowledged">order acknowledged</option>
                                     <option value="partially received">partially received</option>
-                                    <option value="closed">closed</option>
+                                    <option value="Closed">closed</option>
                                     <option value="on hold">on hold</option>
                                     <option value="cancelled">cancelled</option>
                                   </Input>

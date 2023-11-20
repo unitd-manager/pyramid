@@ -4,25 +4,26 @@ import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
-import InvoiceData from '../../components/Finance/InvoiceData';
-import InvoiceModal from '../../components/Finance/InvoiceModal';
-import ReceiptModal from '../../components/Finance/ReceiptModal';
-import CreateReceipt from '../../components/Finance/CreateReceipt';
-import CreateNote from '../../components/Finance/CreateNote';
+import InvoiceData from '../../components/FinanceTable/InvoiceData';
+import InvoiceModal from '../../components/FinanceTable/InvoiceModal';
+import ReceiptModal from '../../components/FinanceTable/ReceiptModal';
+import CreateReceipt from '../../components/FinanceTable/CreateReceipt';
+import CreateNote from '../../components/FinanceTable/CreateNote';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
-import CustomerDetail from '../../components/Finance/CustomerDetail';
-import FinanceInvoiceModal from '../../components/Finance/FinanceInvoiceModal';
-import CustomerFinanceReceipt from '../../components/Finance/CustomerFinanceReceipt';
-import CustomerFinanceCreditNote from '../../components/Finance/CustomerFinanceCreditNote';
-import FinanceSummary from '../../components/Finance/FinanceSummary';
-import FinanceButton from '../../components/Finance/FinanceButton';
-import FinanceDeliveryAddress from '../../components/Finance/FinanceDeliveryAddress';
-import FinanceMainDetails from '../../components/Finance/FinanceMainDetails';
+import CustomerDetail from '../../components/FinanceTable/CustomerDetail';
+import FinanceInvoiceModal from '../../components/FinanceTable/FinanceInvoiceModal';
+import CustomerFinanceReceipt from '../../components/FinanceTable/CustomerFinanceReceipt';
+import CustomerFinanceCreditNote from '../../components/FinanceTable/CustomerFinanceCreditNote';
+import FinanceSummary from '../../components/FinanceTable/FinanceSummary';
+//import FinanceButton from '../../components/Finance/FinanceButton';
+import FinanceDeliveryAddress from '../../components/FinanceTable/FinanceDeliveryAddress';
+import FinanceMainDetails from '../../components/FinanceTable/FinanceMainDetails';
 import creationdatetime from '../../constants/creationdatetime';
 import Tab from '../../components/project/Tab';
+import ApiButton from '../../components/ApiButton';
 
 const FinanceEdit = () => {
   // All state variables
@@ -43,11 +44,12 @@ const FinanceEdit = () => {
   const [invoicesummary, setInvoiceSummary] = useState(null);
   const [receiptsummary, setReceiptSummary] = useState(null);
   const [invoiceitemsummary, setInvoiceItemSummary] = useState(null);
+  const [invoiceDatas, setInvoiceDatas] = useState({});
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
   //Button fuctions
-  const applyChanges = () => {};
+  //const applyChanges = () => {};
   const backToList = () => {
     navigate('/Finance');
   };
@@ -67,7 +69,7 @@ const FinanceEdit = () => {
   const toggle = (tab) => {
     setActiveTab(tab);
   };
-
+console.log('ids',id)
   // Method for getting Invoice By Order Id
   const getInvoiceById = () => {
     api
@@ -224,13 +226,19 @@ const FinanceEdit = () => {
     <>
       <BreadCrumbs heading={financeDetails && financeDetails.order_id} />
       {/* Save,Apply Buttons */}
-      <FinanceButton
+      {/* <FinanceButton
         navigate={navigate}
         editFinanceData={editFinanceData}
         applyChanges={applyChanges}
         backToList={backToList}
-      ></FinanceButton>
-
+      ></FinanceButton> */}
+<ApiButton
+              editData={editFinanceData}
+              navigate={navigate}
+              applyChanges={editFinanceData}
+              backToList={backToList}
+              module="Finance"
+            ></ApiButton>
       {/* Main Details */}
       <FinanceMainDetails
         financeDetails={financeDetails}
@@ -268,6 +276,7 @@ const FinanceEdit = () => {
               invoiceCancel={invoiceCancel}
               setEditModal={setEditModal}
               setEditInvoiceModal={setEditInvoiceModal}
+              setInvoiceDatas={setInvoiceDatas}
             ></FinanceInvoiceModal>
           </TabPane>
           <TabPane tabId="5">
@@ -292,11 +301,13 @@ const FinanceEdit = () => {
               editInvoiceData={editInvoiceData}
               setEditInvoiceData={setEditInvoiceData}
               projectInfo={InvoiceData}
+              orderId={id}
             />
 
             <CreateReceipt
               editCreateReceipt={editCreateReceipt}
               setEditCreateReceipt={setEditCreateReceipt}
+              orderId={id}
             />
 
             <CreateNote editCreateNote={editCreateNote} setEditCreateNote={setEditCreateNote} />
@@ -305,6 +316,8 @@ const FinanceEdit = () => {
               editModal={editModal}
               setEditModal={setEditModal}
               editInvoiceModal={editInvoiceModal}
+              setInvoiceDatas={setInvoiceDatas}
+        invoiceDatas={invoiceDatas}
             />
             <ReceiptModal
               editReceiptModal={editReceiptModal}

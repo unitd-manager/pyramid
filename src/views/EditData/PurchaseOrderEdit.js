@@ -13,16 +13,20 @@ import ViewNote from '../../components/Tender/ViewNote';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
-import AddPoModal from '../../components/PurchaseOrder/AddPoModal';
-import AttachmentTab from '../../components/PurchaseOrder/AttachmentTab';
-import PurchaseOrderlineItemEdit from '../../components/PurchaseOrder/PurchaseOrderLineItem';
-import PurchaseOrderButtons from '../../components/PurchaseOrder/PurchaseOrderButtons';
-import ViewHistoryModal from '../../components/PurchaseOrder/ViewHistoryModal';
-import DeliveryOrderEditModal from '../../components/PurchaseOrder/DeliveryOrderEditModal';
-import PurchaseOrderDetailsPart from '../../components/PurchaseOrder/PurchaseOrderDetailsPart';
-import ProductLinkedTable from '../../components/PurchaseOrder/ProductLinkedTable';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import AddPoModal from '../../components/purchaseOrder/AddPoModal';
+import AttachmentTab from '../../components/purchaseOrder/AttachmentTab';
+import PurchaseOrderlineItemEdit from '../../components/purchaseOrder/PurchaseOrderLineItem';
+import ViewHistoryModal from '../../components/purchaseOrder/ViewHistoryModal';
+import DeliveryOrderEditModal from '../../components/purchaseOrder/DeliveryOrderEditModal';
+import PurchaseOrderDetailsPart from '../../components/purchaseOrder/PurchaseOrderDetailsPart';
+import ProductLinkedTable from '../../components/purchaseOrder/ProductLinkedTable';
 import PdfDeliveryOrderPO from '../../components/PDF/PdfDeliveryOrderPO';
+import PdfPurchaseOrder from '../../components/PDF/PdfPurchaseOrder';
+import PdfPurchaseOrderPrice from '../../components/PDF/PdfPurchaseOrderPrice';
+import ComponentCardV2 from '../../components/ComponentCardV2';
 import Tab from '../../components/project/Tab';
+import ApiButton from '../../components/ApiButton';
 
 const PurchaseOrderEdit = () => {
   //All state variable
@@ -54,7 +58,7 @@ const PurchaseOrderEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const applyChanges = () => {};
+  //const applyChanges = () => {};
   const backToList = () => {
     navigate('/PurchaseOrder');
   };
@@ -284,7 +288,7 @@ const PurchaseOrderEdit = () => {
       <BreadCrumbs />
       <ToastContainer></ToastContainer>
       {/* PurchaseorderButtons */}
-      <PurchaseOrderButtons
+      {/* <PurchaseOrderButtons
         applyChanges={applyChanges}
         backToList={backToList}
         editPurchaseData={editPurchaseData}
@@ -292,7 +296,30 @@ const PurchaseOrderEdit = () => {
         products={products}
         product={product}
         navigate={navigate}
-      />
+      /> */}
+      <ApiButton
+              editData={editPurchaseData}
+              navigate={navigate}
+              applyChanges={editPurchaseData}
+              backToList={backToList}
+              module="PurchaseOrder"
+            ></ApiButton>
+                      <ComponentCardV2>
+            <Row>
+              <Col>
+                <PdfPurchaseOrder
+                  products={products}
+                  purchaseDetails={purchaseDetails}
+                ></PdfPurchaseOrder>
+              </Col>
+              <Col>
+                <PdfPurchaseOrderPrice
+                  product={product}
+                  purchaseDetails={purchaseDetails}
+                ></PdfPurchaseOrderPrice>
+              </Col>
+              </Row>
+              </ComponentCardV2>
       {/* PurchaseOrder Details */}
       <PurchaseOrderDetailsPart
         supplier={supplier}

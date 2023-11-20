@@ -14,7 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import api from '../../constants/api';
-import message from '../Message';
+//import message from '../Message';
 
 function ViewHistoryModal({ viewHistoryModal, setViewHistoryModal, productId, supplierId }) {
   ViewHistoryModal.propTypes = {
@@ -38,7 +38,7 @@ function ViewHistoryModal({ viewHistoryModal, setViewHistoryModal, productId, su
         setFromSame(res.data.data);
       })
       .catch(() => {
-        message('Product history Data Not Found', 'info');
+        //message('Product history Data Not Found', 'info');
       });
   };
   //get history from other supplier
@@ -52,7 +52,7 @@ function ViewHistoryModal({ viewHistoryModal, setViewHistoryModal, productId, su
         setFromOthers(res.data.data);
       })
       .catch(() => {
-        message('Product history Data Not Found', 'info');
+        //message('Product history Data Not Found', 'info');
       });
   };
   const supplierColumn = [

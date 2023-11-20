@@ -14,9 +14,10 @@ import {
 import PropTypes from 'prop-types';
 import * as $ from 'jquery';
 import random from 'random';
-// import Select from 'react-select';
+import Select from 'react-select';
 import api from '../../constants/api';
-import message from '../Message';
+import message from '../Message'
+import creationdatetime from '../../constants/creationdatetime';
 
 const AddPoModal = ({
   projectId,
@@ -33,7 +34,7 @@ const AddPoModal = ({
     setAddPurchaseOrderModal: PropTypes.func,
   };
   const [addNewProductModal, setAddNewProductModal] = useState(false);
-  // const [getProductValue, setProductValue] = useState();
+   const [getProductValue, setProductValue] = useState();
   const [productDetail, setProductDetail] = useState({
     category_id: null,
     sub_category_id: null,
@@ -76,46 +77,46 @@ const AddPoModal = ({
     },
   ]);
 
-  const [query, setQuery] = useState('');
-  const [filteredOptions, setFilteredOptions] = useState([]);
+  // const [query, setQuery] = useState('');
+  // const [filteredOptions, setFilteredOptions] = useState([]);
 
-  const handleInputChange = async (event) => {
-    const inputQuery = event.target.value;
-    setQuery(inputQuery);
+  // const handleInputChange = async (event) => {
+  //   const inputQuery = event.target.value;
+  //   setQuery(inputQuery);
 
-    try {
-      if (inputQuery.trim() === '') {
-        setFilteredOptions([]);
-      } else {
-        api.post('/product/getProductsbySearchFilter',{keyword:inputQuery}).then((res) => {
-          const items = res.data.data;
-          const finaldat = [];
-          items.forEach((item) => {
-            finaldat.push({ value: item.product_id, label: item.title });
-          });
-          console.log('productsearchdata',finaldat)
-          console.log('finaldat',finaldat)
-          // setProductValue(finaldat);
-          setFilteredOptions(finaldat);
-        });
+  //   try {
+  //     if (inputQuery.trim() === '') {
+  //       setFilteredOptions([]);
+  //     } else {
+  //       api.post('/product/getProductsbySearchFilter',{keyword:inputQuery}).then((res) => {
+  //         const items = res.data.data;
+  //         const finaldat = [];
+  //         items.forEach((item) => {
+  //           finaldat.push({ value: item.product_id, label: item.title });
+  //         });
+  //         console.log('productsearchdata',finaldat)
+  //         console.log('finaldat',finaldat)
+  //         // setProductValue(finaldat);
+  //         setFilteredOptions(finaldat);
+  //       });
         
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // };
 
-  const handleSelectOption = (selectedOption,itemId) => {
-    setQuery(selectedOption);
-    const element = addMoreItem.find((el) => el.id === itemId);
-    element.title = selectedOption.label;
-    element.item_title = selectedOption.label;
-    element.product_id = selectedOption.value.toString();
-    setMoreItem(addMoreItem);
-    setFilteredOptions([]); // Clear the suggestions when an option is selected
-    // Additional actions to perform when an option is selected
-    console.log('selectedoption',selectedOption)
-  };
+  // const handleSelectOption = (selectedOption,itemId) => {
+  //   setQuery(selectedOption);
+  //   const element = addMoreItem.find((el) => el.id === itemId);
+  //   element.title = selectedOption.label;
+  //   element.item_title = selectedOption.label;
+  //   element.product_id = selectedOption.value.toString();
+  //   setMoreItem(addMoreItem);
+  //   setFilteredOptions([]); // Clear the suggestions when an option is selected
+  //   // Additional actions to perform when an option is selected
+  //   console.log('selectedoption',selectedOption)
+  // };
 
   const AddNewLineItem = () => {
     setMoreItem([
@@ -177,7 +178,7 @@ const AddPoModal = ({
     setProductDetail({ ...productDetail, [e.target.name]: e.target.value });
   };
 
-  // //   Get Products
+  //   Get Products
   // const getProduct = (e) => {
   //   api.post('/product/getProductsbySearchFilter',{keyword:e.target.value}).then((res) => {
   //     const items = res.data.data;
@@ -186,21 +187,43 @@ const AddPoModal = ({
   //       finaldat.push({ value: item.product_id, label: item.title });
   //     });
   //     console.log('productsearchdata',finaldat)
-  //     // setProductValue(finaldat);
+  //     setProductValue(finaldat);
   //   });
   // };
+ //   Get Products
+ const getProduct = () => {
+  api.get('/product/getProducts').then((res) => {
+    const items = res.data.data;
+    const finaldat = [];
+    items.forEach((item) => {
+      finaldat.push({ value: item.product_id, label: item.title });
+    });
+    setProductValue(finaldat);
+  });
+};
 
-  const insertProduct = () => {
+const insertProduct = (ProductCode, ItemCode) => {
+  if (productDetail.title !== '') {
+    productDetail.product_code = ProductCode;
+    productDetail.item_code = ItemCode;
+    productDetail.creation_date = creationdatetime;
     api
       .post('/purchaseorder/insertPurchaseProduct', productDetail)
       .then((res) => {
         const insertedDataId = res.data.data.insertId;
         message('Product inserted successfully.', 'success');
         api
-          .post('/inventory/insertinventory', { product_id: insertedDataId })
+          .post('/product/getCodeValue', { type: 'InventoryCode' })
+          .then((res1) => {
+            const InventoryCode = res1.data.data;
+            message('inventory created successfully.', 'success');
+            api
+            .post('/inventory/insertinventory', { product_id: insertedDataId, inventory_code:InventoryCode  })
+          
           .then(() => {
             message('inventory created successfully.', 'success');
-            // getProduct();
+             getProduct();
+          })
           })
           .catch(() => {
             message('Unable to create inventory.', 'error');
@@ -208,6 +231,27 @@ const AddPoModal = ({
       })
       .catch(() => {
         message('Unable to insert product.', 'error');
+      });
+    } else {
+      message('Please fill the Product Name ', 'warning');
+    }
+  };
+
+  //Auto generation code
+  const generateCode = () => {
+    api
+      .post('/product/getCodeValue', { type: 'ProductCode' })
+      .then((res) => {
+        const ProductCode = res.data.data
+      api
+      .post('/product/getCodeValue', { type: 'ItemCode' })
+      .then((response) => {
+        const ItemCode = response.data.data
+        insertProduct(ProductCode, ItemCode);
+      })
+      })
+      .catch(() => {
+        insertProduct('');
       });
   };
 
@@ -296,7 +340,9 @@ const AddPoModal = ({
           obj.title = foundObj.title;
           obj.item_title = foundObj.item_title;
         }
-        poProduct(foundObj);
+        if(obj.unit){
+          poProduct(foundObj);
+          }
       }
     });
 
@@ -310,7 +356,7 @@ const AddPoModal = ({
   }
 
   useEffect(() => {
-    // getProduct();
+     getProduct();
     TabMaterialsPurchased();
   }, []);
   useEffect(() => {
@@ -410,9 +456,9 @@ const AddPoModal = ({
                   </th>
                   <th scope="col">Unit</th>
                   <th scope="col">Quantity</th>
-                  <th scope="col">Cost Price (without GST)</th>
-                  <th scope="col">Selling Price (without GST)</th>
-                  <th scope="col">GST</th>
+                  <th scope="col">Cost Price (without VAT)</th>
+                  <th scope="col">Selling Price (without VAT)</th>
+                  <th scope="col">VAT</th>
                   <th scope="col"></th>
                 </tr>
               </thead>
@@ -421,17 +467,17 @@ const AddPoModal = ({
                   return (
                     <tr key={item.id}>
                       <td data-label="title">
-                        {/* <Select
+                        <Select
                           key={item.id}
                           defaultValue={{ value: item.product_id, label: item.title }}
                           onChange={(e) => {
                             onchangeItem(e, item.id);
                           }}
-                          options={getProductValue()}
+                          options={getProductValue}
                         />
                         <Input value={item.product_id} type="hidden" name="product_id"></Input>
-                        <Input value={item.title} type="hidden" name="title"></Input> */}
-                          <div className="autocomplete-container">
+                        <Input value={item.title} type="hidden" name="title"></Input>
+                          {/* <div className="autocomplete-container">
       <Input className="autocomplete-input"
         type="text"
         value={query.label}
@@ -454,7 +500,7 @@ const AddPoModal = ({
       )}
       <Input value={item.product_id} type="hidden" name="product_id"></Input>
                         <Input value={item.title} type="hidden" name="title"></Input> 
-    </div>
+    </div> */}
                       </td>
 
                       <td data-label="Unit">
@@ -494,7 +540,7 @@ const AddPoModal = ({
                         />
                         {item.price}
                       </td>
-                      <td data-label="GST">
+                      <td data-label="VAT">
                         <Input
                           type="number"
                           defaultValue={item.gst}
@@ -581,7 +627,7 @@ const AddPoModal = ({
             className="shadow-none"
             onClick={() => {
               setAddNewProductModal(false);
-              insertProduct();
+              generateCode();
               getProduct();
               setTimeout(() => {
                 window;

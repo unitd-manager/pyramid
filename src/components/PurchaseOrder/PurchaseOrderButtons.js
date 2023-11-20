@@ -36,10 +36,7 @@ function PurchaseOrderButtons({
                 ></PdfPurchaseOrder>
               </Col>
               <Col>
-                <PdfPurchaseOrderPrice
-                  product={product}
-                  purchaseDetails={purchaseDetails}
-                ></PdfPurchaseOrderPrice>
+                <PdfPurchaseOrderPrice product={product} purchaseDetails={purchaseDetails}></PdfPurchaseOrderPrice>
               </Col>
               <Col>
                 <Button
@@ -60,6 +57,8 @@ function PurchaseOrderButtons({
                   onClick={() => {
                     editPurchaseData();
                     applyChanges();
+                    
+                    console.log('cancel process');
                   }}
                 >
                   Apply
