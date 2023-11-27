@@ -2,18 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Form, Table } from 'reactstrap';
+import PdfCreateReceipt from '../PDF/PdfCreateReceipt'
 
 export default function CustomerFinanceReceipt({
   receipt,
   setEditReceiptModal,
   setReceiptDataModal,
   receiptCancel,
+  projectDetail,
 }) {
   CustomerFinanceReceipt.propTypes = {
     receipt: PropTypes.array,
     setEditReceiptModal: PropTypes.func,
     setReceiptDataModal: PropTypes.func,
     receiptCancel: PropTypes.func,
+    projectDetail: PropTypes.any,
   };
 
   //Structure of Receipt table
@@ -23,6 +26,7 @@ export default function CustomerFinanceReceipt({
     { name: 'Receipt Date' },
     { name: 'Mode Of Payment' },
     { name: 'Receipt Amount' },
+    { name: 'Print' },
     { name: 'View' },
     { name: 'Cancel' },
   ];
@@ -44,35 +48,44 @@ export default function CustomerFinanceReceipt({
             <tbody>
               {receipt &&
                 receipt.map((element) => {
+                  const balanceAmountClass =
+                    element.receipt_status.toLowerCase() === 'cancelled' ? 'text-danger' : '';
                   return (
                     <tr key={element.receipt_id}>
                       <td>{element.receipt_code}</td>
-                      <td>{element.receipt_status}</td>
-                      <td>{moment(element.receipt_date).format('YYYY-MM-DD')}</td>
+                      <td className={balanceAmountClass}>{element.receipt_status}</td>
+                      <td>{element.receipt_date ? moment(element.receipt_date).format('DD-MM-YYYY') : ''}</td>
                       <td>{element.mode_of_payment}</td>
                       <td>{element.amount}</td>
+                      <td><PdfCreateReceipt projectDetail={projectDetail} receiptId ={element.receipt_id}></PdfCreateReceipt></td>
                       <td>
-                        <div className="anchor">
-                          <span
-                            onClick={() => {
-                              setEditReceiptModal(element);
-                              setReceiptDataModal(true);
-                            }}
-                          >
-                            View
-                          </span>
-                        </div>
+                        <span
+                          className="addline"
+                          onClick={() => {
+                            setEditReceiptModal(element);
+                            setReceiptDataModal(true);
+                          }}
+                        >
+                          View
+                        </span>
                       </td>
+
                       <td>
-                        <div className="anchor">
+                        {element.receipt_status.toLowerCase() === 'paid' && (
                           <span
                             onClick={() => {
-                              receiptCancel(element);
+                              if (
+                                window.confirm(
+                                  'Are you sure you want to cancel?\n\nYou will lose any changes made',
+                                )
+                              ) {
+                                receiptCancel(element);
+                              }
                             }}
                           >
                             Cancel
                           </span>
-                        </div>
+                        )}
                       </td>
                     </tr>
                   );

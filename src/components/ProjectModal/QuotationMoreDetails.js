@@ -22,7 +22,7 @@ import EditQuotation from './EditQuotation';
 import QuoteviewEditItem from './QuoteviewEditItem';
 import PdfProjectQuote from '../PDF/PdfProjectQuote';
 import ViewQuoteLogModal from './ViewQuoteLogModal';
-//import QuotationViewLineItem from './QuotationViewLineItems';
+// import QuotationViewLineItem from './QuotationViewLineItems';
 const BlueLabel = styled.label`
   color: #2962ff;
 `;
@@ -89,6 +89,7 @@ export default function QuotationMoreDetails({
           <Button
             color="primary"
             className="shadow-none"
+            style={{ fontSize: '16px', padding: '10px' }}
             onClick={() => {
               setquotationsModal(true);
             }}
@@ -97,11 +98,6 @@ export default function QuotationMoreDetails({
           </Button>
         </Col>
       )}
-
-      {/* <CardTitle tag="h5" className="border-bottom bg-secondary p-2 mb-0 text-white">
-          {' '}
-          Quotations{' '}
-         </CardTitle> */}
 
       {Object.keys(quotation).length !== 0 && (
         <Form>
@@ -294,7 +290,7 @@ export default function QuotationMoreDetails({
                       <ViewQuoteLogModal
                         quotationsModal={quotationsModal}
                         setquotationsModal={setquotationsModal}
-                        quoteId={element.quote_id}
+                        quoteId={id}
                       />
                     )}
                     {addLineItemModal && (

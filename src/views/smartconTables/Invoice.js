@@ -12,11 +12,12 @@ import api from '../../constants/api';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import CommonTable from '../../components/CommonTable';
 
+
 //geting data from invoice
 const InvoiceData = () => {
   //State variable
   const [invoice, setInvoice] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   //getting data from invoice table
   const getInvoice = () => {
@@ -30,21 +31,19 @@ const InvoiceData = () => {
           pageLength: 20,
           processing: true,
           dom: 'Bfrtip',
-          buttons: [
-            {
-              extend: 'print',
-              text: 'Print',
-              className: 'shadow-none btn btn-primary',
-            },
-          ],
+          buttons: [ {
+            extend: 'print',
+            text: "Print",
+            className:"shadow-none btn btn-primary",
+        }],
         });
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
+        setLoading(false)
+      }).catch(()=>{
+        setLoading(false)
       });
-  };
+    };
   useEffect(() => {
+   
     getInvoice();
   }, []);
   //Structure of Invoice list view
@@ -119,10 +118,13 @@ const InvoiceData = () => {
   return (
     <div className="MainDiv">
       <div className=" pt-xs-25">
-        <BreadCrumbs />
+        <BreadCrumbs/>
 
-        <CommonTable loading={loading} title="Invoice List">
-          <thead>
+        <CommonTable 
+        loading={loading}
+        title="Invoice List" >
+
+        <thead>
             <tr>
               {columns.map((cell) => {
                 return <td key={cell.name}>{cell.name}</td>;
@@ -138,9 +140,9 @@ const InvoiceData = () => {
                     <td>{element.invoice_code}</td>
                     <td>{element.project_title}</td>
                     <td>{element.company_name}</td>
-                    <td>{moment(element.invoice_date).format('YYYY-MM-DD')}</td>
+                    <td>{(element.invoice_date)? moment(element.invoice_date).format('DD-MM-YYYY'):''}</td>
                     <td>{element.invoice_amount}</td>
-                    <td>{moment(element.invoice_due_date).format('YYYY-MM-DD')}</td>
+                    <td>{(element.invoice_due_date)? moment(element.invoice_due_date).format('DD-MM-YYYY'):''}</td>
                     <td>{element.age}</td>
                     <td>{element.status}</td>
                     <td>{element.invoice_type}</td>
@@ -148,7 +150,8 @@ const InvoiceData = () => {
                 );
               })}
           </tbody>
-        </CommonTable>
+
+          </CommonTable>
       </div>
     </div>
   );

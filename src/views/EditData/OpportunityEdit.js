@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TabContent, TabPane, Col, Label ,FormGroup, Row,Button } from 'reactstrap';
-// import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
@@ -20,6 +20,7 @@ import TenderAttachment from '../../components/TenderTable/TenderAttachment';
 import Tab from '../../components/project/Tab';
 import ApiButton from '../../components/ApiButton';
 
+
 const OpportunityEdit = () => {
   const [activeTab, setActiveTab] = useState('1');
   const [costingsummary, setCostingSummary] = useState([]);
@@ -29,8 +30,8 @@ const OpportunityEdit = () => {
 
   // Start for tab refresh navigation #Renuka 1-06-23
   const tabs = [
-    { id: '1', name: 'Costing Summary' },
-    { id: '2', name: 'Quotations' },
+    { id: '1', name: 'Quotations' },
+    { id: '2', name: 'Costing Summary' },
     { id: '3', name: 'Attachment' },
   ];
   const toggle = (tab) => {
@@ -122,23 +123,24 @@ const OpportunityEdit = () => {
 
   // Insert Company
   const insertCompany = () => {
+    console.log( 'company',companyInsertData.company_name)
     if (
       companyInsertData.company_name !== '' &&
-      companyInsertData.phone !== '' &&
+      companyInsertData.address_street !== '' &&
+      companyInsertData.address_po_code !== '' &&
       companyInsertData.address_country !== ''
     ) {
       api
         .post('/company/insertCompany', companyInsertData)
         .then(() => {
           message('Company inserted successfully.', 'success');
-          toggle();
           getCompany();
         })
         .catch(() => {
           message('Network connection error.', 'error');
         });
     } else {
-      message('Please fill all required fields.', 'error');
+      message('Please fill all required fields.', 'warning');
     }
   };
 
@@ -216,8 +218,9 @@ const OpportunityEdit = () => {
         .then(() => {
           getContact(newDataWithCompanyId.company_id);
           message('Contact Inserted Successfully', 'success');
-          //window.location.reload();
-        })
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);        })
         .catch(() => {
           message('Unable to add Contact! try again later', 'error');
         });
@@ -317,6 +320,7 @@ const OpportunityEdit = () => {
   return (
     <>
       <BreadCrumbs heading={tenderDetails && tenderDetails.title} />
+      <ToastContainer></ToastContainer>
       {/* <TenderButtons
         editTenderData={editTenderData}
         navigate={navigate}
@@ -374,7 +378,31 @@ const OpportunityEdit = () => {
 
         <Tab toggle={toggle} tabs={tabs} />
         <TabContent className="p-4" activeTab={activeTab}>
-          <TabPane tabId="1">
+        <TabPane tabId="1">
+            <TenderQuotation
+              tenderId={id}
+              quote={quote}
+              project={project}
+              quotationsModal={quotationsModal}
+              setquotationsModal={setquotationsModal}
+              viewLineToggle={viewLineToggle}
+              getLineItem={getLineItem}
+              PdfQuote={PdfQuote}
+              editQuoteModal={editQuoteModal}
+              setAddLineItemModal={setAddLineItemModal}
+              setEditQuoteModal={setEditQuoteModal}
+              addLineItemModal={addLineItemModal}
+              lineItem={lineItem}
+              viewLineModal={viewLineModal}
+              setViewLineModal={setViewLineModal}
+              id={id}
+              insertProject={insertProject}
+              generateCode={generateCode}
+              generateCodes={generateCodes}
+              handleQuoteForms={handleQuoteForms}
+            ></TenderQuotation>
+          </TabPane>
+          <TabPane tabId="2">
             <Row>
               {Object.keys(costingsummary).length !== 0 && (
                 <Col md="3" className="mb-4 d-flex justify-content-between">
@@ -518,30 +546,7 @@ const OpportunityEdit = () => {
             )}
           </TabPane>
             {/* Tender Quotation */}
-            <TabPane tabId="2">
-            <TenderQuotation
-              tenderId={id}
-              quote={quote}
-              project={project}
-              quotationsModal={quotationsModal}
-              setquotationsModal={setquotationsModal}
-              viewLineToggle={viewLineToggle}
-              getLineItem={getLineItem}
-              PdfQuote={PdfQuote}
-              editQuoteModal={editQuoteModal}
-              setAddLineItemModal={setAddLineItemModal}
-              setEditQuoteModal={setEditQuoteModal}
-              addLineItemModal={addLineItemModal}
-              lineItem={lineItem}
-              viewLineModal={viewLineModal}
-              setViewLineModal={setViewLineModal}
-              id={id}
-              insertProject={insertProject}
-              generateCode={generateCode}
-              generateCodes={generateCodes}
-              handleQuoteForms={handleQuoteForms}
-            ></TenderQuotation>
-          </TabPane>
+           
 
           <TabPane tabId="3">
             <TenderAttachment></TenderAttachment>

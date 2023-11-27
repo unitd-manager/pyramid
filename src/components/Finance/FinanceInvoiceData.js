@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   Row,
   Col,
   Form,
   Input,
   Button,
+  FormGroup,
   Modal,
   ModalHeader,
   ModalBody,
@@ -14,7 +15,6 @@ import PropTypes from 'prop-types';
 import { Editor } from 'react-draft-wysiwyg';
 import { convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
-import { useParams } from 'react-router-dom';
 import * as $ from 'jquery';
 import random from 'random';
 import api from '../../constants/api';
@@ -30,9 +30,12 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
     orderId: PropTypes.any,
   };
   //All state Varible
-  const { id } = useParams();
+
   const [totalAmount, setTotalAmount] = useState(0);
+  const [gstValue, setGstValue] = useState();
+  const [checkbox, setCheckbox] = useState();
   const [paymentTerms, setPaymentTerms] = useState('');
+  const gstPercentageValue = parseInt(gstValue?.value, 10) || 0; 
   const [createInvoice, setCreateInvoice] = useState({
     discount: '',
     quote_code: '',
@@ -49,7 +52,6 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
     status: 'due',
     paymentTerms: '',
     invoice_code: '',
-    order_id: id,
     invoice_due_date: '',
   });
   const [addLineItem, setAddLineItem] = useState([
@@ -64,6 +66,25 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       description: '',
     },
   ]);
+
+  const getGstValue = () => {
+    api.get('/finance/getGst').then((res) => {
+      setGstValue(res.data.data);
+      });
+  };
+  console.log('ordr',orderId)
+  const getCheckBox = async () => {
+    try {
+      const response = await api.post('/invoice/getCheckboxReceiptById', { order_id: orderId });
+      setCheckbox(response.data.data);
+    } catch (error) {
+      console.error('Error fetching checkbox data:', error);
+    }
+  };
+  useEffect(() => {
+    getGstValue();
+    getCheckBox();
+  }, [orderId]);
 
   //setting data in createinvoice
   const handleInserts = (e) => {
@@ -94,7 +115,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       addLineItemApi({
         description: results[j].description,
         invoice_id: receipt,
-        amount: results[j].total_cost,
+        total_cost: results[j].total_cost,
         item_title: results[j].item_title,
         item_code: projectInfo.item_code,
         cost_price: 2,
@@ -106,8 +127,10 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
     }
   };
   //Insert Invoice
-  const insertInvoice = async (results, code) => {
-    createInvoice.invoice_amount = totalAmount + (7 / 100) * totalAmount;
+  const insertInvoice = async (results, code,) => {
+    createInvoice.invoice_amount = totalAmount + (gstPercentageValue / 100) * totalAmount;
+    createInvoice.gst_value = (gstPercentageValue / 100) * totalAmount;
+    createInvoice.gst_percentage = gstPercentageValue;
     createInvoice.project_id = projectInfo;
     createInvoice.order_id = orderId;
     createInvoice.invoice_code = code;
@@ -164,6 +187,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
   //Invoice item values
   const getAllValues = () => {
     const result = [];
+    let hasZeroTotalCost = false; 
     $('.lineitem tbody tr').each(function input() {
       const allValues = {};
       $(this)
@@ -172,8 +196,16 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
         });
+        allValues.total_cost = allValues.qty * allValues.unit_price;
+        if (allValues.total_cost === 0) {
+          hasZeroTotalCost = true; // Set the flag if total_cost is 0
+        }
       result.push(allValues);
     });
+    if (hasZeroTotalCost) {
+      message('Total cost cannot be 0.', 'error');
+      return; // Prevent further processing if total_cost is 0
+    }
     setTotalAmount(0);
     setAddLineItem([
       {
@@ -225,6 +257,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       setTotalAmount(finalTotal);
     }
   };
+  console.log('checkbox',checkbox)
   return (
     <>
       <Modal size="xl" isOpen={editInvoiceData}>
@@ -273,6 +306,30 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                       />
                     </ComponentCard>
                   </Row>
+                  {checkbox &&
+                      checkbox.map((singleInvoiceObj) => {
+                        console.log('singleInvoiceObj',singleInvoiceObj)
+                        return (
+                          <Row key={singleInvoiceObj.invoice_id}>
+                            <Col md="12">
+                              <FormGroup check>
+                                <Input
+                                  onChange={() => {
+                                    
+                                    // getInvoices(e, singleInvoiceObj);
+                                  }}
+                                  name="invoice_code(prev_amount)"
+                                  type="checkbox"
+                                />
+                                <span>
+                                 {singleInvoiceObj.receipt_code} -{singleInvoiceObj.amount}
+                                </span>
+                              </FormGroup>
+                            </Col>
+                          </Row>
+                        );
+                      })}
+                    <br></br>
                   {/* Invoice Item */}
                   <Row>
                     <Col>

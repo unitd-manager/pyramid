@@ -18,6 +18,7 @@ const CreateReceipt = ({ invoiceData, handleInputs }) => {
                           value={invoiceData && invoiceData.invoice_code}
                           onChange={handleInputs}
                           name="invoice_code"
+                          disabled
                         />
                       </FormGroup>
                     </Col>

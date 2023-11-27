@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Form, Table } from 'reactstrap';
 import PdfCreateInvoice from '../PDF/PdfCreateInvoice';
+import ComponentCard from '../ComponentCard';
+// import api from '../../constants/api';
+// import message from '../Message';
 
 export default function CustomerFinanceInvoice({
   createInvoice,
@@ -10,6 +13,7 @@ export default function CustomerFinanceInvoice({
   invoiceCancel,
   setEditInvoiceModal,
   setEditModal,
+  setInvoiceDatas
 }) {
   CustomerFinanceInvoice.propTypes = {
     createInvoice: PropTypes.array,
@@ -17,7 +21,9 @@ export default function CustomerFinanceInvoice({
     invoiceCancel: PropTypes.func,
     setEditInvoiceModal: PropTypes.func,
     setEditModal: PropTypes.func,
+    setInvoiceDatas:PropTypes.func,
   };
+  // const [setCreateInvoice ] = useState();
 
   //Structure of Invoice table
   const invoiceTableColumns = [
@@ -28,6 +34,12 @@ export default function CustomerFinanceInvoice({
     { name: 'Print' },
     { name: 'Edit' },
     { name: 'Cancel' },
+  ];
+  const invoiceTableColumns1 = [
+    { name: 'Invoice Code' },
+    { name: 'Status' },
+    { name: 'Invoice Date' },
+    { name: 'Amount' },
   ];
 
   return (
@@ -51,7 +63,7 @@ export default function CustomerFinanceInvoice({
                     <tr key={element.invoice_id}>
                       <td>{element.invoice_code}</td>
                       <td>{element.status}</td>
-                      <td>{moment(element.invoice_date).format('YYYY-MM-DD')}</td>
+                      <td>{(element.invoice_date)? moment(element.invoice_date).format('DD-MM-YYYY'):''}</td>
                       <td>{element.invoice_amount}</td>
                       <td>
                         <PdfCreateInvoice
@@ -61,37 +73,45 @@ export default function CustomerFinanceInvoice({
                         ></PdfCreateInvoice>
                       </td>
                       <td>
-                        <div className='anchor'>
-                          <span
-                              onClick={() => {
-                                setEditInvoiceModal(element);
-                                setEditModal(true);
-                              }}
-                            >
-                              Edit
-                            </span>
-                        </div>
+                        <span className='addline'
+                          onClick={() => {
+                            setEditInvoiceModal(element);
+                            setEditModal(true);
+                            setInvoiceDatas(element.invoice_id);
+                                setInvoiceDatas(element)
+                          }}
+                        >
+                          Edit
+                        </span>
                       </td>
                       <td>
-                        <div className='anchor'>
-                          <span
-                            onClick={() => {
-                              invoiceCancel(element);
-                            }}
-                          >
-                            Cancel
-                          </span>
-                        </div>
+                      {element.status === 'due' && (
+                       
+                        <span
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                'Are you sure you want to cancel  \n  \n You will lose any changes made',
+                              )
+                            ) {
+                            invoiceCancel(element);
+                            }
+                          }}
+                        >
+                          Cancel
+                        </span>
+                      )}
                       </td>
                     </tr>
                   );
                 })}
             </tbody>
           </Table>
+          <ComponentCard title="Cancel Invoice">
           <Table id="example">
             <thead>
               <tr>
-                {invoiceTableColumns.map((cell) => {
+                {invoiceTableColumns1.map((cell) => {
                   return <td key={cell.name}>{cell.name}</td>;
                 })}
               </tr>
@@ -99,20 +119,20 @@ export default function CustomerFinanceInvoice({
             <tbody>
               {cancelInvoice &&
                 cancelInvoice.map((element) => {
+                  const balanceAmountClass =
+                  element.status.toLowerCase() === 'cancelled' ? 'text-danger' : '';  
                   return (
                     <tr key={element.invoice_id}>
                       <td>{element.invoice_code}</td>
-                      <td>{element.status}</td>
-                      <td>{moment(element.invoice_date).format('YYYY-MM-DD')}</td>
+                      <td className={balanceAmountClass}>{element.status}</td>
+                      <td>{(element.invoice_date)?moment(element.invoice_date).format('DD-MM-YYYY'):''}</td>
                       <td>{element.invoice_amount}</td>
-                      <td>
-                        <div className='anchor'><span>Print</span></div>
-                      </td>
                     </tr>
                   );
                 })}
             </tbody>
           </Table>
+          </ComponentCard>
         </div>
       </div>
     </Form>

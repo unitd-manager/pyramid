@@ -27,7 +27,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
   const [quote, setQuote] = useState(false);
   const getquotations = () => {
     api
-      .post('/tender/getTabQuotelogById', { opportunity_id: id })
+      .post('/tender/getTabQuotelogsById', { quote_id: id })
       .then((res) => {
         setQuote(res.data.data);
       })
@@ -94,11 +94,6 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
                   </Col>
                   <Col>
                     <FormGroup>
-                      <Label>Discount</Label>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
                       <Label>Amount</Label>
                     </FormGroup>
                   </Col>
@@ -128,7 +123,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
                           <FormGroup>
                             <Label>
                               {element.quote_date
-                                ? moment(element.quote_date).format('DD-MM-YYYY')
+                                ? moment(element.quote_date).format('YYYY-MM-DD')
                                 : ''}
                             </Label>
                           </FormGroup>
@@ -136,11 +131,6 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
                         <Col>
                           <FormGroup>
                             <Label>{element.quote_status}</Label>
-                          </FormGroup>
-                        </Col>
-                        <Col>
-                          <FormGroup>
-                            <Label>{element.discount}</Label>
                           </FormGroup>
                         </Col>
                         <Col>
@@ -171,10 +161,8 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
                                       <tr>
                                         <th scope="col">Title </th>
                                         <th scope="col">Description </th>
-                                        <th scope="col">Qty </th>
-                                        <th scope="col">Unit Price </th>
                                         <th scope="col">Amount</th>
-                                        <th scope="col">Updated By </th>
+                                        <th scope="col">Updated By</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -184,10 +172,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
                                             <tr>
                                               <td>{e.title}</td>
                                               <td>{e.description}</td>
-                                              <td >{e.quantity}</td>
-                                              <td data-label="Unit Price">{e.unit_price}</td>
-                                              <td data-label="Amount">{e.amount}</td>
-                                              <td data-label="Updated By"></td>
+                                              <td>{e.amount} </td>
                                               <td></td>
                                               <td></td>
                                             </tr>

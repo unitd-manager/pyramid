@@ -130,7 +130,7 @@ export default function TenderCompanyEditDetails({
                         </Label>
                         <Input type="select" name="address_country" onChange={companyhandleInputs}>
                           <option defaultValue="selected" value="">
-                            Please Select
+                            Singapore
                           </option>
                           {allCountries &&
                             allCountries.map((country) => (

@@ -135,6 +135,7 @@ export default function TenderQuotation({
             <Button
               color="primary"
               className="shadow-none"
+              style={{ width: '100%' }}
               onClick={() => {
                 if (window.confirm('Do you like to Convert to Project?')) {
                   //insertProject();
@@ -175,7 +176,7 @@ export default function TenderQuotation({
         <ViewQuoteLogModal
           quotationsModal={quotationsModal}
           setquotationsModal={setquotationsModal}
-          id={tenderId}
+          quoteId={quote.quote_id}
         />
       )}
       {Object.keys(quote).length !== 0 && (
@@ -278,9 +279,9 @@ export default function TenderQuotation({
                   <FormGroup>
                     <table className="lineitem border border-secondary rounded">
                       <thead>
-                        <tr>
+                      <tr>
                           <th scope="col">Title </th>
-                          <th scope="col">Description </th>
+                          <th scope="col" >Description </th>
                           <th scope="col">Qty </th>
                           <th scope="col">Unit Price </th>
                           <th scope="col">Amount</th>

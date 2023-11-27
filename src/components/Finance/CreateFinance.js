@@ -15,11 +15,12 @@ import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
 
-const CreateFinance = ({ financeModal, setFinanceModal, projectId }) => {
+const CreateFinance = ({ financeModal, setFinanceModal, projectId,getOrdersById }) => {
   CreateFinance.propTypes = {
     financeModal: PropTypes.bool,
     setFinanceModal: PropTypes.func,
     projectId: PropTypes.any,
+    getOrdersById:PropTypes.func,
   };
 
   const [projectDetails, setCreateOrder] = useState();
@@ -35,17 +36,20 @@ const CreateFinance = ({ financeModal, setFinanceModal, projectId }) => {
         setCreateOrder(res.data.data);
       })
       .catch(() => {
-        message('Costing Summary not found', 'info');
+       // message('Costing Summary not found', 'info');
       });
   };
   //Insert order for finance module
   const insertOrder = () => {
     projectDetails.project_id = projectId;
     api
-      .post('/Finance/insertOrder', projectDetails)
-      .then((res) => {
+      .post('/finance/insertOrder', projectDetails)
+      .then(() => {
+      
+        //setCreateOrder(res.data.data);
         message('Invoice inserted successfully.', 'success');
-        setCreateOrder(res.data.data);
+        //window.location.Reload();
+        getOrdersById();
       })
       .catch(() => {
         message('Network connection error.');

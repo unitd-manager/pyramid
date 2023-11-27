@@ -4,6 +4,11 @@ import PropTypes from 'prop-types';
 import ComponentCard from '../ComponentCard';
 import TenderCompanyEditDetails from './TenderCompanyEditDetails';
 import TenderContactDetails from './TenderContactDetails';
+// import styled from 'styled-components';
+
+// const redText = styled.label`
+//   color: #2962ff;
+// `;
 
 export default function TenderMoreDetails({
   tenderDetails,
@@ -57,6 +62,7 @@ export default function TenderMoreDetails({
                   </Label>
                   <Input
                     type="text"
+                    style={{ borderColor: 'red', color: 'green', /* other styles */ }}
                     onChange={handleInputs}
                     value={tenderDetails && tenderDetails.title}
                     name="title"
@@ -77,7 +83,7 @@ export default function TenderMoreDetails({
               <Col md="3">
                 <FormGroup>
                   <Label>
-                    Company Name (OR)
+                    Company(OR)
                     <span
                       className="anchor"
                       onClick={() => {
@@ -85,7 +91,7 @@ export default function TenderMoreDetails({
                       }}
                     >
                       <b>
-                        <u>Add New Company</u>
+                        <u>Add New</u>
                       </b>
                     </span>
                   </Label>
@@ -126,7 +132,7 @@ export default function TenderMoreDetails({
                     Contact (OR){' '}
                     <span className="anchor" onClick={addContactToggle.bind(null)}>
                       <b>
-                        <u>Add New Contact</u>
+                        <u>Add New</u>
                       </b>
                     </span>
                   </Label>

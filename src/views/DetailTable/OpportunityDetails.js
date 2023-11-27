@@ -190,33 +190,6 @@ const OpportunityDetails = () => {
                     </Button>
                   </Col>
                 </Row>
-                {/* <FormGroup>
-                  <Label>
-                    Company Name (OR){' '}
-                                     </Label>
-                  <Input
-                    type="select"
-                    onChange={
-                      handleInputsTenderForms
-                      
-                    }
-                    value={companyInsertData && companyInsertData.company_name}
-                    name="company_id"
-                  >
-                    <option >Please Select</option>
-                    {company &&
-                      company.map((e) => {
-                        return (
-                          <option key={e.company_id} value={e.company_id}>
-                            {' '}
-                            {e.company_name}{' '}
-                          </option>
-                        );
-                      })}
-
-                   
-                  </Input>
-                </FormGroup> */}
               </FormGroup>
               <TenderCompanyDetails
                 allCountries={allCountries}

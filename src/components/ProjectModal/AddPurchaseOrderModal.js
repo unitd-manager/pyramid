@@ -312,19 +312,9 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     //setAddPurchaseOrderModal(false);
   };
 
-  // const insertPurchaseOrder = () => {
-  //   purchaseDetails.project_id = projectId;
-  //   api.post('/purchaseorder/insertPurchaseOrder', purchaseDetails).then((res) => {
-  //     poProduct(res.data.data.insertId);
-  //     getProduct();
-  //     message('Purchase Order Added!', 'success');
-  //     setAddPurchaseOrderModal(false);
-  //   });
-  // };
 
   function updateState(index, property, e) {
     const copyDeliverOrderProducts = [...addMoreItem];
-    //const amount = (parseFloat(item.qty) || 0) * (parseFloat(item.cost_price) || 0);
     const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e.target.value };
     copyDeliverOrderProducts[index] = updatedObject;
     setMoreItem(copyDeliverOrderProducts);
@@ -337,35 +327,19 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     setMoreItem(updatedItems);
   };
 
-  // const getTotalOfPurchase = () => {
-  //   let total = 0;
-  //   addMoreItem.forEach((a) => {
-  //     total += parseInt(a.qty, 10) * parseFloat(a.cost_price, 10);
-  //   });
-  //   return total;
-  // };
 
   //Insert Product Data
   const insertProductData = (ProductCode,ItemCode) => {
     productDetails.product_code = ProductCode;
     productDetails.item_code = ItemCode;
-    //productDetails.item_code = parseFloat(itemcode) + 1;
     if (productDetails.title !== '' && productDetails.item_code !== '') {
       api
         .post('/product/insertProduct', productDetails)
         .then(() => {
-          // const insertedDataId = res.data.data.insertId;
           message('Product inserted successfully.', 'success');
           getProduct();
           setAddNewProductModal(false);
-          // api.post('/inventory/insertinventory', {product_id:insertedDataId})
-          // .then(() => { message('inventory created successfully.','success')})
-          // .catch(() => {
-          //   message('Unable to create inventory.', 'error')
-          // })
-          // setTimeout(()=> {
-          //   navigate(`/ProductEdit/${insertedDataId}`)
-          // },300);
+       
         })
         .catch(() => {
           message('Unable to edit record.', 'error');

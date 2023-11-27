@@ -379,7 +379,7 @@ const TenderEdit = () => {
               <Col md="3">
                 <FormGroup>
                   <Label>
-                    Company Name (OR){' '}
+                    Company(OR){' '}
                     <span
                       className="anchor"
                       onClick={() => {
@@ -387,7 +387,7 @@ const TenderEdit = () => {
                       }}
                     >
                       <b>
-                        <u>Add New Company</u>
+                        <u>Add New</u>
                       </b>
                     </span>
                   </Label>
@@ -422,7 +422,7 @@ const TenderEdit = () => {
                                     <Col md="6">
                                       <FormGroup>
                                         <Label>
-                                          Company Name <span className="required"> *</span>
+                                          Company <span className="required"> *</span>
                                         </Label>
                                         <Input
                                           type="text"
@@ -516,7 +516,7 @@ const TenderEdit = () => {
                                         name="address_country"
                                         onChange={companyhandleInputs}
                                       >
-                                        <option value="" selected="selected">
+                                        <option value="SG" selected="Singapore">
                                           Please Select
                                         </option>
                                         <option value="AF">Afghanistan</option>
@@ -883,6 +883,7 @@ const TenderEdit = () => {
                           className="shadow-none"
                           onClick={() => {
                             insertCompany();
+                            window.location.reload()
                           }}
                         >
                           Submit
@@ -1035,6 +1036,7 @@ const TenderEdit = () => {
                           className="shadow-none"
                           onClick={() => {
                             AddNewContact();
+                            window.location.reload();
                           }}
                         >
                           Submit

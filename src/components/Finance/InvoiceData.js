@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   Row,
   Col,
@@ -22,16 +22,19 @@ import message from '../Message';
 import ComponentCard from '../ComponentCard';
 import InvoiceTable from './InvoiceTable';
 
-const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
-  InvoiceData.propTypes = {
+const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, orderId }) => {
+  FinanceInvoiceData.propTypes = {
     editInvoiceData: PropTypes.bool,
     setEditInvoiceData: PropTypes.func,
     projectInfo: PropTypes.any,
+    orderId: PropTypes.any,
   };
   //All state Varible
   const { id } = useParams();
   const [totalAmount, setTotalAmount] = useState(0);
+  const [gstValue, setGstValue] = useState();
   const [paymentTerms, setPaymentTerms] = useState('');
+  const gstPercentageValue = parseInt(gstValue?.value, 10) || 0; 
   const [createInvoice, setCreateInvoice] = useState({
     discount: '',
     quote_code: '',
@@ -64,6 +67,15 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
     },
   ]);
 
+  const getGstValue = () => {
+    api.get('/finance/getGst').then((res) => {
+      setGstValue(res.data.data);
+      });
+  };
+  useEffect(() => {
+    getGstValue();
+  }, []);
+
   //setting data in createinvoice
   const handleInserts = (e) => {
     setCreateInvoice({ ...createInvoice, [e.target.name]: e.target.value });
@@ -93,7 +105,7 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
       addLineItemApi({
         description: results[j].description,
         invoice_id: receipt,
-        amount: results[j].total_cost,
+        total_cost: results[j].total_cost,
         item_title: results[j].item_title,
         item_code: projectInfo.item_code,
         cost_price: 2,
@@ -104,13 +116,14 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
       });
     }
   };
-
   //Insert Invoice
-  const insertInvoice = async (code, results) => {
-    createInvoice.invoice_amount = totalAmount + (7 / 100) * totalAmount;
-    createInvoice.order_id = id;
+  const insertInvoice = async (results, code,) => {
+    createInvoice.invoice_amount = totalAmount + (gstPercentageValue / 100) * totalAmount;
+    createInvoice.gst_value = (gstPercentageValue / 100) * totalAmount;
+    createInvoice.gst_percentage = gstPercentageValue;
+    createInvoice.project_id = projectInfo;
+    createInvoice.order_id = orderId;
     createInvoice.invoice_code = code;
-
     const now = new Date();
     if (now.getMonth() === 11) {
       const current = new Date(now.getFullYear() + 1, 0, now.getDate());
@@ -119,7 +132,6 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
       const current = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
       createInvoice.invoice_due_date = current;
     }
-
     api
       .post('/Finance/insertInvoice', createInvoice)
       .then((res) => {
@@ -134,9 +146,9 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
       });
   };
   //generateCode
-  const generateCode = (results, type) => {
+  const generateCode = (results, invoicestype) => {
     api
-      .post('/commonApi/getCodeValue', { type })
+      .post('/commonApi/getCodeValue', { invoicestype })
       .then((res) => {
         insertInvoice(results, res.data.data);
       })
@@ -165,6 +177,7 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
   //Invoice item values
   const getAllValues = () => {
     const result = [];
+    let hasZeroTotalCost = false; 
     $('.lineitem tbody tr').each(function input() {
       const allValues = {};
       $(this)
@@ -173,8 +186,16 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
         });
+        allValues.total_cost = allValues.qty * allValues.unit_price;
+        if (allValues.total_cost === 0) {
+          hasZeroTotalCost = true; // Set the flag if total_cost is 0
+        }
       result.push(allValues);
     });
+    if (hasZeroTotalCost) {
+      message('Total cost cannot be 0.', 'error');
+      return; // Prevent further processing if total_cost is 0
+    }
     setTotalAmount(0);
     setAddLineItem([
       {
@@ -275,77 +296,82 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
                     </ComponentCard>
                   </Row>
                   {/* Invoice Item */}
-                  <table className="lineitem">
-                    <thead>
-                      <tr>
-                        <th scope="col">Item</th>
-                        <th scope="col">Description </th>
-                        <th scope="col">UoM</th>
-                        <th scope="col">Qty</th>
-                        <th scope="col">Unit Price</th>
-                        <th scope="col">Total Price</th>
-                        <th scope="col">Remarks</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {addLineItem.map((item) => {
-                        return (
-                          <tr key={item.id}>
-                            <td data-label="Item">
-                              <Input defaultValue={item.item} type="text" name="item_title" />
-                            </td>
-                            <td data-label="Description">
-                              <Input
-                                defaultValue={item.description}
-                                type="text"
-                                name="description"
-                              />
-                            </td>
-                            <td data-label="UoM">
-                              <Input defaultValue={item.unit} type="text" name="unit" />
-                            </td>
-                            <td data-label="Qty">
-                              <Input defaultValue={item.qty} type="number" name="qty" />
-                            </td>
-                            <td data-label="Unit Price">
-                              <Input
-                                defaultValue={item.unit_price}
-                                onBlur={() => {
-                                  calculateTotal();
-                                }}
-                                type="number"
-                                name="unit_price"
-                              />
-                            </td>
-                            <td data-label="Total Price">
-                              <Input
-                                defaultValue={item.total_cost}
-                                type="text"
-                                name="total_cost"
-                                disabled
-                              />
-                            </td>
-                            <td data-label="Remarks">
-                              <Input defaultValue={item.remarks} type="text" name="remarks" />
-                            </td>
-                            <td data-label="Action">
-                              <div className="anchor">
-                                <Input type="hidden" name="id" defaultValue={item.id}></Input>
-                                <span
-                                  onClick={() => {
-                                    ClearValue(item);
-                                  }}
-                                >
-                                  Clear
-                                </span>
-                              </div>
-                            </td>
+                  <Row>
+                    <Col>
+                      <table className="lineitem">
+                        <thead>
+                          <tr>
+                            <th scope="col">Item</th>
+                            <th scope="col">Description </th>
+                            <th scope="col">UoM</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Unit Price</th>
+                            <th scope="col">Total Price</th>
+                            <th scope="col">Remarks</th>
+                            <th scope="col"></th>
                           </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                        </thead>
+                        <tbody>
+                          {addLineItem.map((item) => {
+                            return (
+                              <tr key={item.id}>
+                                <td data-label="Item">
+                                  <Input defaultValue={item.item} type="text" name="item_title" />
+                                </td>
+                                <td data-label="Description">
+                                  <Input
+                                    defaultValue={item.description}
+                                    type="text"
+                                    name="description"
+                                  />
+                                </td>
+                                <td data-label="UoM">
+                                  <Input defaultValue={item.unit} type="text" name="unit" />
+                                </td>
+                                <td data-label="Qty">
+                                  <Input defaultValue={item.qty} type="number" name="qty" />
+                                </td>
+                                <td data-label="Unit Price">
+                                  <Input
+                                    defaultValue={item.unit_price}
+                                    onBlur={() => {
+                                      calculateTotal();
+                                    }}
+                                    type="number"
+                                    name="unit_price"
+                                  />
+                                </td>
+                                <td data-label="Total Price">
+                                  <Input
+                                    defaultValue={item.total_cost}
+                                    type="text"
+                                    name="total_cost"
+                                    disabled
+                                  />
+                                </td>
+                                <td data-label="Remarks">
+                                  <Input defaultValue={item.remarks} type="text" name="remarks" />
+                                </td>
+                                <td data-label="Action">
+                                  <div className="anchor">
+                                    <Input type="hidden" name="id" defaultValue={item.id}></Input>
+                                    <span
+                                      onClick={() => {
+                                        ClearValue(item);
+                                      }}
+                                    >
+                                      Clear
+                                    </span>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </Col>
+                  </Row>
+
                   <ModalFooter>
                     <Button
                       className="shadow-none"
@@ -376,4 +402,5 @@ const InvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo }) => {
     </>
   );
 };
-export default InvoiceData;
+
+export default FinanceInvoiceData;
