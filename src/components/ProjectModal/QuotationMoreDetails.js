@@ -10,7 +10,6 @@ import {
   ModalBody,
   ModalHeader,
   Button,
-  //CardTitle
 } from 'reactstrap';
 import moment from 'moment';
 import Swal from 'sweetalert2';
@@ -22,7 +21,7 @@ import EditQuotation from './EditQuotation';
 import QuoteviewEditItem from './QuoteviewEditItem';
 import PdfProjectQuote from '../PDF/PdfProjectQuote';
 import ViewQuoteLogModal from './ViewQuoteLogModal';
-// import QuotationViewLineItem from './QuotationViewLineItems';
+
 const BlueLabel = styled.label`
   color: #2962ff;
 `;

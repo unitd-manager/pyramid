@@ -51,6 +51,7 @@ const OpportunityEdit = () => {
   const [contact, setContact] = useState();
   const [company, setCompany] = useState();
   const [incharge, setIncharge] = useState();
+  const [quotes, setQuotes] = useState();
   const [selectedCompany, setSelectedCompany] = useState();
   const [addLineItemModal, setAddLineItemModal] = useState(false);
   const [project, setProject] = useState([]);
@@ -175,8 +176,7 @@ const OpportunityEdit = () => {
 
   const editTenderData = () => {
     tenderDetails.modification_date = creationdatetime;
-    api
-      .post('/tender/edit-Tenders', tenderDetails)
+    api      .post('/tender/edit-Tenders', tenderDetails)
       .then(() => {
         message('Record editted successfully', 'success');
         setTimeout(() => {
@@ -240,6 +240,13 @@ const OpportunityEdit = () => {
   const getLineItem = (quotationId) => {
     api.post('/tender/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
       setLineItem(res.data.data);
+    });
+  };
+
+  // Get Line Item
+  const getLine = (quoteId) => {
+    api.post('/tender/getTabQuotelogsById', { quote_id: quoteId }).then((res) => {
+      setQuotes(res.data.data);
     });
   };
 
@@ -387,6 +394,8 @@ const OpportunityEdit = () => {
               setquotationsModal={setquotationsModal}
               viewLineToggle={viewLineToggle}
               getLineItem={getLineItem}
+              getLine={getLine}
+              quotes={quotes}
               PdfQuote={PdfQuote}
               editQuoteModal={editQuoteModal}
               setAddLineItemModal={setAddLineItemModal}

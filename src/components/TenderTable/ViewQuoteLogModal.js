@@ -14,30 +14,32 @@ import {
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import api from '../../constants/api';
-import TenderPdfQuoteLog from '../PDF/TenderPdfQuoteLog';
+// import TenderPdfQuoteLog from '../PDF/TenderPdfQuoteLog';
 
-const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
+const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
   ViewQuoteLogModal.propTypes = {
     quotationsModal: PropTypes.bool,
     setquotationsModal: PropTypes.func,
     id: PropTypes.any,
+
   };
 
   const [quoteLogViewLineItem, setQuoteLogViewLineItem] = useState(false);
   const [quote, setQuote] = useState(false);
   const getquotations = () => {
     api
-      .post('/tender/getTabQuotelogsById', { quote_id: id })
+      .post('/tender/getTabQuotelogById', { opportunity_id: id })
       .then((res) => {
         setQuote(res.data.data);
+        console.log('QUOTE', res.data.data);
       })
       .catch(() => {});
   };
 
-  const [quotation, setQuotelogLineItems] = useState();
-  const QuotationViewLineItem = (logId) => {
+  const [quotation, setQuotelogLineItems] = useState([]);
+  const QuotationViewLineItem = () => {
     api
-      .post('/tender/getTabQuoteLineItems', { quote_log_id: logId })
+      .post('/tender/getTabQuoteLineItems', { opportunity_id: id })
       .then((res) => {
         setQuotelogLineItems(res.data.data);
         console.log('tender', res.data.data);
@@ -199,10 +201,10 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, id }) => {
                         <Col>
                           <FormGroup>
                             <Label>
-                              <TenderPdfQuoteLog
+                              {/* <TenderPdfQuoteLog
                                 logId={element.quote_log_id}
                                 id={id}
-                              ></TenderPdfQuoteLog>
+                              ></TenderPdfQuoteLog> */}
                             </Label>
                           </FormGroup>
                         </Col>

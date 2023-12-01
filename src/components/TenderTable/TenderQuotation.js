@@ -22,9 +22,6 @@ import EditQuoteModal from './EditQuoteModal';
 import ViewQuoteLogModal from './ViewQuoteLogModal';
 import EditLineItemModal from './EditLineItemModal';
 
-// const RedLabel = styled.label`
-//   color: #2962ff;
-// `;
 
 export default function TenderQuotation({
   tenderId,
@@ -46,6 +43,8 @@ export default function TenderQuotation({
   generateCodes,
   handleQuoteForms,
   generateCode,
+  // getLine,
+  // quotes,
 }) {
   TenderQuotation.propTypes = {
     tenderId: PropTypes.object,
@@ -67,6 +66,8 @@ export default function TenderQuotation({
     handleQuoteForms: PropTypes.object,
     generateCode: PropTypes.object,
     generateCodes: PropTypes.object,
+    // getLine: PropTypes.object,
+    // quotes: PropTypes.object,
   };
 
   const [quoteDatas, setQuoteData] = useState();
@@ -172,11 +173,11 @@ export default function TenderQuotation({
       </EditLineItemModal>
 
       {/* Call View Quote Log Modal */}
-      {quotationsModal && (
+       {quotationsModal && (
         <ViewQuoteLogModal
           quotationsModal={quotationsModal}
           setquotationsModal={setquotationsModal}
-          quoteId={quote.quote_id}
+          id={tenderId}
         />
       )}
       {Object.keys(quote).length !== 0 && (
@@ -299,7 +300,7 @@ export default function TenderQuotation({
                                 <td data-label="Quantity">{e.quantity}</td>
                                 <td data-label="Unit Price">{e.unit_price}</td>
                                 <td data-label="Amount">{e.amount}</td>
-                                <td data-label="Updated By"></td>
+                                <td data-label="Updated By">{e.created_by} {e.creation_date}</td>
                                 {quote && QuoteProject === undefined && (
                                   <td data-label="Actions">
                                     <span
