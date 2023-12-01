@@ -114,32 +114,7 @@ const AddCostingSummaryModal = ({ addCostingSummaryModel, setAddCostingSummaryMo
                         </FormGroup>
                       </Col>
 
-                      <Col md="4">
-                        <FormGroup>
-                          <Label>Profit Margin %</Label>
-                          <Input
-                            type="number"
-                            disabled
-                            onChange={handleCostingSummeryInputs}
-                            value={addCostingSummaryData && addCostingSummaryData.profit_percentage}
-                            name="profit_percentage"
-                          />
-                        </FormGroup>
-                      </Col>
-
-                      <Col md="4">
-                        <FormGroup>
-                          <Label>Profit Margin</Label>
-                          <Input
-                            type="number"
-                            disabled
-                            name="profit"
-                            onChange={handleCostingSummeryInputs}
-                            value={addCostingSummaryData && addCostingSummaryData.profit}
-                            tabindex="-1"
-                          />
-                        </FormGroup>
-                      </Col>
+                    
                     </Row>
                   </Form>
                 </CardBody>
@@ -271,6 +246,32 @@ const AddCostingSummaryModal = ({ addCostingSummaryModel, setAddCostingSummaryMo
                 </CardBody>
               
             </Col>
+            <Col md="4">
+                        <FormGroup>
+                          <Label>Profit Margin %</Label>
+                          <Input
+                            type="number"
+                            disabled
+                            onChange={handleCostingSummeryInputs}
+                            value={addCostingSummaryData && addCostingSummaryData.profit_percentage}
+                            name="profit_percentage"
+                          />
+                        </FormGroup>
+                      </Col>
+
+                      <Col md="4">
+                        <FormGroup>
+                          <Label>Profit Margin</Label>
+                          <Input
+                            type="number"
+                            disabled
+                            name="profit"
+                            onChange={handleCostingSummeryInputs}
+                            value={addCostingSummaryData && addCostingSummaryData.profit}
+                            tabindex="-1"
+                          />
+                        </FormGroup>
+                      </Col>
           </Row>
         </ModalBody>
         <ModalFooter>

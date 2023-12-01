@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button, Label, FormGroup, Container, Row, Col, Card, CardBody, Input } from 'reactstrap';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
@@ -7,19 +7,23 @@ import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { usePermify } from '@permify/react-role';
 import AuthLogo from '../../layouts/logo/AuthLogo';
-import { ReactComponent as LeftBg } from '../../assets/images/bg/login-bgleft.svg';
-import { ReactComponent as RightBg } from '../../assets/images/bg/login-bg-right.svg';
+// import { ReactComponent as LeftBg } from '../../assets/images/bg/login-bgleft.svg';
+// import { ReactComponent as RightBg } from '../../assets/images/bg/login-bg-right.svg';
 // import {Dashboards} from '../../components/dashboard/classicDashboard';
 import loginApi from '../../constants/api';
 import message from '../../components/Message';
+import ProfileDD from '../../layouts/header/ProfileDD';
+
 
 const LoginFormik = ({ setToken }) => {
+  const [userEmail, setUserEmail] = useState();
   const { setUser } = usePermify();
   const getPermissions = (user) => {
     loginApi
       .post('/usergroup/getusergroupForLoginUser', { user_group_id: user.user_group_id })
       .then((res) => {
         const apiData = res.data.data;
+        setUserEmail(res.data.data.email); 
         const permissionArray = [];
         apiData.forEach((element) => {
           if (element.edit) permissionArray.push(`${element.section_title}-edit`);
@@ -40,7 +44,8 @@ const LoginFormik = ({ setToken }) => {
           roles: ['admin'],
           permissions: permissionArray,
         });
-        window.location.reload()
+      
+      window.location.reload()
       })
       .catch(() => {
         message('Network connection error.', 'error');
@@ -51,6 +56,9 @@ const LoginFormik = ({ setToken }) => {
     loginApi
       .post('/api/login', value)
       .then((res) => {
+        console.log('API Response:', res.data);
+        setUserEmail(res.data.data.email); 
+        console.log('User Email Set:', res.data.data.email);
         if (res && res.data.status === '400') {
           alert('Invalid Username or Password');
         } else {
@@ -76,8 +84,8 @@ const LoginFormik = ({ setToken }) => {
 
   return (
     <div className="loginBox">
-      <LeftBg className="position-absolute left bottom-0" />
-      <RightBg className="position-absolute end-0 top" />
+      {/* <LeftBg className="position-absolute left bottom-0" />
+      <RightBg className="position-absolute end-0 top" /> */}
       <Container fluid className="h-100">
         <Row className="justify-content-center align-items-center h-100">
           <Col lg="12" className="loginContainer">
@@ -144,7 +152,8 @@ const LoginFormik = ({ setToken }) => {
           </Col>
         </Row>
       </Container>
-    </div>
+      <ProfileDD userEmail={userEmail} /> 
+          </div>
   );
 };
 
