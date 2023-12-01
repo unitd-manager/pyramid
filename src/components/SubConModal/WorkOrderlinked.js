@@ -112,6 +112,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
         message('Cannot get Invoice Data', 'error');
       });
   };
+  
 
   //Logic for deducting receipt amount
   const finalCalculation = (receipt) => {

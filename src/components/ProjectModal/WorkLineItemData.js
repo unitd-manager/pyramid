@@ -71,31 +71,32 @@ const InvoiceData = ({ workOrderLine, setWorkOrderLine, projectId, subCon }) => 
   //Invoice item values
   const getAllValues = () => {
     const result = [];
-    $('.lineitem tbody tr').each(() => {
+    $('.lineitem tbody tr').each(function input() {
       const allValues = {};
       $(this)
         .find('input')
-        .each(() => {
+        .each(function output() {
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
         });
       result.push(allValues);
     });
-    console.log(result);
     setTotalAmount(0);
+    console.log(result);
     result.forEach((element) => {
       addLineItemApi(element);
     });
+    console.log(result);
   };
-  //Invoice Items Calculation
+
   const calculateTotal = () => {
     let totalValue = 0;
     const result = [];
-    $('.lineitem tbody tr').each(() => {
+    $('.lineitem tbody tr').each(function input() {
       const allValues = {};
       $(this)
         .find('input')
-        .each(() => {
+        .each(function output() {
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
           allValues.amount = allValues.quantity * allValues.unit_rate;
@@ -107,6 +108,7 @@ const InvoiceData = ({ workOrderLine, setWorkOrderLine, projectId, subCon }) => 
         totalValue += parseFloat(e.amount);
       }
     });
+    console.log(result);
     setAddLineItem(result);
     setTotalAmount(totalValue);
   };
@@ -204,7 +206,7 @@ const InvoiceData = ({ workOrderLine, setWorkOrderLine, projectId, subCon }) => 
                                     </td>
                                     <td data-label="Amount">
                                       <Input
-                                        defaultValue={item.amount}
+                                        Value={item.amount}
                                         type="text"
                                         name="amount"
                                         disabled

@@ -1,33 +1,50 @@
-import React from 'react';
+import React,{useState} from 'react';
 import pdfMake from 'pdfmake';
 import { useParams } from 'react-router-dom';
 import * as Icon from 'react-feather';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import api from '../../constants/api';
 import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
-const PdfDeliveryOrder = () => {
+
+const PdfDeliveryOrder = ({ deliverOrderId }) => {
+  PdfDeliveryOrder.propTypes = {
+    deliverOrderId: PropTypes.any,
+    
+  };
   const { id } = useParams();
   const [hfdata, setHeaderFooterData] = React.useState();
-  const [deliveryData, setDeliveryData] = React.useState();
+  
+  const [projectDetail, setProjectDetail] = useState();
   const [editDeliveryOrder, setEditDeliveryOrder] = React.useState();
+  const[deliveryData,setdeliveryData]=React.useState();
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
       setHeaderFooterData(res.data.data);
     });
-  }, []);
+  }, [0]);
 
   const findCompany = (key) => {
     const filteredResult = hfdata.find((e) => e.key_text === key);
     return filteredResult.value;
   };
-  const getPoProduct = () => {
+  
+  const getProjectById = () => {
     api
-      .post('/purchaseorder/getProjectDeliveryOrderByPdf', { delivery_order_id: id })
+      .post('/project/getProjectById', { project_id: id })
       .then((res) => {
-        setDeliveryData(res.data.data[0]);
+        setProjectDetail(res.data.data[0]);
+      })
+      .catch(() => {});
+  };
+  const TabDeliveryOrder = () => {
+    api
+      .post('/projecttabdeliveryorder/TabDeliveryOrder', { project_id: id })
+      .then((res) => {
+        setdeliveryData(res.data.data[0]);
       })
       .catch(() => {
         
@@ -35,7 +52,7 @@ const PdfDeliveryOrder = () => {
   };
   const getPurchaseOrderId = () => {
     api
-      .post('/purchaseorder/getProjectDeliveryOrderByPdf', { delivery_order_id: id })
+      .post('/projecttabdeliveryorder/TabDeliveryOrderHistoryId', { delivery_order_id: deliverOrderId })
       .then((res) => {
         setEditDeliveryOrder(res.data.data);
       })
@@ -45,7 +62,8 @@ const PdfDeliveryOrder = () => {
   };
   React.useEffect(() => {
     getPurchaseOrderId();
-    getPoProduct();
+    getProjectById();
+    TabDeliveryOrder();
   }, []);
   const GetPdf = () => {
     const productItems = [
@@ -78,7 +96,7 @@ const PdfDeliveryOrder = () => {
         },
 
         {
-          text: `${element.product_title ? element.product_title : ''}`,
+          text: `${element.item_title ? element.item_title : ''}`,
           border: [false, false, false, true],
           style: 'tableBody',
         },
@@ -157,26 +175,33 @@ const PdfDeliveryOrder = () => {
         {
           columns: [
             {
-              text: `TO: ${deliveryData.company_name ? deliveryData.company_name : ''}\n${
-                deliveryData.billing_address_flat ? deliveryData.billing_address_flat : ''
-              }\n
-          ${deliveryData.billing_address_street ? deliveryData.billing_address_street : ''}\n${
-                deliveryData.billing_address_po_code ? deliveryData.billing_address_po_code : ''
-              }\n
-          ${deliveryData.billing_address_country ? deliveryData.billing_address_country : ''}\n`,
-              style: ['textSize'],
+              text: `TO`,
+              style: ['notesText', 'textSize'],
+              bold: 'true',
             },
-            '\n',
-
             {
-              text: `DATE :${
-                deliveryData.date ? moment(deliveryData.date).format('DD-MM-YYYY') : ''
-              }`,
-              style: ['textSize'],
+              text: `${projectDetail.company_name ? projectDetail.company_name : ''}
+                 ${projectDetail.address_street ? projectDetail.address_street : ''}
+                 ${projectDetail.address_town ? projectDetail.address_town : ''}
+                 ${projectDetail.address_country ? projectDetail.address_country : ''}
+                 ${ projectDetail.address_po_code ? projectDetail.address_po_code : ''}`,
+              style: ['notesText', 'textSize'],
+              margin: [-250, 20, 0, 0],
+
+              bold: 'true',
             },
           ],
         },
-        '\n',
+
+        {
+          text: `DATE :${
+            deliveryData && deliveryData.date ? moment(deliveryData.date).format('DD-MM-YYYY') : ''
+          }`,
+          
+          style: ['invoiceAdd', 'textSize'],
+          margin: [0, -60, 0, 0],
+        },
+        '\n\n\n\n\n\n',
 
         {
           layout: {

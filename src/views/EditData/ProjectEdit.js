@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CardTitle, Row, Col, TabContent, TabPane, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useParams, useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
@@ -96,6 +97,8 @@ const ProjectEdit = () => {
   const [RoomName, setRoomName] = useState('');
   const [fileTypes, setFileTypes] = useState('');
   const [contactLinked, setContactLinked] = useState('');
+  const [subConWorkOrdeData, setSubConWorkOrdeData] = useState([]);
+
 
   // Start for tab refresh navigation #Renuka 31-05-23
   const tabs =  [
@@ -186,25 +189,39 @@ const ProjectEdit = () => {
 
   //Add to stocks
   const addQtytoStocks = () => {
-    if (selectedPoProducts) {
-      selectedPoProducts.forEach((elem) => {
-        if (elem.status !== 'Closed') {
-          elem.status = 'Closed';
-          elem.qty_updated = elem.qty_delivered;
-          elem.qty_in_stock += parseFloat(elem.qty_delivered);
-          api.post('/product/edit-ProductQty', elem);
+    const isEmpty = Object.keys(checkId).length === 0;
+
+    if (isEmpty) {
+      Swal.fire('Please select atleast one product!');
+    } else {
+      const selectedProducts = checkId;
+      setCheckId([]);
+      selectedProducts.forEach((elem) => {
+        console.log('elem', elem);
+        if (elem.item.status !== 'Closed') {
+          elem.item.status = 'Closed';
+          elem.item.qty_updated = elem.item.qty_delivered;
+          elem.item.qty_in_stock += parseFloat(elem.item.qty_delivered);
+
           api
-            .post('/purchaseorder/editTabPurchaseOrderLineItem', elem)
+            .post('/purchaseorder/editTabPurchaseOrderLineItem', elem.item)
             .then(() => {
               api
-                .post('/inventory/editInventoryStock', elem)
+                .post('/product/edit-ProductQty', elem.item)
                 .then(() => {
-                  message('Quantity updated in inventory successfully.', 'success');
+                  message('Quantity updated in product successfully.', 'success');
+                  api
+                    .post('/inventory/editInventoryStock', elem.item)
+                    .then(() => {
+                      message('Quantity updated in inventory successfully.', 'success');
+                    })
+                    .catch(() => {
+                      message('unable to update quantity in inventory.', 'danger');
+                    });
                 })
                 .catch(() => {
                   message('unable to update quantity in inventory.', 'danger');
                 });
-              message('Quantity added successfully.', 'success');
             })
             .catch(() => {
               message('unable to add quantity.', 'danger');
@@ -213,22 +230,22 @@ const ProjectEdit = () => {
           message('This product is already added', 'danger');
         }
       });
-    } else {
-      alert('Please select atleast one product');
     }
   };
+
 
   const insertDeliveryHistoryOrder = (proId, deliveryOrderId) => {
     api
       .post('/projecttabdeliveryorder/insertDeliveryHistoryOrder', {
-        product_id: proId.id,
-        purchase_order_id: null,
+        product_id: proId.product_id,
+        purchase_order_id: proId.purchase_order_id,
         delivery_order_id: deliveryOrderId,
         status: '1',
         quantity: proId.qty,
-        creation_date: '2022-12-17',
-        modification_date: '2022-12-17',
-        remarks: 'test',
+        item_title: proId.item_title,
+        creation_date: moment(),
+        modification_date: moment(),
+        remarks: proId.description,
       })
       .then(() => {
         message('Delivery Order Item Inserted', 'success');
@@ -259,22 +276,13 @@ const ProjectEdit = () => {
           const selectedProducts = checkId;
           setCheckId([]);
           selectedProducts.forEach((element) => {
-            insertDeliveryHistoryOrder(element, res.data.data.insertId);
+            insertDeliveryHistoryOrder(element.item, res.data.data.insertId);
           });
         })
         .catch(() => {
           message('Unable to add delivery order.', 'error');
         });
     }
-  };
-
-  const getLineItem = (quotationId) => {
-    api.post('/project/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
-      setLineItem(res.data.data);
-      console.log('lineItem', res.data.data);
-
-      //setViewLineModal(true);
-    });
   };
 
   // deleteDeliveryOrder
@@ -303,6 +311,20 @@ const ProjectEdit = () => {
       }
     });
   };
+
+
+
+
+  const getLineItem = (quotationId) => {
+    api.post('/project/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
+      setLineItem(res.data.data);
+      console.log('lineItem', res.data.data);
+
+      //setViewLineModal(true);
+    });
+  };
+
+
 
   //Attachments
   const dataForAttachment = () => {
@@ -342,7 +364,14 @@ const ProjectEdit = () => {
         message('Network connection error.', 'error');
       });
   };
-
+  const SubConWorkOrder = () => {
+    api.post('/projecttabsubconworkorder/SubConWorkOrderPortal', { project_id: id }).then((res) => {
+      setSubConWorkOrdeData(res.data.data);
+    });
+  };
+  useEffect(() => {
+    SubConWorkOrder();
+  }, [id]);
   //generateCode
   const generateCodeQuote = (type) => {
     api
@@ -355,9 +384,9 @@ const ProjectEdit = () => {
       });
   };
   //generateCode
-  const generateCode = (type) => {
+  const generateCode = () => {
     api
-      .post('/commonApi/getCodeValue', { type })
+      .post('/tender/getCodeValue', { type: 'subConworkOrder' })
       .then((res) => {
         insertWorkOrder(res.data.data);
       })
@@ -516,10 +545,10 @@ const ProjectEdit = () => {
                 <Button
                   color="primary"
                   className="shadow-none"
-                  onClick={() => {
+                  onClick={(e) => {
                     insertWorkOrder();
-                    handleClientForms();
-                    generateCode('subcon');
+                    handleClientForms(e);
+                    generateCode(e);
                   }}
                 >
                   Add Work Order
@@ -534,7 +563,7 @@ const ProjectEdit = () => {
               </CardTitle>
             </Row>
 
-            <SubConWorkOrderPortal projectId={id} />
+            <SubConWorkOrderPortal projectId={id} subConWorkOrdeData={subConWorkOrdeData} />
             {/* <SubconWorkPaymentHistory projectId={id} /> */}
           </TabPane>
 
