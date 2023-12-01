@@ -57,6 +57,8 @@ const ProjectEdit = () => {
   const [deliveryData, setDeliveryData] = useState('');
   const [POId, setPOId] = useState('');
   const [testJsonData, setTestJsonData] = useState(null);
+  const [quotationsModal, setquotationsModal] = useState(false);
+  const [lineItem, setLineItem] = useState([]);
 
   const [workOrderForm, setWorkOrderForm] = useState({
     work_order_date: '',
@@ -116,7 +118,7 @@ const ProjectEdit = () => {
   // Get Project By Id
   const getProjectById = () => {
     api
-      .post('/project/getProjectsByID', { project_id: id })
+      .post('/project/getProjectById', { project_id: id })
       .then((res) => {
         setProjectDetail(res.data.data[0]);
       })
@@ -266,6 +268,15 @@ const ProjectEdit = () => {
     }
   };
 
+  const getLineItem = (quotationId) => {
+    api.post('/project/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
+      setLineItem(res.data.data);
+      console.log('lineItem', res.data.data);
+
+      //setViewLineModal(true);
+    });
+  };
+
   // deleteDeliveryOrder
   const deleteDeliveryOrder = (deliveryOrderId) => {
     Swal.fire({
@@ -306,7 +317,7 @@ const ProjectEdit = () => {
     newQuoteId.project_id = id;
     newQuoteId.quote_code = code;
     api
-      .post('/projecttabquote/insertsub_con_work_order', newQuoteId)
+      .post('/projecttabquote/insertquote', newQuoteId)
       .then(() => {
         message('Quote inserted successfully.', 'success');
         window.location.reload();
@@ -357,6 +368,7 @@ const ProjectEdit = () => {
   useEffect(() => {
     getProjectById();
     TabDeliveryOrder();
+    getLineItem();
     TabPurchaseOrderLineItemTable();
     getContactById();
   }, [id]);
@@ -438,7 +450,11 @@ const ProjectEdit = () => {
               insertQuote={insertQuote}
               handleQuoteForms={handleQuoteForms}
               generateCodeQuote={generateCodeQuote}
-              projectId={id}
+              quotationsModal={quotationsModal}
+              lineItem={lineItem}
+              getLineItem={getLineItem}
+              setquotationsModal={setquotationsModal}
+              id={id}
             ></QuotationMoreDetails>
           </TabPane>
           {/* Tab 3 Materials Purchased */}
