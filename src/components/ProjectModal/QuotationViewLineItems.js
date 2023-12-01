@@ -6,28 +6,31 @@ import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
 import QuoteviewEditItem from './QuoteviewEditItem';
-//import WorkOrderEditModal from './WorkOrderEditModal';
 
-const QuotationViewLineItem = ({ id, quotationViewLineItem, setQuotationViewLineItem ,quoteId}) => {
+const QuotationViewLineItem = ({
+  projectId,
+  quote,
+  quotationViewLineItem,
+  setQuotationViewLineItem,
+}) => {
   QuotationViewLineItem.propTypes = {
     quotationViewLineItem: PropTypes.bool,
     setQuotationViewLineItem: PropTypes.func,
-    id: PropTypes.any,
-    quoteId:PropTypes.any,
+    projectId: PropTypes.any,
+    quote: PropTypes.any,
   };
 
   const [quotation, setQuotationViewLineItems] = useState();
-    const [quoteData, setQuoteData] = useState(false);
+  const [quoteData, setQuoteData] = useState(false);
   const [quoteLine, setQuoteLine] = useState();
   const QuotationViewLine = () => {
     api
-      .get('/projecttabquote/getTabQuoteLineItems', {
-        project_id: id,
-         quote_id: quoteId,
+      .post('/projecttabquote/getQuoteLineItemsById', {
+        project_id: projectId,
+        quote_id: quote,
       })
       .then((res) => {
         setQuotationViewLineItems(res.data.data);
-        console.log('SubConWorkOrderPortal', res.data.data);
       })
       .catch(() => {
         message(' LineItem Data not found', 'info');
@@ -36,8 +39,7 @@ const QuotationViewLineItem = ({ id, quotationViewLineItem, setQuotationViewLine
   const QuotationDeleteItem = () => {
     api
       .post('/projecttabquote/deleteQuoteItems', {
-        quote_items_id: id,
-        
+        quote_items_id: quote,
       })
       .then(() => {
         message('Record deteled successfully', 'success');
@@ -46,7 +48,6 @@ const QuotationViewLineItem = ({ id, quotationViewLineItem, setQuotationViewLine
         message(' delete Line Data not found', 'info');
       });
   };
-  //console.log('subconwork', subCon);
   useEffect(() => {
     QuotationViewLine();
   }, []);
@@ -54,23 +55,13 @@ const QuotationViewLineItem = ({ id, quotationViewLineItem, setQuotationViewLine
   return (
     <>
       <Modal size="xl" isOpen={quotationViewLineItem}>
-        <ModalHeader>
-          View Line Items
-          <Button
-            color="secondary"
-            onClick={() => {
-              setQuotationViewLineItem(false);
-            }}
-          >
-            X
-          </Button>
-        </ModalHeader>
+        <ModalHeader>View Line Items</ModalHeader>
         <ModalBody>
           <table className="lineitem border border-secondary rounded">
             <thead>
               <tr>
                 <th scope="col">Title </th>
-                <th scope="col">Description </th>
+                <th scope="col">Desription </th>
                 <th scope="col">Qty</th>
                 <th scope="col">UOM</th>
                 <th scope="col">Unit Price</th>
@@ -92,7 +83,7 @@ const QuotationViewLineItem = ({ id, quotationViewLineItem, setQuotationViewLine
                       <td>{e.unit_price}</td>
                       <td>{e.amount} </td>
                       <td></td>
-                      
+
                       <td>
                         <Row>
                           <Col md="3">
@@ -114,8 +105,6 @@ const QuotationViewLineItem = ({ id, quotationViewLineItem, setQuotationViewLine
                               <Link to="">
                                 <span
                                   onClick={() => {
-                                    // setQuoteLine(e);
-                                   
                                     QuotationDeleteItem();
                                   }}
                                 >

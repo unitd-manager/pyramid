@@ -9,7 +9,7 @@ import "datatables.net-buttons/js/buttons.flash"
 import "datatables.net-buttons/js/buttons.html5"
 import "datatables.net-buttons/js/buttons.print"
 import { Link } from 'react-router-dom';
-import { Button } from 'reactstrap';
+//import { Button } from 'reactstrap';
 import api from '../../constants/api';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import CommonTable from '../../components/CommonTable';
@@ -114,13 +114,13 @@ const Project = () => {
         <CommonTable
                 loading={loading}
           title="Project List"
-          Button={
-            <Link to="/ProjectDetails">
-              <Button color="primary" className="shadow-none">
-                Add New
-              </Button>
-            </Link>
-          }
+          // Button={
+          //   <Link to="/ProjectDetails">
+          //     <Button color="primary" className="shadow-none">
+          //       Add New
+          //     </Button>
+          //   </Link>
+          // }
         >
           <thead>
                   <tr >
