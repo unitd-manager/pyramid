@@ -139,7 +139,7 @@ const AddCostingSummaryModal = ({
       const otherCharges = parseFloat(allValues.other_charges) || 0;
       const totalCost = parseFloat(allValues.total_cost) || 0;
       const poPrice = parseFloat(allValues.po_price) || 0;
-      const profit = parseFloat(allValues.profit) || 0;
+      const profits = parseFloat(allValues.profit) || 0;
       const profitPercentage = parseFloat(allValues.profit_percentage) || 0;
       const totalMaterialPrice = parseFloat(allValues.total_material_price) || 0;
       
@@ -152,7 +152,14 @@ const AddCostingSummaryModal = ({
         officeOverHeads +
         otherCharges+
         totalMaterialPrice;
-      allValues.profit = totalCost*profitPercentage/100;
+        allValues.profit =  parseFloat(transportCharges +
+          totalLabourCharges +
+          salesmanCommission +
+          financeCharges +
+          officeOverHeads +
+          otherCharges+
+          totalMaterialPrice)*parseFloat(profitPercentage)*parseFloat(0.01);
+    
       //allValues.profit_percentage = (profit / poPrice) * 100;
       result.push(allValues);
     });

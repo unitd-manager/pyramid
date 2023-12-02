@@ -25,7 +25,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
   };
 
   const [quoteLogViewLineItem, setQuoteLogViewLineItem] = useState(false);
-  const [quote, setQuote] = useState(false);
+  const [quote, setQuote] = useState([]);
   const getquotations = () => {
     api
       .post('/tender/getTabQuotelogById', { opportunity_id: id })
@@ -107,8 +107,8 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
                   </Col>
                 </Row>
 
-                {quote &&
-                  quote.map((element) => {
+                {quotation &&
+                  quotation.map((element) => {
                     return (
                       <Row>
                         <Col>
@@ -137,7 +137,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
                         </Col>
                         <Col>
                           <FormGroup>
-                            <Label>{element.total_amount}</Label>
+                            <Label>{element.amount}</Label>
                           </FormGroup>
                         </Col>
                         <Col>
