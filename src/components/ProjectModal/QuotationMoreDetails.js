@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row,
-  Col,
-  Form,
-  FormGroup,
-  Label,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  Button,
-} from 'reactstrap';
+import { Row, Col, Form, FormGroup, Label, Button, CardTitle } from 'reactstrap';
 import moment from 'moment';
 import * as Icon from 'react-feather';
 import api from '../../constants/api';
 //import ViewLineItemModal from './ViewLineItemModal';
 import ViewQuoteLogModal from './ViewQuoteLogModal';
-
-const BlueLabel = styled.label`
-  color: #2962ff;
-`;
+import EditQuotation from './EditQuotation';
+import AddLineItemModal from './AddLineItemModal';
+import PdfProjectQuote from '../PDF/PdfProjectQuote';
+import QuotationViewLineItem from './QuotationViewLineItems';
 
 export default function QuotationMoreDetails({
   id,
@@ -263,6 +253,6 @@ export default function QuotationMoreDetails({
             );
           })}
       </Form>
-    </>
+     </>
   );
 }
