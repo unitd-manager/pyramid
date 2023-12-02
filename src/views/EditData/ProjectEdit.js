@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import DuctingCostModal from '../../components/ProjectModal/DuctingCostModal';
-import ViewQuoteLogModal from '../../components/ProjectModal/ViewQuoteLogModal';
+//import ViewQuoteLogModal from '../../components/ProjectModal/ViewQuoteLogModal';
 import ViewLineItemModal from '../../components/ProjectModal/ViewLineItemModal';
 import EditQuotation from '../../components/ProjectModal/EditQuotation';
 import QuotationMoreDetails from '../../components/ProjectModal/QuotationMoreDetails';
@@ -44,7 +44,7 @@ const ProjectEdit = () => {
   const [projectDetail, setProjectDetail] = useState();
   const [activeTab, setActiveTab] = useState('1');
   const [addDuctingCostModal, setAddDuctingCostModal] = useState(false);
-  const [viewQuotationsModal, setViewQuotationsModal] = useState(false);
+  //const [viewQuotationsModal, setViewQuotationsModal] = useState(false);
   const [viewLineModal, setViewLineModal] = useState(false);
   const [editQuoteModal, setEditQuoteModal] = useState(false);
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
@@ -442,14 +442,14 @@ const ProjectEdit = () => {
           addPurchaseOrderModal={addPurchaseOrderModal}
           setAddPurchaseOrderModal={setAddPurchaseOrderModal}
         />
-
+{/* 
         {viewQuotationsModal && (
           <ViewQuoteLogModal
             viewQuotationsModal={viewQuotationsModal}
             setViewQuotationsModal={setViewQuotationsModal}
             id={id}
           />
-        )}
+        )} */}
         <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
         <EditQuotation editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} />
         <EditDeliveryOrder
@@ -475,7 +475,7 @@ const ProjectEdit = () => {
           {/* Tab 2 */}
           <TabPane tabId="2" eventkey="quotationMoreDetails">
             <QuotationMoreDetails
-              setViewQuotationsModal={setViewQuotationsModal}
+              // setViewQuotationsModal={setViewQuotationsModal}
               insertQuote={insertQuote}
               handleQuoteForms={handleQuoteForms}
               generateCodeQuote={generateCodeQuote}

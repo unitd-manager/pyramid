@@ -20,14 +20,17 @@ import message from '../Message';
 //import AppContext from '../../context/AppContext';
 
 
-const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteData,lineItem }) => {
+const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,projectInfo }) => {
   EditQuotation.propTypes = {
     editQuoteModal: PropTypes.bool,
     setEditQuoteModal: PropTypes.func,
     quoteData: PropTypes.object,
-    lineItem: PropTypes.object,
+    quoteId: PropTypes.any,
+    projectInfo: PropTypes.object,
   };
   const [previousquotationeditDetails, setPreviousQuotationeditDetails] = useState(null);
+  const [lineItem, setLineItem] = useState([]);
+
   //const { loggedInuser } = useContext(AppContext);
   const [quotationeditDetails, setQuotationeditDetails] = useState({
     project_id: id,
@@ -39,6 +42,14 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteData,lineItem }
   };
 
 
+
+  const getLineItem = () => {
+    api.post('/project/getQuoteLineItemsById', { quote_id: quoteId }).then((res) => {
+      setLineItem(res.data.data);
+      console.log('lineItem', res.data.data);
+    });
+  };
+  console.log('lineItem', quoteId);
 
   const saveCurrentDetails = () => {
     setPreviousQuotationeditDetails({ ...quotationeditDetails });
@@ -55,15 +66,19 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteData,lineItem }
       //   creation_date: creationdatetime,
       // };
      
-  
+      quoteData.project_id = projectInfo;
       api.post('/project/insertLog', quoteData).then((res) => {
         message('quote inserted successfully.', 'success');
         lineItem.forEach((element) => {
           element.quote_log_id = res.data.data.insertId;
           
-          api.post('/project/insertLogLine', element).then(() => {
-            window.location.reload();
-          });
+          api.post('/project/insertLogLine', element)
+  .then(() => {
+    // window.location.reload();
+  })
+  .catch((error) => {
+    console.error('Error inserting log line:', error);
+  });
         });
       });
     };
@@ -104,6 +119,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteData,lineItem }
 
   useEffect(() => {
     setQuotationeditDetails(quoteData);
+    getLineItem();
   }, [quoteData]);
   return (
     <>

@@ -49,19 +49,19 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
       .post('/subcon/insertsub_con_payments_history', createSubConHistory)
       .then(() => {
         message('History inserted successfully.');
-        setTimeout(() => {
-          console.log('Data saved successfully.');
-          // Reload the page after saving data
-          window.location.reload();
-        }, 2000);
+        // setTimeout(() => {
+        //   console.log('Data saved successfully.');
+        //   // Reload the page after saving data
+        //   window.location.reload();
+        // }, 2000);
       })
       .catch(() => {
         message('Network connection error.');
-        setTimeout(() => {
-          console.log('Data saved successfully.');
-          // Reload the page after saving data
-          window.location.reload();
-        }, 2000);
+        // setTimeout(() => {
+        //   console.log('Data saved successfully.');
+        //   // Reload the page after saving data
+        //   window.location.reload();
+        // }, 2000);
       });
   };
   //Chaning subcon status
@@ -73,11 +73,11 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
       })
       .then(() => {
         message('data inserted successfully.');
-        setTimeout(() => {
-          console.log('Data saved successfully.');
-          // Reload the page after saving data
-          window.location.reload();
-        }, 2000);
+        // setTimeout(() => {
+        //   console.log('Data saved successfully.');
+        //   // Reload the page after saving data
+        //   window.location.reload();
+        // }, 2000);
       })
       .catch(() => {
         message('Network connection error.');
@@ -197,23 +197,23 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
 
             finalCalculation(res.data.data.insertId);
     
-            setTimeout(() => {
-              console.log('Data saved successfully.');
-              // Reload the page after saving data
-              window.location.reload();
-            }, 2000);
+            // setTimeout(() => {
+            //   console.log('Data saved successfully.');
+            //   // Reload the page after saving data
+            //   window.location.reload();
+            // }, 2000);
          
           })
           .catch(() => {
-            setTimeout(() => {
-              console.log('Data saved successfully.');
-              // Reload the page after saving data
-              window.location.reload();
-            }, 2000);setTimeout(() => {
-              console.log('Data saved successfully.');
-              // Reload the page after saving data
-              window.location.reload();
-            }, 2000);
+            // setTimeout(() => {
+            //   console.log('Data saved successfully.');
+            //   // Reload the page after saving data
+            //   window.location.reload();
+            // }, 2000);setTimeout(() => {
+            //   console.log('Data saved successfully.');
+            //   // Reload the page after saving data
+            //   window.location.reload();
+            // }, 2000);
           });
       } else {
         message('Enter the amount less than total amount.');

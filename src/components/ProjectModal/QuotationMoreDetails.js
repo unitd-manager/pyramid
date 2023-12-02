@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row,
-  Col,
-  Form,
-  FormGroup,
-  Label,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  Button,
-} from 'reactstrap';
+import { Row, Col, Form, FormGroup, Label, Button, CardTitle } from 'reactstrap';
 import moment from 'moment';
 import * as Icon from 'react-feather';
 import api from '../../constants/api';
 //import ViewLineItemModal from './ViewLineItemModal';
 import ViewQuoteLogModal from './ViewQuoteLogModal';
-
-const BlueLabel = styled.label`
-  color: #2962ff;
-`;
+import EditQuotation from './EditQuotation';
+import AddLineItemModal from './AddLineItemModal';
+import PdfProjectQuote from '../PDF/PdfProjectQuote';
+import QuotationViewLineItem from './QuotationViewLineItems';
 
 export default function QuotationMoreDetails({
   id,
@@ -28,11 +18,13 @@ export default function QuotationMoreDetails({
   // handleQuoteForms,
   lineItem,
   // generateCodeQuote,
+  getLineItem,
   quotationsModal,
   setquotationsModal,
 }) {
   QuotationMoreDetails.propTypes = {
     id: PropTypes.string,
+    getLineItem: PropTypes.array,
    // setViewQuotationsModal: PropTypes.any,
     quotationsModal: PropTypes.object,
     setquotationsModal: PropTypes.object,
@@ -181,6 +173,7 @@ export default function QuotationMoreDetails({
                         <span
                           onClick={() => {
                             setQuote(element.quote_id);
+                            getLineItem(element.quote_id);
                             setQuotationViewLineItem(true);
                           }}
                         >
@@ -210,7 +203,7 @@ export default function QuotationMoreDetails({
                       </Col>
                       <Col md="4">
                         <Label>
-                          <PdfProjectQuote quotation={element.quote_id}></PdfProjectQuote>
+                        <PdfProjectQuote id={id} quoteId={element.quote_id}></PdfProjectQuote>
                         </Label>
                       </Col>
                       <Col md="2">
@@ -244,6 +237,8 @@ export default function QuotationMoreDetails({
                     setEditQuoteModal={setEditQuoteModal}
                     quoteData={quoteData}
                     lineItem={lineItem}
+                    quoteId={element.quote_id}
+                    projectInfo={id}
                   />
                    <AddLineItemModal
                   projectInfo={quote}
@@ -263,6 +258,6 @@ export default function QuotationMoreDetails({
             );
           })}
       </Form>
-    </>
-  );
+</>
+);
 }
