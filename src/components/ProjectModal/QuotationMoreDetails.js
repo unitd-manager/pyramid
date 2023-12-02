@@ -249,6 +249,8 @@ export default function QuotationMoreDetails({
                     <QuotationViewLineItem
                       quotationViewLineItem={quotationViewLineItem}
                       setQuotationViewLineItem={setQuotationViewLineItem}
+                      quoteId={element.quote_id}
+                      quoteData={quoteData}
                       id={id}
                       quote={quote}
                     />

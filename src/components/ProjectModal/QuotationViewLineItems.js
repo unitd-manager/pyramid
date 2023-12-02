@@ -125,7 +125,7 @@ const QuotationViewLineItem = ({
             FetchLineItemData={quoteLine}
               quoteData={quoteData}
               setQuoteData={setQuoteData}
-              
+              quoteId={quote}
             ></QuoteviewEditItem>
           )}
         </ModalBody>

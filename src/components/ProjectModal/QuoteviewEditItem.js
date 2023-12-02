@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   Row,
   Col,
@@ -17,15 +17,36 @@ import api from '../../constants/api';
 import message from '../Message';
 
 
-const QuoteViewEditItem = ({ quoteData, setQuoteData, FetchLineItemData }) => {
+const QuoteViewEditItem = ({ quoteData, setQuoteData, FetchLineItemData,quoteId, }) => {
   QuoteViewEditItem.propTypes = {
     quoteData: PropTypes.bool,
     setQuoteData: PropTypes.func,
     FetchLineItemData: PropTypes.object,
+    quoteId: PropTypes.any,
+   
   };
 const {id}=useParams();
   const [lineItemData, setLineItemData] = useState(null);
+  const [lineItem, setLineItem] = useState();
   const [totalAmount, setTotalAmount] = useState();
+  const [quotation, setQuotation] = useState();
+
+  const getQuotations = () => {
+    api
+      .post('/projecttabquote/getTabQuote', { quote_id: quoteId })
+      .then((res) => {
+        setQuotation(res.data.data[0]);
+      })
+  };
+  const getLineItem = () => {
+    api.post('/project/getQuoteLineItemsById', { quote_id: quoteId }).then((res) => {
+      setLineItem(res.data.data);
+    });
+  };
+  useEffect(() => {
+    getQuotations();
+    getLineItem();
+  }, [quoteId]);
 
   const handleData = (e) => {
     setLineItemData({ ...lineItemData, [e.target.name]: e.target.value });
@@ -38,21 +59,49 @@ const {id}=useParams();
     setTotalAmount(parseFloat(Qty) * parseFloat(UnitPrice));
   };
 
+  const insertquote = () => {
+    api.post('/project/insertLog', quotation).then((res) => {
+      message('quote inserted successfully.', 'success');
+
+      lineItem.forEach((element) => {
+        element.quote_log_id = res.data.data.insertId;
+
+        api
+          .post('/project/insertLogLine', element)
+          .then(() => {
+             window.location.reload();
+          })
+          .catch((error) => {
+            console.error('Error inserting log line:', error);
+          });
+      });
+    });
+  };
+
   const UpdateData = () => {
     lineItemData.quote_id=id;
     //lineItemData.amount=totalAmount;
+    
     lineItemData.amount = parseFloat(lineItemData.quantity) * parseFloat(lineItemData.unit_price) 
+    const hasChanges = JSON.stringify(lineItemData) !== JSON.stringify(FetchLineItemData);
     api
       .post('/tender/edit-TabQuoteLine', lineItemData)
       .then((res) => {
         console.log('edit Line Item', res.data.data);
         message('Edit Line Item Udated Successfully.', 'success');
+        if (hasChanges) {
+          insertquote();
+        }
         window.location.reload()
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');
       });
   };
+
+
+ 
+
 
   React.useEffect(() => {
     setLineItemData(FetchLineItemData);
