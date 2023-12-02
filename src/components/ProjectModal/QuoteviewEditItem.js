@@ -17,10 +17,10 @@ import api from '../../constants/api';
 import message from '../Message';
 
 
-const QuoteViewEditItem = ({ editLineModal, setEditLineModal, FetchLineItemData }) => {
+const QuoteViewEditItem = ({ quoteData, setQuoteData, FetchLineItemData }) => {
   QuoteViewEditItem.propTypes = {
-    editLineModal: PropTypes.bool,
-    setEditLineModal: PropTypes.func,
+    quoteData: PropTypes.bool,
+    setQuoteData: PropTypes.func,
     FetchLineItemData: PropTypes.object,
   };
 const {id}=useParams();
@@ -60,7 +60,7 @@ const {id}=useParams();
 
   return (
     <>
-      <Modal isOpen={editLineModal}>
+      <Modal isOpen={quoteData}>
         <ModalHeader>Line Items</ModalHeader>
         <ModalBody>
           <FormGroup>
@@ -78,7 +78,7 @@ const {id}=useParams();
           </FormGroup>
           <FormGroup>
             <Row>
-              <Label sm="2">Description</Label>
+              <Label sm="2">Desciption</Label>
               <Col sm="10">
                 <Input
                   type="textarea"
@@ -156,7 +156,7 @@ const {id}=useParams();
             type="button"
             onClick={() => {
               UpdateData();
-              setEditLineModal(false);
+              setQuoteData(false);
             }}
           >
             Save & Continue
@@ -165,7 +165,7 @@ const {id}=useParams();
             color="secondary"
             className="shadow-none"
             onClick={() => {
-              setEditLineModal(false);
+              setQuoteData(false);
             }}
           >
             {' '}

@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { Row, Form, Col, Label, FormGroup } from 'reactstrap';
-import { Link } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import api from '../../constants/api';
-import message from '../Message';
+
 import EditWorkOrder from './EditWorkOrder';
 import WorkOrderViewLineItem from './WorkOrderViewLineItem';
 import PdfProjectWorkOrder from '../PDF/PdfProjectWorkOrder';
 import WorkLineItemData from './WorkLineItemData';
 import SubconWorkPaymentHistory from './SubconWorkPaymentHistory';
 
-function SubConWorkOrderPortal({ projectId }) {
+function SubConWorkOrderPortal({ projectId ,subConWorkOrdeData}) {
   SubConWorkOrderPortal.propTypes = {
     projectId: PropTypes.string,
+    subConWorkOrdeData:PropTypes.object,
   };
 
-  const [subConWorkOrdeData, setSubConWorkOrdeData] = useState();
+  // const [subConWorkOrdeData, setSubConWorkOrdeData] = useState();
   const [editWorkOrderModal, setEditWorkOrderModal] = useState();
   const [workOrderViewLineItem, setWorkOrderViewLineItem] = useState();
   const [workOrderPaymentHistory, setWorkOrderPaymentHistory] = useState();
@@ -25,19 +24,16 @@ function SubConWorkOrderPortal({ projectId }) {
   const [workOrderLine, setWorkOrderLine] = useState(false);
   const [subCon, setSubCon] = useState();
 
-  const SubConWorkOrder = () => {
-    api
-      .post('/projecttabsubconworkorder/SubConWorkOrderPortal', { project_id: projectId })
-      .then((res) => {
-        setSubConWorkOrdeData(res.data.data);
-      })
-      .catch(() => {
-        message(' SubCon Work Order Data not found', 'info');
-      });
-  };
-  useEffect(() => {
-    SubConWorkOrder();
-  }, [projectId]);
+  // const SubConWorkOrder = () => {
+  //   api
+  //     .post('/projecttabsubconworkorder/SubConWorkOrderPortal', { project_id: projectId })
+  //     .then((res) => {
+  //       setSubConWorkOrdeData(res.data.data);
+  //     })
+  // };
+  // useEffect(() => {
+  //   SubConWorkOrder();
+  // }, [projectId]);
 
   return (
     <>
@@ -59,22 +55,22 @@ function SubConWorkOrderPortal({ projectId }) {
         <Row className="border-bottom mb-3">
           <Col>
             <FormGroup>
-              <Label>WO Code</Label>{' '}
+              <Label>WO Code</Label>
             </FormGroup>
           </Col>
           <Col>
             <FormGroup>
-              <Label>Date</Label>{' '}
+              <Label>Date</Label>
             </FormGroup>
           </Col>
           <Col>
             <FormGroup>
-              <Label>Sub Con</Label>{' '}
+              <Label>Sub Con</Label>
             </FormGroup>
           </Col>
           <Col>
             <FormGroup>
-              <Label>Status</Label>{' '}
+              <Label>Status</Label>
             </FormGroup>
           </Col>
           <Col>
@@ -151,23 +147,23 @@ function SubConWorkOrderPortal({ projectId }) {
                 <Col>
                   <FormGroup>
                     <Label>
-                      <Link to="">
-                        <span
+                      <div className="anchor">
+                        <u
                           onClick={() => {
                             setSubCon(element.sub_con_work_order_id);
                             setWorkOrderViewLineItem(true);
                           }}
                         >
                           View Line Items
-                        </span>
-                      </Link>
+                        </u>
+                      </div>
                     </Label>
                   </FormGroup>
                 </Col>
                 <Col>
                   <FormGroup>
                     <Label>
-                      <Link to="">
+                      <div className="anchor">
                         <span
                           onClick={() => {
                             setSubCon(element.sub_con_work_order_id);
@@ -176,7 +172,7 @@ function SubConWorkOrderPortal({ projectId }) {
                         >
                           Payment History
                         </span>
-                      </Link>
+                      </div>
                     </Label>
                   </FormGroup>
                 </Col>
@@ -185,7 +181,7 @@ function SubConWorkOrderPortal({ projectId }) {
                     <Row>
                       <Col md="2">
                         <Label>
-                          <Link to="">
+                          <div className="anchor">
                             <span
                               onClick={() => {
                                 setWorkData(element);
@@ -194,7 +190,7 @@ function SubConWorkOrderPortal({ projectId }) {
                             >
                               <Icon.Edit />
                             </span>
-                          </Link>
+                          </div>
                         </Label>
                       </Col>
                       <Col md="2">
@@ -208,7 +204,7 @@ function SubConWorkOrderPortal({ projectId }) {
                       </Col>
                       <Col md="2">
                         <Label>
-                          <Link to="">
+                          <div className="anchor">
                             {' '}
                             <span
                               onClick={() => {
@@ -218,7 +214,7 @@ function SubConWorkOrderPortal({ projectId }) {
                             >
                               <Icon.PlusCircle />
                             </span>{' '}
-                          </Link>
+                          </div>
                         </Label>
                       </Col>
                     </Row>

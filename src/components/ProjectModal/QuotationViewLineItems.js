@@ -122,9 +122,10 @@ const QuotationViewLineItem = ({
           </table>
           {quoteData && (
             <QuoteviewEditItem
-              quoteLine={quoteLine}
+            FetchLineItemData={quoteLine}
               quoteData={quoteData}
               setQuoteData={setQuoteData}
+              
             ></QuoteviewEditItem>
           )}
         </ModalBody>

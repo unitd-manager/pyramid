@@ -334,7 +334,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     productDetails.item_code = ItemCode;
     if (productDetails.title !== '' && productDetails.item_code !== '') {
       api
-        .post('/product/insertProduct', productDetails)
+        .post('/product/insertProductss', productDetails)
         .then(() => {
           message('Product inserted successfully.', 'success');
           getProduct();

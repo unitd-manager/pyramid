@@ -1,21 +1,25 @@
 import React from 'react';
 import pdfMake from 'pdfmake';
 import { useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import moment from 'moment';
-import { Button } from 'reactstrap';
 import api from '../../constants/api';
 import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
-const PdfMaterialPurchaseOrder = () => {
+const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder}) => {
+  PdfMaterialPurchaseOrder.propTypes = {
+    tabPurchaseOrderLineItemTable: PropTypes.any,
+    purchasePoOrder:PropTypes.any,
+    };
+
   const { id } = useParams();
   const [hfdata, setHeaderFooterData] = React.useState();
-  const [addPurchaseOrderModal, setAddPurchaseOrderModal] = React.useState();
-  const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = React.useState();
-  const [gTotal, setGtotal] = React.useState(0);
-  const [gstTotal, setGsttotal] = React.useState(0);
-  const [Total, setTotal] = React.useState(0);
+  //const [addPurchaseOrderModal, setAddPurchaseOrderModal] = React.useState();
+  // const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = React.useState();
+  //const [gTotal, setGtotal] = React.useState(0);
+  
 
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
@@ -29,30 +33,41 @@ const PdfMaterialPurchaseOrder = () => {
   const getPoProduct = () => {
     api
       .post('/purchaseorder/getProjectMaterialPurchaseByPdf', { project_id: id })
-      .then((res) => {
-        setAddPurchaseOrderModal(res.data.data[0]);
+      .then(() => {
+        //setAddPurchaseOrderModal(res.data.data[0]);
       })
       .catch(() => {
          
       });
   };
+  console.log("0",purchasePoOrder);
+  const calculateTotal = () => {
+    const grandTotal = tabPurchaseOrderLineItemTable.reduce((acc, element) => acc + element.amount, 0);
+    
+    return grandTotal;
+  };
+  const calculateGSTTotal = () => {
+    const gstValue = (purchasePoOrder.gst_percentage / 100) * calculateTotal() ;
+    console.log("PO1",gstValue);
+    
+    return gstValue;
+  };
+   const calculateGSTAmount = () => {
+    const gstAmountValue = calculateTotal() + calculateGSTTotal();
+    return gstAmountValue;
+  };
   const getPurchaseOrderId = () => {
     api
       .post('/purchaseorder/getProjectMaterialPurchaseByPdf', { project_id: id })
-      .then((res) => {
-        setTabPurchaseOrderLineItemTable(res.data.data);
+      .then(() => {
+        //setTabPurchaseOrderLineItemTable(res.data.data);
         //grand total
-        let grandTotal = 0;
-        let grand = 0;
-        let gst = 0;
-        res.data.data.forEach((elem) => {
-          grandTotal += elem.total_price;
-        });
-        setGtotal(grandTotal);
-        gst = grandTotal * 0.07;
-        setGsttotal(gst);
-        grand = grandTotal + gst;
-        setTotal(grand);
+        // let grandTotal = 0;
+        //     res.data.data.forEach((elem) => {
+        //   grandTotal += elem.amount;
+        // });
+        // setGtotal(grandTotal);
+        
       })
       .catch(() => {
          
@@ -115,14 +130,14 @@ const PdfMaterialPurchaseOrder = () => {
           style: 'tableBody2',
         },
         {
-          text: `${element.cost_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+          text: `${element.cost_price?element.cost_price.toLocaleString('en-IN', { minimumFractionDigits: 2 }):''}`,
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
           style: 'tableBody1',
         },
         {
           border: [false, false, false, true],
-          text: `${element.total_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+          text: `${element.amount?element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 }):''}`,
           fillColor: '#f5f5f5',
           style: 'tableBody1',
         },
@@ -151,15 +166,15 @@ const PdfMaterialPurchaseOrder = () => {
               stack: [
                 {
                   text: ` Po Number :${
-                    addPurchaseOrderModal.po_code ? addPurchaseOrderModal.po_code : ''
+                    purchasePoOrder.po_code ? purchasePoOrder.po_code : ''
                   } `,
                   style: ['textSize'],
                   margin: [120, 0, 0, 0],
                 },
                 {
                   text: ` Po Date : ${
-                    addPurchaseOrderModal.purchase_order_date
-                      ? moment(addPurchaseOrderModal.purchase_order_date).format('DD-MM-YYYY')
+                    purchasePoOrder.purchase_order_date
+                      ? moment(purchasePoOrder.purchase_order_date).format('DD-MM-YYYY')
                       : ''
                   } `,
                   style: ['textSize'],
@@ -167,8 +182,8 @@ const PdfMaterialPurchaseOrder = () => {
                 },
                 {
                   text: ` Your Ref :${
-                    addPurchaseOrderModal.supplier_reference_no
-                      ? addPurchaseOrderModal.supplier_reference_no
+                    purchasePoOrder.supplier_reference_no
+                      ? purchasePoOrder.supplier_reference_no
                       : ''
                   } `,
                   style: ['textSize'],
@@ -176,8 +191,8 @@ const PdfMaterialPurchaseOrder = () => {
                 },
                 {
                   text: ` Our Ref : ${
-                    addPurchaseOrderModal.our_reference_no
-                      ? addPurchaseOrderModal.our_reference_no
+                    purchasePoOrder.our_reference_no
+                      ? purchasePoOrder.our_reference_no
                       : ''
                   }`,
                   style: ['textSize'],
@@ -253,7 +268,7 @@ const PdfMaterialPurchaseOrder = () => {
               stack: [
                 {
                   text: `TO: ${
-                    addPurchaseOrderModal.supplier_name ? addPurchaseOrderModal.supplier_name : ''
+                    purchasePoOrder.supplier_name ? purchasePoOrder.supplier_name : ''
                   }\n `,
                   style: ['address', 'textSize'],
                   margin: [20, 0, 0, 0],
@@ -262,7 +277,7 @@ const PdfMaterialPurchaseOrder = () => {
 
                 {
                   text: `Contact Name :${
-                    addPurchaseOrderModal.first_name ? addPurchaseOrderModal.first_name : ''
+                    purchasePoOrder.first_name ? purchasePoOrder.first_name : ''
                   }`,
                   style: ['textSize'],
                   margin: [20, 0, 0, 0],
@@ -271,15 +286,15 @@ const PdfMaterialPurchaseOrder = () => {
             },
             {
               text: `${
-                addPurchaseOrderModal.company_name ? addPurchaseOrderModal.company_name : ''
-              }\n ${addPurchaseOrderModal.address_flat ? addPurchaseOrderModal.address_flat : ''} ${
-                addPurchaseOrderModal.address_state ? addPurchaseOrderModal.address_state : ''
+                purchasePoOrder.company_name ? purchasePoOrder.company_name : ''
+              }\n ${purchasePoOrder.address_flat ? purchasePoOrder.address_flat : ''} ${
+                purchasePoOrder.address_state ? purchasePoOrder.address_state : ''
               }\n ${
-                addPurchaseOrderModal.address_street ? addPurchaseOrderModal.address_street : ''
+                purchasePoOrder.address_street ? purchasePoOrder.address_street : ''
               }\n ${
-                addPurchaseOrderModal.address_country ? addPurchaseOrderModal.address_country : ''
+                purchasePoOrder.address_country ? purchasePoOrder.address_country : ''
               }\n ${
-                addPurchaseOrderModal.address_po_code ? addPurchaseOrderModal.address_po_code : ''
+                purchasePoOrder.address_po_code ? purchasePoOrder.address_po_code : ''
               }`,
               alignment: 'left',
               style: ['address', 'textSize'],
@@ -345,7 +360,7 @@ const PdfMaterialPurchaseOrder = () => {
               [
                 {
                   text: `${
-                    addPurchaseOrderModal.payment_terms ? addPurchaseOrderModal.payment_terms : ''
+                    purchasePoOrder.payment_terms ? purchasePoOrder.payment_terms : ''
                   }`,
                   alignment: 'center',
                   style: 'tableBody',
@@ -353,8 +368,8 @@ const PdfMaterialPurchaseOrder = () => {
                 },
                 {
                   text: `${
-                    addPurchaseOrderModal.creation_date
-                      ? moment(addPurchaseOrderModal.creation_date).format('DD-MM-YYYY')
+                    purchasePoOrder.creation_date
+                      ? moment(purchasePoOrder.creation_date).format('DD-MM-YYYY')
                       : ''
                   }`,
                   alignment: 'center',
@@ -416,28 +431,24 @@ const PdfMaterialPurchaseOrder = () => {
         {
           columns: [
             {
-              text: `Approved By :${addPurchaseOrderModal.po_code}`,
+              text: `Approved By :${purchasePoOrder.po_code}`,
               alignment: 'left',
               style: ['invoiceAdd', 'textSize'],
             },
             {
               stack: [
                 {
-                  text: `SubTotal $ :    ${gTotal.toLocaleString('en-IN', {
+                  text: `SubTotal $ :    ${calculateTotal().toLocaleString('en-IN', {
                     minimumFractionDigits: 2,
                   })}`,
                   style: ['textSize'],
                   margin: [130, 0, 0, 0],
                 },
                 '\n',
+               
+
                 {
-                  text: `Freight :            ${addPurchaseOrderModal.po_code}`,
-                  style: ['textSize'],
-                  margin: [145, 0, 0, 0],
-                },
-                '\n',
-                {
-                  text: `GST:       ${gstTotal.toLocaleString('en-IN', {
+                  text: `VAT:        ${calculateGSTTotal().toLocaleString('en-IN', {
                     minimumFractionDigits: 2,
                   })}`,
                   style: ['textSize'],
@@ -445,7 +456,7 @@ const PdfMaterialPurchaseOrder = () => {
                 },
                 '\n',
                 {
-                  text: `Total $ :     ${Total.toLocaleString('en-IN', {
+                  text: `Total $ :     ${calculateGSTAmount().toLocaleString('en-IN', {
                     minimumFractionDigits: 2,
                   })}`,
                   style: ['textSize'],
@@ -517,9 +528,9 @@ const PdfMaterialPurchaseOrder = () => {
 
   return (
     <>
-      <Button type="submit" className="btn btn-dark mr-2" onClick={GetPdf}>
-        Print Purchase Order
-      </Button>
+      <span onClick={GetPdf}>
+        Print Pdf
+      </span>
     </>
   );
 };

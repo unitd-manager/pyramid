@@ -222,12 +222,7 @@ export default function MaterialPurchased({
             Add all Qty to Stock
           </Button>
         </Col>
-        <Col>
-          <PdfMaterialPurchaseOrder
-            addPurchaseOrderModal={addPurchaseOrderModal}
-            tabPurchaseOrderLineItemTable={tabPurchaseOrderLineItemTable}
-          ></PdfMaterialPurchaseOrder>
-        </Col>
+     
       </Row>
 
       {testJsonData && <>{Object.values(groups).map((group,index)=>(
@@ -263,7 +258,12 @@ export default function MaterialPurchased({
               <Col>
                 <div className="anchor">
                   <span>
-                    <u style={{ color: '#fff' }}> print pdf </u>
+                  
+          <PdfMaterialPurchaseOrder
+            tabPurchaseOrderLineItemTable={group}
+            purchasePoOrder={group[0]}
+          ></PdfMaterialPurchaseOrder>
+        
                   </span>
                 </div>
               </Col>
@@ -309,7 +309,7 @@ export default function MaterialPurchased({
                       type="checkbox"
                       value={item.purchase_order_id}
                       onChange={(e) => {
-                        handleCheck(e, index, item);
+                        handleCheck(e, item);
                       }}
                     />
                   </FormGroup>
