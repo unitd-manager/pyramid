@@ -57,7 +57,7 @@ export default function CustomerFinanceReceipt({
                       <td>{element.receipt_date ? moment(element.receipt_date).format('DD-MM-YYYY') : ''}</td>
                       <td>{element.mode_of_payment}</td>
                       <td>{element.amount}</td>
-                      <td><PdfCreateReceipt projectDetail={projectDetail} receiptId ={element.receipt_id}></PdfCreateReceipt></td>
+                      <td><PdfCreateReceipt projectDetail={projectDetail} receiptId = {element.receipt_id}></PdfCreateReceipt></td>
                       <td>
                         <span
                           className="addline"

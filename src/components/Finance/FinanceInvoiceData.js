@@ -156,9 +156,9 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       });
   };
   //generateCode
-  const generateCode = (results, type) => {
+  const generateCode = (results) => {
     api
-      .post('/commonApi/getCodeValue', { type })
+      .post('/commonApi/getCodeValue', { type:'invoicestype' })
       .then((res) => {
         insertInvoice(results, res.data.data);
       })

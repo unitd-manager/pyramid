@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
+import api from '../../constants/api';
 import ComponentCard from '../ComponentCard';
 
 const ProjectEditForm = ({ projectDetail, setProjectDetail }) => {
@@ -13,6 +14,24 @@ const ProjectEditForm = ({ projectDetail, setProjectDetail }) => {
   const handleInputs = (e) => {
     setProjectDetail({ ...projectDetail, [e.target.name]: e.target.value });
   };
+
+  const [contact, setContact] = useState();
+
+  const getContact = () => {
+    api.post('/company/getContactByCompanyId', { company_id:projectDetail && projectDetail.company_id })
+      .then((res) => {
+        setContact(res.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact:", error);
+      });
+  };
+  
+
+  useEffect(() => {
+    getContact();
+  }, [projectDetail]); // Add projectDetail as a dependency
+  
 
   return (
     <>
@@ -96,16 +115,29 @@ const ProjectEditForm = ({ projectDetail, setProjectDetail }) => {
             </Row>
 
             <Row>
-              <Col md="3">
+            <Col md="3">
                 <FormGroup>
-                  <Label>Contact</Label>
+                  <Label>
+                    Contact
+                  </Label>
                   <Input
                     type="select"
-                    name="contact_id"
-                    defaultValue={projectDetail && projectDetail.contact_id}
                     onChange={handleInputs}
+                    value={projectDetail && projectDetail.contact_id}
+                    name="contact_id"
                   >
-                    <option value="">Please Select</option>
+                    <option value="" selected>
+                      Please Select
+                    </option>
+                    {contact &&
+                      contact.map((e) => {
+                        return (
+                          <option key={e.contact_id} value={e.contact_id}>
+                            {e.first_name}
+                          </option>
+                        );
+                      })}
+                
                   </Input>
                 </FormGroup>
               </Col>

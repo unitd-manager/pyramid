@@ -14,7 +14,7 @@ const PdfCreateReceipt = ({ receiptId,projectDetail }) => {
     projectDetail: PropTypes.any,
   };
   const [hfdata, setHeaderFooterData] = React.useState();
-  const [hfdata1, setHeaderFooterData1] = React.useState();
+  //const [hfdata1, setHeaderFooterData1] = React.useState();
   const [note, setNote] = React.useState();
   const [notes, setNotes] = React.useState();
 
@@ -22,12 +22,12 @@ const PdfCreateReceipt = ({ receiptId,projectDetail }) => {
     api.get('/setting/getSettingsForCompany').then((res) => {
       setHeaderFooterData(res.data.data);
     });
-  }, [0]);
-  React.useEffect(() => {
-    api.get('/setting/getSettingsForCompany1').then((res) => {
-      setHeaderFooterData1(res.data.data);
-    });
   }, []);
+  // React.useEffect(() => {
+  //   api.get('/setting/getSettingsForCompany1').then((res) => {
+  //     setHeaderFooterData1(res.data.data);
+  //   });
+  // }, []);
 
   const findCompany = (key) => {
     console.log('key', key);
@@ -38,8 +38,8 @@ const PdfCreateReceipt = ({ receiptId,projectDetail }) => {
       }
     } else {
      
-        const filteredResult1 = hfdata1.find((e) => e.key_text === key);
-        return filteredResult1 ? filteredResult1.value : '';
+        const filteredResult = hfdata.find((e) => e.key_text === key);
+        return filteredResult ? filteredResult.value : '';
       
     }
     return '';

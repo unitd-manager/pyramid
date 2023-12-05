@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Form, Table,CardTitle,Row } from 'reactstrap';
 import PdfCreateInvoice from '../PDF/PdfCreateInvoice';
- import PdfCreateInvoiceArabic from '../PDF/PdfCreateInvoiceArabic'
+ //import PdfCreateInvoiceArabic from '../PDF/PdfCreateInvoiceArabic'
 
 
 export default function CustomerFinanceInvoice({
@@ -36,7 +36,7 @@ export default function CustomerFinanceInvoice({
     { name: 'Invoice Date' },
     { name: 'Amount' },
     { name: 'Print' },
-     { name: 'PrintArabic' },
+   
     { name: 'Edit' },
     { name: 'Cancel' },
   ];
@@ -80,10 +80,10 @@ export default function CustomerFinanceInvoice({
                  ></PdfCreateInvoice>
          
                        </td>
-                        <td>
+                        {/* <td>
                          <PdfCreateInvoiceArabic invoiceData={{ arabicText: 'نص باللغة العربية' }} invoiceId = {element.invoice_id} /> 
          
-                       </td> 
+                       </td>  */}
                         <td>
                          
                             <span className='addline'

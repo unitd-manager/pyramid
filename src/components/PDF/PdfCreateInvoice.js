@@ -4,33 +4,53 @@ import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Button } from 'reactstrap';
 import moment from 'moment';
-import Converter from 'number-to-words';
+//import Converter from 'number-to-words';
 import api from '../../constants/api';
 import message from '../Message';
 import PdfFooter from './PdfFooter';
-import PdfHeader from './PdfHeader';
+import PdfHeader2 from './PdfHeader2';
+//import PdfHeader2 from './PdfHeader2';
 
-const PdfCreateInvoice = ({ invoiceId }) => {
+const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
   PdfCreateInvoice.propTypes = {
     invoiceId: PropTypes.any,
+    projectDetail: PropTypes.any,
   };
   const [hfdata, setHeaderFooterData] = React.useState();
+  //const [hfdata1, setHeaderFooterData1] = React.useState();
   const [cancelInvoice, setCancelInvoice] = React.useState([]);
   const [createInvoice, setCreateInvoice] = React.useState();
   const [gTotal, setGtotal] = React.useState(0);
-  const [gstTotal, setGsttotal] = React.useState(0);
-  const [Total, setTotal] = React.useState(0);
+
+  //const [gstTotal, setGstTotal] = React.useState(0);
+  //const [Total, setTotal] = React.useState(0);
 
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
       setHeaderFooterData(res.data.data);
     });
   }, []);
+  // React.useEffect(() => {
+  //   api.get('/setting/getSettingsForCompany1').then((res) => {
+  //     setHeaderFooterData1(res.data.data);
+  //   });
+  // }, []);
 
+  console.log('companyInvoice', projectDetail);
   const findCompany = (key) => {
-    const filteredResult = hfdata.find((e) => e.key_text === key);
-    return filteredResult.value;
+    console.log('key', key);
+    if (projectDetail.company_invoice === 'Company Invoice 1') {
+      if (hfdata && hfdata.length > 0) {
+        const filteredResult = hfdata.find((e) => e.key_text === key);
+        return filteredResult ? filteredResult.value : '';
+      }
+    } else {
+      const filteredResult = hfdata.find((e) => e.key_text === key);
+      return filteredResult ? filteredResult.value : '';
+    }
+    return '';
   };
+
   // Gettind data from Job By Id
   const getInvoiceById = () => {
     api
@@ -42,24 +62,25 @@ const PdfCreateInvoice = ({ invoiceId }) => {
         message('Invoice Data Not Found', 'info');
       });
   };
+  const calculateTotal = () => {
+    const grandTotal = cancelInvoice.reduce((acc, element) => acc + element.amount, 0);
+    const gstValue = createInvoice.gst_value || 0;
+    const total = grandTotal + gstValue;
+    return total;
+  };
+  //console.log('2', gstTotal);
   const getInvoiceItemById = () => {
     api
       .post('/invoice/getInvoiceItemByInvoiceId', { invoice_id: invoiceId })
       .then((res) => {
         setCancelInvoice(res.data.data);
-        //grand total
         let grandTotal = 0;
-        let grand = 0;
-        let gst = 0;
         res.data.data.forEach((elem) => {
           grandTotal += elem.amount;
         });
+
         setGtotal(grandTotal);
-        gst = grandTotal * 0.07;
-        setGsttotal(gst);
-        grand = grandTotal + gst;
-        setTotal(grand);
-      })
+         })
       .catch(() => {
         message('Invoice Data Not Found', 'info');
       });
@@ -79,22 +100,27 @@ const PdfCreateInvoice = ({ invoiceId }) => {
         {
           text: 'Description',
           style: 'tableHead',
+          alignment: 'center',
         },
         {
           text: 'Uom',
           style: 'tableHead',
+          alignment: 'center',
         },
         {
           text: 'Qty',
           style: 'tableHead',
+          alignment: 'center',
         },
         {
-          text: 'Price',
+          text: 'Unit Price',
           style: 'tableHead',
+          alignment: 'right',
         },
         {
           text: 'Total Amount',
           style: 'tableHead',
+          alignment: 'right',
         },
       ],
     ];
@@ -109,16 +135,19 @@ const PdfCreateInvoice = ({ invoiceId }) => {
           text: `${element.item_title ? element.item_title : ''}`,
           border: [false, false, false, true],
           style: 'tableBody',
+          alignment: 'center',
         },
         {
           text: `${element.unit ? element.unit : ''}`,
           border: [false, false, false, true],
           style: 'tableBody',
+          alignment: 'center',
         },
         {
           text: `${element.qty ? element.qty : ''}`,
           border: [false, false, false, true],
-          style: 'tableBody2',
+          style: 'tableBody',
+          alignment: 'center',
         },
         {
           text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
@@ -137,7 +166,7 @@ const PdfCreateInvoice = ({ invoiceId }) => {
 
     const dd = {
       pageSize: 'A4',
-      header: PdfHeader({ findCompany }),
+      header: PdfHeader2({ findCompany }),
       pageMargins: [40, 150, 40, 80],
       footer: PdfFooter,
       content: [
@@ -310,7 +339,7 @@ const PdfCreateInvoice = ({ invoiceId }) => {
           },
           table: {
             headerRows: 1,
-            widths: [20, 200, '*', '*', 60, 70],
+            widths: [20, 90, '*', '*', 50, 70],
 
             body: productItems,
           },
@@ -326,36 +355,36 @@ const PdfCreateInvoice = ({ invoiceId }) => {
             {
               stack: [
                 {
-                  text: `SubTotal $ :${gTotal.toLocaleString('en-IN', {
+                  text: `SubTotal $ : ${gTotal.toLocaleString('en-IN', {
                     minimumFractionDigits: 2,
                   })}`,
                   style: ['textSize'],
-                  margin: [130, 0, 0, 0],
+                  margin: [145, 0, 0, 0],
                 },
                 '\n',
                 {
-                  text: `Discount :${createInvoice.discount ? createInvoice.discount : ''}`,
+                  text: `Discount : ${createInvoice.discount ? createInvoice.discount : ''}`,
                   style: ['textSize'],
-                  margin: [130, 0, 0, 0],
+                  margin: [145, 0, 0, 0],
                 },
                 '\n',
                 {
-                  text: `GST:${gstTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+                  text: `VAT :  ${createInvoice.gst_value ? createInvoice.gst_value : ''}`,
                   style: ['textSize'],
-                  margin: [130, 0, 0, 0],
+                  margin: [145, 0, 0, 0],
                 },
                 '\n',
                 {
-                  text: `Total $ :${Total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+                  text: `Total $ : ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
                   style: ['textSize'],
-                  margin: [130, 0, 0, 0],
+                  margin: [145, 0, 0, 0],
                 },
               ],
             },
           ],
         },
         '\n',
-        { text: `Total $ :${Converter.toWords(Total)}` },
+        //{ text: `Total $ :${Converter.toWords(Total)}` },
         '\n',
 
         {

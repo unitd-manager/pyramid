@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Row, Col, Button, CardTitle, Table, Form } from 'reactstrap';
 import PropTypes from 'prop-types';
-import FinanceInvoiceData from '../FinanceTable/FinanceInvoiceData';
-import FinanceReceiptData from '../FinanceTable/FinanceReceiptData';
-import InvoiceModal from '../FinanceTable/InvoiceModal';
-import ReceiptModal from '../FinanceTable/ReceiptModal';
-import CustomerFinanceInvoice from '../FinanceTable/FinanceInvoiceModal';
-import CustomerFinanceReceipt from '../FinanceTable/CustomerFinanceReceipt';
+import FinanceInvoiceData from '../Finance/FinanceInvoiceData';
+import FinanceReceiptData from '../Finance/FinanceReceiptData';
+import InvoiceModal from '../Finance/InvoiceModal';
+import ReceiptModal from '../Finance/ReceiptModal';
+import CustomerFinanceInvoice from '../Finance/CustomerFinanceInvoice';
+import CustomerFinanceReceipt from '../Finance/CustomerFinanceReceipt';
 import api from '../../constants/api';
 import message from '../Message';
-import CreateFinance from '../FinanceTable/CreateFinance';
+import CreateFinance from '../Finance/CreateFinance';
 
 export default function FinanceTab({ projectDetail }) {
   FinanceTab.propTypes = {
@@ -204,6 +204,7 @@ export default function FinanceTab({ projectDetail }) {
           </Col>
         )}
       </Row>
+      {orderId && (
       <Row>
         <Col lg="6">
           <CardTitle tag="h4" className="border-bottom p-3 mb-0">
@@ -298,12 +299,14 @@ export default function FinanceTab({ projectDetail }) {
           </Table>
         </Col>
       </Row>
+          )}
       <FinanceInvoiceData
         editInvoiceData={editInvoiceData}
         setEditInvoiceData={setEditInvoiceData}
         projectInfo={id}
         orderId={orderId}
       />
+      
       {editCreateReceipt && (
         <FinanceReceiptData
           editCreateReceipt={editCreateReceipt}
@@ -312,7 +315,7 @@ export default function FinanceTab({ projectDetail }) {
           projectInfo={id}
         />
       )}
-
+  {orderId && (
       <Row>
         <Col>
           <Button
@@ -337,6 +340,7 @@ export default function FinanceTab({ projectDetail }) {
           </Button>
         </Col>
       </Row>
+  )}
       <InvoiceModal
         editModal={editModal}
         setEditModal={setEditModal}
@@ -349,14 +353,16 @@ export default function FinanceTab({ projectDetail }) {
         setReceiptDataModal={setReceiptDataModal}
         editReceiptDataModal={editReceiptDataModal}
       />
+        {orderId && (
       <Row className="mt-4">
         <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
           {' '}
           INVOICE(S){' '}
         </CardTitle>
       </Row>
-
+        )}
       <Form className="mt-4">
+      {orderId && (
         <Row className="border-bottom mb-3">
           <CustomerFinanceInvoice
             createInvoice={createInvoice}
@@ -371,15 +377,18 @@ export default function FinanceTab({ projectDetail }) {
             
           ></CustomerFinanceInvoice>
         </Row>
+      )}
       </Form>
+      {orderId && (
       <Row className="mt-4">
         <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
           {' '}
           RECEIPT(S){' '}
         </CardTitle>
       </Row>
-
+      )}
       <Form className="mt-4">
+      {orderId && (
         <Row className="border-bottom mb-3">
           <CustomerFinanceReceipt
             receipt={receipt}
@@ -390,6 +399,7 @@ export default function FinanceTab({ projectDetail }) {
             setReceiptDataModal={setReceiptDataModal}
           ></CustomerFinanceReceipt>
         </Row>
+      )}
       </Form>
     </>
   );

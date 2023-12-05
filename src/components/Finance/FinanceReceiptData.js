@@ -164,11 +164,13 @@ const FinanceReceiptData = ({ editCreateReceipt, setEditCreateReceipt,orderId, p
   //     message('Please fill all required fields', 'warning');
   //  }
   };
+  
   const generateCode = () => {
     api
       .post('/commonApi/getCodeValue', { type:'receipt'})
       .then((res) => {
         insertReceipt(res.data.data);
+        insertReceiptHistory(res.data.data);
       })
       .catch(() => {
         insertReceipt('');
@@ -194,7 +196,7 @@ const FinanceReceiptData = ({ editCreateReceipt, setEditCreateReceipt,orderId, p
   };
 
 
-
+  
   // const insertInvoices = () => {
   //   invoices.forEach((obj) => {
   //     insertReceiptHistory(obj);
@@ -212,7 +214,7 @@ const FinanceReceiptData = ({ editCreateReceipt, setEditCreateReceipt,orderId, p
       setInvoiceReceipt(result);
     });
   };
-  //Calculation for Invoice checkbox amount
+     //Calculation for Invoice checkbox amount
   const result = [];
   const addAndDeductAmount = (checkboxVal, receiptObj) => {
     const remainingAmount = receiptObj.invoice_amount - receiptObj.prev_amount
@@ -258,23 +260,22 @@ const FinanceReceiptData = ({ editCreateReceipt, setEditCreateReceipt,orderId, p
                       invoiceReceipt.map((singleInvoiceObj) => {
                         return (
                           <Row key={singleInvoiceObj.invoice_id}>
-                            <Col md="12">
-                              <FormGroup check>
-                                <Input
-                                  onChange={(e) => {
-                                    addAndDeductAmount(e, singleInvoiceObj);
-                                    getInvoices(e, singleInvoiceObj);
-                                  }}
-                                  name="invoice_code(prev_amount)"
-                                  type="checkbox"
-                                />
-                                <span>
-                                  {singleInvoiceObj.invoice_code}({singleInvoiceObj.invoice_amount})
-                                  Paid - {singleInvoiceObj.prev_amount}
-                                </span>
-                              </FormGroup>
-                            </Col>
-                          </Row>
+                          <Col md="12">
+                            <FormGroup check>
+                              <Input
+                                onChange={(e) => {
+                                  addAndDeductAmount(e, singleInvoiceObj);
+                                  getInvoices(e, singleInvoiceObj);
+                                }}
+                                name="invoice_code(prev_amount)"
+                                type="checkbox"
+                              />
+                              <span>
+                                {singleInvoiceObj.invoice_code} ({singleInvoiceObj.invoice_amount}) - Paid: {singleInvoiceObj.prev_amount}
+                              </span>
+                            </FormGroup>
+                          </Col>
+                        </Row>
                         );
                       })}
                     <br></br>
