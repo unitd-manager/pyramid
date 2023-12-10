@@ -32,6 +32,7 @@ const EditCostingSummaryModal = ({
   const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
   const { id } = useParams();
   const [totalLabour, setTotalLabour] = useState();
+  const [totalCost, setTotalCost] = useState();
   //edit Tab Costing Summary Form
   const handleCostingSummeryInputs = (e) => {
     seteditCostingSummaryData({ ...editCostingSummaryData, [e.target.name]: e.target.value });
@@ -44,12 +45,37 @@ const EditCostingSummaryModal = ({
     if (!totallabourcharges) totallabourcharges = 0;
 
     setTotalLabour(
-      parseFloat(noofworkerused) * parseFloat(noofdaysworked) * parseFloat(labourratesperday),
+      parseFloat(noofworkerused) * parseFloat(noofdaysworked)* parseFloat(labourratesperday) 
+     
     );
+    console.log('totalLabour',totalLabour)
+   
   };
+  
+  const handleCalcTotal = (totalMaterialPrice, transportCharges, totalLabourCharges, salesmanCommission, financeCharges, officeOverheads, otherCharges, totalCosts) => {
+    if (!totalMaterialPrice) totalMaterialPrice = 0;
+    if (!transportCharges) transportCharges = 0;
+    if (!totalLabourCharges) totalLabourCharges = 0;
+    if (!salesmanCommission) salesmanCommission = 0;
+    if (!financeCharges) financeCharges = 0;
+    if (!officeOverheads) officeOverheads = 0;
+    if (!otherCharges) otherCharges = 0;
+    if (!totalCosts) totalCosts = 0;
+
+   const totalLabourcal = totalLabour || totalLabourCharges 
+    setTotalCost(
+      parseFloat(totalMaterialPrice) + parseFloat(transportCharges) + 
+      parseFloat(totalLabourcal) + parseFloat(salesmanCommission) 
+      +parseFloat(financeCharges) + parseFloat(officeOverheads) + parseFloat(otherCharges) 
+    );
+    console.log('totalCost',totalCost)
+   
+  };
+  // console.log('totalLabours',totalLabours)
   const EditCostingSummary = () => {
     editCostingSummaryData.opportunity_id = id;
-    editCostingSummaryData.total_labour_charges = totalLabour;
+    editCostingSummaryData.total_labour_charges = totalLabour || costingsummary.total_labour_charges;
+    editCostingSummaryData.total_cost = totalCost || costingsummary.total_cost;
     api.post('/tender/edit-TabCostingSummaryForm', editCostingSummaryData).then(() => {
       setEditCostingSummaryModel(false);
       window.location.reload();
@@ -141,51 +167,6 @@ const EditCostingSummaryModal = ({
                         />
                       </FormGroup>
                     </Col>
-
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>Total Price (S$ W/o VAT)</Label>
-                        <Input
-                          type="number"
-                          onChange={(e) => {
-                            handleCostingSummeryInputs(e);
-                          }}
-                          defaultValue={costingsummary && costingsummary.po_price}
-                          name="po_price"
-                        />
-                      </FormGroup>
-                    </Col>
-
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>Profit Margin %</Label>
-                        <Input
-                          type="number"
-                          disabled
-                          onChange={(e) => {
-                            handleCostingSummeryInputs(e);
-                          }}
-                          defaultValue={costingsummary && costingsummary.profit_percentage}
-                          name="profit_percentage"
-                        />
-                      </FormGroup>
-                    </Col>
-
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>Profit Margin</Label>
-                        <Input
-                          type="number"
-                          disabled
-                          name="profit"
-                          onChange={(e) => {
-                            handleCostingSummeryInputs(e);
-                          }}
-                          defaultValue={costingsummary && costingsummary.profit}
-                          tabindex="-1"
-                        />
-                      </FormGroup>
-                    </Col>
                   </Row>
                 </Form>
               </CardBody>
@@ -203,6 +184,16 @@ const EditCostingSummaryModal = ({
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
+                          handleCalcTotal(
+                              e.target.value, 
+                              costingsummary.transport_charges,
+                              costingsummary.total_labour_charges,
+                              costingsummary.salesman_commission,
+                              costingsummary.finance_charges,
+                              costingsummary.office_overheads,
+                              costingsummary.other_charges,
+                              costingsummary.total_cost
+                          )
                         }}
                         defaultValue={costingsummary && costingsummary.total_material_price}
                         name="total_material_price"
@@ -217,6 +208,16 @@ const EditCostingSummaryModal = ({
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
+                          handleCalcTotal(
+                            costingsummary.total_material_price,
+                            e.target.value, 
+                            costingsummary.total_labour_charges,
+                            costingsummary.salesman_commission,
+                            costingsummary.finance_charges,
+                            costingsummary.office_overheads,
+                            costingsummary.other_charges,
+                            costingsummary.total_cost
+                          )
                         }}
                         defaultValue={costingsummary && costingsummary.transport_charges}
                         name="transport_charges"
@@ -226,7 +227,7 @@ const EditCostingSummaryModal = ({
 
                   <Col md="4">
                     <FormGroup>
-                      <Label>Total Labour Charges</Label>
+                      <Label>Total Charges</Label>
                       <Input
                         type="number"
                         disabled
@@ -238,6 +239,16 @@ const EditCostingSummaryModal = ({
                             costingsummary.labour_rates_per_day,
                             e.target.value,
                           );
+                          handleCalcTotal( 
+                            costingsummary.total_material_price,
+                            costingsummary.transport_charges,
+                            e.target.value,
+                            costingsummary.salesman_commission,
+                            costingsummary.finance_charges,
+                            costingsummary.office_overheads,
+                            costingsummary.other_charges,
+                            costingsummary.total_cost
+                            )
                         }}
                         value={totalLabour || costingsummary.total_labour_charges}
                         name="total_labour_charges"
@@ -254,6 +265,16 @@ const EditCostingSummaryModal = ({
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
+                          handleCalcTotal(
+                            costingsummary.total_material_price, 
+                            costingsummary.transport_charges,
+                            costingsummary.total_labour_charges,
+                            e.target.value, 
+                            costingsummary.finance_charges,
+                            costingsummary.office_overheads,
+                            costingsummary.other_charges,
+                            costingsummary.total_cost
+                          )
                         }}
                         defaultValue={costingsummary && costingsummary.salesman_commission}
                         name="salesman_commission"
@@ -268,6 +289,16 @@ const EditCostingSummaryModal = ({
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
+                          handleCalcTotal(
+                            costingsummary.total_material_price, 
+                            costingsummary.transport_charges,
+                            costingsummary.total_labour_charges,
+                            costingsummary.salesman_commission,
+                            e.target.value, 
+                            costingsummary.office_overheads,
+                            costingsummary.other_charges,
+                            costingsummary.total_cost
+                          )
                         }}
                         defaultValue={costingsummary && costingsummary.finance_charges}
                         name="finance_charges"
@@ -282,6 +313,16 @@ const EditCostingSummaryModal = ({
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
+                          handleCalcTotal(
+                            costingsummary.total_material_price, 
+                            costingsummary.transport_charges,
+                            costingsummary.total_labour_charges,
+                            costingsummary.salesman_commission,
+                            costingsummary.finance_charges,
+                            e.target.value, 
+                            costingsummary.other_charges,
+                            costingsummary.total_cost
+                          )
                         }}
                         defaultValue={costingsummary && costingsummary.office_overheads}
                         name="office_overheads"
@@ -298,6 +339,16 @@ const EditCostingSummaryModal = ({
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
+                          handleCalcTotal(
+                            costingsummary.total_material_price, 
+                            costingsummary.transport_charges,
+                            costingsummary.total_labour_charges,
+                            costingsummary.salesman_commission,
+                            costingsummary.finance_charges,
+                            costingsummary.office_overheads,
+                            e.target.value, 
+                            costingsummary.total_cost
+                          )
                         }}
                         defaultValue={costingsummary && costingsummary.other_charges}
                         name="other_charges"
@@ -314,12 +365,54 @@ const EditCostingSummaryModal = ({
                         disabled
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
+                          handleCalcTotal(
+                            costingsummary.total_material_price, 
+                            costingsummary.transport_charges,
+                            costingsummary.total_labour_charges,
+                            costingsummary.salesman_commission,
+                            costingsummary.finance_charges,
+                            costingsummary.office_overheads,
+                            costingsummary.other_charges,
+                            e.target.value, 
+                          )
                         }}
-                        value={costingsummary && costingsummary.total_cost}
+                        value={totalCost || costingsummary && costingsummary.total_cost}
                       />
                     </FormGroup>
                   </Col>
                 </Row>
+                <Row>
+                <Col md="4">
+                      <FormGroup>
+                        <Label>Profit Margin %</Label>
+                        <Input
+                          type="number"
+                          disabled
+                          onChange={(e) => {
+                            handleCostingSummeryInputs(e);
+                          }}
+                          defaultValue={costingsummary && costingsummary.profit_percentage}
+                          name="profit_percentage"
+                        />
+                      </FormGroup>
+                    </Col>
+
+                    <Col md="4">
+                      <FormGroup>
+                        <Label>Profit Margin Value</Label>
+                        <Input
+                          type="number"
+                          disabled
+                          name="profit"
+                          onChange={(e) => {
+                            handleCostingSummeryInputs(e);
+                          }}
+                          defaultValue={costingsummary && costingsummary.profit}
+                          tabindex="-1"
+                        />
+                      </FormGroup>
+                    </Col>
+                    </Row>
               </CardBody>
               <CardBody>
                 <CardTitle className="mb-0 bg-light"></CardTitle>

@@ -1,4 +1,3 @@
-/*eslint-disable */
 import React, { useState } from 'react';
 import {
   Row,
@@ -49,22 +48,10 @@ const AddCostingSummaryModal = ({
       transport_charges: '',
       other_charges: '',
       salesman_commission: '',
+      profit_percentage:'',
     },
   ]);
-  //Insert Invoice Item
-  // const addLineItemApi = (obj) => {
-  //   obj.opportunity_id = projectInfo;
-  //   obj.quote_id = quoteLine;
-  //   api
-  //     .post('/tender/insertQuoteItems', obj)
-  //     .then(() => {
-  //       message('Line Item Added Successfully', 'sucess');
-  //       window.location.reload();
-  //     })
-  //     .catch(() => {
-  //       message('Cannot Add Line Items', 'error');
-  //     });
-  // };
+  
   const AddCostingSummary = (obj) => {
     //obj.opportunity_costing_summary_id=id;
     obj.opportunity_id = projectInfo;
@@ -79,22 +66,7 @@ const AddCostingSummaryModal = ({
       });
   };
 
-  //Add new line item
-  // const AddNewLineItem = () => {
-  //   setAddLineItem([
-  //     ...addLineItem,
-  //     {
-  //       id: new Date().getTime().toString(),
-  //       unit: '',
-  //       no_of_days_worked: '',
-  //       labour_rates_per_day: '',
-  //       remarks: '',
-  //       amount: '',
-  //       title: '',
-  //       description: '',
-  //     },
-  //   ]);
-  // };
+  
   //Invoice item values
   const getAllValues = () => {
     const result = [];
@@ -137,11 +109,9 @@ const AddCostingSummaryModal = ({
       const financeCharges = parseFloat(allValues.finance_charges) || 0;
       const officeOverHeads = parseFloat(allValues.office_overheads) || 0;
       const otherCharges = parseFloat(allValues.other_charges) || 0;
-      const totalCost = parseFloat(allValues.total_cost) || 0;
-      const poPrice = parseFloat(allValues.po_price) || 0;
-      const profits = parseFloat(allValues.profit) || 0;
       const profitPercentage = parseFloat(allValues.profit_percentage) || 0;
       const totalMaterialPrice = parseFloat(allValues.total_material_price) || 0;
+
       
       // Calculate the total_cost by adding transport_charges and other_charges
       allValues.total_cost =
@@ -152,41 +122,16 @@ const AddCostingSummaryModal = ({
         officeOverHeads +
         otherCharges+
         totalMaterialPrice;
-        allValues.profit =  parseFloat(transportCharges +
-          totalLabourCharges +
-          salesmanCommission +
-          financeCharges +
-          officeOverHeads +
-          otherCharges+
-          totalMaterialPrice)*parseFloat(profitPercentage)*parseFloat(0.01);
-    
-      //allValues.profit_percentage = (profit / poPrice) * 100;
-      result.push(allValues);
+        allValues.profit = (profitPercentage / 100) * allValues.total_cost;
+        console.log('After profit calculation:', allValues);
+              result.push(allValues);
     });
+    
     // Return the result array
     setAddLineItem(result);
   };
 
-  // result.forEach((e) => {
-  //   if (e.invoiced_price) {
-  //     totalValue += parseFloat(e.invoiced_price);
-  //   }
-  // });
-  // console.log(result);
-  // setAddLineItem(result);
-  // setTotalAmount(totalValue);
-  // Clear row value
-  // const ClearValue = (ind) => {
-  //   setAddLineItem((current) =>
-  //     current.filter((obj) => {
-  //       return obj.id !== ind.id;
-  //     }),
-  //   );
-  //   if (ind.amount) {
-  //     const finalTotal = totalAmount - parseFloat(ind.amount);
-  //     setTotalAmount(finalTotal);
-  //   }
-  // };
+  
   return (
     <>
       <Modal size="lg" isOpen={addCostingSummaryModel}>
@@ -249,23 +194,7 @@ const AddCostingSummaryModal = ({
                                   </FormGroup>
                                 </Col>
                               </Row>
-                              <Row>
-                                <Col md="4">
-                                  <FormGroup>
-                                    <Label>Total Price</Label>
-                                    <Input
-                                      Value={item.po_price}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
-                                      type="number"
-                                      name="po_price"
-                                    />
-                                  </FormGroup>
-                                </Col>
-
-                            
-                              </Row>
+                             
                               <CardBody className="bg-light">
                                 <CardTitle tag="h4" className="mb-0"></CardTitle>
                               </CardBody>
@@ -316,7 +245,7 @@ const AddCostingSummaryModal = ({
                               <Row>
                                 <Col md="4">
                                   <FormGroup>
-                                    <Label>salesman commission</Label>
+                                    <Label>Salesman Commission</Label>
                                     <Input
                                       Value={item.salesman_commission}
                                       onBlur={() => {
