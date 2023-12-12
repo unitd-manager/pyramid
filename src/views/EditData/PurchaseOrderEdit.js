@@ -118,19 +118,12 @@ const PurchaseOrderEdit = () => {
         if (elem.status !== 'Closed') {
           elem.status = 'Closed';
           elem.qty_updated = elem.qty_delivered;
-          elem.qty_in_stock += parseFloat(elem.qty_delivered);
-          api.post('/product/edit-ProductQty', elem);
+          elem.qty_in_stock += elem.qty_delivered;
+       
           api
-            .post('/purchaseorder/editTabPurchaseOrderLineItem', elem)
+            .post('/inventory/editInventoryStock', elem)
             .then(() => {
-              api
-                .post('/inventory/editInventoryStock', elem)
-                .then(() => {
-                  message('Quantity updated in inventory successfully.', 'success');
-                })
-                .catch(() => {
-                  message('unable to update quantity in inventory.', 'danger');
-                });
+            
               message('Quantity added successfully.', 'success');
             })
             .catch(() => {

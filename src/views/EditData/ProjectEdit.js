@@ -197,31 +197,17 @@ const ProjectEdit = () => {
       const selectedProducts = checkId;
       setCheckId([]);
       selectedProducts.forEach((elem) => {
-        console.log('elem', elem);
+     
         if (elem.item.status !== 'Closed') {
           elem.item.status = 'Closed';
           elem.item.qty_updated = elem.item.qty_delivered;
           elem.item.qty_in_stock += parseFloat(elem.item.qty_delivered);
 
           api
-            .post('/purchaseorder/editTabPurchaseOrderLineItem', elem.item)
+            .post('/inventory/editInventoryStock', elem.item)
             .then(() => {
-              api
-                .post('/product/edit-ProductQty', elem.item)
-                .then(() => {
-                  message('Quantity updated in product successfully.', 'success');
-                  api
-                    .post('/inventory/editInventoryStock', elem.item)
-                    .then(() => {
-                      message('Quantity updated in inventory successfully.', 'success');
-                    })
-                    .catch(() => {
-                      message('unable to update quantity in inventory.', 'danger');
-                    });
-                })
-                .catch(() => {
-                  message('unable to update quantity in inventory.', 'danger');
-                });
+              message('Quantity added successfully.', 'success');
+               
             })
             .catch(() => {
               message('unable to add quantity.', 'danger');

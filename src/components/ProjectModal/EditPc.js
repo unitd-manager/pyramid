@@ -4,6 +4,7 @@ import random from 'random';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types'
 import moment from 'moment';
+import * as $ from 'jquery';
 import message from '../Message'
 import api from '../../constants/api'
 
@@ -26,6 +27,8 @@ function EditPc({editPcModal,setEditPcModal,pc,projectClaimId}) {
     },
   ]);
   const AddNewLineItem = () => {
+    console.log('Add Line Item button clicked');
+
     setAddLineItem([
       ...addLineItem,
       {
@@ -42,12 +45,30 @@ function EditPc({editPcModal,setEditPcModal,pc,projectClaimId}) {
  
 //get line items
 const getClaimLineItems=()=>{
-  api.post('/claim/TabClaimPortalLineItemById',{project_id:id,project_claim_id:projectClaimId})
+  api.post('/claim/TabClaimPortalLineItem',{project_id:id,project_claim_id:projectClaimId})
   .then((res)=>{
     setClaimItems(res.data.data);
   }).catch(()=>{
     message('unable to get products','error');
   })
+}
+
+function updateState(index, property, e, isAddLineItem) {
+  const updatedItems = isAddLineItem ? [...addLineItem] : [...claimItems];
+  const updatedObject = { ...updatedItems[index], [property]: e.target.value };
+
+  if (!isAddLineItem) {
+    // Include claim_line_items_id when updating existing items
+    updatedObject.claim_line_items_id = updatedItems[index].claim_line_items_id;
+  }
+
+  updatedItems[index] = updatedObject;
+
+  if (isAddLineItem) {
+    setAddLineItem(updatedItems);
+  } else {
+    setClaimItems(updatedItems);
+  }
 }
 //edit claim items
 const editClaimLineItems=(elem)=>{
@@ -63,43 +84,80 @@ message('Unable to edit record.', 'error');
 }
 
 //Insert claim line items
-const insertClaimLineItems=(elem)=>{
+const insertClaimLineItems = (elem) => {
+  // Modify the API call to handle an array of line items
   elem.project_claim_id=projectClaimId;
   elem.project_id=id;
-api.post('/claim/insertClaimLineItems',elem)
-.then(() => {
-message('Record created successfully', 'success');
-})
-.catch(() => {
-message('Unable to edit record.', 'error');
-});
-
-}
-
-
-function updateState(index,property,e){
- 
-  const updatedLineItems=[... claimItems];
-const updatedObject = {...updatedLineItems[index], [property]: e.target.value};
-updatedLineItems[index] = updatedObject;
-setClaimItems(updatedLineItems);
-
+  api
+    .post('/claim/insertClaimLineItems11', elem) // Wrap elem in an array
+    .then(() => {
+      message('Record created successfully', 'success');
+    })
+    .catch(() => {
+      message('Unable to create record.', 'error');
+    });
 };
 
-  const insertOrEditClaimItems=()=>{
-    claimItems.forEach((el)=>{
-      if(el.claim_line_items_id){
-        editClaimLineItems(el)
-      }else{
-        insertClaimLineItems(el)
+const insertOrEditClaimItems = async () => {
+  try {
+    // Update existing claim items
+    const editPromises = claimItems.map(async (el) => {
+      if (el.claim_line_items_id) {
+        await editClaimLineItems(el);
       }
-    })
-    addLineItem.forEach((el)=>{
-      if(el.title!==''&& el.amount){
-        insertClaimLineItems(el)
-      }
-    })
+    });
+
+   
+    const getAllValues = () => {
+      return new Promise((resolve) => {
+        const result = [];
+        $('tr.lineitem1').each(function input() {
+          const allValues = {};
+          $(this)
+            .find('input')
+            .each(function output() {
+              const fieldName = $(this).attr('name');
+              const value = $(this).val().trim(); // Trim to remove leading/trailing whitespaces
+              allValues[fieldName] = value;
+            });
+    
+          // Check if all values are non-empty before pushing into the result array
+          const isEmpty = Object.values(allValues).some((value) => value === '');
+          if (!isEmpty) {
+            result.push(allValues);
+          }
+        });
+    
+        // Insert claim line items only if there are non-empty values
+        if (result.length > 0) {
+          result.forEach((element) => {
+            insertClaimLineItems(element);
+          });
+        }else{
+          message('Please fill all fields', 'danger');
+        }
+    
+        resolve(); // Resolve the promise when everything is done
+      });
+    };
+    
+
+    // Wait for all promises to complete
+    await Promise.all([...editPromises, getAllValues()]);
+
+
+    // After all promises are completed, close the modal
+    setEditPcModal(false);
+    // Optionally, you may want to update the state or perform any other actions after the API calls are completed.
+  } catch (error) {
+    // Handle errors here
+    console.error('Error:', error);
+    message('Error occurred while saving data.', 'error');
   }
+};
+
+
+  
 
 useEffect(()=>{
   getClaimLineItems();
@@ -115,20 +173,30 @@ useEffect(()=>{
                             <Row>
                             <Col md="3">
                             <FormGroup>
-                           <Button onClick={()=>AddNewLineItem}>Add More Items</Button>
+                            <Button
+                        className="shadow-none"
+                        color="primary"
+                        type="button"
+                        onClick={() => {
+                          AddNewLineItem();
+                        }}
+                      >
+                        Add Line Item
+                      </Button>
                            
                             </FormGroup>
                         </Col>
                             <Col md="3">
                             <FormGroup>
                             <Label>Date</Label>
-                            <Input type="date" name="date"  value={moment(new Date()).format('YYYY-MM-DD')} />
+                            <Input type="date" name="claim_date" value={moment(new Date()).format('YYYY-MM-DD')} />
+
                             </FormGroup>
                         </Col>
                         <Col md="4">
                             <FormGroup>
                             <Label>Project</Label>
-                            <Input name="project"  type="text" value={pc && pc.title}/>
+                            <Input name="project"  type="text" value={pc && pc.title} disabled/>
                             </FormGroup>
                         </Col>
                       
@@ -150,17 +218,17 @@ useEffect(()=>{
                                 return (
                                   <tr key={item.id}>
                                     
-                                    <td data-label="title">
+                                    <td data-label="Title">
                                       <Input
                                         defaultValue={item.title}
-                                        type="textarea"
+                                        type="text"
                                         name="title"
                                         onChange={(e)=>updateState(index,"title",e)}
                                       />
                                     </td>
                                   
-                                    <td data-label="description">
-                                      <Input defaultValue={item.description} type="textarea" name="description" 
+                                    <td data-label="Description">
+                                      <Input defaultValue={item.description} type="text" name="description" 
                                       onChange={(e)=>updateState(index,"description",e)}/>
                                     </td>
                                     <td data-label="amount">
@@ -185,38 +253,38 @@ useEffect(()=>{
                                   </tr>
                                 );
                               })}
-                               {addLineItem && addLineItem.map((item,index) => {
+                               {addLineItem && addLineItem.map((itemqwe) => {
                                 return (
-                                  <tr key={item.id}>
+                                  <tr className='lineitem1' key={itemqwe.id}>
                                     
-                                    <td data-label="title">
+                                    <td data-label="Title">
                                       <Input
-                                        defaultValue={item.title}
-                                        type="textarea"
+                                        Value={itemqwe.title}
+                                        type="text"
                                         name="title"
-                                        onChange={(e)=>updateState(index,"title",e)}
+                                        
                                       />
                                     </td>
                                   
-                                    <td data-label="description">
-                                      <Input defaultValue={item.description} type="textarea" name="description" 
-                                      onChange={(e)=>updateState(index,"description",e)}/>
+                                    <td data-label="Description">
+                                      <Input Value={itemqwe.description} type="text" name="description" 
+                                     />
                                     </td>
                                     <td data-label="amount">
                                       <Input
-                                        defaultValue={item.amount}
+                                        Value={itemqwe.amount}
                                       
-                                        type="text"
+                                        type="number"
                                         name="amount"
-                                        onChange={(e)=>updateState(index,"amount",e)}
+                                       
                                       />
                                     </td>
                                     <td data-label="Status">
                                       <Input
-                                        defaultValue={item.status}
+                                        Value={itemqwe.status}
                                         type="text"
                                         name="status"
-                                        onChange={(e)=>updateState(index,"status",e)}
+                                      
                                       />
                                     </td>
                                     

@@ -14,6 +14,7 @@ function NewPcModal({newPcModal, setNewPcModal,pc,projectClaimId}) {
         pc:PropTypes.object,
         projectClaimId:PropTypes.any
       }
+      const [claimSeq, setClaimSeq] = useState([]);
       const [claimItems, setClaimItems] = useState([
        
       ]);
@@ -32,24 +33,45 @@ const getClaimLineItems=()=>{
 }
 
       //insert claim payment
-    const insertClaimPayment = () => {
-      claimItems.forEach((el)=>{
-        if(el.this_month_amount){
-          
-        api.post('/claim/insertClaimPaymenttable',{project_claim_id:projectClaimId,
-        claim_line_items_id:el.claim_line_items_id,status:'In Progress',
-        date:new Date(),claim_seq:'Progress Claim',project_id:id,amount:el.this_month_amount
-      })
-        .then(() => {
-         message('Record editted successfully','success')
-          setTimeout(()=>{
-            // window.location.reload()
-          },300);
-        })}
-        
-      })
-     
-    }
+      const insertClaimPayment = () => {
+        let canInsert = true;
+      
+        claimItems.forEach((el) => {
+          if (el.this_month_amount) {
+            const remainingAmount = el.amount - el.prev_amount;
+      
+            if (el.this_month_amount > remainingAmount) {
+              alert('This Month Amount  exceeds the remaining contract amount.');
+              canInsert = false;
+            }
+          }
+        });
+      
+        if (canInsert) {
+          claimItems.forEach((el) => {
+            if (el.this_month_amount) {
+            api.post('/claim/insertClaimPaymenttable', {
+              project_claim_id: projectClaimId,
+              claim_line_items_id: el.claim_line_items_id,
+              status: 'In Progress',
+              date: new Date(),
+              claim_seq: `Progress Claim ${String(claimSeq.claim_seq + 1).padStart(2, '0')}`,
+              project_id: id,
+              amount: el.this_month_amount,
+            })
+            .then(() => {
+              message('Record edited successfully', 'success');
+              setTimeout(() => {
+                // window.location.reload()
+              }, 300);
+            })
+            .catch(() => {
+              message('Failed to insert claim payment', 'error');
+            });
+            }
+          });
+        }
+      };
 
     function updateState(index,property,e){
  
@@ -61,10 +83,23 @@ const getClaimLineItems=()=>{
     };
     
     
-
-    useEffect(()=>{
+    useEffect(() => {
       getClaimLineItems();
-    },[])
+  
+      // Fetch the claim_seq value from your API or any logic you use
+      // For example, you can use the same API call as above and extract the claim_seq value
+      // and set it to the state variable.
+ 
+      const fetchClaimSeq = () => {
+        api.get('/claim/getClaimSeq').then((res) => {
+          const currentClaimSeq = res.data.data[0].claim_seq;
+          const numericPart = parseInt(currentClaimSeq.match(/\d+/)[0], 10);
+          setClaimSeq({ claim_seq: numericPart });
+        });
+      };
+      console.log("errorfdv: ", claimSeq);
+      fetchClaimSeq();
+    }, [id, projectClaimId]);
 
   return (
     <>
@@ -87,11 +122,17 @@ const getClaimLineItems=()=>{
                         </FormGroup>
                     </Col>
                     <Col md="4">
-                        <FormGroup>
-                        <Label>Claim Sequence</Label>
-                        <Input name="claim_seq"  type="text" value="Progress Claim" onChange={handleChange}/>
-                        </FormGroup>
-                    </Col>
+  <FormGroup>
+    <Label>Claim Sequence</Label>
+    <Input
+      name="claim_seq"
+      type="text"
+      value={`Progress Claim ${String(claimSeq.claim_seq + 1).padStart(2, '0')}`}
+      onChange={handleChange}
+    />
+  </FormGroup>
+</Col>
+
                         </Row>
                         <FormGroup>
                         <table className='lineitem' >
@@ -118,7 +159,7 @@ const getClaimLineItems=()=>{
                       <td>{res.amount}</td>
                      <td>{res.prev_amount}</td>
                      <td><Input name='this_month_amount' value={res.this_month_amount} onChange={(e)=>{updateState(index,'this_month_amount',e)}}/></td>
-                      <td>{parseFloat(res.prev_amount)+parseFloat(res.this_month_amount)}</td>
+                      <td>{res.prev_amount}</td>
                       <td data-label="Remarks"><Input type="text" name="remarks" value={res.remarks} onchange={(e)=>{updateState(index,'remarks',e)}}></Input></td>
                     </tr>
                   </>
