@@ -77,6 +77,7 @@ export default function TenderQuotation({
   const QuoteProject = project.find((element) => {
     return element.quote_id === quote.quote_id;
   });
+  console.log('QuoteProject',QuoteProject)
   const deleteRecord = (deleteID) => {
     Swal.fire({
       title: `Are you sure? ${id}`,

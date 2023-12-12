@@ -26,9 +26,16 @@ const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData 
 const {id}=useParams();
   const [lineItemData, setLineItemData] = useState(null);
   const [totalAmount, setTotalAmount] = useState();
+  const [quoteData, setQuoteData] = useState();
 
   const handleData = (e) => {
     setLineItemData({ ...lineItemData, [e.target.name]: e.target.value });
+  };
+  const getQuote = () => {
+    api.post('/tender/getQuoteById', { opportunity_id: id }).then((res) => {
+      setQuoteData(res.data.data[0]);
+      console.log('quote', res.data.data[0]);
+    });
   };
   const handleCalc = (Qty, UnitPrice, TotalPrice) => {
     if (!Qty) Qty = 0;
@@ -45,7 +52,12 @@ const {id}=useParams();
     api
       .post('/tender/edit-TabQuoteLine', lineItemData)
       .then((res) => {
-
+        api.post('/tender/insertLog', quoteData)
+        .then(() => {
+          
+          message('insert log Udated Successfully.', 'success');
+          
+        })
         api
         .post('/tender/insertLogLine', lineItemData)
         .then((result) => {
@@ -66,6 +78,7 @@ const {id}=useParams();
   };
 
   React.useEffect(() => {
+    getQuote()
     setLineItemData(FetchLineItemData);
   }, [FetchLineItemData]);
 
