@@ -231,7 +231,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
         status: 'In Progress',
         cost_price: Number(itemObj.cost_price).toFixed(2),
         selling_price: itemObj.mrp,
-        qty_updated: parseInt(itemObj.qty, 10),
+        qty_updated: Number(0).toFixed(2),
         qty: parseInt(itemObj.qty, 10),
         product_id: parseInt(itemObj.itemId, 10),
         supplier_id: insertPurchaseOrderData.supplier_id,

@@ -14,14 +14,14 @@ import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AddPoModal from '../../components/purchaseOrder/AddPoModal';
-import AttachmentTab from '../../components/purchaseOrder/AttachmentTab';
-import PurchaseOrderlineItemEdit from '../../components/purchaseOrder/PurchaseOrderLineItem';
+import AddPoModal from '../../components/PurchaseOrder/AddPoModal';
+import AttachmentTab from '../../components/PurchaseOrder/AttachmentTab';
+import PurchaseOrderlineItemEdit from '../../components/PurchaseOrder/PurchaseOrderLineItem';
 //import PurchaseOrderButtons from '../../components/PurchaseOrder/PurchaseOrderButtons';
-import ViewHistoryModal from '../../components/purchaseOrder/ViewHistoryModal';
-import DeliveryOrderEditModal from '../../components/purchaseOrder/DeliveryOrderEditModal';
-import PurchaseOrderDetailsPart from '../../components/purchaseOrder/PurchaseOrderDetailsPart';
-import ProductLinkedTable from '../../components/purchaseOrder/ProductLinkedTable';
+import ViewHistoryModal from '../../components/PurchaseOrder/ViewHistoryModal';
+import DeliveryOrderEditModal from '../../components/PurchaseOrder/DeliveryOrderEditModal';
+import PurchaseOrderDetailsPart from '../../components/PurchaseOrder/PurchaseOrderDetailsPart';
+import ProductLinkedTable from '../../components/PurchaseOrder/ProductLinkedTable';
 import PdfDeliveryOrderPO from '../../components/PDF/PdfDeliveryOrderPO';
 import PdfPurchaseOrder from '../../components/PDF/PdfPurchaseOrder';
 import PdfPurchaseOrderPrice from '../../components/PDF/PdfPurchaseOrderPrice';
@@ -118,19 +118,12 @@ const PurchaseOrderEdit = () => {
         if (elem.status !== 'Closed') {
           elem.status = 'Closed';
           elem.qty_updated = elem.qty_delivered;
-          elem.qty_in_stock += parseFloat(elem.qty_delivered);
-          api.post('/product/edit-ProductQty', elem);
+          elem.qty_in_stock += elem.qty_delivered;
+       
           api
-            .post('/purchaseorder/editTabPurchaseOrderLineItem', elem)
+            .post('/inventory/editInventoryStock', elem)
             .then(() => {
-              api
-                .post('/inventory/editInventoryStock', elem)
-                .then(() => {
-                  message('Quantity updated in inventory successfully.', 'success');
-                })
-                .catch(() => {
-                  message('unable to update quantity in inventory.', 'danger');
-                });
+            
               message('Quantity added successfully.', 'success');
             })
             .catch(() => {

@@ -10,6 +10,7 @@ import NewPcModal from '../../ProjectModal/NewPcModal';
 import ClaimItems from '../../ProjectModal/ClaimItems';
 import EditClaimModal from '../../ProjectModal/EditClaimModal';
 import EditPc from '../../ProjectModal/EditPc';
+import AddLineItemModal from './AddLineItemModal';
 import AttachmentModalV2 from '../../Tender/AttachmentModalV2';
 import ViewFileComponentV2 from '../../ProjectModal/ViewFileComponentV2';
 
@@ -53,6 +54,8 @@ const Claim = ({
   const [claimData, setClaimData] = useState({});
   const [pcId, setPcId] = useState();
   const [pc, setPc] = useState();
+  const [addLineItemModal, setAddLineItemModal] = useState(false);
+
 
   // Get ProjectClaim By ProjectId
   const getProjectClaimById = () => {
@@ -69,7 +72,7 @@ const Claim = ({
   //insert project claim
   const insertProjectClaim = () => {
     const newclaim = {};
-    newclaim.date = new Date();
+    newclaim.claim_date = new Date();
     newclaim.project_id = projectId;
     newclaim.status = 'In Progress';
     newclaim.amount = 0.0;
@@ -181,7 +184,7 @@ const Claim = ({
 
             <Row>
               <Col>
-                <FormGroup>{claimData.claim_code}</FormGroup>
+                <FormGroup>{claimData.claim_no}</FormGroup>
               </Col>
               <Col>
                 <FormGroup>
@@ -206,6 +209,18 @@ const Claim = ({
                       >
                         <Icon.Edit />
                       </span>
+                      {' '}
+                      
+                    
+              <span
+                onClick={() => {
+                  setPcId(claimData.project_claim_id);
+                  setAddLineItemModal(true);
+                }}
+              >
+                <Icon.PlusCircle />
+              </span>
+            
                     </div>
                   </Label>
                 </FormGroup>
@@ -256,6 +271,13 @@ const Claim = ({
           </Form>
         </>
       )}
+      <AddLineItemModal
+                  projectId={projectId}
+                  projectDetail={projectDetail}
+                  projectClaimId={pcId}
+                  addLineItemModal={addLineItemModal}
+                  setAddLineItemModal={setAddLineItemModal}
+                ></AddLineItemModal>
       {editClaimModal && (
         <EditClaimModal
           projectId={projectId}
@@ -294,7 +316,7 @@ const Claim = ({
                     className="shadow-none"
                     color="primary"
                     onClick={() => {
-                      setRoomName('ProjectClaim');
+                      setRoomName('Claim');
                       setFileTypes(['JPG', 'JPEG', 'PNG', 'GIF', 'PDF']);
                       dataForAttachment();
                       setAttachmentModal(true);
@@ -311,14 +333,14 @@ const Claim = ({
                 setAttachmentModal={setAttachmentModal}
                 roomName={RoomName}
                 fileTypes={fileTypes}
-                altTagData="ProjectClaim Data"
-                desc="ProjectClaim Data"
+                altTagData="Claim Data"
+                desc="Claim Data"
                 recordType="Picture"
                 mediaType={attachmentData.modelType}
               />
               <ViewFileComponentV2
                 moduleId={projectId}
-                roomName="ProjectClaim"
+                roomName="Claim"
                 recordType="Picture"
               />
             </ComponentCard>
