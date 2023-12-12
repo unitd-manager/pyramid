@@ -20,10 +20,11 @@ function ClaimItems({projectClaimId,projectId,checkId,POId,projectDetail,deliver
         editPo:PropTypes.any
     
       }
-
+   
       const[claimItemsData,setClaimItemsData]=useState([]);
       const[editPcItems,setEditPcItems]=useState(false);
       const[editClaim,setEditClaim]=useState();
+      const[editClaim1,setEditClaim1]=useState();
         // Get ClaimPayment By ProjectId and project claim id
 
         const getClaimPaymentById = () => {
@@ -61,13 +62,17 @@ function ClaimItems({projectClaimId,projectId,checkId,POId,projectDetail,deliver
                   <>
                     <tr>
                       <td>{moment(res.date).format('DD-MM-YYYY')}</td>
-                      <td>{res.claim_Seq}</td>
-                      <td>{res.amount}</td>
+                      <td>{res.claim_seq}</td>
+                      <td>{res.claim_amount}</td>
                      <td>{res.status}</td>
-                     <td><span onClick={()=>{setEditClaim(res);setEditPcItems(true)}}>Edit Pc items</span></td>
+                     <td><span onClick={()=>{setEditClaim1(res.claim_seq);setEditClaim(res.claim_payment_id);setEditPcItems(true)}}>Edit Pc items</span></td>
                       <td> <PdfProjectClaim
                  checkId = {checkId}
                   POId = {POId}
+                  editClaim1={res.claim_seq}
+                  claimpay={res.claim_payment_id}
+                  claimline={res.claim_line_items_id}
+                  projectClaimId={projectClaimId} projectId={projectId}
                   ></PdfProjectClaim></td>
                       <td> 
                   <PdfPcSummary
@@ -82,7 +87,8 @@ function ClaimItems({projectClaimId,projectId,checkId,POId,projectDetail,deliver
                 
             </tbody>
           </table>
-          {editPcItems && <EditPcItems editPcItems={editPcItems} setEditPcItems={setEditPcItems} pc={projectDetail} editClaim={editClaim}/>}
+          
+          {editPcItems && <EditPcItems editPcItems={editPcItems} setEditPcItems={setEditPcItems} pc={projectDetail} projectClaimId={projectClaimId} projectId={projectId} editClaim1={editClaim1} editClaim={editClaim}/>}
           </FormGroup>
     </div>
   )

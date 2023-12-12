@@ -2,6 +2,8 @@ import React from 'react';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Button } from 'reactstrap';
+import PropTypes from 'prop-types'
+
 import { useParams } from 'react-router-dom';
 import api from '../../constants/api';
 import message from '../Message';
@@ -9,8 +11,18 @@ import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
 
-const PdfProjectClaim = () => {
+const PdfProjectClaim = ({editClaim1,projectClaimId,claimpay,claimline}) => {
+  PdfProjectClaim.propTypes = {
+    editClaim1: PropTypes.any,
+    projectClaimId: PropTypes.any,
+    claimpay: PropTypes.any,
+    claimline: PropTypes.any,
+  };
+
+
   const { id } = useParams();
+  console.log("sfwefrg" ,editClaim1,projectClaimId,id);
+
   const [hfdata, setHeaderFooterData] = React.useState();
   const [checkId, setCheckId] = React. useState(0);
   const [ POId, setPOId ]=  React. useState(0);
@@ -32,18 +44,18 @@ const PdfProjectClaim = () => {
   // Gettind data from Job By Id
   const getInvoiceById = () => {
     api
-      .post('/project/getClaimPaymentBYId', { project_id: id,claim_payment_id:id })
+      .post('/project/getClaimPaymentBYId', {claim_line_items_id:claimline,claim_payment_id:claimpay, project_id: id,claim_seq:editClaim1 ,project_claim_id:projectClaimId})
       .then((res) => {
         setCheckId(res.data.data[0]);
      //grand total
      let prevTotal = 0;
-     let thisTotal = 0;
+   
      res.data.data.forEach((elem) => {
       prevTotal += elem.amount;
-      thisTotal += elem.cum_amount;
+   
      });
      setGrandThis(prevTotal);
-     setGrandCum(thisTotal);
+ 
         })
         .catch(() => {
           message('Invoice Data Not Found', 'info');
@@ -51,7 +63,7 @@ const PdfProjectClaim = () => {
     };
   const getInvoiceItemById = () => {
     api
-      .post('/project/getClaimPaymentBYId',{project_id: id,claim_payment_id:id })
+      .post('/project/getClaimPaymentBYId',{claim_line_items_id:claimline,claim_payment_id:claimpay,project_id: id,claim_seq:editClaim1,project_claim_id:projectClaimId})
       .then((res) => {
         setPOId(res.data.data);
     //grand total
@@ -59,7 +71,7 @@ const PdfProjectClaim = () => {
    let prev = 0;
    res.data.data.forEach((elem) => {
      grandTotal += elem.contractAmount;
-     prev += elem.prev_amount;
+     prev += elem.prevAmount;
     //  grand += elem.actual_value;
    });
    setGtotal(grandTotal);
@@ -69,11 +81,28 @@ const PdfProjectClaim = () => {
         message('Invoice Data Not Found', 'info');
       });
   };
+
   React.useEffect(() => {
     getInvoiceItemById();
     getInvoiceById();
-  }, []);
+  }, [claimline, claimpay, id, editClaim1, projectClaimId]); // Add dependencies
 
+  // ... (other code)
+
+  React.useEffect(() => {
+    // Ensure that both `POId` and `checkId` are available before calculating grandCum
+    if (POId && checkId) {
+      let thisTotal = 0;
+
+      POId.forEach((element) => {
+        const sumPrevAndAmount = element.prevAmount + element.amount;
+        element.cum_amount = sumPrevAndAmount;
+        thisTotal += element.cum_amount;
+      });
+
+      setGrandCum(thisTotal);
+    }
+  }, [POId, checkId]); // Add dependencies
   const GetPdf = () => {
     const productItems = [
       [
@@ -110,6 +139,12 @@ const PdfProjectClaim = () => {
     ];
     POId.forEach((element, index) => {
       console.log(element);
+         // Calculate the sum of prevAmount and amount
+    const sumPrevAndAmount = element.prevAmount + element.amount;
+   
+    // Update the value of cum_amount with the sum
+    element.cum_amount = sumPrevAndAmount;
+    
       productItems.push([
         {
           text: `${index + 1}`,
@@ -129,7 +164,7 @@ const PdfProjectClaim = () => {
           style: 'tableBody',
         },
         {
-          text: `${element.prev_amount ? element.prev_amount : ''}`,
+          text: `${element.prevAmount ? element.prevAmount : ''}`,
           border: [false, false, false, true],
           style: 'tableBody2',
         },
