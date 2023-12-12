@@ -65,7 +65,7 @@ const OpportunityEdit = () => {
   const navigate = useNavigate();
   // const applyChanges = () => {};
   const backToList = () => {
-    navigate('/Tender');
+    navigate('/Opportunity');
   };
 
   const viewLineToggle = () => {
