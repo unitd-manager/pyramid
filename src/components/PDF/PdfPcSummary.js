@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import PropTypes from 'prop-types'
 import { Button } from 'reactstrap';
 import api from '../../constants/api';
 import message from '../Message';
@@ -9,13 +10,19 @@ import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
 
-const PdfPcSummary = () => {
+const PdfPcSummary = ({editClaim1,projectClaimId,claimpay,claimline}) => {
+  PdfPcSummary.propTypes = {
+    editClaim1: PropTypes.any,
+    projectClaimId: PropTypes.any,
+    claimpay: PropTypes.any,
+    claimline: PropTypes.any,
+  };
   const { id } = useParams();
   const [hfdata, setHeaderFooterData] = React.useState();
   const [deliveryData, setDeliveryData] = React.useState();
   const [editPo, setEditPo] = React.useState();
   const [projectDetail, setProjectDetail] = React.useState();
-  const [gTotal, setGtotal] = React. useState(0);
+  //const [gTotal, setGtotal] = React. useState(0);
   const [gstTotal, setGsttotal] = React. useState(0);
   const [Total, setTotal] = React. useState(0);
 
@@ -24,7 +31,10 @@ const PdfPcSummary = () => {
       setHeaderFooterData(res.data.data);
     });
   }, []);
-
+  const handleMouseOver = () => {
+    // Add logic to show tooltip or perform actions when mouse over
+    console.log('Mouse over: Claim Sequence -', editClaim1);
+  };
   const findCompany = (key) => {
     const filteredResult = hfdata.find((e) => e.key_text === key);
     return filteredResult.value;
@@ -32,7 +42,7 @@ const PdfPcSummary = () => {
   // Gettind data from Job By Id
   const getClaim = () => {
     api
-      .post('/project/getProjectClaimSummaryById', { project_id: id })
+      .post('/project/getProjectClaimSummaryById', { project_id: id,project_claim_id:projectClaimId })
       .then((res) => {
         setDeliveryData(res.data.data[0]);
         
@@ -43,17 +53,17 @@ const PdfPcSummary = () => {
   };
   const getPC = () => {
     api
-      .post('/project/getProjectPaymentSummaryById', { project_id: id })
+      .post('/project/getProjectPaymentSummaryById', {claim_line_items_id:claimline,claim_payment_id:claimpay, project_id: id,claim_seq:editClaim1 ,project_claim_id:projectClaimId })
       .then((res) => {
         setEditPo(res.data.data[0]);
         let grandTotal = 0;
         let grand = 0;
        let gst = 0;
        res.data.data.forEach((elem) => {
-         grandTotal = elem.amount;
+         grandTotal = elem.cppamount;
         //  grand += elem.actual_value;
        });
-       setGtotal(grandTotal);
+      // setGtotal(grandTotal);
        gst=grandTotal*0.07
        setGsttotal(gst);
        grand=grandTotal+gst
@@ -65,8 +75,10 @@ const PdfPcSummary = () => {
       };
 
   const getPCs = () => {
+    // api.post('/claim/getTabClaimPaymentPortalById',{project_id:id,project_claim_id:projectClaimId})
+
     api
-      .post('/project/getProjectPaymentSummaryById', { project_id: id })
+      .post('/claim/getTabClaimPaymentPortalByIding', { project_id: id,claim_seq:editClaim1,project_claim_id:projectClaimId ,claim_payment_id:claimpay,})
       .then((res) => {
         setProjectDetail(res.data.data);
           })
@@ -82,6 +94,8 @@ const PdfPcSummary = () => {
 
   const GetPdf = () => {
 
+  
+
     const productItems = [
       [
         {
@@ -95,18 +109,22 @@ const PdfPcSummary = () => {
        ],
     ];
     projectDetail.forEach(element => {
+      console.log('Sequence:', element.claim_seq);
+      console.log('Cumulative Amount:', element.claim_amount);
+    
       productItems.push([
     {
           text: `${element.claim_seq? element.claim_seq : ''}`,
          
         },
         {
-          text: `${element.amount? element.amount : ''}`,
+          text: `${element.claim_amount? element.claim_amount : ''}`,
           
         },
        
       ]);
     });
+
 
     const dd = {
       pageSize: 'A4',
@@ -170,14 +188,14 @@ const PdfPcSummary = () => {
           bold: true,
           margin:[0,10,-13,0],
         },
-        {text:`${editPo.title?editPo.title:''}`,margin:[120,-18,50,10],style: 'textSize',alignment: 'center'},
+        {text:`${deliveryData.project_title?deliveryData.project_title:''}`,margin:[120,-18,50,10],style: 'textSize',alignment: 'center'},
         {canvas: [ { type: 'line', x1: 430, y1: 0, x2: 0, y2: 0, lineWidth:1}],margin:[110,-5,0,20]},
         {
           text: `Work Description:`,
           style: 'textSize',
           bold: true
         },
-        {text:`${editPo.description?editPo.description:''}`,margin:[120,-18,50,10],style: 'textSize',   alignment: 'center'},
+        {text:`${deliveryData.description?deliveryData.description:''}`,margin:[120,-18,50,10],style: 'textSize',   alignment: 'center'},
         {canvas: [ { type: 'line', x1: 430, y1: 0, x2: 0, y2: 0, lineWidth:1}],margin:[110,-5,0,20]},
       
       {columns: [
@@ -187,7 +205,7 @@ const PdfPcSummary = () => {
           bold: true,
           margin:[0,8,-13,0],
         },
-        {text:`${editPo.quote_id?editPo.quote_id:''}`,margin:[30,5,-25,10],style: 'textSize',alignment: 'center'},
+        {text:`${deliveryData.po_quote_no?deliveryData.po_quote_no:''}`,margin:[30,5,-25,10],style: 'textSize',alignment: 'center'},
         {canvas: [ { type: 'line', x1: 200, y1: 0, x2: 0, y2: 0, lineWidth:1}],margin:[-108,18,0,0]},
                {
           text: `Date:`,
@@ -206,7 +224,7 @@ const PdfPcSummary = () => {
           bold: true,
           margin:[0,10,-13,0],
         },
-        {text:`${deliveryData.con_sum?deliveryData.con_sum:''}`,margin:[120,-18,50,10],style: 'textSize',alignment: 'center'},
+        {text:`${deliveryData.amount?deliveryData.amount:''}`,margin:[120,-18,50,10],style: 'textSize',alignment: 'center'},
         {canvas: [ { type: 'line', x1: 250, y1: 0, x2: 0, y2: 0, lineWidth:1}],margin:[190,-5,0,20]},
          {
           text: `2. Variation Order Submission (Amount) `,
@@ -280,7 +298,7 @@ const PdfPcSummary = () => {
           margin:[0,10,-13,0],
           
         },
-        {text:` ${(gTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))} `,margin:[120,-18,50,10],style: 'textSize',alignment: 'center'},
+        {text:`${editPo.cppamount?editPo.cppamount:''} `,margin:[120,-18,50,10],style: 'textSize',alignment: 'center'},
         {canvas: [ { type: 'line', x1: 250, y1: 0, x2: 0, y2: 0, lineWidth:1}],margin:[190,-5,0,20]}, 
           {
           text: `Add 7% GST`,
@@ -427,7 +445,7 @@ const PdfPcSummary = () => {
 
   return (
     <>
-      <Button type="button" className="btn btn-dark mr-2" onClick={GetPdf}>
+      <Button type="button" onMouseOver={handleMouseOver} className="btn btn-dark mr-2" onClick={GetPdf}>
         Print PC Summary
       </Button>
     </>

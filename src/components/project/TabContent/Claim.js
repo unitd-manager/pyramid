@@ -52,6 +52,7 @@ const Claim = ({
   const [pcItems, setPcItems] = useState(false);
   const [editClaimModal, setEditClaimModal] = useState(false);
   const [claimData, setClaimData] = useState({});
+  const [claimData1, setClaimData1] = useState({});
   const [pcId, setPcId] = useState();
   const [pc, setPc] = useState();
   const [addLineItemModal, setAddLineItemModal] = useState(false);
@@ -68,6 +69,19 @@ const Claim = ({
         message('Project claim not found', 'info');
       });
   };
+
+    // Get ProjectClaim By ProjectId
+    const getClaimById = () => {
+      api
+        .post('/claim/getamountclaim', { project_id: projectId })
+        .then((res) => {
+          setClaimData1(res.data.data[0]);
+        })
+        .catch(() => {
+          message('Projsdect claim not found', 'info');
+        });
+    };
+    console.log('or11111111111111dr',claimData1.claimAmount)
 
   //insert project claim
   const insertProjectClaim = () => {
@@ -87,6 +101,7 @@ const Claim = ({
 
   useEffect(() => {
     getProjectClaimById();
+    getClaimById();
   }, [projectId]);
 
   return (
@@ -211,7 +226,7 @@ const Claim = ({
                       </span>
                       {' '}
                       
-                    
+                      {claimData.amount === 0 && (  
               <span
                 onClick={() => {
                   setPcId(claimData.project_claim_id);
@@ -220,7 +235,8 @@ const Claim = ({
               >
                 <Icon.PlusCircle />
               </span>
-            
+                            )}
+
                     </div>
                   </Label>
                 </FormGroup>

@@ -79,7 +79,13 @@ function ClaimItems({projectClaimId,projectId,checkId,POId,projectDetail,deliver
                    projectDetail = {projectDetail}
                   deliveryData = {deliveryData}
                   editPo = {editPo}
-                  ></PdfPcSummary></td>
+                  editClaim1={res.claim_seq}
+                  claimpay={res.claim_payment_id}
+                  claimline={res.claim_line_items_id}
+                  projectClaimId={projectClaimId} projectId={projectId}
+                  title={`Claim Sequence: ${res.claim_seq}`} // Add this line
+                  ></PdfPcSummary>
+                  </td>
                     </tr>
                   </>
                 )

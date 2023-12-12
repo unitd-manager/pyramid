@@ -43,16 +43,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectId,proj
       title: '',
       description: '',
     },
-    {
-      id: random.int(1, 99),
-      unit: '',
-      cum_amount: '',
-      current_month_amount: '',
-      amount: '',
-      remarks: '',
-      title: '',
-      description: '',
-    },
+  
   ]);
   
   //Insert Invoice Item

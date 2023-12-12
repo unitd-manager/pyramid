@@ -14,14 +14,14 @@ import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AddPoModal from '../../components/purchaseOrder/AddPoModal';
-import AttachmentTab from '../../components/purchaseOrder/AttachmentTab';
-import PurchaseOrderlineItemEdit from '../../components/purchaseOrder/PurchaseOrderLineItem';
+import AddPoModal from '../../components/PurchaseOrder/AddPoModal';
+import AttachmentTab from '../../components/PurchaseOrder/AttachmentTab';
+import PurchaseOrderlineItemEdit from '../../components/PurchaseOrder/PurchaseOrderLineItem';
 //import PurchaseOrderButtons from '../../components/PurchaseOrder/PurchaseOrderButtons';
-import ViewHistoryModal from '../../components/purchaseOrder/ViewHistoryModal';
-import DeliveryOrderEditModal from '../../components/purchaseOrder/DeliveryOrderEditModal';
-import PurchaseOrderDetailsPart from '../../components/purchaseOrder/PurchaseOrderDetailsPart';
-import ProductLinkedTable from '../../components/purchaseOrder/ProductLinkedTable';
+import ViewHistoryModal from '../../components/PurchaseOrder/ViewHistoryModal';
+import DeliveryOrderEditModal from '../../components/PurchaseOrder/DeliveryOrderEditModal';
+import PurchaseOrderDetailsPart from '../../components/PurchaseOrder/PurchaseOrderDetailsPart';
+import ProductLinkedTable from '../../components/PurchaseOrder/ProductLinkedTable';
 import PdfDeliveryOrderPO from '../../components/PDF/PdfDeliveryOrderPO';
 import PdfPurchaseOrder from '../../components/PDF/PdfPurchaseOrder';
 import PdfPurchaseOrderPrice from '../../components/PDF/PdfPurchaseOrderPrice';
@@ -69,7 +69,7 @@ const PurchaseOrderEdit = () => {
   };
   //getting data from purchaseOrder by Id
   const getPurchaseOrderId = () => {
-    api.post('/purchaseorder/getPurchaseOrderById', { purchase_order_id: id }).then((res) => {
+    api.post('/Purchaseorder/getPurchaseOrderById', { purchase_order_id: id }).then((res) => {
       setPurchaseDetails(res.data.data[0]);
       setSupplierId(res.data.data[0].supplier_id);
     });
@@ -78,7 +78,7 @@ const PurchaseOrderEdit = () => {
   // Gettind data from Job By Id
   const getPoProduct = () => {
     api
-      .post('/purchaseorder/TabPurchaseOrderLineItemById', { purchase_order_id: id })
+      .post('/Purchaseorder/TabPurchaseOrderLineItemById', { purchase_order_id: id })
       .then((res) => {
         setProducts(res.data.data);
         //grand total
@@ -98,7 +98,7 @@ const PurchaseOrderEdit = () => {
   // Gettind data from Job By Id
   const getSupplier = () => {
     api
-      .get('/purchaseorder/getSupplier')
+      .get('/Purchaseorder/getSupplier')
       .then((res) => {
         setSupplier(res.data.data);
       })
@@ -141,13 +141,13 @@ const PurchaseOrderEdit = () => {
   //Delivery order
   const deliverOrder = () => {
     if (selectedPoDelivers) {
-      api.post('/purchaseorder/insertDeliveryOrder', { purchase_order_id: id }).then((res) => {
+      api.post('/Purchaseorder/insertDeliveryOrder', { purchase_order_id: id }).then((res) => {
         selectedPoDelivers.forEach((elem) => {
           elem.delivery_order_id = res.data.data.insertId;
           elem.purchase_order_id = id;
 
           api
-            .post('/purchaseorder/insertDeliveryOrderHistory', elem)
+            .post('/Purchaseorder/insertDeliveryOrderHistory', elem)
             .then(() => {
               message('Inserted successfully.', 'success');
             })
@@ -164,7 +164,7 @@ const PurchaseOrderEdit = () => {
 
   const getDeliveryOrders = () => {
     api
-      .post('/purchaseorder/getDeliveryOrder', { purchase_order_id: id })
+      .post('/Purchaseorder/getDeliveryOrder', { purchase_order_id: id })
       .then((res) => {
         setDeliveryOrders(res.data.data);
       })
@@ -176,7 +176,7 @@ const PurchaseOrderEdit = () => {
   //Update Setting
   const editPurchaseData = () => {
     api
-      .post('/purchaseorder/editTabPurchaseOrder', purchaseDetails)
+      .post('/Purchaseorder/editTabPurchaseOrder', purchaseDetails)
       .then(() => {
         message('Record editted successfully', 'success');
       })
@@ -188,7 +188,7 @@ const PurchaseOrderEdit = () => {
   //Edit poproductdata
   const editPoProductData = () => {
     api
-      .post('/purchaseorder/editTabPurchaseOrderLineItem', product)
+      .post('/Purchaseorder/editTabPurchaseOrderLineItem', product)
       .then(() => {
         message('product edited successfully.', 'success');
       })
