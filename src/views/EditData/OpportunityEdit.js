@@ -258,7 +258,6 @@ const OpportunityEdit = () => {
     const newQuoteId = quoteForm;
     newQuoteId.opportunity_id = id;
     newQuoteId.quote_code = code;
-
     api.post('/tender/insertquote', newQuoteId).then(() => {
       message('Quote inserted successfully.', 'success');
       window.location.reload();
@@ -288,7 +287,6 @@ const OpportunityEdit = () => {
     newDataWithCompanyId.project_code = code;
     api.post('/project/insertProject', newDataWithCompanyId).then(() => {
       message('Project Converted Successfully', 'success');
-      //window.location.reload();
     });
   };
 
@@ -453,13 +451,13 @@ const OpportunityEdit = () => {
                       <Label>Total Cost : {costingsummary && costingsummary.total_cost}</Label>{' '}
                     </FormGroup>
                   </Col>
-                  <Col md="3">
+                  {/* <Col md="3">
                     <FormGroup>
                       <Label>
                         PO Price (S$ W/o GST) : {costingsummary && costingsummary.po_price}
                       </Label>{' '}
                     </FormGroup>
-                  </Col>
+                  </Col> */}
                   <Col md="3">
                     <FormGroup>
                       <Label>
@@ -489,7 +487,7 @@ const OpportunityEdit = () => {
                   </Col>
                   <Col md="3">
                     <FormGroup>
-                      <Label>Total Labour Charges</Label>
+                      <Label>Total  Charges</Label>
                       <br />
                       <span>{costingsummary && costingsummary.total_labour_charges}</span>
                     </FormGroup>

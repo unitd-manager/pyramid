@@ -66,8 +66,6 @@ export default function TenderQuotation({
     handleQuoteForms: PropTypes.object,
     generateCode: PropTypes.object,
     generateCodes: PropTypes.object,
-    // getLine: PropTypes.object,
-    // quotes: PropTypes.object,
   };
 
   const [quoteDatas, setQuoteData] = useState();
