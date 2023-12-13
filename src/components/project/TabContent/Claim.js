@@ -81,7 +81,7 @@ const Claim = ({
           message('Projsdect claim not found', 'info');
         });
     };
-    console.log('or11111111111111dr',claimData1.claimAmount)
+    console.log('or11111111111111dr',claimData1?.claimAmount)
 
   //insert project claim
   const insertProjectClaim = () => {
