@@ -42,15 +42,22 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
   const addLineItemApi = (obj) => {
     obj.opportunity_id = projectInfo;
     obj.quote_id = quoteLine;
-    api
+    if (obj.title !== '' && obj.unit_price !== '' && obj.quantity !== '') {
+      api
       .post('/tender/insertQuoteItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
-        window.location.reload();
+        setAddLineItemModal(false);
+        // window.location.reload();
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
       });
+    }
+    else {
+      message('Please fill all required fields', 'warning');
+    }
+  
   };
   //Add new line item
   const AddNewLineItem = () => {
@@ -88,6 +95,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
     });
     console.log(result);
   };
+  
   //Invoice Items Calculation
   const calculateTotal = () => {
     let totalValue = 0;
@@ -163,11 +171,11 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                     <table className="lineitem">
                       <thead>
                         <tr>
-                          <th scope="col">Title </th>
+                          <th scope="col">Title <span className="required"> *</span>{' '}</th>
                           <th scope="col">Description </th>
-                          <th scope="col">Unit </th>
-                          <th scope="col">Qty</th>
-                          <th scope="col">Unit Price</th>
+                          <th scope="col">Unit</th>
+                          <th scope="col">Qty <span className="required"> *</span>{' '}</th>
+                          <th scope="col">Unit Price <span className="required"> *</span>{' '}</th>
                           <th scope="col">Amount</th>
                           <th scope="col">Remarks</th>
                           <th scope="col"></th>
@@ -182,7 +190,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                                   <Input Value={item.title} type="text" name="title" style={{ width: '100%' }} />
                                 </td>
                                 <td data-label="Description">
-                                  <Input Value={item.description} type="textarea" name="description"style={{ width: '100%' }} />
+                                  <Input Value={item.description} type="text" name="description" style={{ width: '100%' }} />
                                 </td>
                                 <td data-label="Unit">
                                   <Input Value={item.unit} type="text" name="unit" style={{ width: '70%' }}/>

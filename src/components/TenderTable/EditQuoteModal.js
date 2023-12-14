@@ -64,7 +64,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
       .post('/tender/edit-TabQuote', quoteData)
       .then(() => {
         message('Quote Edited Successfully.', 'success');
-        //window.location.reload();
+        window.location.reload();
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');

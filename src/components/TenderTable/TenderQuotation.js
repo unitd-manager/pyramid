@@ -43,7 +43,7 @@ export default function TenderQuotation({
   generateCodes,
   handleQuoteForms,
   generateCode,
-  // getLine,
+  getLine,
   // quotes,
 }) {
   TenderQuotation.propTypes = {
@@ -52,6 +52,7 @@ export default function TenderQuotation({
     viewLineModal: PropTypes.object,
     PdfQuote: PropTypes.string,
     getLineItem: PropTypes.object,
+    getLine: PropTypes.object,
     viewLineToggle: PropTypes.object,
     setEditQuoteModal: PropTypes.object,
     setAddLineItemModal: PropTypes.object,
@@ -80,7 +81,7 @@ export default function TenderQuotation({
   console.log('QuoteProject',QuoteProject)
   const deleteRecord = (deleteID) => {
     Swal.fire({
-      title: `Are you sure? ${id}`,
+      title: `Are you sure?`,
       text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
@@ -381,6 +382,7 @@ export default function TenderQuotation({
       {editQuoteModal && (
         <EditQuoteModal
           lineItem={lineItem}
+          getLine={getLine}
           editQuoteModal={editQuoteModal}
           setEditQuoteModal={setEditQuoteModal}
           quoteDatas={quote}

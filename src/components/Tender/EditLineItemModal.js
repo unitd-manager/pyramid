@@ -32,7 +32,6 @@ const EditLineItemModal = ({editLineModal,setEditLineModal,FetchLineItemData}) =
         }).catch(()=>{
             message('Unable to edit quote. please fill all fields','error')
         })
-
     }
 
 

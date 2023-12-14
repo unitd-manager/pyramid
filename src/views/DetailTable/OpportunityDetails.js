@@ -7,16 +7,19 @@ import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
 import message from '../../components/Message';
 import TenderCompanyDetails from '../../components/TenderTable/TenderCompanyDetails';
+import creationdatetime from '../../constants/creationdatetime';
 
 const OpportunityDetails = () => {
   const [company, setCompany] = useState();
   const [allCountries, setallCountries] = useState();
+  const [contact, setContact] = useState();
   const [modal, setModal] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const toggle = () => {
     setModal(!modal);
   };
+
   //Api call for getting company dropdown
   const getCompany = () => {
     api.get('/company/getCompany').then((res) => {
@@ -56,6 +59,10 @@ const OpportunityDetails = () => {
         .then(() => {
           message('Company inserted successfully.', 'success');
           getCompany();
+          setTimeout(()=>{
+            toggle()
+          },1000)
+         
         })
         .catch(() => {
           message('Network connection error.', 'error');
@@ -70,6 +77,7 @@ const OpportunityDetails = () => {
     title: '',
     company_name: '',
     category: '',
+    contact_name:contact
   });
 
   const handleInputsTenderForms = (e) => {
@@ -97,16 +105,26 @@ const OpportunityDetails = () => {
       })
       .catch(() => {});
   };
-  //console.log(tenderDetails);
+
+    // Get contact 
+    const getContact = (companyId) => {
+      // setSelectedCompany(companyId);
+      api.post('/company/getContactByCompanyId', { company_id: companyId }).then((res) => {
+        setContact(res.data.data[0]?.contact_id);
+      });
+    };
+
   const insertTender = (code) => {
     if (tenderForms.company_id !== '' && tenderForms.title !== '' && tenderForms.category !== '') {
       tenderForms.opportunity_code = code;
+      tenderForms.contact_id = contact;   
+      tenderForms.creation_date = creationdatetime
       api
         .post('/tender/insertTenders', tenderForms)
         .then((res) => {
           const insertedDataId = res.data.data.insertId;
           getTendersById();
-          message('Tender inserted successfully.', 'success');
+          message('Opportunity inserted successfully.', 'success');
           setTimeout(() => {
             navigate(`/OpportunityEdit/${insertedDataId}?tab=1`);
           }, 300);
@@ -170,7 +188,13 @@ const OpportunityDetails = () => {
                       type="select"
                       name="company_id"
                       //value={tenderForms && tenderForms.company_id}
-                      onChange={handleInputsTenderForms}
+                      // onChange={handleInputsTenderForms}
+
+                      onChange={(e) => {
+                        handleInputsTenderForms(e)
+                        getContact(e.target.value);
+                      }}
+
                     >
                       <option>Please Select</option>
                       {company &&

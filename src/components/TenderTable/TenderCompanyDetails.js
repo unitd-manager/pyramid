@@ -125,7 +125,7 @@ export default function TenderCompanyDetails({
                         <Label>Country<span className="required"> *</span></Label>
                         <Input type="select" name="address_country" onChange={handleInputs}>
                           <option defaultValue="selected" value="">
-                            Singapore
+                          Please Select
                           </option>
                           {allCountries &&
                             allCountries.map((country) => (

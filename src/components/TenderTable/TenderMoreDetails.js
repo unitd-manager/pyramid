@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 import ComponentCard from '../ComponentCard';
@@ -47,6 +47,11 @@ export default function TenderMoreDetails({
     getContact: PropTypes.object,
     allCountries: PropTypes.object,
   };
+
+    useEffect(() => {
+    getContact(tenderDetails?.company_id);
+  }, [tenderDetails?.company_id]);
+
   return (
     <div>
       {' '}
@@ -139,12 +144,9 @@ export default function TenderMoreDetails({
                   <Input
                     type="select"
                     onChange={handleInputs}
-                    value={tenderDetails && tenderDetails.contact_id}
+                    value={tenderDetails?.contact_id}
                     name="contact_id"
                   >
-                    <option value="" selected>
-                      Please Select
-                    </option>
                     {contact &&
                       contact.map((e) => {
                         return (
