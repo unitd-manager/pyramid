@@ -122,7 +122,9 @@ useEffect(()=>{
                       <td>{res.title}</td>
                       <td>{res.description}</td>
                       <td>{res.claimAmount}</td>
-                      <td data-label="Status"><Input type="select" name="status" value={res.status} onChange={(e)=>{updateState(index,'status',e)}}></Input></td>
+                      <td data-label="Status"><Input type="select" name="status" value={res.status} onChange={(e)=>{updateState(index,'status',e)}}> <option value="In Progress">In Progress</option>
+  <option value="New">New</option></Input></td>
+                  
                      <td>{res.prev_amount}</td>
                      <td>
                       <Input

@@ -89,6 +89,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectId,proj
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
         });
+        allValues.claim_seq = 'Progress Claim 01';
       result.push(allValues);
     });
     setTotalAmount(0);
