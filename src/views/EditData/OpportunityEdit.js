@@ -314,9 +314,9 @@ const OpportunityEdit = () => {
       .post('/tender/getCodeValue', { type: 'opportunityproject' })
       .then((res) => {
         insertProject(res.data.data);
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 400);
+        setTimeout(() => {
+          window.location.reload();
+        }, 400);
       })
       .catch(() => {
         insertProject('');
