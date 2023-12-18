@@ -21,12 +21,13 @@ import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import api from '../../constants/api';
 import message from '../Message';
 
-const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineItem }) => {
+const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineItem, getQuoteFun }) => {
   EditQuoteModal.propTypes = {
     editQuoteModal: PropTypes.bool,
     setEditQuoteModal: PropTypes.func,
     quoteDatas: PropTypes.object,
     lineItem: PropTypes.object,
+    getQuoteFun: PropTypes.any,
   };
 
   const { id } = useParams();
@@ -54,7 +55,8 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
       lineItem.forEach((element) => {
         element.quote_log_id = res.data.data.insertId;
         api.post('/tender/insertLogLine', element).then(() => {
-          window.location.reload();
+          getQuoteFun();
+          // window.location.reload();
         });
       });
     });
@@ -64,7 +66,8 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
       .post('/tender/edit-TabQuote', quoteData)
       .then(() => {
         message('Quote Edited Successfully.', 'success');
-        window.location.reload();
+        getQuoteFun();
+        // window.location.reload();
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');
@@ -278,7 +281,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     onClick={() => {
                       insertquote();
                       GetEditQuote();
-                      setQuoteData();
+                      // setQuoteData();
                       setEditQuoteModal(false);
                       //insertquoteLogLine();
                     }}

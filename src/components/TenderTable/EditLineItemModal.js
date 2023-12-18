@@ -17,11 +17,12 @@ import api from '../../constants/api';
 import message from '../Message';
 
 
-const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData }) => {
+const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData, getLineItem }) => {
   EditLineItemModal.propTypes = {
     editLineModal: PropTypes.bool,
     setEditLineModal: PropTypes.func,
     FetchLineItemData: PropTypes.object,
+    getLineItem: PropTypes.array,
   };
 const {id}=useParams();
   const [lineItemData, setLineItemData] = useState(null);
@@ -34,7 +35,6 @@ const {id}=useParams();
   const getQuote = () => {
     api.post('/tender/getQuoteById', { opportunity_id: id }).then((res) => {
       setQuoteData(res.data.data[0]);
-      console.log('quote', res.data.data[0]);
     });
   };
   const handleCalc = (Qty, UnitPrice, TotalPrice) => {
@@ -54,22 +54,22 @@ const {id}=useParams();
       .then((res) => {
         api.post('/tender/insertLog', quoteData)
         .then(() => {
-          
           message('insert log Udated Successfully.', 'success');
-          
+          getLineItem();
         })
         api
         .post('/tender/insertLogLine', lineItemData)
         .then((result) => {
           console.log('edit Line Item', result.data.data);
           message('Edit Line Item Udated Successfully.', 'success');
-          
+          getLineItem();
         })
         .catch(() => {
           message('Unable to edit quote. please fill all fields', 'error');
         });
         console.log('edit Line Item', res.data.data);
         message('Edit Line Item Udated Successfully.', 'success');
+        getLineItem();
         // window.location.reload()
       })
       .catch(() => {

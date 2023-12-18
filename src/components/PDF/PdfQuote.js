@@ -1,155 +1,109 @@
-import React,{useState} from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import Converter from 'number-to-words';
 import * as Icon from 'react-feather';
+import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
 import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
 
-const PdfQuote = () => {
-  const { id } = useParams();
+const PdfQuote = ({ quote }) => {
+  PdfQuote.propTypes = {
+    quote: PropTypes.object
+  };
   const [hfdata, setHeaderFooterData] = React.useState();
-  //const [products, setProducts] = React.useState([]);
-  const [quote, setQuote] = useState(null);
-  const [lineItem, setLineItem] = useState([]);
-  const [gTotal, setGtotal] = React. useState(0);
-  const [gstTotal, setGsttotal] = React. useState(0);
-  const [Total, setTotal] = React. useState(0);
-  //const [lineItem, setLineItem] = useState(null);
-  
+  const [gTotal, setGtotal] = React.useState(0);
+  const [gstTotal, setGsttotal] = React.useState(0);
+  const [Total, setTotal] = React.useState(0);
 
-  
-  
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
       setHeaderFooterData(res.data.data);
-      console.log(res.data);
     });
   }, []);
 
   const findCompany = (key) => {
     const filteredResult = hfdata.find((e) => e.key_text === key);
-    return filteredResult.value;//
+    return filteredResult.value;
   };
- 
-  const getQuote = () => {
-    api
-      .post('/tender/getQuoteById', { opportunity_id: id })
-      .then((res) => {
-        setQuote(res.data.data[0]);
-        console.log(res);
-      })
-      .catch(() => {
-        message('Quote not found', 'info');
-      });
-  };
-  const getQuoteById = () => {
-    api
-      .post('/tender/getQuoteLineItemsById', { quote_id: id})
-      .then((res) => {
-        setLineItem(res.data.data);
-        let grandTotal = 0;
-          let grand = 0;
-         let gst = 0;
-         res.data.data.forEach((elem) => {
-           grandTotal += elem.amount;
-          //  grand += elem.actual_value;
-        });
-        setGtotal(grandTotal);
-        gst=grandTotal*0.07
-        setGsttotal(gst);
-        grand=grandTotal+gst
-        setTotal(grand);
-        //setViewLineModal(true);
-      })
-      .catch(() => {
-        message('Quote not found', 'info');
-      });
-  };
-  React.useEffect(() => {
-    getQuote();
-    getQuoteById();
-  }, []);
-
-  const GetPdf = () => {
-   const lineItemBody =  [
-    [
-    {
-        text: 'SN',
-        style:'tableHead',
-      },
-      {
-        text: 'Description',
-        style:'tableHead',
-      },
-      {
-        text: 'EA',
-        style:'tableHead',
-      },
-      {
-        text: 'Qty',
-        style:'tableHead',
-      },
-      {
-        text: 'U/R(S$) ',
-        style:'tableHead',
-      },
-      {
-        text:  'Amt S$',
-        style:'tableHead',
-      },
-      {
-        text:  'Remarks',
-        style:'tableHead',
-      },
-    ]
-  ]
-  lineItem.forEach(element => {
-    lineItemBody.push(  [
-      {
+  const GetPdf = (lineItem) => {
+    console.log(lineItem);
+    const lineItemBody = [
+      [
+        {
+          text: 'SN',
+          style: 'tableHead',
+        },
+        {
+          text: 'Description',
+          style: 'tableHead',
+        },
+        {
+          text: 'EA',
+          style: 'tableHead',
+        },
+        {
+          text: 'Qty',
+          style: 'tableHead',
+        },
+        {
+          text: 'U/R(S$) ',
+          style: 'tableHead',
+        },
+        {
+          text: 'Amt S$',
+          style: 'tableHead',
+        },
+        {
+          text: 'Remarks',
+          style: 'tableHead',
+        },
+      ],
+    ];
+    lineItem.forEach((element) => {
+      lineItemBody.push([
+        {
           text: '1',
-          style:'tableBody',
+          style: 'tableBody',
           border: [false, false, false, true],
         },
-    {
-      text: `${element.title}`,
-      border: [false, false, false, true],
-      style:'tableBody',
-    },
-    {
-      text: `${element.unit}`,
-      border: [false, false, false, true],
-      style:'tableBody',
-    },
-    {
-      text: `${element.quantity}`,
-      border: [false, false, false, true],
-      style:'tableBody',
-    },
-    {
-      text: `${(element.unit_price .toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`,
-      border: [false, false, false, true],
-      margin: [0, 5, 0, 5],
-      style:'tableBody',
-    },
-    {
-      text: `${(element.amount .toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`,
-      border: [false, false, false, true],
-      style:'tableBody',
-    },
-    {
-      border: [false, false, false, true],
-      text: `${element.remarks}`,
-      fillColor: '#f5f5f5',
-      style:'tableBody',
-    },
-  ]);
-  });
-
+        {
+          text: `${element.title}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
+          text: `${element.unit}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
+          text: `${element.quantity}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
+          text: `${element.unit_price}`,
+          border: [false, false, false, true],
+          margin: [0, 5, 0, 5],
+          style: 'tableBody',
+        },
+        {
+          text: `${parseInt(element.quantity,10) * parseFloat(element.unit_price)}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
+          border: [false, false, false, true],
+          text: `${element.remarks}`,
+          fillColor: '#f5f5f5',
+          style: 'tableBody',
+        },
+      ]);
+    });
 
     const dd = {
       pageSize: 'A4',
@@ -160,166 +114,187 @@ const PdfQuote = () => {
         {
           layout: {
             defaultBorder: false,
-            hLineWidth: ()=> {
+            hLineWidth: () => {
               return 1;
             },
-            vLineWidth: ()=> {
+            vLineWidth: () => {
               return 1;
             },
-            hLineColor: (i)=> {
+            hLineColor: (i) => {
               if (i === 1 || i === 0) {
                 return '#bfdde8';
               }
               return '#eaeaea';
             },
-            vLineColor: ()=> {
+            vLineColor: () => {
               return '#eaeaea';
             },
-            hLineStyle: ()=> {
+            hLineStyle: () => {
               // if (i === 0 || i === node.table.body.length) {
               return null;
               //}
             },
             // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
-            paddingLeft: ()=> {
+            paddingLeft: () => {
               return 10;
             },
-            paddingRight: ()=> {
+            paddingRight: () => {
               return 10;
             },
-            paddingTop: ()=> {
+            paddingTop: () => {
               return 2;
             },
-            paddingBottom: ()=> {
+            paddingBottom: () => {
               return 2;
             },
-            fillColor: ()=> {
+            fillColor: () => {
               return '#fff';
             },
           },
           table: {
             headerRows: 1,
-            widths: ['105%','51%'],
-            
+            widths: ['105%', '51%'],
+
             body: [
               [
-              {
+                {
                   text: 'QUOTATION',
-                   alignment: 'center',
-                  style:'tableHead',
+                  alignment: 'center',
+                  style: 'tableHead',
                 },
-               
-              
               ],
-              
-            
-
-             
             ],
           },
-        },'\n',
-    {columns: [
-         {text:`TO:${quote.company_name ?quote.company_name:''}`, style: ['notesText', 'textSize']},
-  
-       {text:`Date :${quote.quote_date ?quote.quote_date:''}\n  Quote Code : ${quote.quote_code ?quote.quote_code:''}\n \n  `,style: ['invoiceAdd', 'textSize']  },
-  
-         ],},
-          '\n',
-          {text:`Att :${quote.first_name ?quote.first_name:''}`,style: ['notesText', 'textSize']},
-          
-          '\n',
-          
-       {
-           text:`Project:- ${quote.title ?quote.title:''}
+        },
+        '\n',
+        {
+          columns: [
+            {
+              text: `TO:${quote.company_name ? quote.company_name : ''}`,
+              style: ['notesText', 'textSize'],
+            },
+
+            {
+              text: `Date :${quote.quote_date ? quote.quote_date : ''}\n  Quote Code : ${
+                quote.quote_code ? quote.quote_code : ''
+              }\n \n  `,
+              style: ['invoiceAdd', 'textSize'],
+            },
+          ],
+        },
+        '\n',
+        {
+          text: `Att :${quote.first_name ? quote.first_name : ''}`,
+          style: ['notesText', 'textSize'],
+        },
+
+        '\n',
+
+        {
+          text: `Project:- ${quote.title ? quote.title : ''}
            Dear Sir,
 
            With reference to the above captions, we would like to thank you for inviting us to quote for the above mentioned works and we are pleased to submit herewith our Value Quotation for you kind persual.`,
-          
-          style: ['notesText', 'textSize']
+
+          style: ['notesText', 'textSize'],
         },
         '\n',
-         '\n',
-         
-    '\n',
+        '\n',
 
-    {
-      layout: {
-        defaultBorder: false,
-        hLineWidth: ()=> {
-          return 1;
-        },
-        vLineWidth: ()=> {
-          return 1;
-        },
-        hLineColor: (i)=> {
-          if (i === 1 || i === 0) {
-            return '#bfdde8';
-          }
-          return '#eaeaea';
-        },
-        vLineColor: ()=> {
-          return '#eaeaea';
-        },
-        hLineStyle: ()=> {
-          // if (i === 0 || i === node.table.body.length) {
-          return null;
-          //}
-        },
-        // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
-        paddingLeft: ()=> {
-          return 10;
-        },
-        paddingRight: ()=> {
-          return 10;
-        },
-        paddingTop: ()=> {
-          return 2;
-        },
-        paddingBottom: ()=> {
-          return 2;
-        },
-        fillColor: ()=> {
-          return '#fff';
-        },
-      },
-      table: {
-        headerRows: 1,
-        widths: ['8%','15%', '14%', '14%', '17%','18%', '14%'],
-        
-        body:lineItemBody
-      },
-    },
-'\n',
-{   stack:[
-  {text:`SubTotal $ :    ${(gTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[300,0,0,0] },
-   '\n',
-    {text:`GST:       ${(gstTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[330,0,0,0]  },
-   '\n',
-    {text:`Total $ :     ${(Total.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[320,0,0,0] },
-    '\n\n\n',
-    {text:`TOTAL : ${Converter.toWords(Total)}`,style:'bold', margin:[40,0,0,0]}
-    ]},
-'\n\n',
- '\n',
+        '\n',
 
-       
-{columns: [
-{
-   text:`Terms and Condition:- \n
+        {
+          layout: {
+            defaultBorder: false,
+            hLineWidth: () => {
+              return 1;
+            },
+            vLineWidth: () => {
+              return 1;
+            },
+            hLineColor: (i) => {
+              if (i === 1 || i === 0) {
+                return '#bfdde8';
+              }
+              return '#eaeaea';
+            },
+            vLineColor: () => {
+              return '#eaeaea';
+            },
+            hLineStyle: () => {
+              // if (i === 0 || i === node.table.body.length) {
+              return null;
+              //}
+            },
+            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
+            paddingLeft: () => {
+              return 10;
+            },
+            paddingRight: () => {
+              return 10;
+            },
+            paddingTop: () => {
+              return 2;
+            },
+            paddingBottom: () => {
+              return 2;
+            },
+            fillColor: () => {
+              return '#fff';
+            },
+          },
+          table: {
+            headerRows: 1,
+            widths: ['8%', '15%', '14%', '14%', '17%', '18%', '14%'],
+
+            body: lineItemBody,
+          },
+        },
+        '\n',
+        {
+          stack: [
+            {
+              text: `SubTotal $ :    ${gTotal.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+              })}`,
+              style: ['textSize'],
+              margin: [300, 0, 0, 0],
+            },
+            '\n',
+            {
+              text: `GST:       ${gstTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+              style: ['textSize'],
+              margin: [330, 0, 0, 0],
+            },
+            '\n',
+            {
+              text: `Total $ :     ${Total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+              style: ['textSize'],
+              margin: [320, 0, 0, 0],
+            },
+            '\n\n\n',
+            { text: `TOTAL : ${Converter.toWords(Total)}`, style: 'bold', margin: [40, 0, 0, 0] },
+          ],
+        },
+        '\n\n',
+        '\n',
+
+        {
+          columns: [
+            {
+              text: `Terms and Condition:- \n
 :- Payment : COD \n
 :- The above quote does not cover replacement of any parts unless expressly stated above. \n
 :- We reserve the right to terminate any scope of work in event where there is a default to our Payment Schedule`,
-  
-  style: ['notesText', 'textSize']
-}, 
 
-],},
+              style: ['notesText', 'textSize'],
+            },
+          ],
+        },
 
+        '\n',
+        '\n',
 
-'\n',
- '\n',     
-    
-        
         {
           width: '100%',
           alignment: 'center',
@@ -350,15 +325,15 @@ const PdfQuote = () => {
         },
         textSize1: {
           fontSize: 10,
-          alignment:'right',
-          margin:[0,0,200,0]
-       },
-       textSize2: {
+          alignment: 'right',
+          margin: [0, 0, 200, 0],
+        },
+        textSize2: {
           fontSize: 15,
-          bold:'true',
-          alignment:'left',
-          margin:[100,0,0,0]
-       },
+          bold: 'true',
+          alignment: 'left',
+          margin: [100, 0, 0, 0],
+        },
         notesTitle: {
           bold: true,
           margin: [0, 50, 0, 3],
@@ -396,10 +371,43 @@ const PdfQuote = () => {
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
     pdfMake.createPdf(dd, null, null, pdfFonts.pdfMake.vfs).open();
   };
+  const getQuoteById = () => {
+    api
+      .post('/tender/getQuoteLineItemsById', { quote_id: quote.quote_id })
+      .then((res) => {
+        let grandTotal = 0;
+        let grand = 0;
+        let gst = 0;
+
+        console.log("getQuoteLineItemsById",res.data.data)
+
+        res.data.data.forEach((elem) => {
+          grandTotal += elem.amount;
+          //  grand += elem.actual_value;
+        });
+
+        console.log("grandTotal",grandTotal)
+        
+        setGtotal(grandTotal);
+        gst = grandTotal * 0.07;
+        setGsttotal(gst);
+        grand = grandTotal + gst;
+        setTotal(grand);
+        if(res.data.data.length > 0){
+          GetPdf(res.data.data);
+        }else{
+          message('No Items Found','warning')
+        }
+        
+      })
+      .catch(() => {});
+  };
 
   return (
     <>
-       <span onClick={GetPdf}><Icon.Printer/></span>
+      <span onClick={getQuoteById}>
+        <Icon.Printer />
+      </span>
     </>
   );
 };

@@ -35,6 +35,9 @@ export default function QuotationMoreDetails({
     // generateCodeQuote: PropTypes.any,
   };
 
+
+  console.log("id",id)
+
   const [quotation, setQuotation] = useState();
   const [quoteData, setQuoteData] = useState();
  // const [quotelineItem, setQuoteLineItem] = useState();
@@ -47,6 +50,7 @@ export default function QuotationMoreDetails({
     api
       .post('/projecttabquote/getTabQuoteById', { project_id: id })
       .then((res) => {
+        console.log("getTabQuoteById",res.data.data)
         setQuotation(res.data.data);
       })
   };

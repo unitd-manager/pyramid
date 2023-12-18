@@ -112,9 +112,10 @@ export default function TenderContactDetails({
             className="shadow-none"
             onClick={() => {
               AddNewContact();
+              // addContactToggle(null)
             }}
           >
-            Submit
+            Save & Continue
           </Button>
           <Button color="secondary" className="shadow-none" onClick={addContactToggle.bind(null)}>
             Cancel
