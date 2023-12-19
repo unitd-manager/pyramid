@@ -21,8 +21,10 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
     quotationsModal: PropTypes.bool,
     setquotationsModal: PropTypes.func,
     id: PropTypes.any,
-
   };
+
+  console.log("id+++++",id)
+
 
   const [quoteLogViewLineItem, setQuoteLogViewLineItem] = useState(false);
   const [quote, setQuote] = useState([]);
@@ -107,8 +109,8 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
                   </Col>
                 </Row>
 
-                {quotation &&
-                  quotation.map((element) => {
+                {quote &&
+                  quote.map((element) => {
                     return (
                       <Row>
                         <Col>
