@@ -11,7 +11,7 @@ const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
     navigate: PropTypes.any,
     //applyChanges: PropTypes.func,
     backToList: PropTypes.func,
-    deleteData: PropTypes.func,
+    deleteData: PropTypes.any,
     module: PropTypes.string,
   };
   const { isAuthorized, isLoading } = usePermify();

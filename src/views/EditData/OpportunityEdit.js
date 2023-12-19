@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { TabContent, TabPane, Col, Label ,FormGroup, Row,Button } from 'reactstrap';
+import { TabContent, TabPane, Col, Label, FormGroup, Row, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
 import api from '../../constants/api';
-//import TenderButtons from '../../components/TenderTable/TenderButtons';
-import PdfQuote from '../../components/PDF/PdfQuote';
 import creationdatetime from '../../constants/creationdatetime';
 import AddCostingSummaryModal from '../../components/TenderTable/AddCostingSummaryModal';
 import EditCostingSummaryModal from '../../components/TenderTable/EditCostingSummaryModal';
@@ -124,7 +123,7 @@ const OpportunityEdit = () => {
 
   // Insert Company
   const insertCompany = () => {
-    console.log( 'company',companyInsertData.company_name)
+    console.log('company', companyInsertData.company_name)
     if (
       companyInsertData.company_name !== '' &&
       companyInsertData.address_street !== '' &&
@@ -176,7 +175,7 @@ const OpportunityEdit = () => {
 
   const editTenderData = () => {
     tenderDetails.modification_date = creationdatetime;
-    api      .post('/tender/edit-Tenders', tenderDetails)
+    api.post('/tender/edit-Tenders', tenderDetails)
       .then(() => {
         message('Record editted successfully', 'success');
         setTimeout(() => {
@@ -218,14 +217,13 @@ const OpportunityEdit = () => {
         .then(() => {
           getContact(newDataWithCompanyId.company_id);
           message('Contact Inserted Successfully', 'success');
-          setTimeout(() => {
-            window.location.reload();
-          }, 300);        })
+          getCompany();
+        })
         .catch(() => {
           message('Unable to add Contact! try again later', 'error');
         });
     } else {
-      message('All fields are required.', 'info');
+      message('All fields are required.', 'warning');
     }
   };
 
@@ -285,8 +283,19 @@ const OpportunityEdit = () => {
     const newDataWithCompanyId = tenderDetails;
     newDataWithCompanyId.quote_id = quote.quote_id;
     newDataWithCompanyId.project_code = code;
-    api.post('/project/insertProject', newDataWithCompanyId).then(() => {
-      message('Project Converted Successfully', 'success');
+    api.post('/project/insertProject', newDataWithCompanyId).then((response) => {
+
+      const projectId = response.data.data.insertId;
+
+      const updateQuoteData = {
+        project_id: projectId,
+        quote_id: quote.quote_id,
+        opportunity_id: newDataWithCompanyId.opportunity_id,
+      };
+  
+      api.post('/project/updateQuote', updateQuoteData).then(() => {
+        message('Project Converted Successfully', 'success');
+      });
     });
   };
 
@@ -305,10 +314,36 @@ const OpportunityEdit = () => {
       .post('/tender/getCodeValue', { type: 'opportunityproject' })
       .then((res) => {
         insertProject(res.data.data);
+        setTimeout(() => {
+          window.location.reload();
+        }, 400);
       })
       .catch(() => {
         insertProject('');
       });
+  };
+
+  //  deleteRecord
+  const deleteOpportunity = () => {
+
+    Swal.fire({
+      title: `Are you sure?`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('/tender/deleteTender', { opportunity_id: id })
+          .then(() => {
+            Swal.fire('Deleted!', 'Your opportunity has been deleted.', 'success');
+            backToList();
+          });
+      }
+    });
   };
 
   useEffect(() => {
@@ -326,17 +361,12 @@ const OpportunityEdit = () => {
     <>
       <BreadCrumbs heading={tenderDetails && tenderDetails.title} />
       <ToastContainer></ToastContainer>
-      {/* <TenderButtons
-        editTenderData={editTenderData}
-        navigate={navigate}
-        applyChanges={applyChanges}
-        backToList={backToList}
-      ></TenderButtons> */}
       <ApiButton
         editData={editTenderData}
         navigate={navigate}
         applyChanges={editTenderData}
         backToList={backToList}
+        deleteData={deleteOpportunity}
         module="Tender"
       ></ApiButton>
       <TenderMoreDetails
@@ -362,8 +392,8 @@ const OpportunityEdit = () => {
       ></TenderMoreDetails>
 
       <ComponentCard>
-       
-      <EditCostingSummaryModal
+
+        <EditCostingSummaryModal
           editCostingSummaryModel={editCostingSummaryModel}
           setEditCostingSummaryModel={setEditCostingSummaryModel}
           costingsummary={costingsummary}
@@ -377,13 +407,13 @@ const OpportunityEdit = () => {
           ></AddCostingSummaryModal>
         )}
         {/* End Call Edit Costing Summary Modal */}
-       
+
 
         {/* End Call View Quote Log Modal */}
 
         <Tab toggle={toggle} tabs={tabs} />
         <TabContent className="p-4" activeTab={activeTab}>
-        <TabPane tabId="1">
+          <TabPane tabId="1">
             <TenderQuotation
               tenderId={id}
               quote={quote}
@@ -394,7 +424,6 @@ const OpportunityEdit = () => {
               getLineItem={getLineItem}
               getLine={getLine}
               quotes={quotes}
-              PdfQuote={PdfQuote}
               editQuoteModal={editQuoteModal}
               setAddLineItemModal={setAddLineItemModal}
               setEditQuoteModal={setEditQuoteModal}
@@ -407,6 +436,7 @@ const OpportunityEdit = () => {
               generateCode={generateCode}
               generateCodes={generateCodes}
               handleQuoteForms={handleQuoteForms}
+              getQuote={getQuote}
             ></TenderQuotation>
           </TabPane>
           <TabPane tabId="2">
@@ -552,8 +582,8 @@ const OpportunityEdit = () => {
               </Row>
             )}
           </TabPane>
-            {/* Tender Quotation */}
-           
+          {/* Tender Quotation */}
+
 
           <TabPane tabId="3">
             <TenderAttachment></TenderAttachment>

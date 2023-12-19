@@ -42,7 +42,7 @@ export default function TenderMoreDetails({
     AddNewContact: PropTypes.object,
     insertCompany: PropTypes.object,
     companyhandleInputs: PropTypes.object,
-    setAddCompanyModal: PropTypes.object,
+    setAddCompanyModal: PropTypes.func,
     incharge: PropTypes.object,
     getContact: PropTypes.object,
     allCountries: PropTypes.object,
@@ -88,7 +88,7 @@ export default function TenderMoreDetails({
               <Col md="3">
                 <FormGroup>
                   <Label>
-                    Company(OR)
+                    Company (OR){' '}
                     <span
                       className="anchor"
                       onClick={() => {
