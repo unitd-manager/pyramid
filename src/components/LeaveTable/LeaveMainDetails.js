@@ -27,7 +27,7 @@ export default function LeaveMainDetails({ handleInputs, leavesDetails,differenc
                 <FormGroup>
                   <Label>Designation</Label>
                   <br />
-                  <span>{leavesDetails && leavesDetails.position}</span>
+                  <span>{leavesDetails && leavesDetails.designation}</span>
                 </FormGroup>
               </Col>
               <Col md="4">

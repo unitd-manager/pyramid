@@ -3,6 +3,7 @@ import { Row, Col, Form, FormGroup, Button } from 'reactstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import * as Icon from 'react-feather';
+import Swal from 'sweetalert2';
 import AttachmentModalV2 from '../../components/Tender/AttachmentModalV2';
 import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
 import ComponentCard from '../../components/ComponentCard';
@@ -96,7 +97,26 @@ const CpfCalculatorEdit = () => {
         message('Unable to edit record.', 'error');
       });
   };
-
+  const deleteData = () => {
+    Swal.fire({
+      title: `Are you sure?`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('/cpfCalculator/deleteCpfCalculator', { cpf_calculator_id: id })
+          .then(() => {
+            Swal.fire('Deleted!', 'CPF Calculator has been deleted.', 'success');
+            //window.location.reload();
+          });
+      }
+    });
+  };
   useEffect(() => {
     editCpfRecordById();
   }, [id]);
@@ -114,6 +134,7 @@ const CpfCalculatorEdit = () => {
               navigate={navigate}
               applyChanges={applyChanges}
               backToList={backToList}
+              deleteData={deleteData}
               module="CPF Calculater"
             ></ApiButton>
       
