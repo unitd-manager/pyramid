@@ -14,6 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import api from '../../constants/api';
+import PdfProjectQuoteLog from '../PDF/PdfProjectQuoteLog';
 // import TenderPdfQuoteLog from '../PDF/TenderPdfQuoteLog';
 
 const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
@@ -23,36 +24,33 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
     id: PropTypes.any,
   };
 
-  console.log("id+++++",id)
-
-
   const [quoteLogViewLineItem, setQuoteLogViewLineItem] = useState(false);
   const [quote, setQuote] = useState([]);
+
   const getquotations = () => {
     api
       .post('/tender/getTabQuotelogById', { opportunity_id: id })
-      .then((res) => {
-        setQuote(res.data.data);
-        console.log('QUOTE', res.data.data);
+      .then(({ data: { data } }) => {
+        const modifiedData = data.length > 1 ? data.slice(0, -1) : data;
+        setQuote(modifiedData);
       })
       .catch(() => {});
   };
-
+  
   const [quotation, setQuotelogLineItems] = useState([]);
   const QuotationViewLineItem = () => {
     api
       .post('/tender/getTabQuoteLineItems', { opportunity_id: id })
       .then((res) => {
         setQuotelogLineItems(res.data.data);
-        console.log('tender', res.data.data);
       })
       .catch(() => {});
   };
+
   useEffect(() => {
     QuotationViewLineItem();
   }, []);
 
-  console.log('data', quote);
   useEffect(() => {
     getquotations();
   }, [id]);
@@ -127,7 +125,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
                           <FormGroup>
                             <Label>
                               {element.quote_date
-                                ? moment(element.quote_date).format('YYYY-MM-DD')
+                                ? moment(element.quote_date).format('DD-MM-YYYY')
                                 : ''}
                             </Label>
                           </FormGroup>
@@ -176,7 +174,9 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
                                             <tr>
                                               <td>{e.title}</td>
                                               <td>{e.description}</td>
-                                              <td>{e.amount} </td>
+                                              <td>{e.quantity}</td>
+                                              <td>{e.unit_price}</td>
+                                              <td>{e.amount}</td>
                                               <td></td>
                                               <td></td>
                                             </tr>
@@ -198,15 +198,16 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal ,id}) => {
                                 </Button>
                               </ModalFooter>
                             </Modal>
+
                           </FormGroup>
                         </Col>
                         <Col>
-                          <FormGroup>
+                           <FormGroup>
                             <Label>
-                              {/* <TenderPdfQuoteLog
+                              <PdfProjectQuoteLog
                                 logId={element.quote_log_id}
                                 id={id}
-                              ></TenderPdfQuoteLog> */}
+                              ></PdfProjectQuoteLog>
                             </Label>
                           </FormGroup>
                         </Col>

@@ -57,6 +57,8 @@ export default function QuotationMoreDetails({
   useEffect(() => {
     getQuotations();
   }, [id]);
+  
+  console.log("quotation",quotation)
 
   return (
     <>

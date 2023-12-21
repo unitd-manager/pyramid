@@ -23,6 +23,8 @@ export default function TenderCompanyEditDetails({
   companyhandleInputs,
   addCompanyToggle,
   addCompanyModal,
+  formSubmitted,
+  companyInsertData
 }) {
   TenderCompanyEditDetails.propTypes = {
     allCountries: PropTypes.any,
@@ -30,6 +32,8 @@ export default function TenderCompanyEditDetails({
     companyhandleInputs: PropTypes.any,
     addCompanyModal: PropTypes.any,
     addCompanyToggle: PropTypes.any,
+    formSubmitted: PropTypes.any,
+    companyInsertData: PropTypes.any,
   };
   return (
     <div>
@@ -48,7 +52,14 @@ export default function TenderCompanyEditDetails({
                           <Label>
                             Company Name <span className="required"> *</span>
                           </Label>
-                          <Input type="text" name="company_name" onChange={companyhandleInputs} />
+                          <Input type="text" name="company_name"
+                           onChange={companyhandleInputs} 
+                           className={`form-control ${formSubmitted && companyInsertData && companyInsertData.company_name.trim() === '' ? 'highlight' : ''
+                          }`}
+                           />
+                            {formSubmitted && companyInsertData && companyInsertData.company_name.trim() === '' && (
+                      <div className="error-message">Please enter the company name</div>
+                    )}
                         </FormGroup>
                       </Col>
                       <Col md="4">
@@ -62,7 +73,13 @@ export default function TenderCompanyEditDetails({
                           <Label>
                             Main Phone <span className="required"> *</span>
                           </Label>
-                          <Input type="text" name="phone" onChange={companyhandleInputs} />
+                          <Input type="text" name="phone" onChange={companyhandleInputs} 
+                          className={`form-control ${formSubmitted && companyInsertData && companyInsertData.phone.trim() === '' ? 'highlight' : ''
+                        }`}
+                        />
+                        {formSubmitted && companyInsertData && companyInsertData.phone.trim() === '' && (
+                      <div className="error-message">Please enter the phone</div>
+                    )}
                         </FormGroup>
                       </Col>
                     </Row>
@@ -93,7 +110,12 @@ export default function TenderCompanyEditDetails({
                           name="address_street"
                           placeholder=" "
                           onChange={companyhandleInputs}
+                          className={`form-control ${formSubmitted && companyInsertData && companyInsertData.address_street.trim() === '' ? 'highlight' : ''
+                        }`}
                         />
+                         {formSubmitted && companyInsertData && companyInsertData.address_street.trim() === '' && (
+                      <div className="error-message">Please enter the Address</div>
+                    )}
                       </FormGroup>
                     </Col>
                     <Col md="4">
@@ -117,7 +139,12 @@ export default function TenderCompanyEditDetails({
                           name="address_po_code"
                           placeholder=""
                           onChange={companyhandleInputs}
+                          className={`form-control ${formSubmitted && companyInsertData && companyInsertData.address_po_code.trim() === '' ? 'highlight' : ''
+                        }`}
                         />
+                         {formSubmitted && companyInsertData && companyInsertData.address_po_code.trim() === '' && (
+                      <div className="error-message">Please enter the Post Code</div>
+                    )}
                       </FormGroup>
                     </Col>
                   </Row>
@@ -126,11 +153,11 @@ export default function TenderCompanyEditDetails({
                       <FormGroup>
                         {' '}
                         <Label>
-                          Country<span className="required"> *</span>
+                          Country
                         </Label>
                         <Input type="select" name="address_country" onChange={companyhandleInputs}>
-                          <option defaultValue="selected" value="">
-                            Please Select
+                          <option defaultValue="selected" value="Singapore">
+                            Singapore
                           </option>
                           {allCountries &&
                             allCountries.map((country) => (
@@ -230,7 +257,6 @@ export default function TenderCompanyEditDetails({
             className="shadow-none"
             onClick={() => {
               insertCompany();
-              // addCompanyToggle(null)
             }}
           >
             Save & Continue

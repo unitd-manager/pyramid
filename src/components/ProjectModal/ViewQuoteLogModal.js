@@ -25,6 +25,9 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) 
     id:PropTypes.any,
   };
 
+  console.log("quoteId",quoteId)
+  console.log("id",id)
+
   const [quoteLogViewLineItem, setQuoteLogViewLineItem] = useState(false);
   const [quote, setQuote] = useState();
   const getquotations = () => {

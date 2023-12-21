@@ -21,12 +21,16 @@ export default function TenderContactDetails({
   addContactModal,
   addContactToggle,
   AddNewContact,
+  formSubmitted,
+  newContactData
 }) {
   TenderContactDetails.propTypes = {
     handleAddNewContact: PropTypes.any,
     addContactModal: PropTypes.object,
     addContactToggle: PropTypes.any,
     AddNewContact: PropTypes.any,
+    formSubmitted: PropTypes.any,
+    newContactData: PropTypes.object,
   };
 
   return (
@@ -45,7 +49,12 @@ export default function TenderContactDetails({
                           <Label>
                             Title<span className="required"> *</span>
                           </Label>
-                          <Input type="select" name="salutation" onChange={handleAddNewContact}>
+                          <Input type="select" name="salutation" onChange={handleAddNewContact}
+                            className={`form-control ${formSubmitted && newContactData && (newContactData.salutation === undefined || newContactData.salutation.trim() === '')
+                            ? 'highlight'
+                            : ''
+                          }`}
+                          >
                             <option value="" selected="selected">
                               Please Select
                             </option>
@@ -53,6 +62,9 @@ export default function TenderContactDetails({
                             <option value="Mr">Mr</option>
                             <option value="Mrs">Mrs</option>
                           </Input>
+                          {formSubmitted && newContactData && (newContactData.salutation === undefined || newContactData.salutation.trim() === '') && (
+                      <div className="error-message">Please select the Title</div>
+                    )}
                         </FormGroup>
                       </Col>
                       <Col md="4">
@@ -60,7 +72,13 @@ export default function TenderContactDetails({
                           <Label>
                             Name<span className="required"> *</span>
                           </Label>
-                          <Input type="text" name="first_name" onChange={handleAddNewContact} />
+                          <Input type="text" name="first_name" onChange={handleAddNewContact} 
+                           className={`form-control ${formSubmitted && newContactData && newContactData.first_name.trim() === '' ? 'highlight' : ''
+                          }`}
+                          />
+                            {formSubmitted && newContactData && newContactData.first_name.trim() === '' && (
+                      <div className="error-message">Please enter the Name</div>
+                    )}
                         </FormGroup>
                       </Col>
                       <Col md="4">

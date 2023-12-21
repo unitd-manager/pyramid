@@ -7,6 +7,7 @@ export default function CreationModification({ details = null, title }) {
     details: PropTypes.object,
     title: PropTypes.string,
   };
+  console.log("details",details)
   return (
     <>
       <CardTitle tag="h4" className="border-bottom px-4 py-3 mb-0">
@@ -14,11 +15,11 @@ export default function CreationModification({ details = null, title }) {
           <Col>{title}</Col>
           {details && (
             <Col>
-              <Row>
-                <small>Modification Date: {details && details.modification_date}</small>
+               <Row>
+              <span style={{ fontSize: '0.7em' }}> Creation: {details && details.created_by} {details && details.creation_date}</span>
               </Row>
               <Row className="d-flex">
-                <small>Creation Date: {details && details.creation_date}</small>
+              <span style={{ fontSize: '0.7em' }}> Modified: {details && details.modified_by} {details && details.modification_date}</span>
               </Row>
             </Col>
           )}
