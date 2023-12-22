@@ -18,7 +18,7 @@ import creationdatetime from '../../constants/creationdatetime';
 
 const Test = () => {
   //state variables
-  const [tabPurchaseOrdersLinked, setTabPurchaseOrdersLinked] = useState([]);
+  const [tabPurchaseOrdersLinked, setTabPurchaseOrdersLinked] = useState();
   const [projectsLinked, setProjectsLinked] = useState([]);
   const [productQty, setProductQty] = useState({});
   const [inventoryDetails, setInventoryDetails] = useState({
@@ -42,10 +42,21 @@ const Test = () => {
   const handleInputs = (e) => {
     setInventoryDetails({ ...inventoryDetails, [e.target.name]: e.target.value, inventory_id: id });
   };
+   //get inventoryby product id
+   const getInventoryData = () => {
+    api
+      .post('/inventory/getinventoryById', { inventory_id: id })
+      .then((res) => {
+        setInventoryDetails(res.data.data[0]);
+      })
+      .catch(() => {
+        message('Unable to get inventory data.', 'error');
+      });
+  };
   //get data for purchaseorder table
   const getAllpurchaseOrdersLinked = () => {
     api
-      .post('/inventory/gettabPurchaseOrderLinkedById', { product_id: id })
+      .post('/inventory/gettabPurchaseOrderLinkedById', { product_id: inventoryDetails && inventoryDetails.productId })
       .then((res) => {
         setTabPurchaseOrdersLinked(res.data.data);
       })
@@ -53,10 +64,12 @@ const Test = () => {
         message('Unable to get purchase order data.', 'error');
       });
   };
+  console.log("productId", tabPurchaseOrdersLinked)
+
   //get data for projects table
   const getAllProjectsLinked = () => {
     api
-      .post('/inventory/getTabProjectLinkedById', { product_id: id })
+      .post('/inventory/getTabProjectLinkedById', {product_id: inventoryDetails && inventoryDetails.productId })
       .then((res) => {
         setProjectsLinked(res.data.data);
       })
@@ -68,7 +81,7 @@ const Test = () => {
   //get product purchasedquantity and sold qty
   const getproductquantity = () => {
     api
-      .post('/inventory/getProductQuantity', { product_id: id })
+      .post('/inventory/getProductQuantity', {product_id: inventoryDetails && inventoryDetails.productId })
       .then((res) => {
         setProductQty(res.data.data[0]);
       })
@@ -76,17 +89,7 @@ const Test = () => {
         message('Unable to get productqty data.', 'error');
       });
   };
-  //get inventoryby product id
-  const getInventoryData = () => {
-    api
-      .post('/inventory/getinventoryById', { inventory_id: id })
-      .then((res) => {
-        setInventoryDetails(res.data.data[0]);
-      })
-      .catch(() => {
-        message('Unable to get inventory data.', 'error');
-      });
-  };
+ 
   //update Inventory
   const editinventoryData = () => {
     inventoryDetails.modification_date = creationdatetime;
@@ -108,8 +111,8 @@ const Test = () => {
     getInventoryData();
     getAllpurchaseOrdersLinked();
     getAllProjectsLinked();
-    getproductquantity(id);
-  }, [id]);
+    getproductquantity( inventoryDetails && inventoryDetails.productId);
+  }, [ inventoryDetails && inventoryDetails.productId]);
 
   return (
       <>
@@ -141,9 +144,8 @@ const Test = () => {
                   <Row>
                     <h5>Remaining quantity</h5>
                   </Row>
-                  <span>
-                    {productQty && productQty.materials_purchased - productQty.materials_used}
-                  </span>
+                  <span>{productQty && productQty.actual_stock}</span>
+
                   <Row></Row>
                 </Col>
               </Row>

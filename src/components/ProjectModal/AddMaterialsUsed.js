@@ -161,12 +161,12 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed }) => {
             .then(() => {
               
               api
-                .post('/inventory/editInventoryStock', elem)
+                .post('/inventory/editInventoryStock11', elem)
                 .then(() => {
                   message('Quantity updated in inventory successfully.', 'success');
                 })
                 .catch(() => {
-                  message('unable to update quantity in inventory.', 'danger');
+                  message('unable to update quantity in inventory.22', 'danger');
                 });
               message('Quantity added successfully.', 'success');
             })

@@ -11,8 +11,8 @@ import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import CommonTable from '../../components/CommonTable';
 import 'datatables.net-buttons/js/buttons.colVis';
 import 'datatables.net-buttons/js/buttons.flash';
-import 'datatables.net-buttons/js/buttons.html5';
-import 'datatables.net-buttons/js/buttons.print';
+// import 'datatables.net-buttons/js/buttons.html5';
+// import 'datatables.net-buttons/js/buttons.print';
 import api from '../../constants/api';
 
 const Accounts = () => {
@@ -30,13 +30,13 @@ const Accounts = () => {
           pageLength: 20,
           processing: true,
           dom: 'Bfrtip',
-          buttons: [
-            {
-              extend: 'print',
-              text: 'Print',
-              className: 'shadow-none btn btn-primary',
-            },
-          ],
+          // buttons: [
+          //   {
+          //     extend: 'print',
+          //     text: 'Print',
+          //     className: 'shadow-none btn btn-primary',
+          //   },
+          // ],
         });
         setLoading(false);
       })
@@ -155,12 +155,12 @@ const Accounts = () => {
                         <Icon.Edit2 />
                       </Link>
                     </td>
-                    <td>{moment(element.date).format('YYYY-MM-DD')}</td>
+                    <td>{moment(element.date).format('DD-MM-YYYY')}</td>
                     <td>{element.description}</td>
                     <td>{element.total_amount}</td>
                     <td>{element.type}</td>
-                    <td>{element.group_name}</td>
-                    <td>{element.sub_group}</td>
+                    <td>{element.type === 'Expense' ? element.group_name : element.income_group_name}</td>
+<td>{element.type === 'Expense' ? element.sub_group_name : element.income_sub_group_name}</td>
                     <td>{element.payment_status}</td>
                     <td>{element.modified_by}</td>
                   </tr>

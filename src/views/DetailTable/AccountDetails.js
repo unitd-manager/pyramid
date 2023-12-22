@@ -19,6 +19,8 @@ const AccountsDetails = () => {
   const [gstAmount, setGstAmount] = useState('');
   const [groups, setGroup] = useState();
   const [subgroup, setSubgroup] = useState();
+  const [selectedType, setSelectedType] = useState(''); // Default to 'Expense'
+
 
   // Navigation and Parameter Constants
   const navigate = useNavigate();
@@ -30,6 +32,12 @@ const AccountsDetails = () => {
       setGroup(res.data.data);
     });
   };
+
+  const getIncomeGroup = () => {
+    api.get('/accounts/getIncomeGroupTitle').then((res) => {
+      setGroup(res.data.data);
+    });
+  };
   // get subgroup
   const getSubGroup = (headId) => {
     api
@@ -38,7 +46,18 @@ const AccountsDetails = () => {
         setSubgroup(res.data.data);
       })
       .catch(() => {
-        message('ExpenseHead Data Not Found', 'info');
+        //message('ExpenseHead Data Not Found', 'info');
+      });
+  };
+
+  const getIncomeSubGroup = (incomeGroupId) => {
+    api
+      .post('/accounts/getIncomeSubGroupTitle', { income_group_id: incomeGroupId })
+      .then((res) => {
+        setSubgroup(res.data.data);
+      })
+      .catch(() => {
+        //message('ExpenseHead Data Not Found', 'info');
       });
   };
   // insertExpense const
@@ -60,6 +79,7 @@ const AccountsDetails = () => {
     job_id: '',
     payment_status: '',
     remarks: '',
+    type: '',
   });
   // calculation connect with radio button
   const handleRadioGst = (radioVal, totalAmountF, gstValue, serviceCharge) => {
@@ -82,10 +102,22 @@ const AccountsDetails = () => {
     setTotalAmount(parseFloat(totalAmountF) + calculatedGstAmount + parseFloat(serviceCharge));
       
   };
-  /* eslint-disable */
+ 
+
   const handleInputs = (e) => {
     setAccountsDetail({ ...AccountsDetail, [e.target.name]: e.target.value });
+  
+    if (e.target.name === 'group') {
+      const selectedGroupId = e.target.value;
+      if (selectedType === 'Expense') {
+        getSubGroup(selectedGroupId);
+      } else if (selectedType === 'Income') {
+        getIncomeSubGroup(selectedGroupId);
+      }
+   
+    }
   };
+  
 
   // insertExpense
  // insertExpense
@@ -108,6 +140,7 @@ const insertExpense = () => {
           // If the description is unique, proceed with inserting the expense data
           AccountsDetail.date = moment();
           AccountsDetail.total_amount = totalAmount;
+          AccountsDetail.gst_amount = gstAmount;
           AccountsDetail.creation_date = creationdatetime;
           api
             .post('/accounts/insertexpense', AccountsDetail)
@@ -127,10 +160,15 @@ const insertExpense = () => {
     message('Please fill all required fields', 'warning');
   }
 };
-
-  useEffect(() => {
+useEffect(() => {
+  if (selectedType === 'Income') {
+    getIncomeGroup();
+  } else if (selectedType === 'Expense') {
     getGroup();
-  }, [groupss]);
+  }
+  setSubgroup([]);
+}, [selectedType]);
+
 
   return (
     <>
@@ -160,39 +198,80 @@ const insertExpense = () => {
                 </FormGroup>
               </Col>
               <Col md="3">
-                <Label>
-                  Head <span className="required"> *</span>{' '}
-                </Label>
-                <Input
-                  type="select"
-                  name="group"
-                  onChange={(e) => {
-                    getSubGroup(e.target.value);
-                    handleInputs(e);
-                  }}
-                  value={groupss}
-                >
-                  <option value="" selected>
-                    Please Select
-                  </option>
-                  {groups &&
-                    groups.map((ele) => {
-                      return <option value={ele.expense_group_id}>{ele.title}</option>;
-                    })}
-                </Input>
-              </Col>
-              <Col md="3">
-                <Label>Sub Head </Label>
-                <Input type="select" name="sub_group" onChange={handleInputs} value={groupss}>
-                  <option value="" selected>
-                    Please Select
-                  </option>
-                  {subgroup &&
-                    subgroup.map((ele) => {
-                      return <option value={ele.title}>{ele.title}</option>;
-                    })}
-                </Input>
-              </Col>
+  <Label>Type</Label>
+  <select
+    name="type"
+    value={selectedType}
+    onChange={(e) => {
+      setSelectedType(e.target.value);
+      handleInputs(e);
+    }}
+  >
+    <option value="" selected>
+      Please Select
+    </option>
+    <option value="Income">Income</option>
+    <option value="Expense">Expense</option>
+  </select>
+</Col>
+<Col md="3">
+  <Label>
+    Head <span className="required"> *</span>{' '}
+  </Label>
+  <Input
+    type="select"
+    name="group"
+    onChange={(e) => {
+      handleInputs(e);
+      const selectedGroupId = e.target.value;
+      if (selectedType === 'Expense') {
+        getSubGroup(selectedGroupId);
+      } else if (selectedType === 'Income') {
+        getIncomeSubGroup(selectedGroupId);
+      }
+    }}
+    value={groupss}
+  >
+    <option value="" selected>
+      Please Select
+    </option>
+    
+    {groups &&
+      groups.map((ele) => {
+        return (
+          <option
+            key={ele.expense_group_id}
+            value={
+              selectedType === 'Income'
+                ? ele.income_group_id
+                : ele.expense_group_id
+            }
+          >
+            {ele.title}
+          </option>
+        );
+      })}
+  </Input>
+</Col>
+
+<Col md="3">
+  <Label>Sub Head </Label>
+  <Input type="select" name="sub_group" onChange={handleInputs} value={AccountsDetail.sub_group}>
+    <option value="" selected>
+      Please Select
+    </option>
+    {subgroup &&
+      subgroup.map((ele) => {
+        return <option key={ele.expense_sub_group_id}
+        value={
+          selectedType === 'Income'
+            ? ele.income_sub_title
+            : ele.title
+        }>{ele.title}</option>;
+      })}
+  </Input>
+</Col>
+
               {/* radio button */}
               <Col md="3">
                 <Label>GST</Label>

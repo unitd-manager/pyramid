@@ -4,7 +4,7 @@ import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment';
 import ComponentCard from '../../components/ComponentCard';
-import AccountsButton from '../../components/AccountTable/AccountsButton';
+//import AccountsButton from '../../components/AccountTable/AccountsButton';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -14,23 +14,35 @@ import AccountsMainEdit from '../../components/AccountTable/AccountsMainEdit';
 import AddNote from '../../components/Tender/AddNote';
 import ViewNote from '../../components/Tender/ViewNote';
 import creationdatetime from '../../constants/creationdatetime';
+import ApiButton from '../../components/ApiButton';
 
 const AccountsEdit = () => {
   //Const Variables
   const [totalAmount, setTotalAmount] = useState('');
   const [gstAmount, setGstAmount] = useState('');
+  const [gstValue, setGstValue] = useState();
+  const gstPercentageValue = parseInt(gstValue?.value, 10) || 0; 
   const [AccountsDetails, setAccountsDetails] = useState();
+  const getGstValue = () => {
+    api.get('/finance/getGst').then((res) => {
+      setGstValue(res.data.data);
+      });
+  };
   
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
   // Button
-  const applyChanges = () => {};
+  // const applyChanges = () => {};
   const backToList = () => {
     navigate('/Accounts');
   };
+
+  useEffect(() => {
+    getGstValue();
+  }, []);
   // calculation connect with radio button
-  const handleRadioGst = (radioVal, totalAmountF, gstValue, serviceCharge) => {
+  const handleRadioGst = (radioVal, totalAmountF, gstValu, serviceCharge) => {
     /* eslint-disable */
     if (serviceCharge == '') {
       serviceCharge = 0;
@@ -38,15 +50,15 @@ const AccountsEdit = () => {
     if (totalAmountF == '') {
       totalAmountF = 0;
     }
-    if (gstValue == '') {
-      gstValue = 0;
+    if (gstValu == '') {
+      gstValu = 0;
     }
    
   
     
   let calculatedGstAmount = 0;
   if (radioVal === '1') {
-    calculatedGstAmount = parseFloat(totalAmountF) * 7 / 100;
+    calculatedGstAmount = parseFloat(totalAmountF) * (gstPercentageValue / 100);
   }
 
   setGstAmount(calculatedGstAmount);
@@ -58,7 +70,7 @@ const AccountsEdit = () => {
   const handleInputs = (e) => {
     setAccountsDetails({ ...AccountsDetails, [e.target.name]: e.target.value });
   };
-  
+ 
   // Get Accounts By Id
   const editAccountsById = () => {
     api
@@ -66,9 +78,10 @@ const AccountsEdit = () => {
       .then((res) => {
         setAccountsDetails(res.data.data[0]);
         setTotalAmount(res.data.data[0].total_amount);
+        setGstAmount(res.data.data[0].gst_amount);
       })
       .catch(() => {
-        message('Accounts Data Not Found', 'info');
+        //message('Accounts Data Not Found', 'info');
       });
   };
   // Edit Accounts Data
@@ -90,13 +103,13 @@ const editAccountsData = () => {
          
             AccountsDetails.total_amount = totalAmount;
             AccountsDetails.modification_date = creationdatetime;
-
+            AccountsDetails.gst_amount = gstAmount;
             api.post('/accounts/editAccounts', AccountsDetails)
               .then(() => {
                 message('Record edited successfully', 'success');
                 editAccountsById();
                 setTimeout(() => {
-                  navigate('/Accounts');
+                  //navigate('/Accounts');
                 }, 800);
               })
               .catch(() => {
@@ -133,14 +146,22 @@ const editAccountsData = () => {
     <>
       <BreadCrumbs heading={AccountsDetails && AccountsDetails.expense_id} />
       {/* Button */}
-      <AccountsButton
+      {/* <AccountsButton
         id={id}
         editAccountsData={editAccountsData}
         navigate={navigate}
         applyChanges={applyChanges}
         deleteExpense={deleteExpense}
         backToList={backToList}
-      ></AccountsButton>
+      ></AccountsButton> */}
+      <ApiButton
+              editData={editAccountsData}
+              navigate={navigate}
+              applyChanges={editAccountsData}
+              backToList={backToList}
+              deleteData={deleteExpense}
+              module="Accounts"
+            ></ApiButton>
       {/* Main Details */}
 
       <ToastContainer></ToastContainer>
@@ -165,19 +186,28 @@ const editAccountsData = () => {
                 </FormGroup>
               </Col>
               <Col md="3">
-                <FormGroup>
-                  <Label>Head</Label>
-                  <br />
-                  <span>{AccountsDetails && AccountsDetails.group_name}</span>
-                </FormGroup>
-              </Col>
-              <Col md="3">
-                <FormGroup>
-                  <Label> Sub Head</Label>
-                  <br />
-                  <span>{AccountsDetails && AccountsDetails.sub_group}</span>
-                </FormGroup>
-              </Col>
+  <FormGroup>
+    <Label>Head</Label>
+  <br/>
+    {AccountsDetails && AccountsDetails.type === 'Expense' ? (
+      <span>{AccountsDetails && AccountsDetails.group_name}</span>
+    ) : (
+      <span>{AccountsDetails && AccountsDetails.income_group_name}</span>
+    )}
+  </FormGroup>
+</Col>
+<Col md="3">
+  <FormGroup>
+    <Label> Sub Head</Label>
+  <br/>
+    {AccountsDetails && AccountsDetails.type === 'Expense' ? (
+      <span>{AccountsDetails && AccountsDetails.sub_group_name}</span>
+    ) : (
+      <span>{AccountsDetails && AccountsDetails.income_sub_group_name}</span>
+    )}
+  </FormGroup>
+</Col>
+
               {/* Radio button */}
               <Col md="3">
                 <Label>GST</Label>
@@ -243,18 +273,14 @@ const editAccountsData = () => {
                 <FormGroup>
                   <Label>GST Amount </Label>
                   <Input
-                    type="number"
+                  disabled
+                    type="text"
                     onChange={(e) => {
                       handleInputs(e);
-                      handleRadioGst(
-                        AccountsDetails.gst,
-                        AccountsDetails.amount,
-                        AccountsDetails.gst_amount,
-                        e.target.value,
-                      );
+                    
                     }}
                     name="gst_amount"
-                    value={gstAmount}
+                    value={gstAmount.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
                   />
                 </FormGroup>
               </Col>

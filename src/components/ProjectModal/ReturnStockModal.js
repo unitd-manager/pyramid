@@ -74,7 +74,7 @@ console.log('loginuser',loggedInuser)
             .post('/product/edit-ProductQty', elem)
             .then(() => {
               api
-                .post('/inventory/editInventoryStock', elem)
+                .post('/inventory/editInventoryStock11', elem)
                 .then(() => {
                   message('Quantity updated in inventory successfully.', 'success');
                   setTimeout(()=>{
@@ -82,7 +82,7 @@ console.log('loginuser',loggedInuser)
                   },300)
                 })
                 .catch(() => {
-                  message('unable to update quantity in inventory.', 'danger');
+                  message('unable to update quantity in inventory.11', 'danger');
                 });
               message('Quantity added successfully.', 'success');
             })

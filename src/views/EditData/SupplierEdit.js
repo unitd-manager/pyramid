@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Form, FormGroup, Button } from 'reactstrap';
+import {  Form, FormGroup } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'datatables.net-dt/js/dataTables.dataTables';
@@ -19,6 +19,7 @@ import api from '../../constants/api';
 import PurchaseOrderLinked from '../../components/SupplierModal/Purchaseorderlinked';
 import SupplierTable from '../../components/SupplierModal/SupplierTable';
 import SupplierDetails from '../../components/SupplierModal/SupplierDetails';
+import ApiButton from '../../components/ApiButton';
 
 const SupplierEdit = () => {
   //all state variables
@@ -32,8 +33,10 @@ const SupplierEdit = () => {
   //navigation and params
   const { id } = useParams();
   const navigate = useNavigate();
-  const applyChanges = () => {};
-
+  //const applyChanges = () => {};
+const backToList=() => {
+  navigate('/Supplier');
+}
   const handleInputs = (e) => {
     setSupplier({ ...supplier, [e.target.name]: e.target.value });
   };
@@ -129,7 +132,14 @@ const SupplierEdit = () => {
       <Form>
         <FormGroup>
           <ComponentCardV2>
-            <Row>
+          <ApiButton
+              editData={editSupplierData}
+              navigate={navigate}
+              applyChanges={editSupplierData}
+              backToList={backToList}
+              module="Supplier"
+            ></ApiButton>
+            {/* <Row>
               <Col>
                 <Button
                   className="shadow-none"
@@ -169,7 +179,7 @@ const SupplierEdit = () => {
                   Back to List
                 </Button>
               </Col>
-            </Row>
+            </Row> */}
           </ComponentCardV2>
         </FormGroup>
       </Form>
