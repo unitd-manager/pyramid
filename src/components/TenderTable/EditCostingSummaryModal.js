@@ -35,10 +35,19 @@ const EditCostingSummaryModal = ({
   const [totalCost, setTotalCost] = useState();
   //edit Tab Costing Summary Form
   const handleCostingSummeryInputs = (e) => {
+    console.log("handleCostingSummeryInputs",{ ...editCostingSummaryData, [e.target.name]: e.target.value })
     seteditCostingSummaryData({ ...editCostingSummaryData, [e.target.name]: e.target.value });
   };
 
   const handleCalc = (noofworkerused, noofdaysworked, labourratesperday, totallabourcharges) => {
+
+    console.log("+++++++",
+    noofworkerused, 
+    noofdaysworked, 
+    labourratesperday, 
+    totallabourcharges
+
+    )
     if (!noofworkerused) noofworkerused = 0;
     if (!noofdaysworked) noofdaysworked = 0;
     if (!labourratesperday) labourratesperday = 0;
@@ -167,6 +176,50 @@ const EditCostingSummaryModal = ({
                         />
                       </FormGroup>
                     </Col>
+                    <Col md="4">
+                                  <FormGroup>
+                                    <Label>Total Price (S$ W/o GST)</Label>
+                                    <Input
+                                    defaultValue={costingsummary && costingsummary.po_price}
+                                      // Value={item.po_price}
+                                      type="number"
+                                      name="po_price"
+                                      // onBlur={() => {
+                                      //   calculateTotal();
+                                      // }}
+                                    />
+                                  </FormGroup>
+                                </Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <Label>Profit Margin %</Label>
+                        <Input
+                          type="number"
+                          disabled
+                          onChange={(e) => {
+                            handleCostingSummeryInputs(e);
+                          }}
+                          defaultValue={costingsummary && costingsummary.profit_percentage}
+                          name="profit_percentage"
+                        />
+                      </FormGroup>
+                    </Col>
+
+                    <Col md="4">
+                      <FormGroup>
+                        <Label>Profit Margin Value</Label>
+                        <Input
+                          type="number"
+                          disabled
+                          name="profit"
+                          onChange={(e) => {
+                            handleCostingSummeryInputs(e);
+                          }}
+                          defaultValue={costingsummary && costingsummary.profit}
+                          tabindex="-1"
+                        />
+                      </FormGroup>
+                    </Col>
                   </Row>
                 </Form>
               </CardBody>
@@ -197,6 +250,7 @@ const EditCostingSummaryModal = ({
                         }}
                         defaultValue={costingsummary && costingsummary.total_material_price}
                         name="total_material_price"
+                        disabled
                       />
                     </FormGroup>
                   </Col>
@@ -381,38 +435,6 @@ const EditCostingSummaryModal = ({
                     </FormGroup>
                   </Col>
                 </Row>
-                <Row>
-                <Col md="4">
-                      <FormGroup>
-                        <Label>Profit Margin %</Label>
-                        <Input
-                          type="number"
-                          disabled
-                          onChange={(e) => {
-                            handleCostingSummeryInputs(e);
-                          }}
-                          defaultValue={costingsummary && costingsummary.profit_percentage}
-                          name="profit_percentage"
-                        />
-                      </FormGroup>
-                    </Col>
-
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>Profit Margin Value</Label>
-                        <Input
-                          type="number"
-                          disabled
-                          name="profit"
-                          onChange={(e) => {
-                            handleCostingSummeryInputs(e);
-                          }}
-                          defaultValue={costingsummary && costingsummary.profit}
-                          tabindex="-1"
-                        />
-                      </FormGroup>
-                    </Col>
-                    </Row>
               </CardBody>
               <CardBody>
                 <CardTitle className="mb-0 bg-light"></CardTitle>
