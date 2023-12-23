@@ -97,7 +97,7 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
         insertReceiptHistory({
           creation_date: moment().format(),
           modification_date: moment().format(),
-          purchase_order_date: '',
+          purchase_order_date: moment().format(),
           invoice_paid_status: 'Paid',
           title: '',
           installment_id: '',
@@ -120,7 +120,7 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
           creation_date: moment().format(),
           modification_date: moment().format(),
 
-          purchase_order_date: '',
+          purchase_order_date: moment().format(),
           invoice_paid_status: 'Partially paid',
           title: '',
           installment_id: '',

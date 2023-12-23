@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import {  Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Form, Table } from 'reactstrap';
 import ComponentCard from '../ComponentCard';
 
 export default function SupplierTable({ purchaseOrder }) {
   SupplierTable.propTypes = {
     purchaseOrder: PropTypes.array,
-    
   };
   // structure of makesupplier payment tables
   const supplierTableColumn = [
@@ -32,8 +31,6 @@ export default function SupplierTable({ purchaseOrder }) {
     },
   ];
 
-
-  
   return (
     <ComponentCard title="Purchase Order Linked">
       <Form>
@@ -52,7 +49,8 @@ export default function SupplierTable({ purchaseOrder }) {
                   purchaseOrder.map((element) => {
                     return (
                       <tr key={element.purchase_order_id}>
-                        <td>{element.purchase_order_date ? moment(element.purchase_order_date).format('DD-MM-YYYY') : ''}</td>
+                        <td>{(element.purchase_order_date)?moment(element.purchase_order_date).format('DD-MM-YYYY'):''}</td>
+
                         <td>
                           <Link to={`/PurchaseOrderEdit/${element.purchase_order_id}`}>
                             {element.po_code}
@@ -60,7 +58,9 @@ export default function SupplierTable({ purchaseOrder }) {
                         </td>
                         <td>{element.po_value}</td>
                         <td>
-                        {parseFloat ? element.po_value - parseFloat(element.prev_amount) : 0}
+                          {Number.isNaN(parseFloat(element.prev_amount))
+                            ? element.po_value
+                            : element.po_value - parseFloat(element.prev_amount)}
                         </td>
                         <td>{element.payment_status}</td>
                         <td>
