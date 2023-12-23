@@ -48,15 +48,13 @@ const AddCostingSummaryModal = ({
       transport_charges: '',
       other_charges: '',
       salesman_commission: '',
-      profit_percentage: '',
-      po_price: '',
+      profit_percentage:'',
     },
   ]);
-
+  
   const AddCostingSummary = (obj) => {
     //obj.opportunity_costing_summary_id=id;
     obj.opportunity_id = projectInfo;
-
     api
       .post('/tender/insertTabcostingsummary', obj)
       .then(() => {
@@ -68,7 +66,7 @@ const AddCostingSummaryModal = ({
       });
   };
 
-
+  
   //Invoice item values
   const getAllValues = () => {
     const result = [];
@@ -111,8 +109,10 @@ const AddCostingSummaryModal = ({
       const financeCharges = parseFloat(allValues.finance_charges) || 0;
       const officeOverHeads = parseFloat(allValues.office_overheads) || 0;
       const otherCharges = parseFloat(allValues.other_charges) || 0;
+      const profitPercentage = parseFloat(allValues.profit_percentage) || 0;
       const totalMaterialPrice = parseFloat(allValues.total_material_price) || 0;
 
+      
       // Calculate the total_cost by adding transport_charges and other_charges
       allValues.total_cost =
         transportCharges +
@@ -120,20 +120,18 @@ const AddCostingSummaryModal = ({
         salesmanCommission +
         financeCharges +
         officeOverHeads +
-        otherCharges +
-        totalMaterialPrice ;
-        
-      allValues.profit = parseFloat(allValues.po_price) - allValues.total_cost || 0;
-      allValues.profit_percentage =
-      (allValues.profit / parseFloat(allValues.po_price)) * 100 || 0;
-
-      result.push(allValues);
+        otherCharges+
+        totalMaterialPrice;
+        allValues.profit = (profitPercentage / 100) * allValues.total_cost;
+        console.log('After profit calculation:', allValues);
+              result.push(allValues);
     });
-
+    
     // Return the result array
     setAddLineItem(result);
   };
 
+  
   return (
     <>
       <Modal size="lg" isOpen={addCostingSummaryModel}>
@@ -167,11 +165,11 @@ const AddCostingSummaryModal = ({
                                     <Label>No of Worker Used</Label>
                                     <Input
                                       Value={item.no_of_worker_used}
+                                      type="number"
+                                      name="no_of_worker_used"
                                       onBlur={() => {
                                         calculateTotal();
                                       }}
-                                      type="number"
-                                      name="no_of_worker_used"
                                     />
                                   </FormGroup>
                                 </Col>
@@ -180,11 +178,11 @@ const AddCostingSummaryModal = ({
                                     <Label>No of Days Worked</Label>
                                     <Input
                                       Value={item.no_of_days_worked}
+                                      type="number"
+                                      name="no_of_days_worked"
                                       onBlur={() => {
                                         calculateTotal();
                                       }}
-                                      type="number"
-                                      name="no_of_days_worked"
                                     />
                                   </FormGroup>
                                 </Col>
@@ -201,48 +199,26 @@ const AddCostingSummaryModal = ({
                                     />
                                   </FormGroup>
                                 </Col>
-                                <Col md="4">
-                                  <FormGroup>
-                                    <Label>Total Price (S$ W/o GST)</Label>
-                                    <Input
-                                      Value={item.po_price}
-                                      type="number"
-                                      name="po_price"
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
-                                    />
-                                  </FormGroup>
-                                </Col>
-                                <Col md="4">
-                                  <FormGroup>
-                                    <Label>Profit Margin%</Label>
-                                    <Input
-                                      Value={item.profit_percentage}
-                                      type="text"
-                                      name="profit_percentage"
-                                      disabled
-                                    />
-                                  </FormGroup>
-                                </Col>
-                                <Col md="4">
-                                  <FormGroup>
-                                    <Label>Profit Margin Value</Label>
-                                    <Input
-                                      Value={item.profit}
-                                      type="text"
-                                      name="profit"
-                                      disabled
-                                    />
-                                  </FormGroup>
-                                </Col>
                               </Row>
-
+                             
                               <CardBody className="bg-light">
                                 <CardTitle tag="h4" className="mb-0"></CardTitle>
                               </CardBody>
                               <Row>
                                 <Col md="4">
+                                  <FormGroup>
+                                    <Label>Total Labour Charges</Label>
+                                    <Input
+                                      Value={item.total_labour_charges}
+                                      type="number"
+                                      name="total_labour_charges"
+                                      disabled
+                                    />
+                                  </FormGroup>
+                                </Col>
+                              </Row>
+                              <Row>
+                              <Col md="4">
                                   <FormGroup>
                                     <Label>Total Material</Label>
                                     <Input
@@ -252,7 +228,7 @@ const AddCostingSummaryModal = ({
                                       }}
                                       type="text"
                                       name="total_material_price"
-                                      disabled
+                                     
                                     />
                                   </FormGroup>
                                 </Col>
@@ -270,22 +246,6 @@ const AddCostingSummaryModal = ({
                                     />
                                   </FormGroup>
                                 </Col>
-                                <Col md="4">
-                                  <FormGroup>
-                                    <Label>Total Labour Charges</Label>
-                                    <Input
-                                      Value={item.total_labour_charges}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
-                                      type="number"
-                                      name="total_labour_charges"
-                                      disabled
-                                    />
-                                  </FormGroup>
-                                </Col>
-                              </Row>
-                              <Row>
                                 <Col md="4">
                                   <FormGroup>
                                     <Label>Salesman Commission</Label>
@@ -325,8 +285,6 @@ const AddCostingSummaryModal = ({
                                     />
                                   </FormGroup>
                                 </Col>
-                              </Row>
-                              <Row>
                                 <Col md="4">
                                   <FormGroup>
                                     <Label>Other Charges</Label>
@@ -340,6 +298,9 @@ const AddCostingSummaryModal = ({
                                     />
                                   </FormGroup>
                                 </Col>
+                              </Row>
+                              <Row>
+                               
                                 <Col md="4">
                                   <FormGroup>
                                     <Label>Total Cost</Label>
@@ -354,7 +315,30 @@ const AddCostingSummaryModal = ({
                                     />
                                   </FormGroup>
                                 </Col>
-
+                                <Col md="4">
+                                  <FormGroup>
+                                    <Label>Profit Margin%</Label>
+                                    <Input
+                                      Value={item.profit_percentage}
+                                      type="text"
+                                      name="profit_percentage"
+                                      onBlur={() => {
+                                        calculateTotal();
+                                      }}
+                                      />
+                                  </FormGroup>
+                                </Col>
+                                <Col md="4">
+                                  <FormGroup>
+                                    <Label>Profit Margin Value</Label>
+                                    <Input
+                                      Value={item.profit}
+                                      type="text"
+                                      name="profit"
+                                      disabled
+                                    />
+                                  </FormGroup>
+                                </Col>
                               </Row>
                             </Form>
                           </CardBody>

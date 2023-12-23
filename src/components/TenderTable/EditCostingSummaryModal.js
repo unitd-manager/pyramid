@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   CardBody,
   CardTitle,
@@ -29,62 +29,88 @@ const EditCostingSummaryModal = ({
     costingsummary: PropTypes.object,
   };
 
-  const [editCostingSummaryData, seteditCostingSummaryData] = useState(null);
+  const [editCostingSummaryData, seteditCostingSummaryData] = useState(0);
   const { id } = useParams();
   const [totalLabour, setTotalLabour] = useState();
   const [totalCost, setTotalCost] = useState();
+  const [totalProfit, setTotalProfit] = useState(costingsummary?.profit || 0);
+
   //edit Tab Costing Summary Form
+
   const handleCostingSummeryInputs = (e) => {
-    console.log("handleCostingSummeryInputs",{ ...editCostingSummaryData, [e.target.name]: e.target.value })
     seteditCostingSummaryData({ ...editCostingSummaryData, [e.target.name]: e.target.value });
   };
 
-  const handleCalc = (noofworkerused, noofdaysworked, labourratesperday, totallabourcharges) => {
+  // const handleCalc = (noofworkerused, noofdaysworked, labourratesperday) => {
 
-    console.log("+++++++",
-    noofworkerused, 
-    noofdaysworked, 
-    labourratesperday, 
-    totallabourcharges
+  //   noofworkerused = parseFloat(noofworkerused) || 0;
+  //   noofdaysworked = parseFloat(noofdaysworked) || 0;
+  //   labourratesperday = parseFloat(labourratesperday) || 0;
 
-    )
-    if (!noofworkerused) noofworkerused = 0;
-    if (!noofdaysworked) noofdaysworked = 0;
-    if (!labourratesperday) labourratesperday = 0;
-    if (!totallabourcharges) totallabourcharges = 0;
+  //   console.log("set Total Labour",Math.max(0, noofworkerused * noofdaysworked * labourratesperday))
+  //   setTotalLabour(Math.max(0, noofworkerused * noofdaysworked * labourratesperday));
 
-    setTotalLabour(
-      parseFloat(noofworkerused) * parseFloat(noofdaysworked)* parseFloat(labourratesperday) 
-     
-    );
-    console.log('totalLabour',totalLabour)
-   
-  };
-  
-  const handleCalcTotal = (totalMaterialPrice, transportCharges, totalLabourCharges, salesmanCommission, financeCharges, officeOverheads, otherCharges, totalCosts) => {
-    if (!totalMaterialPrice) totalMaterialPrice = 0;
-    if (!transportCharges) transportCharges = 0;
-    if (!totalLabourCharges) totalLabourCharges = 0;
-    if (!salesmanCommission) salesmanCommission = 0;
-    if (!financeCharges) financeCharges = 0;
-    if (!officeOverheads) officeOverheads = 0;
-    if (!otherCharges) otherCharges = 0;
-    if (!totalCosts) totalCosts = 0;
+  //   // if (!noofworkerused) noofworkerused = 0;
+  //   // if (!noofdaysworked) noofdaysworked = 0;
+  //   // if (!labourratesperday) labourratesperday = 0;
 
-   const totalLabourcal = totalLabour || totalLabourCharges 
+  //   // setTotalLabour(
+  //   //   parseFloat(noofworkerused) * parseFloat(noofdaysworked) * parseFloat(labourratesperday)
+  //   // );
+  // };
+
+  const handleCalc = (noofworkerused, noofdaysworked, labourratesperday) => {
+    noofworkerused = parseFloat(noofworkerused) || 0;
+    noofdaysworked = parseFloat(noofdaysworked) || 0;
+    labourratesperday = parseFloat(labourratesperday) || 0;
+
+    const calculatedValue = Math.max(0, noofworkerused * noofdaysworked * labourratesperday);
+
+    console.log("Calculated Value", calculatedValue);
+
+    // Set totalLabour and log its value immediately
+    setTotalLabour(calculatedValue);
+
+    // Log the value of totalLabour after setting it
+    console.log("Total Labour After Setting", totalLabour);
+};
+
+  const handleCalcTotal = (totalMaterialPrice, transportCharges, salesmanCommission, financeCharges, officeOverheads, otherCharges) => {
     setTotalCost(
-      parseFloat(totalMaterialPrice) + parseFloat(transportCharges) + 
-      parseFloat(totalLabourcal) + parseFloat(salesmanCommission) 
-      +parseFloat(financeCharges) + parseFloat(officeOverheads) + parseFloat(otherCharges) 
+      parseFloat(totalMaterialPrice) + parseFloat(transportCharges) + parseFloat(salesmanCommission) 
+      +parseFloat(financeCharges) + parseFloat(officeOverheads) + parseFloat(otherCharges) + parseFloat(totalLabour ?? costingsummary.total_labour_charges)
     );
-    console.log('totalCost',totalCost)
-   
   };
-  // console.log('totalLabours',totalLabours)
+
+  useEffect(() => {
+    handleCalcTotal(
+      editCostingSummaryData?.total_material_price,
+      editCostingSummaryData?.transport_charges,
+      editCostingSummaryData?.salesman_commission,
+      editCostingSummaryData?.finance_charges,
+      editCostingSummaryData?.office_overheads,
+      editCostingSummaryData?.other_charges,
+      editCostingSummaryData?.profit_percentage,
+    );
+  }, [totalLabour,editCostingSummaryData?.profit_percentage]);
+
+  useEffect(() => {
+    // Calculate profit whenever relevant data changes
+    const calculateProfit = () => {
+      const profitPercentage = editCostingSummaryData.profit_percentage || costingsummary.profit_percentage || 0;
+      setTotalProfit((profitPercentage / 100) * (totalCost || costingsummary.total_cost || 0) );
+    };
+
+    calculateProfit();
+  }, [totalCost, totalLabour, editCostingSummaryData?.profit_percentage, costingsummary?.profit_percentage]);
+
+
   const EditCostingSummary = () => {
     editCostingSummaryData.opportunity_id = id;
     editCostingSummaryData.total_labour_charges = totalLabour || costingsummary.total_labour_charges;
     editCostingSummaryData.total_cost = totalCost || costingsummary.total_cost;
+    editCostingSummaryData.profit =  totalProfit || costingsummary.total_labour_charges
+
     api.post('/tender/edit-TabCostingSummaryForm', editCostingSummaryData).then(() => {
       setEditCostingSummaryModel(false);
       window.location.reload();
@@ -126,9 +152,8 @@ const EditCostingSummaryModal = ({
                             handleCostingSummeryInputs(e);
                             handleCalc(
                               e.target.value,
-                              costingsummary.no_of_days_worked,
-                              costingsummary.labour_rates_per_day,
-                              costingsummary.total_labour_charges,
+                              editCostingSummaryData.no_of_days_worked,
+                              editCostingSummaryData.labour_rates_per_day,
                             );
                           }}
                           defaultValue={costingsummary && costingsummary.no_of_worker_used}
@@ -145,10 +170,9 @@ const EditCostingSummaryModal = ({
                           onChange={(e) => {
                             handleCostingSummeryInputs(e);
                             handleCalc(
-                              costingsummary.no_of_worker_used,
+                              editCostingSummaryData.no_of_worker_used,
                               e.target.value,
-                              costingsummary.labour_rates_per_day,
-                              costingsummary.total_labour_charges,
+                              editCostingSummaryData.labour_rates_per_day,
                             );
                           }}
                           defaultValue={costingsummary && costingsummary.no_of_days_worked}
@@ -165,10 +189,9 @@ const EditCostingSummaryModal = ({
                           onChange={(e) => {
                             handleCostingSummeryInputs(e);
                             handleCalc(
-                              costingsummary.no_of_worker_used,
-                              costingsummary.no_of_days_worked,
+                              editCostingSummaryData.no_of_worker_used,
+                              editCostingSummaryData.no_of_days_worked,
                               e.target.value,
-                              costingsummary.total_labour_charges,
                             );
                           }}
                           defaultValue={costingsummary && costingsummary.labour_rates_per_day}
@@ -176,49 +199,17 @@ const EditCostingSummaryModal = ({
                         />
                       </FormGroup>
                     </Col>
-                    <Col md="4">
-                                  <FormGroup>
-                                    <Label>Total Price (S$ W/o GST)</Label>
-                                    <Input
-                                    defaultValue={costingsummary && costingsummary.po_price}
-                                      // Value={item.po_price}
-                                      type="number"
-                                      name="po_price"
-                                      // onBlur={() => {
-                                      //   calculateTotal();
-                                      // }}
-                                    />
-                                  </FormGroup>
-                                </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>Profit Margin %</Label>
-                        <Input
-                          type="number"
-                          disabled
-                          onChange={(e) => {
-                            handleCostingSummeryInputs(e);
-                          }}
-                          defaultValue={costingsummary && costingsummary.profit_percentage}
-                          name="profit_percentage"
-                        />
-                      </FormGroup>
-                    </Col>
 
                     <Col md="4">
-                      <FormGroup>
-                        <Label>Profit Margin Value</Label>
-                        <Input
-                          type="number"
-                          disabled
-                          name="profit"
-                          onChange={(e) => {
-                            handleCostingSummeryInputs(e);
-                          }}
-                          defaultValue={costingsummary && costingsummary.profit}
-                          tabindex="-1"
-                        />
-                      </FormGroup>
+                    <FormGroup>
+                      <Label>Total Charges</Label>
+                      <Input
+                        type="number"
+                        disabled
+                        value={totalLabour || costingsummary.total_labour_charges}
+                        name="total_labour_charges"
+                      />
+                    </FormGroup>
                     </Col>
                   </Row>
                 </Form>
@@ -239,18 +230,15 @@ const EditCostingSummaryModal = ({
                           handleCostingSummeryInputs(e);
                           handleCalcTotal(
                               e.target.value, 
-                              costingsummary.transport_charges,
-                              costingsummary.total_labour_charges,
-                              costingsummary.salesman_commission,
-                              costingsummary.finance_charges,
-                              costingsummary.office_overheads,
-                              costingsummary.other_charges,
-                              costingsummary.total_cost
+                              editCostingSummaryData.transport_charges,
+                              editCostingSummaryData.salesman_commission,
+                              editCostingSummaryData.finance_charges,
+                              editCostingSummaryData.office_overheads,
+                              editCostingSummaryData.other_charges,
                           )
                         }}
                         defaultValue={costingsummary && costingsummary.total_material_price}
                         name="total_material_price"
-                        disabled
                       />
                     </FormGroup>
                   </Col>
@@ -263,14 +251,12 @@ const EditCostingSummaryModal = ({
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
                           handleCalcTotal(
-                            costingsummary.total_material_price,
+                            editCostingSummaryData.total_material_price,
                             e.target.value, 
-                            costingsummary.total_labour_charges,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            costingsummary.total_cost
+                            editCostingSummaryData.salesman_commission,
+                            editCostingSummaryData.finance_charges,
+                            editCostingSummaryData.office_overheads,
+                            editCostingSummaryData.other_charges,
                           )
                         }}
                         defaultValue={costingsummary && costingsummary.transport_charges}
@@ -281,53 +267,18 @@ const EditCostingSummaryModal = ({
 
                   <Col md="4">
                     <FormGroup>
-                      <Label>Total Charges</Label>
-                      <Input
-                        type="number"
-                        disabled
-                        onChange={(e) => {
-                          handleCostingSummeryInputs(e);
-                          handleCalc(
-                            costingsummary.no_of_worker_used,
-                            costingsummary.no_of_days_worked,
-                            costingsummary.labour_rates_per_day,
-                            e.target.value,
-                          );
-                          handleCalcTotal( 
-                            costingsummary.total_material_price,
-                            costingsummary.transport_charges,
-                            e.target.value,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            costingsummary.total_cost
-                            )
-                        }}
-                        value={totalLabour || costingsummary.total_labour_charges}
-                        name="total_labour_charges"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md="4">
-                    <FormGroup>
                       <Label>Salesman Commission </Label>
                       <Input
                         type="number"
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
                           handleCalcTotal(
-                            costingsummary.total_material_price, 
-                            costingsummary.transport_charges,
-                            costingsummary.total_labour_charges,
+                            editCostingSummaryData.total_material_price, 
+                            editCostingSummaryData.transport_charges,
                             e.target.value, 
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            costingsummary.total_cost
+                            editCostingSummaryData.finance_charges,
+                            editCostingSummaryData.office_overheads,
+                            editCostingSummaryData.other_charges,
                           )
                         }}
                         defaultValue={costingsummary && costingsummary.salesman_commission}
@@ -344,14 +295,12 @@ const EditCostingSummaryModal = ({
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
                           handleCalcTotal(
-                            costingsummary.total_material_price, 
-                            costingsummary.transport_charges,
-                            costingsummary.total_labour_charges,
-                            costingsummary.salesman_commission,
+                            editCostingSummaryData.total_material_price, 
+                            editCostingSummaryData.transport_charges,
+                            editCostingSummaryData.salesman_commission,
                             e.target.value, 
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            costingsummary.total_cost
+                            editCostingSummaryData.office_overheads,
+                            editCostingSummaryData.other_charges,
                           )
                         }}
                         defaultValue={costingsummary && costingsummary.finance_charges}
@@ -368,14 +317,12 @@ const EditCostingSummaryModal = ({
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
                           handleCalcTotal(
-                            costingsummary.total_material_price, 
-                            costingsummary.transport_charges,
-                            costingsummary.total_labour_charges,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
+                            editCostingSummaryData.total_material_price, 
+                            editCostingSummaryData.transport_charges,
+                            editCostingSummaryData.salesman_commission,
+                            editCostingSummaryData.finance_charges,
                             e.target.value, 
-                            costingsummary.other_charges,
-                            costingsummary.total_cost
+                            editCostingSummaryData.other_charges,
                           )
                         }}
                         defaultValue={costingsummary && costingsummary.office_overheads}
@@ -383,9 +330,7 @@ const EditCostingSummaryModal = ({
                       />
                     </FormGroup>
                   </Col>
-                </Row>
 
-                <Row>
                   <Col md="4">
                     <FormGroup>
                       <Label>Other Charges </Label>
@@ -394,14 +339,12 @@ const EditCostingSummaryModal = ({
                         onChange={(e) => {
                           handleCostingSummeryInputs(e);
                           handleCalcTotal(
-                            costingsummary.total_material_price, 
-                            costingsummary.transport_charges,
-                            costingsummary.total_labour_charges,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
+                            editCostingSummaryData.total_material_price, 
+                            editCostingSummaryData.transport_charges,
+                            editCostingSummaryData.salesman_commission,
+                            editCostingSummaryData.finance_charges,
+                            editCostingSummaryData.office_overheads,
                             e.target.value, 
-                            costingsummary.total_cost
                           )
                         }}
                         defaultValue={costingsummary && costingsummary.other_charges}
@@ -409,7 +352,9 @@ const EditCostingSummaryModal = ({
                       />
                     </FormGroup>
                   </Col>
+                </Row>
 
+                <Row>
                   <Col md="4">
                     <FormGroup>
                       <Label>TOTAL COST</Label>
@@ -417,24 +362,45 @@ const EditCostingSummaryModal = ({
                         type="number"
                         name="total_cost"
                         disabled
-                        onChange={(e) => {
-                          handleCostingSummeryInputs(e);
-                          handleCalcTotal(
-                            costingsummary.total_material_price, 
-                            costingsummary.transport_charges,
-                            costingsummary.total_labour_charges,
-                            costingsummary.salesman_commission,
-                            costingsummary.finance_charges,
-                            costingsummary.office_overheads,
-                            costingsummary.other_charges,
-                            e.target.value, 
-                          )
-                        }}
-                        value={totalCost || costingsummary && costingsummary.total_cost}
+                        value={totalCost || costingsummary && costingsummary.total_cost }
                       />
                     </FormGroup>
                   </Col>
+                  <Col md="4">
+                      <FormGroup>
+                        <Label>Profit Margin %</Label>
+                         <Input
+        type="number"
+        onChange={(e) => {
+          handleCostingSummeryInputs(e);
+          handleCalcTotal(
+            editCostingSummaryData.total_material_price,
+            editCostingSummaryData.transport_charges,
+            editCostingSummaryData.salesman_commission,
+            editCostingSummaryData.finance_charges,
+            editCostingSummaryData.office_overheads,
+            editCostingSummaryData.other_charges,
+          );
+        }}
+        defaultValue={costingsummary && costingsummary.profit_percentage}
+        name="profit_percentage"
+      />
+                      </FormGroup>
+                    </Col>
+
+                    <Col md="4">
+                      <FormGroup>
+                        <Label>Profit Margin Value</Label>
+                        <Input
+                          type="number"
+                          disabled
+                          value={ totalProfit || costingsummary.profit}
+                          name="profit"
+                        />
+                      </FormGroup>
+                    </Col>
                 </Row>
+
               </CardBody>
               <CardBody>
                 <CardTitle className="mb-0 bg-light"></CardTitle>
