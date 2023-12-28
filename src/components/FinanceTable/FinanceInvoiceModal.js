@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Form, Table } from 'reactstrap';
-import PdfCreateInvoice from '../PDF/PdfCreateInvoice';
+import PdfCreateInvoice from '../PDF/PdfCreateInvoicess';
 import ComponentCard from '../ComponentCard';
 // import api from '../../constants/api';
 // import message from '../Message';
@@ -13,6 +13,7 @@ export default function CustomerFinanceInvoice({
   invoiceCancel,
   setEditInvoiceModal,
   setEditModal,
+  financeDetails,
   setInvoiceDatas
 }) {
   CustomerFinanceInvoice.propTypes = {
@@ -22,6 +23,7 @@ export default function CustomerFinanceInvoice({
     setEditInvoiceModal: PropTypes.func,
     setEditModal: PropTypes.func,
     setInvoiceDatas:PropTypes.func,
+    financeDetails:PropTypes.object,
   };
   // const [setCreateInvoice ] = useState();
 
@@ -70,6 +72,7 @@ export default function CustomerFinanceInvoice({
                           createInvoice={createInvoice}
                           cancelInvoice={cancelInvoice}
                           invoiceId={element.invoice_id}
+                          financeDetails={financeDetails}
                         ></PdfCreateInvoice>
                       </td>
                       <td>

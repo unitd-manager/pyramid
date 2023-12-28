@@ -137,13 +137,14 @@ export default function FinanceTab({ projectDetail }) {
     //   });
   };
   //receipt Cancel
-  const receiptCancel = (obj) => {
+  const receiptCancel = (obj,invoiceId) => {
     obj.receipt_status = 'cancelled';
+    obj.invoice_id = invoiceId;
     api
       .post('/Finance/editTabReceiptPortalDisplay', obj)
       .then(() => {
         message('Record editted successfully', 'success');
-        window.location.reload()
+       // window.location.reload()
       })
       .catch(() => {
         message('Unable to edit record.', 'error');

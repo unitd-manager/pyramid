@@ -91,7 +91,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
   const addLineItemApi = (obj) => {
     obj.order_id = projectInfo;
     api
-      .post('/Finance/insertInvoiceItem', obj)
+      .post('/invoice/insertInvoiceItem', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
       })
@@ -133,7 +133,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       createInvoice.invoice_due_date = current;
     }
     api
-      .post('/Finance/insertInvoice', createInvoice)
+      .post('/finance/insertInvoice', createInvoice)
       .then((res) => {
         message('Invoice inserted successfully.', 'success');
         finalinsertapi(res.data.data.insertId, results);
@@ -146,9 +146,9 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       });
   };
   //generateCode
-  const generateCode = (results, type) => {
+  const generateCode = (results,type) => {
     api
-      .post('/commonApi/getCodeValue', { type })
+      .post('/tender/getCodeValue', { type })
       .then((res) => {
         insertInvoice(results, res.data.data);
       })
@@ -209,7 +209,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
         description: '',
       },
     ]);
-    generateCode(result, 'invoice');
+    generateCode(result, 'invoicestype');
   };
   //Invoice Items Calculation
   const calculateTotal = () => {

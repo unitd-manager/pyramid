@@ -18,7 +18,7 @@ import FinanceInvoiceModal from '../../components/FinanceTable/FinanceInvoiceMod
 import CustomerFinanceReceipt from '../../components/FinanceTable/CustomerFinanceReceipt';
 import CustomerFinanceCreditNote from '../../components/FinanceTable/CustomerFinanceCreditNote';
 import FinanceSummary from '../../components/FinanceTable/FinanceSummary';
-import FinanceDeliveryAddress from '../../components/FinanceTable/FinanceDeliveryAddress';
+//import FinanceDeliveryAddress from '../../components/FinanceTable/FinanceDeliveryAddress';
 import FinanceMainDetails from '../../components/FinanceTable/FinanceMainDetails';
 import creationdatetime from '../../constants/creationdatetime';
 import Tab from '../../components/project/Tab';
@@ -58,8 +58,8 @@ const FinanceEdit = () => {
   };
   // Start for tab refresh navigation #Renuka 1-06-23
   const tabs = [
-    { id: '1', name: 'Delivery Address' },
-    { id: '2', name: 'Customer Details' },
+    // { id: '1', name: 'Delivery Address' },
+    { id: '1', name: 'Customer Details' },
     { id: '3', name: 'Summary' },
     { id: '4', name: 'Invoice(s)' },
     { id: '5', name: 'Receipt(s)' },
@@ -249,15 +249,15 @@ console.log('ids',id)
         <Tab toggle={toggle} tabs={tabs} />
         <TabContent className="p-4" activeTab={activeTab}>
           {/* Delivery address Form */}
-          <TabPane tabId="1">
+          {/* <TabPane tabId="1">
             <FinanceDeliveryAddress
               financeDetails={financeDetails}
               handleInputs={handleInputs}
             ></FinanceDeliveryAddress>
-          </TabPane>
+          </TabPane> */}
 
           {/* Customer Details Form */}
-          <TabPane tabId="2">
+          <TabPane tabId="1">
             <CustomerDetail financeDetails={financeDetails}></CustomerDetail>
           </TabPane>
           {/* Summary */}
@@ -276,6 +276,7 @@ console.log('ids',id)
               setEditModal={setEditModal}
               setEditInvoiceModal={setEditInvoiceModal}
               setInvoiceDatas={setInvoiceDatas}
+              financeDetails={financeDetails}
             ></FinanceInvoiceModal>
           </TabPane>
           <TabPane tabId="5">
@@ -285,6 +286,7 @@ console.log('ids',id)
               receipt={receipt}
               setEditReceiptModal={setEditReceiptModal}
               setReceiptDataModal={setReceiptDataModal}
+              financeDetails={financeDetails}
             ></CustomerFinanceReceipt>
           </TabPane>
           <TabPane tabId="6">

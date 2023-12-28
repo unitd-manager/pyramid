@@ -8,10 +8,10 @@ import api from '../../constants/api';
 import PdfFooter from './PdfFooter';
 import PdfHeader2 from './PdfHeader2';
 
-const PdfCreateReceipt = ({ receiptId,projectDetail }) => {
+const PdfCreateReceipt = ({ receiptId,financeDetails }) => {
   PdfCreateReceipt.propTypes = {
     receiptId: PropTypes.any,
-    projectDetail: PropTypes.any,
+    financeDetails: PropTypes.any,
   };
   const [hfdata, setHeaderFooterData] = React.useState();
   //const [hfdata1, setHeaderFooterData1] = React.useState();
@@ -31,7 +31,7 @@ const PdfCreateReceipt = ({ receiptId,projectDetail }) => {
 
   const findCompany = (key) => {
     console.log('key', key);
-    if (projectDetail.company_invoice === 'Company Invoice 1') {
+    if (financeDetails.company_invoice === 'Company Invoice 1') {
       if (hfdata && hfdata.length > 0) {
         const filteredResult = hfdata.find((e) => e.key_text === key);
         return filteredResult ? filteredResult.value : '';
