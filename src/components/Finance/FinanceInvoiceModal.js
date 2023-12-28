@@ -22,6 +22,7 @@ export default function CustomerFinanceInvoice({
     setEditInvoiceModal: PropTypes.func,
     setEditModal: PropTypes.func,
     setInvoiceDatas:PropTypes.func,
+    financeDetails:PropTypes.object,
   };
   // const [setCreateInvoice ] = useState();
 
@@ -70,6 +71,7 @@ export default function CustomerFinanceInvoice({
                           createInvoice={createInvoice}
                           cancelInvoice={cancelInvoice}
                           invoiceId={element.invoice_id}
+                          financeDetails={financeDetails}
                         ></PdfCreateInvoice>
                       </td>
                       <td>

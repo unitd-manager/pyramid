@@ -97,8 +97,8 @@ const Finance = () => {
     },
     {
       name: 'Amount',
-      selector: 'orderamount',
-      sortable: true,
+      selector: 'invoice_amount',
+      se: true,
       width: 'auto',
     },
 
@@ -139,8 +139,8 @@ const Finance = () => {
                     <td>{element.cust_company_name}</td>
                     <td>{element.order_date}</td>
                     <td>{element.project_type}</td>
-                    <td>{element.orderamount}</td>
-                    <td>{element.order_status}</td>
+                    <td>{element.invoice_amount}</td>
+                    <td>{element.status}</td>
                   </tr>
                 );
               })}

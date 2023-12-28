@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,13 +8,17 @@ import api from '../../constants/api';
 import message from '../../components/Message';
 import TenderCompanyDetails from '../../components/TenderTable/TenderCompanyDetails';
 import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
 
 const OpportunityDetails = () => {
   const [company, setCompany] = useState();
   const [allCountries, setallCountries] = useState();
   const [contact, setContact] = useState();
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [addFormSubmitted, setAddFormSubmitted] = useState(false);
   const [modal, setModal] = useState(false);
   const { id } = useParams();
+  const { loggedInuser } = useContext(AppContext);
   const navigate = useNavigate();
   const toggle = () => {
     setModal(!modal);
@@ -32,7 +36,7 @@ const OpportunityDetails = () => {
     company_name: '',
     address_street: '',
     address_town: '',
-    address_country: '',
+    address_country: 'Singapore',
     address_po_code: '',
     phone: '',
     fax: '',
@@ -44,6 +48,7 @@ const OpportunityDetails = () => {
   });
 
   const handleInputs = (e) => {
+    console.log("companyInsertData",{ ...companyInsertData, [e.target.name]: e.target.value })
     setCompanyInsertData({ ...companyInsertData, [e.target.name]: e.target.value });
   };
 
@@ -59,15 +64,16 @@ const OpportunityDetails = () => {
         .then(() => {
           message('Company inserted successfully.', 'success');
           getCompany();
-          setTimeout(()=>{
+          setTimeout(() => {
             toggle()
-          },1000)
-         
+          }, 1000)
+
         })
         .catch(() => {
           message('Network connection error.', 'error');
         });
     } else {
+      setAddFormSubmitted(true)
       message('Please fill all required fields.', 'warning');
     }
   };
@@ -77,10 +83,13 @@ const OpportunityDetails = () => {
     title: '',
     company_name: '',
     category: '',
-    contact_name:contact
+    contact_name: contact
   });
 
   const handleInputsTenderForms = (e) => {
+
+    console.log("handleInputsTenderForms",{ ...tenderForms, [e.target.name]: e.target.value })
+
     setTenderForms({ ...tenderForms, [e.target.name]: e.target.value });
   };
 
@@ -103,27 +112,29 @@ const OpportunityDetails = () => {
         setTenderForms(res.data.data);
         // getContact(res.data.data.company_id);
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
-    // Get contact 
-    const getContact = (companyId) => {
-      // setSelectedCompany(companyId);
-      api.post('/company/getContactByCompanyId', { company_id: companyId }).then((res) => {
-        setContact(res.data.data[0]?.contact_id);
-      });
-    };
+  // Get contact 
+  const getContact = (companyId) => {
+    // setSelectedCompany(companyId);
+    api.post('/company/getContactByCompanyId', { company_id: companyId }).then((res) => {
+      setContact(res.data.data[0]?.contact_id);
+    });
+  };
 
   const insertTender = (code) => {
     if (tenderForms.company_id !== '' && tenderForms.title !== '' && tenderForms.category !== '') {
       tenderForms.opportunity_code = code;
-      tenderForms.contact_id = contact;   
+      tenderForms.contact_id = contact;
       tenderForms.creation_date = creationdatetime
+      tenderForms.created_by = loggedInuser.first_name;
       api
         .post('/tender/insertTenders', tenderForms)
         .then((res) => {
           const insertedDataId = res.data.data.insertId;
           getTendersById();
+
           message('Opportunity inserted successfully.', 'success');
           setTimeout(() => {
             navigate(`/OpportunityEdit/${insertedDataId}?tab=1`);
@@ -133,6 +144,7 @@ const OpportunityDetails = () => {
           message('Network connection error.', 'error');
         });
     } else {
+      setFormSubmitted(true);
       message('Please fill all required fields', 'warning');
     }
   };
@@ -172,9 +184,14 @@ const OpportunityDetails = () => {
                     <Input
                       type="text"
                       name="title"
+                      className={`form-control ${formSubmitted && tenderForms && tenderForms.title.trim() === '' ? 'highlight' : ''
+                        }`}
                       value={tenderForms && tenderForms.title}
                       onChange={handleInputsTenderForms}
                     />
+                    {formSubmitted && tenderForms && tenderForms.title.trim() === '' && (
+                      <div className="error-message">Please enter the title</div>
+                    )}
                   </Col>
                 </Row>
               </FormGroup>
@@ -187,16 +204,19 @@ const OpportunityDetails = () => {
                     <Input
                       type="select"
                       name="company_id"
+                      className={`form-control ${formSubmitted && tenderForms && (tenderForms.company_id === undefined || tenderForms.company_id.trim() === '')
+                          ? 'highlight'
+                          : ''
+                        }`}
                       //value={tenderForms && tenderForms.company_id}
                       // onChange={handleInputsTenderForms}
-
                       onChange={(e) => {
                         handleInputsTenderForms(e)
                         getContact(e.target.value);
                       }}
 
                     >
-                      <option>Please Select</option>
+                      <option value=''>Please Select</option>
                       {company &&
                         company.map((ele) => {
                           return (
@@ -206,6 +226,9 @@ const OpportunityDetails = () => {
                           );
                         })}
                     </Input>
+                    {formSubmitted && tenderForms && (tenderForms.company_id === undefined || tenderForms.company_id.trim() === '') && (
+                      <div className="error-message">Please select the company name</div>
+                    )}
                   </Col>
                   <Col md="3" className="addNew">
                     <Label>Add New Name</Label>
@@ -222,6 +245,8 @@ const OpportunityDetails = () => {
                 toggle={toggle}
                 modal={modal}
                 setModal={setModal}
+                companyInsertData={companyInsertData}
+                addFormSubmitted={addFormSubmitted}
               ></TenderCompanyDetails>
               <FormGroup>
                 <Col md="9">
@@ -231,15 +256,22 @@ const OpportunityDetails = () => {
                   <Input
                     type="select"
                     onChange={handleInputsTenderForms}
-                    value={tenderForms && tenderForms.category}
+                    className={`form-control ${formSubmitted && tenderForms && (tenderForms.category === undefined || tenderForms.category.trim() === '')
+                          ? 'highlight'
+                          : ''
+                        }`}
+                    // value={tenderForms && tenderForms.category}
                     name="category"
                   >
-                    <option defaultValue="selected">Please Select</option>
+                    <option value=''>Please Select</option>
                     <option value="Project">Project</option>
                     <option value="Maintenance">Maintenance</option>
                     <option value="Tenancy Project">Tenancy Project</option>
                     <option value="Tenancy Work">Tenancy Work</option>
                   </Input>
+                  {formSubmitted && tenderForms && (tenderForms.category === undefined || tenderForms.category.trim() === '') && (
+                      <div className="error-message">Please select the company name</div>
+                    )}
                 </Col>
               </FormGroup>
               <Row>

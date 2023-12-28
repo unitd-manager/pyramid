@@ -28,6 +28,9 @@ export default function TenderMoreDetails({
   setAddCompanyModal,
   //setAddContactModal,
   allCountries,
+  formSubmitted,
+  companyInsertData,
+  newContactData
 }) {
   TenderMoreDetails.propTypes = {
     tenderDetails: PropTypes.object,
@@ -46,11 +49,16 @@ export default function TenderMoreDetails({
     incharge: PropTypes.object,
     getContact: PropTypes.object,
     allCountries: PropTypes.object,
+    formSubmitted: PropTypes.any,
+    companyInsertData: PropTypes.object,
+    newContactData: PropTypes.object,
   };
 
     useEffect(() => {
     getContact(tenderDetails?.company_id);
   }, [tenderDetails?.company_id]);
+
+  console.log("tenderDetails",tenderDetails)
 
   return (
     <div>
@@ -71,7 +79,15 @@ export default function TenderMoreDetails({
                     onChange={handleInputs}
                     value={tenderDetails && tenderDetails.title}
                     name="title"
-                  />
+                    className={`form-control ${
+                      formSubmitted && tenderDetails && tenderDetails.title.trim() === '' ? 'highlight' : ''
+                    }`}
+                    />
+                {formSubmitted && tenderDetails && tenderDetails.title.trim() === '' && (
+                <div className="error-message">Please enter the title</div>
+              )}
+
+
                 </FormGroup>
               </Col>
               <Col md="3">
@@ -128,6 +144,8 @@ export default function TenderMoreDetails({
                   insertCompany={insertCompany}
                   allCountries={allCountries}
                   companyhandleInputs={companyhandleInputs}
+                  formSubmitted={formSubmitted}
+                  companyInsertData={companyInsertData}
                 ></TenderCompanyEditDetails>
               </Col>
 
@@ -160,6 +178,8 @@ export default function TenderMoreDetails({
                       addContactToggle={addContactToggle}
                       AddNewContact={AddNewContact}
                       handleAddNewContact={handleAddNewContact}
+                      formSubmitted={formSubmitted}
+                      newContactData={newContactData}
                     ></TenderContactDetails>
                   </Input>
                 </FormGroup>

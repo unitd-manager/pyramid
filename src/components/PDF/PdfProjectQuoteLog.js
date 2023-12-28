@@ -12,6 +12,7 @@ import PdfHeader from './PdfHeader';
 
 
 const PdfProjectQuoteLog = ({id,logId}) => {
+
   PdfProjectQuoteLog.propTypes = {
     id: PropTypes.any,
     logId:PropTypes.any,
@@ -39,6 +40,7 @@ const PdfProjectQuoteLog = ({id,logId}) => {
       .post('/project/getProjectById', { project_id: id })
       .then((res) => {
         setProjectDetail(res.data.data[0]);
+        console.log("projectDetail",projectDetail)
       })
       .catch(() => {});
   };
@@ -196,18 +198,18 @@ const PdfProjectQuoteLog = ({id,logId}) => {
           columns: [
             {
               stack: [
-                {text:` Co Name  :   ${projectDetail.company_name?projectDetail.company_name:''} `,style: [ 'textSize'], },
-                {text:` Address    :   ${projectDetail.address_street ? projectDetail.address_street : ''}`,style: [ 'textSize']},
-                {text: `               ${projectDetail.address_town?projectDetail.address_town:''}`,style: [ 'textSize'],margin:[57,0,0,0]},
-                {text: `               ${projectDetail.address_country ? projectDetail.address_country : ''}-${projectDetail.address_po_code ? projectDetail.address_po_code : ''}`,style: [ 'textSize'],margin:[57,0,0,0]},
-                {text:` Email        :   ${projectDetail.email?projectDetail.email:''} `,style: [ 'textSize'],  },
-                {text:` Tel.            :   ${projectDetail.phone?projectDetail.phone:''}`,style: [ 'textSize'],  },
+                {text:` Co Name  :   ${projectDetail?.company_name?projectDetail?.company_name:''} `,style: [ 'textSize'], },
+                {text:` Address    :   ${projectDetail?.address_street ? projectDetail?.address_street : ''}`,style: [ 'textSize']},
+                {text: `               ${projectDetail?.address_town?projectDetail?.address_town:''}`,style: [ 'textSize'],margin:[57,0,0,0]},
+                {text: `               ${projectDetail?.address_country ? projectDetail?.address_country : ''}-${projectDetail?.address_po_code ? projectDetail?.address_po_code : ''}`,style: [ 'textSize'],margin:[57,0,0,0]},
+                {text:` Email        :   ${projectDetail?.email?projectDetail?.email:''} `,style: [ 'textSize'],  },
+                {text:` Tel.            :   ${projectDetail?.phone?projectDetail?.phone:''}`,style: [ 'textSize'],  },
               ],
             },
             {
               stack: [
-                {text:`  Quote Date       :  ${(quotation.quote_date)? moment(quotation.quote_date).format('DD-MM-YYYY'):''} `,style: [ 'textSize'],margin:[83,0,0,0]  },
-                {text:` Quote code       :  ${quotation.quote_code?quotation.quote_code:''} `,style: [ 'textSize'],margin:[83,0,0,0]   },
+                {text:`  Quote Date       :  ${(quotation?.quote_date)? moment(quotation?.quote_date).format('DD-MM-YYYY'):''} `,style: [ 'textSize'],margin:[83,0,0,0]  },
+                {text:` Quote code       :  ${quotation?.quote_code?quotation?.quote_code:''} `,style: [ 'textSize'],margin:[83,0,0,0]   },
               
                 
               
@@ -219,8 +221,8 @@ const PdfProjectQuoteLog = ({id,logId}) => {
         {
           stack: [
             
-            {text:`Project Reference : ${quotation.project_reference?quotation.project_reference:''} `,style: [ 'textSize'],  },
-            {text:`Project Location  : ${quotation.project_location?quotation.project_location:''} `,style: [ 'textSize'],  },
+            {text:`Project Reference : ${quotation?.project_reference?quotation?.project_reference:''} `,style: [ 'textSize'],  },
+            {text:`Project Location  : ${quotation?.project_location?quotation?.project_location:''} `,style: [ 'textSize'],  },
           ],
         },'\n\n\n',
      

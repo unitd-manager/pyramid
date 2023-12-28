@@ -408,3 +408,11 @@ a.active.nav-link, a.nav-link:focus-visible  {
 .autocomplete-suggestions option:hover {
   background-color: #f2f2f2;
 }
+.form-select.form-control.highlight, input.form-control.highlight {
+  border: 1px solid red;
+}
+.error-message {
+  color: red;
+  margin-top: 5px; /* Add margin for spacing */
+  font-size: 12px; /* Adjust font size if needed */
+}

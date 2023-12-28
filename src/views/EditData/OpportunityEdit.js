@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { TabContent, TabPane, Col, Label, FormGroup, Row, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,7 +18,7 @@ import TenderMoreDetails from '../../components/TenderTable/TenderMoreDetails';
 import TenderAttachment from '../../components/TenderTable/TenderAttachment';
 import Tab from '../../components/project/Tab';
 import ApiButton from '../../components/ApiButton';
-
+import AppContext from '../../context/AppContext';
 
 const OpportunityEdit = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -26,6 +26,8 @@ const OpportunityEdit = () => {
   const [quote, setQuote] = useState({});
   const [lineItem, setLineItem] = useState([]);
   const [tenderDetails, setTenderDetails] = useState();
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const { loggedInuser } = useContext(AppContext);
 
   // Start for tab refresh navigation #Renuka 1-06-23
   const tabs = [
@@ -82,7 +84,6 @@ const OpportunityEdit = () => {
     api.post('/tender/getCostingSummaryById', { opportunity_id: id }).then((res) => {
       setCostingSummary(res.data.data[0]);
       //seteditCostingSummaryData(res.data.data)
-      console.log('costing summary', res.data.data);
     });
   };
 
@@ -106,7 +107,7 @@ const OpportunityEdit = () => {
     company_name: '',
     address_street: '',
     address_town: '',
-    address_country: '',
+    address_country: 'Singapore',
     address_po_code: '',
     phone: '',
     fax: '',
@@ -118,12 +119,12 @@ const OpportunityEdit = () => {
   });
 
   const companyhandleInputs = (e) => {
+    console.log("companyhandleInputs",{ ...companyInsertData, [e.target.name]: e.target.value })
     setCompanyInsertData({ ...companyInsertData, [e.target.name]: e.target.value });
   };
 
   // Insert Company
   const insertCompany = () => {
-    console.log('company', companyInsertData.company_name)
     if (
       companyInsertData.company_name !== '' &&
       companyInsertData.address_street !== '' &&
@@ -135,12 +136,14 @@ const OpportunityEdit = () => {
         .then(() => {
           message('Company inserted successfully.', 'success');
           getCompany();
+          addCompanyToggle(null)
         })
         .catch(() => {
           message('Network connection error.', 'error');
         });
     } else {
       message('Please fill all required fields.', 'warning');
+      setFormSubmitted(true)
     }
   };
 
@@ -163,6 +166,7 @@ const OpportunityEdit = () => {
   const editTenderById = () => {
     api.post('/tender/getTendersById', { opportunity_id: id }).then((res) => {
       setTenderDetails(res.data.data);
+      console.log("created_by",res.data.data)
       //getContact(res.data.data.company_id);
     });
   };
@@ -174,9 +178,14 @@ const OpportunityEdit = () => {
   //Logic for edit data in db
 
   const editTenderData = () => {
-    tenderDetails.modification_date = creationdatetime;
+
+    if (tenderDetails.title !== '') {
+      tenderDetails.modification_date = creationdatetime;
+      tenderDetails.modified_by = loggedInuser.first_name;
+
     api.post('/tender/edit-Tenders', tenderDetails)
       .then(() => {
+
         message('Record editted successfully', 'success');
         setTimeout(() => {
           window.location.reload();
@@ -185,6 +194,10 @@ const OpportunityEdit = () => {
       .catch(() => {
         message('Unable to edit record.', 'error');
       });
+    }
+    else{
+      message('Please fill all required fields', 'warning');
+    }
   };
 
   // Add new Contact
@@ -218,11 +231,13 @@ const OpportunityEdit = () => {
           getContact(newDataWithCompanyId.company_id);
           message('Contact Inserted Successfully', 'success');
           getCompany();
+          addContactToggle(null)
         })
         .catch(() => {
           message('Unable to add Contact! try again later', 'error');
         });
     } else {
+      setFormSubmitted(true)
       message('All fields are required.', 'warning');
     }
   };
@@ -368,6 +383,8 @@ const OpportunityEdit = () => {
         backToList={backToList}
         deleteData={deleteOpportunity}
         module="Tender"
+        setFormSubmitted={setFormSubmitted}
+        tenderDetails={tenderDetails}
       ></ApiButton>
       <TenderMoreDetails
         companyInsertData={companyInsertData}
@@ -389,6 +406,7 @@ const OpportunityEdit = () => {
         addContactToggle={addContactToggle}
         setAddCompanyModal={setAddCompanyModal}
         getContact={getContact}
+        formSubmitted={formSubmitted}
       ></TenderMoreDetails>
 
       <ComponentCard>

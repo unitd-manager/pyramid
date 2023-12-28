@@ -167,6 +167,9 @@ const AddCostingSummaryModal = ({
                                       Value={item.no_of_worker_used}
                                       type="number"
                                       name="no_of_worker_used"
+                                      onBlur={() => {
+                                        calculateTotal();
+                                      }}
                                     />
                                   </FormGroup>
                                 </Col>
@@ -177,6 +180,9 @@ const AddCostingSummaryModal = ({
                                       Value={item.no_of_days_worked}
                                       type="number"
                                       name="no_of_days_worked"
+                                      onBlur={() => {
+                                        calculateTotal();
+                                      }}
                                     />
                                   </FormGroup>
                                 </Col>
@@ -200,6 +206,19 @@ const AddCostingSummaryModal = ({
                               </CardBody>
                               <Row>
                                 <Col md="4">
+                                  <FormGroup>
+                                    <Label>Total Labour Charges</Label>
+                                    <Input
+                                      Value={item.total_labour_charges}
+                                      type="number"
+                                      name="total_labour_charges"
+                                      disabled
+                                    />
+                                  </FormGroup>
+                                </Col>
+                              </Row>
+                              <Row>
+                              <Col md="4">
                                   <FormGroup>
                                     <Label>Total Material</Label>
                                     <Input
@@ -227,22 +246,6 @@ const AddCostingSummaryModal = ({
                                     />
                                   </FormGroup>
                                 </Col>
-                                <Col md="4">
-                                  <FormGroup>
-                                    <Label>Total Labour Charges</Label>
-                                    <Input
-                                      Value={item.total_labour_charges}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
-                                      type="number"
-                                      name="total_labour_charges"
-                                      disabled
-                                    />
-                                  </FormGroup>
-                                </Col>
-                              </Row>
-                              <Row>
                                 <Col md="4">
                                   <FormGroup>
                                     <Label>Salesman Commission</Label>
@@ -282,8 +285,6 @@ const AddCostingSummaryModal = ({
                                     />
                                   </FormGroup>
                                 </Col>
-                              </Row>
-                              <Row>
                                 <Col md="4">
                                   <FormGroup>
                                     <Label>Other Charges</Label>
@@ -297,6 +298,9 @@ const AddCostingSummaryModal = ({
                                     />
                                   </FormGroup>
                                 </Col>
+                              </Row>
+                              <Row>
+                               
                                 <Col md="4">
                                   <FormGroup>
                                     <Label>Total Cost</Label>
@@ -318,6 +322,9 @@ const AddCostingSummaryModal = ({
                                       Value={item.profit_percentage}
                                       type="text"
                                       name="profit_percentage"
+                                      onBlur={() => {
+                                        calculateTotal();
+                                      }}
                                       />
                                   </FormGroup>
                                 </Col>

@@ -23,10 +23,11 @@ import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import api from '../../constants/api';
-import ExpenseButton from '../../components/ExpenseHeadTable/ExpenseButton';
+//import ExpenseButton from '../../components/ExpenseHeadTable/ExpenseButton';
 import ExpenseHeadMainDetails from '../../components/ExpenseHeadTable/ExpenseHeadMainDetails';
 import ExpenseHeadSubHead from '../../components/ExpenseHeadTable/ExpenseHeadSubHead';
 import creationdatetime from '../../constants/creationdatetime';
+import ApiButton from '../../components/ApiButton';
 
 const ExpenseEdit = () => {
   //Const Variables
@@ -55,7 +56,7 @@ const ExpenseEdit = () => {
     setAddContactModal(!addContactModal);
   };
   // Button
-  const applyChanges = () => {};
+  //const applyChanges = () => {};
   const backToList = () => {
     navigate('/Expensehead');
   };
@@ -173,13 +174,19 @@ const ExpenseEdit = () => {
     <>
       <BreadCrumbs heading={expenseDetails && expenseDetails.title} />
       {/* button */}
-      <ExpenseButton
+      {/* <ExpenseButton
         editExpenseData={editExpenseData}
         navigate={navigate}
         applyChanges={applyChanges}
         backToList={backToList}
-      ></ExpenseButton>
-
+      ></ExpenseButton> */}
+<ApiButton
+              editData={editExpenseData}
+              navigate={navigate}
+              applyChanges={editExpenseData}
+              backToList={backToList}
+              module="ExpenseHead"
+            ></ApiButton>
       {/* Expense Head Details */}
       <ComponentCard title="Expense Head Details" creationModificationDate={expenseDetails}>
         <ExpenseHeadMainDetails

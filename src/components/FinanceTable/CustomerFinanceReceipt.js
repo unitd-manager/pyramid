@@ -2,21 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Form, Table } from 'reactstrap';
-import PdfCreateReceipt from '../PDF/PdfCreateReceipt'
+import PdfCreateReceipt from '../PDF/PdfCreateReceiptss'
 
 export default function CustomerFinanceReceipt({
   receipt,
   setEditReceiptModal,
   setReceiptDataModal,
   receiptCancel,
-  projectDetail,
+  financeDetails,
 }) {
   CustomerFinanceReceipt.propTypes = {
     receipt: PropTypes.array,
     setEditReceiptModal: PropTypes.func,
     setReceiptDataModal: PropTypes.func,
     receiptCancel: PropTypes.func,
-    projectDetail: PropTypes.any,
+    financeDetails: PropTypes.any,
   };
 
   //Structure of Receipt table
@@ -57,7 +57,7 @@ export default function CustomerFinanceReceipt({
                       <td>{element.receipt_date ? moment(element.receipt_date).format('DD-MM-YYYY') : ''}</td>
                       <td>{element.mode_of_payment}</td>
                       <td>{element.amount}</td>
-                      <td><PdfCreateReceipt projectDetail={projectDetail} receiptId ={element.receipt_id}></PdfCreateReceipt></td>
+                      <td><PdfCreateReceipt financeDetails={financeDetails} receiptId ={element.receipt_id}></PdfCreateReceipt></td>
                       <td>
                         <span
                           className="addline"

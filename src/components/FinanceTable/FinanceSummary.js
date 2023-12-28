@@ -51,13 +51,13 @@ export default function FinanceSummary({invoicesummary,receiptsummary,invoiceite
               <Input type="text" name="outstandingInvoice" value={receiptsummary && receiptsummary.outstandingInvoiceAmount} disabled></Input>
             </FormGroup>
           </Col>
-          <Col md="4">
+          {/* <Col md="4">
             <FormGroup>
               <Label>Overall Balance</Label>
               {' '}
               <Input type="text" name="balance" value={receiptsummary && receiptsummary.balance} disabled></Input>
             </FormGroup>
-          </Col>
+          </Col> */}
           </Row>
   </div>
 </div>

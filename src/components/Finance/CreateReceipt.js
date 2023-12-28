@@ -165,7 +165,7 @@ const FinanceReceiptData = ({ editCreateReceipt, setEditCreateReceipt,orderId, p
   };
   const generateCode = () => {
     api
-      .post('/commonApi/getCodeValue', { type:'receipt'})
+      .post('/invoice/getCodeValue', { type:'receipt'})
       .then((res) => {
         insertReceipt(res.data.data);
       })

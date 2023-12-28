@@ -72,8 +72,11 @@ export default function TenderQuotation({
   const [quoteLine, setQuoteLine] = useState();
   const [editLineModelItem, setEditLineModelItem] = useState(null);
   const [editLineModal, setEditLineModal] = useState(false);
-  console.log('1', quoteDatas);
 
+  console.log('quoteDatas', quoteDatas);
+  console.log('quote', quote);
+
+  
   const QuoteProject = project.find((element) => {
     return element.quote_id === quote.quote_id;
   });
@@ -177,6 +180,7 @@ export default function TenderQuotation({
         <ViewQuoteLogModal
           quotationsModal={quotationsModal}
           setquotationsModal={setquotationsModal}
+          quoteId={quote.quote_id}
           id={tenderId}
         />
       )}
@@ -343,7 +347,7 @@ export default function TenderQuotation({
                           className="addline pointer"
                           onClick={() => {
                             setEditQuoteModal(true);
-                            setQuoteData(quote);
+                            // setQuoteData(quote);
                             setQuoteData(lineItem.quote_id);
                             getLineItem(quote.quote_id);
                           }}

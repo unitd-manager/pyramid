@@ -45,7 +45,6 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
   const getQuote = () => {
     api.post('/tender/getQuoteById', { opportunity_id: id }).then((res) => {
       setQuoteData(res.data.data[0]);
-      console.log('quote', res.data.data[0]);
     });
   };
 

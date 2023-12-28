@@ -125,7 +125,7 @@ const PdfCreditNote = ({ creditId }) => {
             {
               text: ` Dear Sir,\n Title :${
                 notes.item_title ? notes.item_title : ''
-              } ,\n Description: ${notes.desription ? notes.desription : ''}`,
+              } ,\n Description: ${notes.description ? notes.description : ''}`,
               style: 'textSize',
               bold: true,
             },
