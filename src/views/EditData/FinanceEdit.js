@@ -99,7 +99,9 @@ console.log('ids',id)
       .post('/Finance/editInvoicePortalDisplay', obj)
       .then(() => {
         message('Record editted successfully', 'success');
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 600);
       })
       .catch(() => {
         message('Unable to edit record.', 'error');

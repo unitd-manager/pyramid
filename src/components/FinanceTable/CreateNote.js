@@ -69,7 +69,9 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
       .then((res) => {
         setCreateNoteAmount(res.data.data);
         finalapicall(res.data.data.insertId, results);
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 600);
       })
   };
 
@@ -112,7 +114,7 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
         editInvoiceCreditData(obj, totalValue);
       }
     });
-
+   
     // editCreditData(amount);
   };
 
