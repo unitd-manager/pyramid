@@ -5,19 +5,18 @@ import PropTypes from 'prop-types';
 import { HasAccess ,usePermify} from '@permify/react-role';
 import ComponentCardV2 from './ComponentCardV2';
 
-const ApiButton = ({ editData, navigate, backToList, module,deleteData, setFormSubmitted, tenderDetails }) => {
+const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
   ApiButton.propTypes = {
     editData: PropTypes.func,
     navigate: PropTypes.any,
     //applyChanges: PropTypes.func,
     backToList: PropTypes.func,
-    deleteData: PropTypes.any,
+    deleteData: PropTypes.func,
     module: PropTypes.string,
-    setFormSubmitted: PropTypes.any,
-    tenderDetails: PropTypes.any,
   };
   const { isAuthorized, isLoading } = usePermify();
 
+  
   const fetchData = async (type) => {
     // Pass roles and permissions accordingly
     // You can send empty array or null for first param to check permissions only
@@ -28,22 +27,6 @@ const ApiButton = ({ editData, navigate, backToList, module,deleteData, setFormS
     }
 };
 
-const handleSave = () => {
-  // Validate Title
-  const trimmedCompanyName = tenderDetails?.title?.trim();
-  if (!trimmedCompanyName) {
-    // If validation fails, show an error message or take appropriate action
-    console.error('Company name cannot be empty. Current value:', trimmedCompanyName);
-    // You can also show an error message to the user using a toast or other UI element
-    return;
-  }
-
-  // If validation passes, proceed with setting formSubmitted to true
-  setFormSubmitted(true);
-  editData();
-  backToList();
-};
-
   return (
     <Form>
     <FormGroup>
@@ -51,34 +34,32 @@ const handleSave = () => {
           <Row>
             <Col >
          
-              {/* <HasAccess
+              <HasAccess
                 roles={null}
                 permissions={`${module}-edit`}
                 renderAuthFailed={<p></p>}
-        > */}
+        >
                 <Button
                   onClick={() => {
-                    handleSave()
-                    setFormSubmitted(true);
-                      // setTimeout(()=>{
-                      //   backToList();
-                      // },1000)
+                    editData()
+                      setTimeout(()=>{
+                        backToList();
+                      },1000)
                     
                   }}
                   color="primary">
                   Save
                 </Button>
-              {/* </HasAccess> */}
+              </HasAccess>
             </Col>
             <Col >
-              {/* <HasAccess
+              <HasAccess
                 roles={null}
                 permissions={`${module}-edit`}
                 renderAuthFailed={<p></p>}
-              > */}
+              >
                 <Button
                   onClick={() => {
-                    setFormSubmitted(true);
                     editData();
                     //applyChanges();
                   }}
@@ -86,7 +67,7 @@ const handleSave = () => {
                 >
                   Apply
                 </Button>
-              {/* </HasAccess> */}
+              </HasAccess>
             </Col>
             <Col>
               <Button
@@ -99,11 +80,11 @@ const handleSave = () => {
               </Button>
             </Col>
             <Col>
-              {/* <HasAccess
+              <HasAccess
                 roles={null}
                 permissions={`${module}-remove`}
                 renderAuthFailed={<p></p>}
-              > */}
+              >
                 <Button color="danger" onClick={() => {deleteData();
                 //  setTimeout(()=>{
                 //   //backToList();
@@ -111,7 +92,7 @@ const handleSave = () => {
                 }}>
                   Delete
                 </Button>
-              {/* </HasAccess> */}
+              </HasAccess>
             </Col>
           </Row>
         </ComponentCardV2>

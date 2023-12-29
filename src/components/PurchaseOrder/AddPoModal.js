@@ -286,7 +286,7 @@ const insertProduct = (ProductCode, ItemCode) => {
         status: 'In Progress',
         cost_price: itemObj.cost_price,
         selling_price: itemObj.mrp,
-        qty_updated: parseInt(itemObj.qty, 10),
+        qty_updated: 0,
         qty: parseInt(itemObj.qty, 10),
         product_id: itemObj.product_id,
         supplier_id: insertPurchaseOrderData.supplier_id,

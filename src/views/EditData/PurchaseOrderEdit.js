@@ -118,8 +118,8 @@ const PurchaseOrderEdit = () => {
         if (elem.status !== 'Closed') {
           elem.status = 'Closed';
           elem.qty_updated = elem.qty_delivered;
-          elem.qty_in_stock += elem.qty_delivered;
-       
+          elem.qty_in_stock += parseFloat(elem.qty_delivered);
+
           api
             .post('/inventory/editInventoryStock', elem)
             .then(() => {
@@ -176,7 +176,7 @@ const PurchaseOrderEdit = () => {
   //Update Setting
   const editPurchaseData = () => {
     api
-      .post('/Purchaseorder/editTabPurchaseOrder', purchaseDetails)
+      .post('/purchaseorder/editTabPurchaseOrder', purchaseDetails)
       .then(() => {
         message('Record editted successfully', 'success');
       })
@@ -280,6 +280,13 @@ const PurchaseOrderEdit = () => {
   return (
     <>
       <BreadCrumbs />
+      <ApiButton
+              editData={editPurchaseData}
+              navigate={navigate}
+              applyChanges={editPurchaseData}
+              backToList={backToList}
+              module="Purchase Order"
+            ></ApiButton>
       <ToastContainer></ToastContainer>
       {/* PurchaseorderButtons */}
       {/* <PurchaseOrderButtons
@@ -291,13 +298,7 @@ const PurchaseOrderEdit = () => {
         product={product}
         navigate={navigate}
       /> */}
-      <ApiButton
-              editData={editPurchaseData}
-              navigate={navigate}
-              applyChanges={editPurchaseData}
-              backToList={backToList}
-              module="PurchaseOrder"
-            ></ApiButton>
+     
                       <ComponentCardV2>
             <Row>
               <Col>
