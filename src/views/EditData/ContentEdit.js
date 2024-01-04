@@ -14,13 +14,14 @@ import AttachmentModalV2 from '../../components/Tender/AttachmentModalV2';
 import ComponentCard from '../../components/ComponentCard';
 import ComponentCardV2 from '../../components/ComponentCardV2';
 import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
-import PictureAttachmentModalV2 from '../../components/Tender/PictureAttachmentModalV2';
+//import PictureAttachmentModalV2 from '../../components/Tender/PictureAttachmentModalV2';
 import message from '../../components/Message';
 import api from '../../constants/api';
 
 const ContentUpdate = () => {
   // All state variables
   const [lineItem] = useState(null);
+  const [RoomName, setRoomName] = useState('');
   const [contentDetails, setContentDetails] = useState();
   const [sectionLinked, setSectionLinked] = useState();
   const [categoryLinked, setCategoryLinked] = useState();
@@ -30,10 +31,11 @@ const ContentUpdate = () => {
   const [attachmentData, setDataForAttachment] = useState({
     modelType: '',
   });
-  const [pictureData, setDataForPicture] = useState({
-    modelType: '',
-  });
-
+  // const [pictureData, setDataForPicture] = useState({
+  //   modelType: '',
+  // });
+  const [fileTypes, setFileTypes] = useState('');
+  const [update, setUpdate] = useState(false);
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
@@ -67,7 +69,7 @@ const ContentUpdate = () => {
         convertHtmlToDraft(res.data.data.description);
       })
       .catch(() => {
-        message('Content Data Not Found', 'info');
+       
       });
   };
   //Edit Content
@@ -82,6 +84,28 @@ const ContentUpdate = () => {
         .then(() => {
           message('Record edited successfully', 'success');
           navigate('/Content');
+        })
+        .catch(() => {
+          message('Unable to edit record.', 'error');
+        });
+    } else {
+      message('Please fill all required fields', 'warning');
+    }
+  };
+
+  const editContentData1 = () => {
+    if (
+      contentDetails.content_title !== '' &&
+      contentDetails.sub_category_id !== '' &&
+      contentDetails.published !== ''
+    ) {
+      api
+        .post('/content/editContent', contentDetails)
+        .then(() => {
+          message('Record edited successfully', 'success');
+          setTimeout(() => {
+            window.location.reload();
+          }, 400);
         })
         .catch(() => {
           message('Unable to edit record.', 'error');
@@ -116,11 +140,11 @@ const ContentUpdate = () => {
     });
   };
   //Pictures
-  const dataForPicture = () => {
-    setDataForPicture({
-      modelType: 'picture',
-    });
-  };
+  // const dataForPicture = () => {
+  //   setDataForPicture({
+  //     modelType: 'picture',
+  //   });
+  // };
   useEffect(() => {
     getsection();
     getCategory();
@@ -150,7 +174,7 @@ const ContentUpdate = () => {
                 <Button
                   color="secondary"
                   onClick={() => {
-                    editContentData();
+                    editContentData1();
                   }}
                 >
                   Apply
@@ -337,7 +361,7 @@ const ContentUpdate = () => {
       {/* Picture and Attachments Form */}
       <Form>
         <FormGroup>
-          <ComponentCard title="Picture">
+          {/* <ComponentCard title="Picture">
             <Row>
               <Col xs="12" md="3" className="mb-3">
                 <Button
@@ -361,13 +385,15 @@ const ContentUpdate = () => {
               setAttachmentModal={setAttachmentModal}
             />
             <ViewFileComponentV2 moduleId={id} roomName="Content" />
-          </ComponentCard>
+          </ComponentCard> */}
           <ComponentCard title="Attachments">
             <Row>
               <Col xs="12" md="3" className="mb-3">
                 <Button
                   color="primary"
                   onClick={() => {
+                    setRoomName('Staff');
+                    setFileTypes(['JPG', 'JPEG', 'PNG', 'GIF', 'PDF']);
                     dataForAttachment();
                     setAttachmentModal(true);
                   }}
@@ -376,16 +402,27 @@ const ContentUpdate = () => {
                 </Button>
               </Col>
             </Row>
+          
             <AttachmentModalV2
               moduleId={id}
-              roomName="Content"
-              altTagData="Content Data"
-              desc="Content Data"
-              modelType={attachmentData.modelType}
               attachmentModal={attachmentModal}
               setAttachmentModal={setAttachmentModal}
+              roomName={RoomName}
+              fileTypes={fileTypes}
+              altTagData="StaffRelated Data"
+              desc="StaffRelated Data"
+              recordType="RelatedPicture"
+              mediaType={attachmentData.modelType}
+              update={update}
+              setUpdate={setUpdate}
             />
-            <ViewFileComponentV2 moduleId={id} roomName="Content" />
+            <ViewFileComponentV2
+              moduleId={id}
+              roomName="Staff"
+              recordType="RelatedPicture"
+              update={update}
+              setUpdate={setUpdate}
+            />
           </ComponentCard>
         </FormGroup>
       </Form>

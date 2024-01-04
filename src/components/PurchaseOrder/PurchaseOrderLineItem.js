@@ -178,9 +178,9 @@ const PurchaseOrderlineItemEdit = ({
               editPoProductData();
               getAllValues();
               setEditModal(false);
-              setTimeout(() => {
-                window.location.reload();
-              }, 300);
+              // setTimeout(() => {
+              //   window.location.reload();
+              // }, 300);
             }}
           >
             Save & Continue

@@ -42,8 +42,11 @@ const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder
   };
   console.log("0",purchasePoOrder);
   const calculateTotal = () => {
-    const grandTotal = tabPurchaseOrderLineItemTable.reduce((acc, element) => acc + element.amount, 0);
-    
+    const grandTotal = tabPurchaseOrderLineItemTable.reduce(
+      (acc, element) => acc + element.qty * element.cost_price,
+      0
+    );
+  
     return grandTotal;
   };
   const calculateGSTTotal = () => {
@@ -108,6 +111,9 @@ const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder
       ],
     ];
     tabPurchaseOrderLineItemTable.forEach((element, index) => {
+      const quantity = element.qty || 0;
+      const unitPrice = element.cost_price || 0;
+      const amount11 = quantity * unitPrice;
       productItems.push([
         {
           text: `${index + 1}`,
@@ -137,7 +143,7 @@ const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder
         },
         {
           border: [false, false, false, true],
-          text: `${element.amount?element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 }):''}`,
+          text: `${amount11.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           fillColor: '#f5f5f5',
           style: 'tableBody1',
         },
