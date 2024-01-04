@@ -90,6 +90,7 @@ const Valuelist = () => {
       sortable: true,
       grow: 0,
       wrap: true,
+      width:'10%'
     },
     {
       name: 'Value List Name',
