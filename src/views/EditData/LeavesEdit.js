@@ -174,7 +174,7 @@ const LeavesEdit = () => {
       </Form>
 
       {/* Main Details */}
-      <LeaveMainDetails
+      <LeaveMainDetails name='LeaveMainDetails'
         handleInputs={handleInputs}
         leavesDetails={leavesDetails}
         difference={difference}

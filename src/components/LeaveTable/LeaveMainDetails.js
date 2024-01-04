@@ -34,6 +34,7 @@ export default function LeaveMainDetails({ handleInputs, leavesDetails,differenc
                 <FormGroup>
                   <Label>Applied Date</Label>
                   <Input
+                 
                     type="Date"
                     onChange={handleInputs}
                     value={leavesDetails && moment(leavesDetails.date).format('YYYY-MM-DD')}

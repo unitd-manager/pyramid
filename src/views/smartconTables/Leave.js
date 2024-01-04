@@ -132,7 +132,7 @@ const Leaves = () => {
           title="Leave List"
           Button={
             <Link to="/LeaveDetails">
-              <Button color="primary" className="shadow-none">
+              <Button color="primary" className="shadow-none add-new">
                 Add New
               </Button>
             </Link>
@@ -152,7 +152,7 @@ const Leaves = () => {
                   <tr key={element.leave_id}>
                     <td>{i + 1}</td>
                     <td>
-                      <Link to={`/LeavesEdit/${element.leave_id}?tab=1`}>
+                      <Link to={`/LeavesEdit/${element.leave_id}?tab=1`} className='editlink'>
                         <Icon.Edit2 />
                       </Link>
                     </td>

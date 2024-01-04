@@ -70,11 +70,15 @@ const LoginFormik = ({ setToken }) => {
       });
   };
 
-  const initialValues = {
-    email: 'admin@gmail.com',
-    password: 'admin@123',
-  };
+  // const initialValues = {
+  //   email: 'admin@gmail.com',
+  //   password: 'admin@123',
+  // };
 
+  const initialValues = {
+    email: '',
+    password: '',
+  };
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Email is invalid').required('Email is required'),
     password: Yup.string()
