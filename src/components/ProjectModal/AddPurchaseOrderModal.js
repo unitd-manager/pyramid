@@ -595,6 +595,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                           name="qty"
                           value={el.qty}
                           onChange={(e) => updateState(index, 'qty', e)}
+                          onBlur={(e) => updateAmount(index)}
                         />
                       </td>
                       <td data-label="Unit Price">
@@ -603,6 +604,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                           name="cost_price"
                           value={el.cost_price}
                           onChange={(e) => updateState(index, 'cost_price', e)}
+                          onBlur={(e) => updateAmount(index)}
                         />
                       </td>
                       <td data-label="Total Price">
@@ -610,7 +612,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                           type="text"
                           name="amount"
                           value={el.amount}
-                          onChange={(e) => updateAmount(index, 'amount', e)}
+                          // onChange={(e) => updateAmount(index, 'amount', e)}
                         />
                         </td>
                       <td data-label="Remarks">

@@ -19,7 +19,7 @@ import CommonTable from '../../components/CommonTable';
 function Timesheet() {
   const [timeSheet, setTimeSheet] = useState(null);
   const getTimeSheet = () => {
-    api.get('/timesheet/getTimeSheet').then((res) => {
+    api.get('/attendance/getTimesheetAttendance').then((res) => {
       setTimeSheet(res.data.data);
     });
   };
@@ -164,7 +164,7 @@ function Timesheet() {
                         </span>
                       </Link>
                     </td>
-                    <td>{element.staff_name}</td>
+                    <td>{element.first_name}</td>
                     <td>{element.creation_date}</td>
                     <td>{element.time_in}</td>
                     <td>{element.leave_time}</td>

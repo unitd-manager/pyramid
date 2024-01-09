@@ -11,7 +11,7 @@ import creationdatetime from '../../constants/creationdatetime';
 import message from '../../components/Message';
 import UserGroupButtons from '../../components/userGroup/UserGroupButtons';
 import AppContext from '../../context/AppContext';
-import ApiButton from '../../components/ApiButton';
+//import ApiButton from '../../components/ApiButton';
 
 const UserGroupEdit = () => {
   //state variables
@@ -215,14 +215,14 @@ const UserGroupEdit = () => {
               editRoomUserGroup={getAllValues}
               navigate={navigate}
             />
-            <ApiButton
+            {/* <ApiButton
               editData={editUserGroupData}
               navigate={navigate}
               applyChanges={editUserGroupData}
               backToList={backToList}
               deleteData={deleteUserGroupData}
               module="UserGroup"
-            ></ApiButton>
+            ></ApiButton> */}
             <Form>
               <FormGroup>
                 <ComponentCard title="UserGroup Details">
