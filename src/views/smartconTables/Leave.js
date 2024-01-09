@@ -157,7 +157,7 @@ const Leaves = () => {
                       </Link>
                     </td>
                     <td>{element.employee_name}</td>
-                    <td>{element.position}</td>
+                    <td>{element.designation}</td>
                     <td>{element.status}</td>
                     <td>{element.from_date ? moment(element.from_date).format('DD-MM-YYYY') : ''}</td>
                     <td>{element.to_date ? moment(element.to_date).format('DD-MM-YYYY') : ''}</td>

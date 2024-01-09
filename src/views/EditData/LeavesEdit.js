@@ -19,6 +19,7 @@ import api from '../../constants/api';
 import LeaveMainDetails from '../../components/LeaveTable/LeaveMainDetails';
 import ApiButton from '../../components/ApiButton';
 import Tab from '../../components/ProjectTabs/Tab';
+import creationdatetime from '../../constants/creationdatetime';
 
 const LeavesEdit = () => {
   //Const Variables
@@ -108,6 +109,8 @@ const LeavesEdit = () => {
         leavesDetails.leave_type!=='' 
        
       ) {
+        
+        leavesDetails.modification_date = creationdatetime;
         api
           .post('/leave/editleave', leavesDetails)
           .then(() => {

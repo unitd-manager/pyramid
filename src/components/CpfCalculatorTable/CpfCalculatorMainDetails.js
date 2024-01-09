@@ -12,7 +12,7 @@ export default function CpfCalculatorMainDetails({ handleInputs, cpfRecordDetail
   };
   return (
     <>
-      <ComponentCard title="Cpf Calculator Details">
+      <ComponentCard title="Cpf Calculator Details" creationModificationDate={cpfRecordDetails}>
         <Form>
           <FormGroup>
             <Row>

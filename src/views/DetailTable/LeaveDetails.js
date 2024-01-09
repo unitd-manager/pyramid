@@ -39,7 +39,7 @@ const LeaveDetails = () => {
   }
   //Api insertLeave
   const insertLeave = () => {
-    if (new Date(leaveInsertData.to_date) >= new Date(leaveInsertData.from_date)) {
+   
     if (
       leaveInsertData.employee_id !== '' &&
       leaveInsertData.from_date !== '' &&
@@ -76,10 +76,7 @@ const LeaveDetails = () => {
       message('Please fill all required fields', 'warning');
     }
     
-  }
-  else {
-      message('The To date should be the future date of From date', 'error');
-    }
+  
   };
   // getEmployee dropDown
   const getEmployee = () => {

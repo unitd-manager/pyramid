@@ -33,7 +33,7 @@ export default function Jobinformationedit({ handleInputsJobInformation, job,ins
           </Col>
         </Row>
       </ComponentCardV2>
-      <ComponentCard title="Details of Employment (KET)">
+      <ComponentCard title="Details of Employment (KET)" creationModificationDate={job}>
         <ToastContainer></ToastContainer>
         <br />
         <FormGroup>
