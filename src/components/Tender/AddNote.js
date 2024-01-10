@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col } from 'reactstrap';
 import moment from 'moment';
 import message from '../Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 
 function AddNote({ recordId, roomName }) {
@@ -10,12 +11,13 @@ function AddNote({ recordId, roomName }) {
     recordId: PropTypes.string,
     roomName: PropTypes.string,
   };
-
+  const { loggedInuser } = useContext(AppContext);
   const [addNoteData, setAddNoteData] = useState({
     comments: '',
     room_name: roomName,
     record_id: recordId,
     creation_date: moment().format('DD-MM-YYYY'),
+    created_by: loggedInuser.first_name,
   });
 
   const handleData = (e) => {
@@ -24,10 +26,11 @@ function AddNote({ recordId, roomName }) {
 
   const SubmitNote = () => {
     api.post('/note/addNote', addNoteData).then(() => {
+      console.log('note data', addNoteData)
       message('Add Note Successfully', 'success');
-      setTimeout(() => {
-        window.location.reload();
-      }, 400);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 400);
     });
   };
 

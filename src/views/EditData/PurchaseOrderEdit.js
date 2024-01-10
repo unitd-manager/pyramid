@@ -184,17 +184,23 @@ const PurchaseOrderEdit = () => {
         message('Unable to edit record.', 'error');
       });
   };
-
-  //Edit poproductdata
   const editPoProductData = () => {
-    api
-      .post('/Purchaseorder/editTabPurchaseOrderLineItem', product)
-      .then(() => {
-        message('product edited successfully.', 'success');
-      })
-      .catch(() => {
-        message('unable to edit product.', 'danger');
-      });
+    // Check if the quantity to be added to stock is valid
+  
+    if (product.qty_delivered > 0) {
+      // Proceed with the API call
+      api
+        .post('/Purchaseorder/editTabPurchaseOrderLineItem', product)
+        .then(() => {
+          message('Product edited successfully.', 'success');
+        })
+        .catch(() => {
+          message('Unable to edit product.', 'danger');
+        });
+    } else {
+      // Show an error message for invalid quantity
+      message('Invalid quantity. Please enter a valid quantity.', 'danger');
+    }
   };
 
   const deletePoProduct = (poProductId) => {

@@ -233,7 +233,7 @@ const insertProduct = (ProductCode, ItemCode) => {
         message('Unable to insert product.', 'error');
       });
     } else {
-      message('Please fill the Product Name ', 'warning');
+      message('Please fill the Product Name', 'warning');
     }
   };
 
