@@ -9,7 +9,7 @@ export default function CustomerFinanceReceipt({
   setEditReceiptModal,
   setReceiptDataModal,
   receiptCancel,
-  financeDetails,
+  financeDetails, 
 }) {
   CustomerFinanceReceipt.propTypes = {
     receipt: PropTypes.array,
@@ -79,7 +79,7 @@ export default function CustomerFinanceReceipt({
                                   'Are you sure you want to cancel?\n\nYou will lose any changes made',
                                 )
                               ) {
-                                receiptCancel(element);
+                                receiptCancel(element,element.invoice_id);
                               }
                             }}
                           >

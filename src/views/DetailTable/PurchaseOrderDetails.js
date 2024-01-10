@@ -57,7 +57,7 @@ const PurchaseOrderDetails = () => {
 
   const generateCode = () => {
     api
-      .post('/commonApi/getCodeValue', { type: 'purchaseOrder' })
+      .post('/tender/getCodeValue', { type: 'purchaseOrder' })
       .then((res) => {
         insertPurchaseOrder(res.data.data);
       })

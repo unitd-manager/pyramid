@@ -103,7 +103,7 @@ function ViewHistoryModal({ viewHistoryModal, setViewHistoryModal, productId, su
                                 <td>{element.supplier_name}</td>
                                 <td>{moment(element.po_date).format('YYYY-MM-DD')}</td>
                                 <td>{element.cost_price}</td>
-                                <td>{element.qty}</td>
+                                <td>{element.po_QTY}</td>
                               </tr>
                             );
                           })}
@@ -131,7 +131,7 @@ function ViewHistoryModal({ viewHistoryModal, setViewHistoryModal, productId, su
                                 <td>{element.supplier_name}</td>
                                 <td>{moment(element.po_date).format('YYYY-MM-DD')}</td>
                                 <td>{element.cost_price}</td>
-                                <td>{element.qty}</td>
+                                <td>{element.po_QTY}</td>
                               </tr>
                             );
                           })}
