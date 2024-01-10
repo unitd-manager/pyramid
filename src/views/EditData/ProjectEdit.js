@@ -49,7 +49,7 @@ const ProjectEdit = () => {
   const [editQuoteModal, setEditQuoteModal] = useState(false);
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
   const [attachmentModal, setAttachmentModal] = useState(false);
-  const [tabdeliveryorder, setTabdeliveryorder] = useState();
+  const [tabdeliveryorder, setTabdeliveryorder] = useState([]);
   const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
   const [checkId, setCheckId] = useState([]);
   const [editDeliveryOrder, setEditDeliveryOrder] = useState(false);
@@ -458,6 +458,7 @@ const ProjectEdit = () => {
           editDeliveryOrder={editDeliveryOrder}
           setEditDeliveryOrder={setEditDeliveryOrder}
           data={deliveryData}
+          tabdeliveryorder={tabdeliveryorder}
         />
         {editPo && <EditPoModal editPo={editPo} setEditPo={setEditPo} data={POId} />}
         {editPOLineItemsModal && (
