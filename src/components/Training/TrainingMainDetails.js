@@ -10,7 +10,7 @@ export default function TrainingMainDetails({ trainingDetails, handleInputs }) {
     handleInputs: PropTypes.func,
   };
   return (
-    <ComponentCard title="Main Details">
+    <ComponentCard title="Main Details" creationModificationDate={trainingDetails}>
       <Form>
         <Row>
           <Col md="4">

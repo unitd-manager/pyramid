@@ -73,18 +73,30 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
           style: 'tableHead',
         },
         {
-          text: 'PRODUCT NAME',
+          text: 'EQUIPMENT NO',
           style: 'tableHead',
         },
-
+        {
+          text: 'WORK DESCRTPTION',
+          style: 'tableHead',
+        },
+        {
+          text: 'ITEM',
+          style: 'tableHead',
+        },
+        {
+          text: 'SIZE',
+          style: 'tableHead',
+        },
         {
           text: 'QTY',
           style: 'tableHead',
         },
         {
-          text: 'REMARKS',
+          text: 'UNIT',
           style: 'tableHead',
         },
+        
       ],
     ];
     editDeliveryOrder?.forEach((element, index) => {
@@ -94,9 +106,23 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
           style: 'tableBody',
           border: [false, false, false, true],
         },
-
+        {
+          text: `${element.equipment_no ? element.equipment_no : ''}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
         {
           text: `${element.item_title ? element.item_title : ''}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
+          text: `${element.item ? element.item : ''}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
+          text: `${element.size ? element.size : ''}`,
           border: [false, false, false, true],
           style: 'tableBody',
         },
@@ -106,7 +132,7 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
           style: 'tableBody',
         },
         {
-          text: `${element.remarks ? element.remarks : ''}`,
+          text: `${element.unit ? element.unit : ''}`,
           border: [false, false, false, true],
           style: 'tableBody',
         },
@@ -172,34 +198,68 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
           },
         },
         '\n',
-        {
-          columns: [
+        '\n',
+        
             {
-              text: `TO`,
+              text: `Client:${projectDetail.company_name ? projectDetail.company_name : ''}`,
               style: ['notesText', 'textSize'],
               bold: 'true',
             },
+            '\n',
             {
-              text: `${projectDetail.company_name ? projectDetail.company_name : ''}
-                 ${projectDetail.address_street ? projectDetail.address_street : ''}
-                 ${projectDetail.address_town ? projectDetail.address_town : ''}
-                 ${projectDetail.address_country ? projectDetail.address_country : ''}
-                 ${ projectDetail.address_po_code ? projectDetail.address_po_code : ''}`,
+              text: `Project:${projectDetail.title ? projectDetail.title : ''}`,
               style: ['notesText', 'textSize'],
-              margin: [-250, 20, 0, 0],
+              bold: 'true',
+              
+            },
+            '\n',
+            {
+              text: `Location:${projectDetail.location ? projectDetail.location : ''}`,
+              style: ['notesText', 'textSize'],
+              bold: 'true',
+            },
+            '\n',
+            {
+              text: `Scope of Work: ${projectDetail.scope_of_work ? projectDetail.scope_of_work : ''}`,
+              style: ['notesText', 'textSize'],
+              
 
               bold: 'true',
             },
-          ],
+          
+
+        {
+          text: `Job No :${deliveryData.delivery_order_code ? deliveryData.delivery_order_code : ''}`,
+          
+          style: ['invoiceAdd', 'textSize'],
+          margin: [0, -90, 0, 0],
         },
-
+        '\n',
         {
-          text: `DATE :${
+          text: `P.O No :${
+            deliveryData.po_code ? deliveryData.po_code  : ''
+          }`,
+          
+          style: ['invoiceAdd', 'textSize'],
+          
+        },
+        '\n',
+        {
+          text: `P.O.Date :${
+            deliveryData && deliveryData.po_date ? moment(deliveryData.po_date).format('DD-MM-YYYY') : ''
+          }`,
+          
+          style: ['invoiceAdd', 'textSize'],
+          
+        },
+        '\n',
+        {
+          text: `Date :${
             deliveryData && deliveryData.date ? moment(deliveryData.date).format('DD-MM-YYYY') : ''
           }`,
           
           style: ['invoiceAdd', 'textSize'],
-          margin: [0, -60, 0, 0],
+          
         },
         '\n\n\n\n\n\n',
 
@@ -242,7 +302,7 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
           },
           table: {
             headerRows: 1,
-            widths: ['10%', '41%', '20%', '30%'],
+            widths: ['10%','15%', '31%', '15%', '10%','10%','10%'],
 
             body: productItems,
           },
@@ -255,46 +315,39 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
             {
               stack: [
                 {
-                  text: 'Your Faithfully :',
+                  text: 'Name :',
                   alignment: 'left',
                   bold: true,
                   fontSize: 10,
                   style: ['invoiceAdd', 'textSize'],
                 },
-                '\n\n\n',
-                { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 190, y2: 0, lineWidth: 1 }] },
+                '\n',
                 {
-                  text: `Authorised Signature/Date`,
+                  text: 'Designation :',
+                  alignment: 'left',
+                  bold: true,
                   fontSize: 10,
+                  style: ['invoiceAdd', 'textSize'],
+                },
+                '\n',
+                {
+                  text: `Signature:`,
+                  fontSize: 10,
+                  bold: true,
+                  style: ['textSize'],
+                  margin: [0, 0, 0, 0],
+                },
+                '\n',
+                {
+                  text: `Date:`,
+                  fontSize: 10,
+                  bold: true,
                   style: ['textSize'],
                   margin: [0, 0, 0, 0],
                 },
               ],
             },
-            {
-              stack: [
-                '\n\n\n\n',
-                {
-                  canvas: [
-                    {
-                      type: 'line',
-                      margin: [0, 0, 0, 0],
-                      x1: 0,
-                      y1: 0,
-                      x2: 200,
-                      y2: 0,
-                      lineWidth: 1,
-                    },
-                  ],
-                },
-                {
-                  text: `Accepted By/date`,
-                  fontSize: 10,
-                  style: ['textSize'],
-                  margin: [0, 0, 0, 0],
-                },
-              ],
-            },
+            
           ],
         },
         '\n\n\n\n\n',

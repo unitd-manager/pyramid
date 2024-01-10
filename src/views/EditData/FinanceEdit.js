@@ -82,8 +82,9 @@ console.log('ids',id)
   };
 
   //receipt Cancel
-  const receiptCancel = (obj) => {
+  const receiptCancel = (obj,invoiceId) => {
     obj.receipt_status = 'cancelled';
+    obj.invoice_id = invoiceId;
     api
       .post('/Finance/editTabReceiptPortalDisplay', obj)
       .then(() => {
@@ -310,6 +311,8 @@ console.log('ids',id)
             <CreateReceipt
               editCreateReceipt={editCreateReceipt}
               setEditCreateReceipt={setEditCreateReceipt}
+              getReceiptById={getReceiptById}
+              getFinancesById={getFinancesById}
               orderId={id}
             />
 

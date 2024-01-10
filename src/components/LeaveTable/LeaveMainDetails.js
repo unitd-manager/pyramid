@@ -12,7 +12,7 @@ export default function LeaveMainDetails({ handleInputs, leavesDetails,differenc
   };
   return (
     <>
-      <ComponentCard title="Leave Edit">
+      <ComponentCard title="Leave Edit" creationModificationDate={leavesDetails}>
         <Form>
           <FormGroup>
             <Row>

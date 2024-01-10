@@ -48,6 +48,8 @@ const ProductUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  console.log('productDetails', productDetails)
+
   //const applyChanges = () => {};
   const backToList = () => {
     navigate('/Product');

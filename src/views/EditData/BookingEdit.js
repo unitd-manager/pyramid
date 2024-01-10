@@ -120,7 +120,7 @@ const BookingEdit = () => {
   const handleserviceInputs = (e) => {
     setServiceLinkedDetails({ ...servicelinkeddetails, [e.target.name]: e.target.value });
   };
-
+  //edit-Booking_service
   //get booking service data in db
   const getServiceLinked = () => {
     api

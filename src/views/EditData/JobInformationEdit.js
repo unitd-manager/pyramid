@@ -181,7 +181,7 @@ const JobInformationEdit = () => {
     job.overtime_pay_rate = overTimeRate;
     job.deduction4 = parseFloat(job.deduction4);
     if (job.act_join_date && job.working_days && job.basic_pay && job.join_date && job.govt_donation) {
-     
+      job.modification_date = creationdatetime;
       api
         .post('/jobinformation/edit-jobinformation', job)
         .then(() => {

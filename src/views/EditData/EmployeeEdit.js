@@ -19,13 +19,12 @@ import api from '../../constants/api';
 import message from '../../components/Message';
 import Tab from '../../components/ProjectTabs/Tab';
 import ApiButton from '../../components/ApiButton';
+import creationdatetime from '../../constants/creationdatetime';
 
 const EmployeeEdit = () => {
   //state variables
   const [activeTab, setActiveTab] = useState('1');
-  const [employeeDetails, setEmployeeDetails] = useState({
-    nationality: '',
-  });
+  const [employeeDetails, setEmployeeDetails] = useState();
   const [contactInformationDetails, setContactInformationDetails] = useState({
     employee_id: '',
     address_area: '',
@@ -193,7 +192,7 @@ const EmployeeEdit = () => {
   //Api for getting all countries
   const getAllCountries = () => {
     api
-      .get('/geocountry/getNationality')
+      .get('/geocountry/getCountry')
       .then((res) => {
         setallCountries(res.data.data);
       })
@@ -227,12 +226,8 @@ const EmployeeEdit = () => {
   // Api calls for Editing
   //edit employeedata
   const editEmployeeData = () => {
-    if (
-      employeeDetails.employee_name !== '' &&
-      employeeDetails.date_of_birth !== '' &&
-      employeeDetails.nationality !== '' &&
-      employeeDetails.nationality !== '' // Check if nationality is not "Please Select"
-    ) {
+    
+      employeeDetails.modification_date = creationdatetime;
       api
         .post('/employeeModule/edit-Employee', employeeDetails)
         .then(() => {
@@ -241,9 +236,7 @@ const EmployeeEdit = () => {
         .catch(() => {
           message('Unable to edit record.', 'error');
         });
-    } else {
-      message('Please fill the required fields', 'warning');
-    }
+    
   };
 
   //update tab data
@@ -283,74 +276,75 @@ const EmployeeEdit = () => {
 }
   //update tabpasstype data
   const editTabPassTypeData = () => {
-    if (tabPassTypeDetails.citizen === 'Citizen' ) {
-      if (tabPassTypeDetails.nric_no !== '') {
-        api
-          .post('/employeeModule/edit-TabPassType', tabPassTypeDetails)
-          .then(() => {
-            //message('Record editted successfully', 'success');
-          })
-          .catch(() => {
-            message('Unable to edit record.', 'error');
-          });
-      } else {
-        message('Please fill the nricno fields', 'warning');
-      }
-    } else if (
-      
-      tabPassTypeDetails.citizen === 'DP' ||
-      tabPassTypeDetails.citizen === 'EP' ||
-      tabPassTypeDetails.citizen === 'SP'
-    ) {
-      if (tabPassTypeDetails.fin_no !== '') {
-        api
-          .post('/employeeModule/edit-TabPassType', tabPassTypeDetails)
-          .then(() => {
-            //message('Record editted successfully', 'success');
-          })
-          .catch(() => {
-            message('Unable to edit record.', 'error');
-          });
-      } else {
-        message('Please fill the fin no field', 'warning');
-      }
-    } else if (tabPassTypeDetails.citizen === 'WP') {
-      if (tabPassTypeDetails.fin_no !== '' && tabPassTypeDetails.work_permit !== '') {
-        api
-          .post('/employeeModule/edit-TabPassType', tabPassTypeDetails)
-          .then(() => {
-            //message('Record editted successfully', 'success');
-          })
-          .catch(() => {
-            message('Unable to edit record.', 'error');
-          });
-      } else {
-        message('Please fill the Fin no and Work permit No field', 'warning');
-      }
-    } else if ( tabPassTypeDetails.citizen === 'PR') {
-      if (tabPassTypeDetails.nric_no !== '' && tabPassTypeDetails.spr_year !== '') {
-        api
-          .post('/employeeModule/edit-TabPassType', tabPassTypeDetails)
-          .then(() => {
-            //message('Record editted successfully', 'success');
-          })
-          .catch(() => {
-            message('Unable to edit record.', 'error');
-          });
-      } else {
-        message('Please fill the Nric No and Spryear field', 'warning');
-      }
-    } else {
-      message('Please fill the PassType', 'warning');
-    }
+    api
+    .post('/employeeModule/edit-TabPassType', tabPassTypeDetails)
+    .then(() => {
+      //message('Record editted successfully', 'success');
+    })
+    .catch(() => {
+      message('Unable to edit record.', 'error');
+    });
   };
   //update all data
   const updateData = async () => {
-    await editEmployeeData();
+    if (
+      employeeDetails.employee_name !== '' &&
+      employeeDetails.date_of_birth !== '' &&
+      employeeDetails.nationality 
+      // Check if nationality is not "Please Select"
+    ) {
+      if (tabPassTypeDetails.citizen === 'Citizen' ) {
+        if (tabPassTypeDetails.nric_no !== '') {
+          await editEmployeeData();
+          await editTabPassTypeData();
+          await editEQData();
+          await editECData();
+          await editCIData();
+        } else {
+          message('Please fill the nricno fields', 'warning');
+        }
+      } else if (
+        
+        tabPassTypeDetails.citizen === 'DP' ||
+        tabPassTypeDetails.citizen === 'EP' ||
+        tabPassTypeDetails.citizen === 'SP'
+      ) {
+        if (tabPassTypeDetails.fin_no !== '') {
+          await editEmployeeData();
     await editTabPassTypeData();
     await editEQData();
     await editECData();
     await editCIData();
+        } else {
+          message('Please fill the fin no field', 'warning');
+        }
+      } else if (tabPassTypeDetails.citizen === 'WP') {
+        if (tabPassTypeDetails.fin_no !== '' && tabPassTypeDetails.work_permit !== '') {
+          await editEmployeeData();
+    await editTabPassTypeData();
+    await editEQData();
+    await editECData();
+    await editCIData();
+        } else {
+          message('Please fill the Fin no and Work permit No field', 'warning');
+        }
+      } else if ( tabPassTypeDetails.citizen === 'PR') {
+        if (tabPassTypeDetails.nric_no !== '' && tabPassTypeDetails.spr_year !== '') {
+          await editEmployeeData();
+          await editTabPassTypeData();
+          await editEQData();
+          await editECData();
+          await editCIData();
+        } else {
+          message('Please fill the Nric No and Spryear field', 'warning');
+        }
+      } else {
+        message('Please fill the PassType', 'warning');
+      }
+   
+  } else {
+    message('Please fill the required fields', 'warning');
+  }
   };
 
   //Attachments

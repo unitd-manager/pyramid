@@ -21,6 +21,7 @@ import AttachmentModalV2 from '../../components/Tender/AttachmentModalV2';
 import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
 //import ComponentCardV2 from '../../components/ComponentCardV2';
 import ApiButton from '../../components/ApiButton';
+import creationdatetime from '../../constants/creationdatetime';
 
 const TrainingEdit = () => {
   //All state variables
@@ -232,6 +233,7 @@ const TrainingEdit = () => {
     if (new Date(trainingDetails.to_date) > new Date(trainingDetails.from_date)) {
       if (trainingDetails.title !== '') {
         //Update training
+        trainingDetails.modification_date = creationdatetime;
         api
           .post('/training/edit-Training', trainingDetails)
           .then(() => {

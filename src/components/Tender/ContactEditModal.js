@@ -39,9 +39,10 @@ const ContactEditModal = ({ contactData, editContactEditModal, setEditContactEdi
     api
       .post('/clients/editContact', contactinsert)
       .then(() => {
+       
+        message('Record editted successfully', 'success');
         getContactLinked();
         setEditContactEditModal(false);
-        message('Record editted successfully', 'success');
         //window.location.reload();
       })
       .catch(() => {

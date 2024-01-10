@@ -73,7 +73,7 @@ const ClientsEdit = () => {
         setClientsDetails(res.data.data[0]);
       })
       .catch(() => {
-        message('Clients Data Not Found', 'info');
+        //message('Clients Data Not Found', 'info');
       });
   };
 
@@ -103,7 +103,7 @@ const ClientsEdit = () => {
         setContactsDetails(res.data.data);
       })
       .catch(() => {
-        message('Conatct Data Not Found', 'info');
+        //message('Conatct Data Not Found', 'info');
       });
   };
   //Email
@@ -175,7 +175,7 @@ const ClientsEdit = () => {
         setProjectDetails(res.data.data);
       })
       .catch(() => {
-        message('Project Data Not Found', 'info');
+        //message('Project Data Not Found', 'info');
       });
   };
 
@@ -187,7 +187,7 @@ const ClientsEdit = () => {
         setInvoiceDetails(res.data.data);
       })
       .catch(() => {
-        message('Invoice Data Not Found', 'info');
+       // message('Invoice Data Not Found', 'info');
       });
   };
 
@@ -199,7 +199,7 @@ const ClientsEdit = () => {
         setTenderDetails(res.data.data);
       })
       .catch(() => {
-        message('Tender Data Not Found', 'info');
+       // message('Tender Data Not Found', 'info');
       });
   };
   //Api for getting all countries
@@ -210,7 +210,7 @@ const ClientsEdit = () => {
         setallCountries(res.data.data);
       })
       .catch(() => {
-        message('Country Data Not Found', 'info');
+       // message('Country Data Not Found', 'info');
       });
   };
 
