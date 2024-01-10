@@ -2,7 +2,9 @@ import React from 'react';
 import { Row, Col, FormGroup, Label, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { RadioGroup } from '@mui/material';
 import ComponentCard from '../ComponentCard';
+
 
 function EmployeePart({ employeeDetails, handleInputChange, allCountries, companies }) {
   EmployeePart.propTypes = {
@@ -15,7 +17,7 @@ console.log('all countries',allCountries)
   return (
     <div>
       <FormGroup>
-        <ComponentCard title="Personal Information">
+        <ComponentCard title="Personal Information" creationModificationDate={employeeDetails}>
           <Row>
             <Col md="3">
               <FormGroup>
@@ -158,7 +160,8 @@ console.log('all countries',allCountries)
             <Col md="3">
               <FormGroup>
                 <Label>
-                  Nationality <span style={{ color: 'red' }}>*</span>
+                Nationality
+                  {/* Nationality <span style={{ color: 'red' }}>*</span> */}
                 </Label>
                 <Input
                   name="nationality"
@@ -166,12 +169,12 @@ console.log('all countries',allCountries)
                   onChange={handleInputChange}
                   type="select"
                 >
-                  <option>Please Select</option>
+                  <option value="">Please Select</option>
                   {allCountries &&
                     allCountries.map((ele) => {
                       return (
-                        <option key={ele.nationality_code} value={parseFloat(ele.nationality_code)}>
-                          {ele.title}
+                        <option key={ele.country_code} value={parseFloat(ele.country_code)}>
+                          {ele.name}
                         </option>
                       );
                     })}
@@ -271,29 +274,31 @@ console.log('all countries',allCountries)
               </FormGroup>
             </Col>
             <Col md="3">
-              <FormGroup>
-                <Label>Project manager</Label>
-                <br></br>
-                <Label>Yes</Label>
-                &nbsp;
-                <Input
-                  name="project_manager"
-                  value="1"
-                  type="radio"
-                  defaultChecked={employeeDetails && employeeDetails.project_manager === 1 && true}
-                  onChange={handleInputChange}
-                />
-                &nbsp; &nbsp;
-                <Label>No</Label>
-                &nbsp;
-                <Input
-                  name="project_manager"
-                  value="0"
-                  type="radio"
-                  defaultChecked={employeeDetails && employeeDetails.project_manager === 0 && true}
-                  onChange={handleInputChange}
-                />
-              </FormGroup>
+              <RadioGroup>
+                <FormGroup>
+                  <Label>Project manager</Label>
+                  <br></br>
+                  <Label>Yes</Label>
+                  &nbsp;
+                  <Input
+                    name="project_manager"
+                    value="1"
+                    type="radio"
+                    defaultChecked={employeeDetails && employeeDetails.project_manager === 1 && true}
+                    onChange={handleInputChange}
+                  />
+                  &nbsp; &nbsp;
+                  <Label>No</Label>
+                  &nbsp;
+                  <Input
+                    name="project_manager"
+                    value="0"
+                    type="radio"
+                    defaultChecked={employeeDetails && employeeDetails.project_manager === 0 && true}
+                    onChange={handleInputChange}
+                  />
+                </FormGroup>
+              </RadioGroup>
             </Col>
           </Row>
         </ComponentCard>

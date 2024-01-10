@@ -14,6 +14,7 @@ import LoanDetailComp from '../../components/LoanTable/LoanDetailComp';
 //import ComponentCardV2 from '../../components/ComponentCardV2';
 //import LoanButtons from '../../components/LoanTable/LoanButton';
 import ApiButton from '../../components/ApiButton';
+import creationdatetime from '../../constants/creationdatetime';
 
 const LoanEdit = () => {
   //All state variables
@@ -106,6 +107,7 @@ const LoanEdit = () => {
       loanDetails.amount !== '' &&
       loanDetails.month_amount !== ''
     ) {
+      loanDetails.modification_date = creationdatetime;
       api
         .post('/loan/edit-Loan', loanDetails)
         .then(() => {
