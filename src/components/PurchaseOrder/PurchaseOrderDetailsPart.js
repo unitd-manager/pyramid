@@ -121,6 +121,32 @@ function PurchaseOrderDetailsPart({ purchaseDetails, handleInputs, supplier }) {
                   />
                 </FormGroup>
               </Col>
+              <Col md="3">
+                <FormGroup>
+                  <Label>Delivery Date</Label>
+                  <Input
+                    type="date"
+                    onChange={handleInputs}
+                    value={
+                      purchaseDetails && moment(purchaseDetails.delivery_date).format('YYYY-MM-DD')
+                    }
+                    name="delivery_date"
+                  />
+                </FormGroup>
+              </Col>
+              <Col md="3">
+                <FormGroup>
+                  <Label>Yr Quote Date</Label>
+                  <Input
+                    type="date"
+                    onChange={handleInputs}
+                    value={
+                      purchaseDetails && moment(purchaseDetails.yr_quote_date).format('YYYY-MM-DD')
+                    }
+                    name="yr_quote_date"
+                  />
+                </FormGroup>
+              </Col>
 
               <Col md="3">
                 <FormGroup>
@@ -179,6 +205,39 @@ function PurchaseOrderDetailsPart({ purchaseDetails, handleInputs, supplier }) {
                     type="text"
                     value={purchaseDetails && purchaseDetails.supplier_inv_code}
                     name="supplier_inv_code"
+                    onChange={handleInputs}
+                  ></Input>
+                </FormGroup>
+              </Col>
+              <Col md="3">
+                <FormGroup>
+                  <Label>Yr Ref No</Label>
+                  <Input
+                    type="text"
+                    value={purchaseDetails && purchaseDetails.supplier_reference_no}
+                    name="supplier_reference_no"
+                    onChange={handleInputs}
+                  ></Input>
+                </FormGroup>
+              </Col>
+              <Col md="3">
+                <FormGroup>
+                  <Label>Item</Label>
+                  <Input
+                    type="textArea"
+                    value={purchaseDetails && purchaseDetails.purchase_item}
+                    name="purchase_item"
+                    onChange={handleInputs}
+                  ></Input>
+                </FormGroup>
+              </Col>
+              <Col md="3">
+                <FormGroup>
+                  <Label>Currency</Label>
+                  <Input
+                    type="text"
+                    value={purchaseDetails && purchaseDetails.currency}
+                    name="currency"
                     onChange={handleInputs}
                   ></Input>
                 </FormGroup>
