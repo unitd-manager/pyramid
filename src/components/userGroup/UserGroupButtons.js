@@ -9,7 +9,7 @@ function UserGroupButtons({
     applyChanges,
     backToList,
     editUserGroupData,
-    editRoomUserGroup,
+   // editRoomUserGroup,
     navigate
 }) {
 
@@ -18,7 +18,7 @@ function UserGroupButtons({
         applyChanges: PropTypes.func,
         backToList: PropTypes.func,
         editUserGroupData: PropTypes.func,
-        editRoomUserGroup: PropTypes.func,
+      //  editRoomUserGroup: PropTypes.func,
         navigate: PropTypes.any
       };
 
@@ -33,7 +33,7 @@ function UserGroupButtons({
                 color="primary"
                 onClick={() => {
                   editUserGroupData();
-                  editRoomUserGroup();
+                 // editRoomUserGroup();
                   setTimeout(()=>{
                     navigate('/UserGroup');
                   },300)
@@ -48,7 +48,7 @@ function UserGroupButtons({
                 color="primary"
                 onClick={() => {
                   editUserGroupData();
-                  editRoomUserGroup();
+                  //editRoomUserGroup();
                   applyChanges();
                 }}
               >

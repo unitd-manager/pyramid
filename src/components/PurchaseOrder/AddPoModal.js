@@ -173,9 +173,12 @@ const AddPoModal = ({
     payment: '0',
     project: '',
   });
+  const [isNewProductValid, setIsNewProductValid] = useState(false);
 
   const handleNewProductDetails = (e) => {
     setProductDetail({ ...productDetail, [e.target.name]: e.target.value });
+    const isValid = e.target.value.trim() !== '';
+    setIsNewProductValid(isValid);
   };
 
   //   Get Products
@@ -456,9 +459,9 @@ const insertProduct = (ProductCode, ItemCode) => {
                   </th>
                   <th scope="col">Unit</th>
                   <th scope="col">Quantity</th>
-                  <th scope="col">Cost Price (without VAT)</th>
-                  <th scope="col">Selling Price (without VAT)</th>
-                  <th scope="col">VAT</th>
+                  <th scope="col">Cost Price (without GST)</th>
+                  <th scope="col">Selling Price (without GST)</th>
+                  <th scope="col">GST</th>
                   <th scope="col"></th>
                 </tr>
               </thead>
@@ -622,16 +625,19 @@ const insertProduct = (ProductCode, ItemCode) => {
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button
+        <Button
             color="primary"
             className="shadow-none"
             onClick={() => {
-              setAddNewProductModal(false);
-              generateCode();
-              getProduct();
-              setTimeout(() => {
-                window;
-              }, 300);
+              // Check if the validation passes before closing the modal
+              if (isNewProductValid) {
+                setAddNewProductModal(false);
+                generateCode();
+                getProduct();
+              } else {
+                // Show a message or handle invalid input in some way
+                alert('Please fill in the product name.');
+              }
             }}
           >
             Submit

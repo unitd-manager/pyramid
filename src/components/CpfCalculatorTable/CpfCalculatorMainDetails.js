@@ -18,7 +18,7 @@ export default function CpfCalculatorMainDetails({ handleInputs, cpfRecordDetail
             <Row>
               <Col md="3">
                 <FormGroup>
-                  <Label>From Age</Label>
+                  <Label>From Age <span className="required"> *</span> </Label>
                   <Input
                     type="text"
                     onChange={handleInputs}
@@ -29,7 +29,7 @@ export default function CpfCalculatorMainDetails({ handleInputs, cpfRecordDetail
               </Col>
               <Col md="3">
                 <FormGroup>
-                  <Label>To Age</Label>
+                  <Label>To Age <span className="required"> *</span> </Label>
                   <Input
                     type="text"
                     onChange={handleInputs}

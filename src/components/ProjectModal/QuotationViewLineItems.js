@@ -36,6 +36,8 @@ const QuotationViewLineItem = ({
         message(' LineItem Data not found', 'info');
       });
   };
+
+  console.log('qoute',quote)
   const QuotationDeleteItem = () => {
     api
       .post('/projecttabquote/deleteQuoteItems', {
@@ -105,6 +107,7 @@ const QuotationViewLineItem = ({
                               <Link to="">
                                 <span
                                   onClick={() => {
+                                    setQuoteLine(e);
                                     QuotationDeleteItem();
                                   }}
                                 >
@@ -123,6 +126,7 @@ const QuotationViewLineItem = ({
           {quoteData && (
             <QuoteviewEditItem
             FetchLineItemData={quoteLine}
+            QuotationViewLine={QuotationViewLine}
               quoteData={quoteData}
               setQuoteData={setQuoteData}
               quoteId={quote}

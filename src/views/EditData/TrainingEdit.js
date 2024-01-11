@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Row, Col, Input, Button, Form, FormGroup } from 'reactstrap';
 import { useNavigate, useParams,Link } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -13,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import TrainingCompany from '../../components/Training/TrainingCompany';
 import TrainingMainDetails from '../../components/Training/TrainingMainDetails';
@@ -40,7 +41,7 @@ const TrainingEdit = () => {
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const { loggedInuser } = useContext(AppContext);
   //Button fuctions
   // const applyChanges = () => {};
   const backToList = () => {
@@ -166,6 +167,7 @@ const TrainingEdit = () => {
   };
   //edit data in link employee
   const insertTrainingStaff = (trainingId, staffObj) => {
+    
     if (new Date(staffObj.to_date) > new Date(staffObj.from_date)) {
       api
         .post('/training/insertTrainingStaff', {
@@ -234,6 +236,7 @@ const TrainingEdit = () => {
       if (trainingDetails.title !== '') {
         //Update training
         trainingDetails.modification_date = creationdatetime;
+        trainingDetails.modified_by = loggedInuser.first_name;
         api
           .post('/training/edit-Training', trainingDetails)
           .then(() => {

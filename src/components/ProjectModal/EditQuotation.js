@@ -187,7 +187,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                       name="drawing_nos"
                       value="0"
                     />
-                    <Label for="inlineradio2">No</Label>
+                    <Label for="inlineradio2">No</Label>{' '}
                   </Col>
                   <Col md="4">
                     <FormGroup>
@@ -269,7 +269,11 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                       color="primary"
                       className="btn shadow-none mr-2"
                       onClick={() => {
-                        editQuotations();                     
+                        editQuotations();   
+                        setTimeout(()=>{
+                          setEditQuoteModal(false);
+                        },500)
+                                          
                       }}
                     >
                       Save & Continue
