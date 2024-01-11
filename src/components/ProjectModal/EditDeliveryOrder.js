@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter,Form,Row } from 'reactstrap';
 import PropTypes from 'prop-types';
+//import { useParams } from 'react-router-dom';
 import message from '../Message';
 import api from '../../constants/api';
 import DeliveryModalTable from './DeliveryOrder/DeliveryModalTable';
+
 
 const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) => {
   EditDeliveryOrder.propTypes = {
@@ -12,6 +14,7 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
     data: PropTypes.string,
   };
   const [delivery, setDelivery] = useState();
+  //const{id}=useParams();
   const [deliveryHistory, setDeliveryHistory] = useState();
 
   const handleInputs = (e) => {
@@ -20,9 +23,9 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
 
   const getDeliveryOrder = () => {
     api
-      .post('/projecttabdeliveryorder/getDeliveryOrder', { delivery_order_id: data})
+      .post('/project/getDeliveryOrder', { delivery_order_id: data})
       .then((res) => {
-        setDelivery(res.data.data);
+        setDelivery(res.data.data[0]);
         console.log('deliveryorder',res.data.data);
       });
   };
@@ -36,6 +39,20 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
       })
       .catch(() => {
         message('Unable to add Delivery Order Item', 'error');
+      });
+  };
+
+  const editDeliveryorder = () => {
+    //invoiceData.invoice_amount = totalAmount + (7 / 100) * totalAmount;
+    //delivery.project_id = id;
+    api
+      .post('/projecttabdeliveryorder/editTabDeliveryOrder', delivery)
+      .then(() => {
+        message('Invoice edited successfully.', 'success');
+        //window.location.reload();
+      })
+      .catch(() => {
+        message('Network connection error.');
       });
   };
   //edit delivery items
@@ -61,6 +78,7 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
   }
 
   useEffect(() => {
+    console.log('Data:', data);
     getDeliveryOrder(data);
     TabDeliveryOrderHistory(data);
   }, [data]);
@@ -157,6 +175,7 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
             className="shadow-none"
             onClick={() => {
               editDeliveryProducts();
+              editDeliveryorder();
               setEditDeliveryOrder(false);
             }}
           >

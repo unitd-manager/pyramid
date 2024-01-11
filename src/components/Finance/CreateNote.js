@@ -74,9 +74,9 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
   };
 
   //generateCode
-  const generateCode = (results, type) => {
+  const generateCode = (results, ) => {
     api
-      .post('/commonApi/getCodeValue', { type })
+      .post('/commonApi/getCodeValue', { type:'creditNote'  })
       .then((res) => {
         editCreditData(results, res.data.data);
       })
