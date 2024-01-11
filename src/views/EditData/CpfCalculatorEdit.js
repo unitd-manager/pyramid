@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Row, Col, Form, FormGroup, Button } from 'reactstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -12,9 +12,11 @@ import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import CpfCalculatorMainDetails from '../../components/CpfCalculatorTable/CpfCalculatorMainDetails';
 import ApiButton from '../../components/ApiButton';
+import creationdatetime from '../../constants/creationdatetime';
 //import ComponentCardV2 from '../../components/ComponentCardV2';
 
 const CpfCalculatorEdit = () => {
@@ -40,6 +42,7 @@ const CpfCalculatorEdit = () => {
     navigate('/CPFCalculator');
   };
   const [total, setTotal] = useState(0);
+  const { loggedInuser } = useContext(AppContext);
 
   // Calculate and update the total whenever by_employee or by_employer changes
   useEffect(() => {
@@ -88,14 +91,25 @@ const CpfCalculatorEdit = () => {
 
   //Logic for edit data in db
   const editCpfCalculator = () => {
+    if (
+      cpfRecordDetails.from_age !== '' &&
+      cpfRecordDetails.to_age !== ''
+    )
+    {
+    cpfRecordDetails.modification_date = creationdatetime;
+    cpfRecordDetails.modified_by = loggedInuser.first_name;
     api
       .post('/cpfCalculator/editCpfCalculator', cpfRecordDetails)
       .then(() => {
         message('Record editted successfully', 'success');
+        console.log('cpfRecordDetails',cpfRecordDetails)
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
       });
+    } else {
+      message('Please fill all required fields', 'warning');
+    }
   };
   const deleteData = () => {
     Swal.fire({
@@ -109,7 +123,7 @@ const CpfCalculatorEdit = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         api
-          .post('/cpfCalculator/deleteCpfCalculator', { cpf_calculator_id: id })
+          .delete('/cpfCalculator/deleteCpfCalculator', { cpf_calculator_id: id })
           .then(() => {
             Swal.fire('Deleted!', 'CPF Calculator has been deleted.', 'success');
             //window.location.reload();
