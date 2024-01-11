@@ -72,6 +72,8 @@ const PurchaseOrderEdit = () => {
     api.post('/Purchaseorder/getPurchaseOrderById', { purchase_order_id: id }).then((res) => {
       setPurchaseDetails(res.data.data[0]);
       setSupplierId(res.data.data[0].supplier_id);
+      console.log("created_by",res.data.data[0].creation_date)
+
     });
   };
 
@@ -125,6 +127,9 @@ const PurchaseOrderEdit = () => {
             .then(() => {
             
               message('Quantity added successfully.', 'success');
+               setTimeout(() => {
+          window.location.reload();
+        }, 300);
             })
             .catch(() => {
               message('unable to add quantity.', 'danger');
@@ -150,6 +155,9 @@ const PurchaseOrderEdit = () => {
             .post('/Purchaseorder/insertDeliveryOrderHistory', elem)
             .then(() => {
               message('Inserted successfully.', 'success');
+              setTimeout(() => {
+                window.location.reload();
+              }, 300);
             })
             .catch(() => {
               message('unable to deliver.', 'danger');
@@ -179,6 +187,9 @@ const PurchaseOrderEdit = () => {
       .post('/purchaseorder/editTabPurchaseOrder', purchaseDetails)
       .then(() => {
         message('Record editted successfully', 'success');
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
@@ -187,19 +198,22 @@ const PurchaseOrderEdit = () => {
   const editPoProductData = () => {
     // Check if the quantity to be added to stock is valid
   
-    if (product.qty_delivered > 0) {
+    if (product.qty_delivered > 0 && product.status && product.status !== 'Please Select') {
       // Proceed with the API call
       api
         .post('/Purchaseorder/editTabPurchaseOrderLineItem', product)
         .then(() => {
           message('Product edited successfully.', 'success');
+           setTimeout(() => {
+                window.location.reload();
+              }, 300);
         })
         .catch(() => {
           message('Unable to edit product.', 'danger');
         });
     } else {
       // Show an error message for invalid quantity
-      message('Invalid quantity. Please enter a valid quantity.', 'danger');
+      message('Please Fill All Required Field', 'danger');
     }
   };
 
@@ -322,11 +336,13 @@ const PurchaseOrderEdit = () => {
               </Row>
               </ComponentCardV2>
       {/* PurchaseOrder Details */}
+
       <PurchaseOrderDetailsPart
         supplier={supplier}
         handleInputs={handleInputs}
         purchaseDetails={purchaseDetails}
       />
+      
       <ComponentCard title="Product Linked">
         <AddPoModal
           PurchaseOrderId={id}

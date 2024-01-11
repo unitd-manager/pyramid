@@ -79,12 +79,7 @@ const PurchaseOrder = () => {
       grow: 2,
       wrap: true,
     },
-    {
-      name: 'Po Value',
-      selector: 'po_value',
-      sortable: true,
-      grow: 0,
-    },
+   
     {
       name: 'Status',
       selector: 'status',
@@ -166,7 +161,6 @@ const PurchaseOrder = () => {
                     </td>
                     <td>{element.po_code}</td>
                     <td>{element.title ? element.title :element.title_field}</td>
-                    <td>{element.po_value}</td>
                     <td>{element.status}</td>
                     <td>{element.purchase_order_date? moment(element.purchase_order_date).format('YYYY-MM-DD'):''}</td>
                     <td>{element.supplier_inv_code}</td>
