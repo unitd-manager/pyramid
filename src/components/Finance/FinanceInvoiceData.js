@@ -5,21 +5,22 @@ import {
   Form,
   Input,
   Button,
-  FormGroup,
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Label
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { Editor } from 'react-draft-wysiwyg';
-import { convertToRaw } from 'draft-js';
+import { convertToRaw,EditorState,ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+import Select from 'react-select';
 import * as $ from 'jquery';
 import random from 'random';
 import api from '../../constants/api';
 import message from '../Message';
-import ComponentCard from '../ComponentCard';
 import InvoiceTable from './InvoiceTable';
 
 const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, orderId }) => {
@@ -33,7 +34,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
 
   const [totalAmount, setTotalAmount] = useState(0);
   const [gstValue, setGstValue] = useState();
-  const [checkbox, setCheckbox] = useState();
+  //const [checkbox, setCheckbox] = useState();
   const [paymentTerms, setPaymentTerms] = useState('');
   const gstPercentageValue = parseInt(gstValue?.value, 10) || 0; 
   const [createInvoice, setCreateInvoice] = useState({
@@ -73,18 +74,14 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       });
   };
   console.log('ordr',orderId)
-  const getCheckBox = async () => {
-    try {
-      const response = await api.post('/invoice/getCheckboxReceiptById', { order_id: orderId });
-      setCheckbox(response.data.data);
-    } catch (error) {
-      console.error('Error fetching checkbox data:', error);
-    }
-  };
-  useEffect(() => {
-    getGstValue();
-    getCheckBox();
-  }, [orderId]);
+  // const getCheckBox = async () => {
+  //   try {
+  //     const response = await api.post('/invoice/getCheckboxReceiptById', { order_id: orderId });
+  //     setCheckbox(response.data.data);
+  //   } catch (error) {
+  //     console.error('Error fetching checkbox data:', error);
+  //   }
+
 
   //setting data in createinvoice
   const handleInserts = (e) => {
@@ -96,7 +93,31 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       [type]: draftToHtml(convertToRaw(e.getCurrentContent())),
     });
   };
+  const fetchTermsAndConditions = () => {
+    api.get('/setting/getSettingsForPaymentTerms')
+      .then((res) => {
+        const settings = res.data.data;
+        if (settings && settings.length > 0) {
+          const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
+          // Update the payment terms in createInvoice
+          setCreateInvoice({ ...createInvoice, payment_terms: fetchedTermsAndCondition });
+          const contentBlock = htmlToDraft(fetchedTermsAndCondition);
+          if (contentBlock) {
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            const editorState = EditorState.createWithContent(contentState);
+            setPaymentTerms(editorState);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching terms and conditions:', error);
+      });
+  };
 
+  useEffect(() => {
+    fetchTermsAndConditions();
+    // Other useEffect logic
+  }, []);
   //Insert Invoice Item
   const addLineItemApi = (obj) => {
     obj.order_id = projectInfo;
@@ -147,9 +168,9 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       .then((res) => {
         message('Invoice inserted successfully.', 'success');
         finalinsertapi(res.data.data.insertId, results);
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 300);
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       })
       .catch(() => {
         message('Network connection error.');
@@ -221,6 +242,33 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
     ]);
     generateCode(result, 'invoicestype');
   };
+  const [unitdetails, setUnitDetails] = useState();
+  // Fetch data from API
+  const getUnit = () => {
+    api.get('/product/getUnitFromValueList', unitdetails).then((res) => {
+      const items = res.data.data;
+      const finaldat = [];
+      items.forEach((item) => {
+        finaldat.push({ value: item.value, label: item.value });
+      });
+      setUnitDetails(finaldat);
+    });
+  };
+  const onchangeItem = (selectedValue) => {
+    const updatedItems = addLineItem.map((item) => {
+      if (item.unit === selectedValue.value) {
+        // Compare with selectedValue.value
+        return {
+          ...item,
+          unit: selectedValue.value, // Update the unit with the selected option's value
+          value: selectedValue.value, // Update the value with the selected option's value
+        };
+      }
+      return item;
+    });
+
+    setAddLineItem(updatedItems);
+  };
   //Invoice Items Calculation
   const calculateTotal = () => {
     let totalValue = 0;
@@ -257,10 +305,16 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       setTotalAmount(finalTotal);
     }
   };
-  console.log('checkbox',checkbox)
+    // };
+    useEffect(() => {
+      getGstValue();
+      getUnit();
+      //getCheckBox();
+    }, [orderId]);
+  //console.log('checkbox',checkbox)
   return (
     <>
-      <Modal size="xl" isOpen={editInvoiceData}>
+     <Modal size="xl" isOpen={editInvoiceData}>
         <ModalHeader>
           Create Invoice
           <Button
@@ -278,6 +332,27 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
             <Col md="12">
               <Form>
                 <Row>
+
+
+                  {/* Invoice Detail */}
+                  <Row>
+                    <InvoiceTable createInvoice={createInvoice} handleInserts={handleInserts} />
+                    {/* Description form */}
+                    <Row>
+                      <Label>Description</Label>
+                    </Row>
+                    {/* <ComponentCard title="Description"> */}
+                    <Editor
+                      editorState={paymentTerms}
+                      wrapperClassName="demo-wrapper mb-0"
+                      editorClassName="demo-editor border mb-4 edi-height"
+                      onEditorStateChange={(e) => {
+                        handleDataEditor(e, 'payment_terms');
+                        setPaymentTerms(e);
+                      }}
+                    />
+                    {/* </ComponentCard> */}
+                  </Row>
                   <Col md="3">
                     <Button
                       className="shadow-none"
@@ -290,23 +365,8 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                       Add Line Item
                     </Button>
                   </Col>
-                  {/* Invoice Detail */}
-                  <Row>
-                    <InvoiceTable createInvoice={createInvoice} handleInserts={handleInserts} />
-                    {/* Description form */}
-                    <ComponentCard title="Description">
-                      <Editor
-                        editorState={paymentTerms}
-                        wrapperClassName="demo-wrapper mb-0"
-                        editorClassName="demo-editor border mb-4 edi-height"
-                        onEditorStateChange={(e) => {
-                          handleDataEditor(e, 'payment_terms');
-                          setPaymentTerms(e);
-                        }}
-                      />
-                    </ComponentCard>
-                  </Row>
-                  {checkbox &&
+                  
+                  {/* {checkbox &&
                       checkbox.map((singleInvoiceObj) => {
                         console.log('singleInvoiceObj',singleInvoiceObj)
                         return (
@@ -328,7 +388,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                             </Col>
                           </Row>
                         );
-                      })}
+                      })} */}
                     <br></br>
                   {/* Invoice Item */}
                   <Row>
@@ -360,9 +420,18 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                                     name="description"
                                   />
                                 </td>
-                                <td data-label="UoM">
+                                 <td data-label="UoM">
+                                  <Select
+                                    name="unit"
+                                    onChange={(selectedOption) => {
+                                      onchangeItem(selectedOption);
+                                    }}
+                                    options={unitdetails}
+                                  />
+                                  </td>
+                                {/* <td data-label="UoM">
                                   <Input defaultValue={item.unit} type="text" name="unit" />
-                                </td>
+                                </td> */}
                                 <td data-label="Qty">
                                   <Input defaultValue={item.qty} type="number" name="qty" />
                                 </td>

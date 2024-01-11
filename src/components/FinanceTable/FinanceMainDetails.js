@@ -50,6 +50,7 @@ export default function FinanceMainDetails({ financeDetails, handleInputs }) {
                   <br />
                   <span>
                     {moment(financeDetails && financeDetails.order_date).format('DD-MM-YYYY')}
+                  
                   </span>
                 </FormGroup>
               </Col>
