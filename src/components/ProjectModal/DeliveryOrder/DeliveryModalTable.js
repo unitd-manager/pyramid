@@ -3,7 +3,7 @@ import { Col, FormGroup, Label, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-const DeliveryModalTable = ({ delivery, handleInputs }) => {
+const DeliveryModalTable = ({ delivery, handleInputs, }) => {
     DeliveryModalTable.propTypes = {
     delivery: PropTypes.object,
     handleInputs: PropTypes.func,
