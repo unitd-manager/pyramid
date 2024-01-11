@@ -12,8 +12,10 @@ import {
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { Editor } from 'react-draft-wysiwyg';
-import { convertToRaw } from 'draft-js';
+import { convertToRaw,EditorState,ContentState } from 'draft-js';
+import htmlToDraft from 'html-to-draftjs';
 import draftToHtml from 'draftjs-to-html';
+import Select from 'react-select';
 import { useParams } from 'react-router-dom';
 import * as $ from 'jquery';
 import random from 'random';
@@ -72,9 +74,8 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       setGstValue(res.data.data);
       });
   };
-  useEffect(() => {
-    getGstValue();
-  }, []);
+
+
 
   //setting data in createinvoice
   const handleInserts = (e) => {
@@ -98,6 +99,59 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       .catch(() => {
         message('Cannot Add Line Items', 'error');
       });
+  };
+
+  const fetchTermsAndConditions = () => {
+    api.get('/setting/getSettingsForPaymentTerms')
+      .then((res) => {
+        const settings = res.data.data;
+        if (settings && settings.length > 0) {
+          const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
+          // Update the payment terms in createInvoice
+          setCreateInvoice({ ...createInvoice, payment_terms: fetchedTermsAndCondition });
+          const contentBlock = htmlToDraft(fetchedTermsAndCondition);
+          if (contentBlock) {
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            const editorState = EditorState.createWithContent(contentState);
+            setPaymentTerms(editorState);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching terms and conditions:', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchTermsAndConditions();
+    // Other useEffect logic
+  }, []);
+  const [unitdetails, setUnitDetails] = useState();
+  // Fetch data from API
+  const getUnit = () => {
+    api.get('/product/getUnitFromValueList', unitdetails).then((res) => {
+      const items = res.data.data;
+      const finaldat = [];
+      items.forEach((item) => {
+        finaldat.push({ value: item.value, label: item.value });
+      });
+      setUnitDetails(finaldat);
+    });
+  };
+  const onchangeItem = (selectedValue) => {
+    const updatedItems = addLineItem.map((item) => {
+      if (item.unit === selectedValue.value) {
+        // Compare with selectedValue.value
+        return {
+          ...item,
+          unit: selectedValue.value, // Update the unit with the selected option's value
+          value: selectedValue.value, // Update the value with the selected option's value
+        };
+      }
+      return item;
+    });
+
+    setAddLineItem(updatedItems);
   };
   //final api call
   const finalinsertapi = (receipt, results) => {
@@ -173,6 +227,11 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       },
     ]);
   };
+  useEffect(() => {
+    getGstValue();
+    getUnit();
+    //getCheckBox();
+  }, [orderId]);
 
   //Invoice item values
   const getAllValues = () => {
@@ -326,7 +385,13 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                                   />
                                 </td>
                                 <td data-label="UoM">
-                                  <Input defaultValue={item.unit} type="text" name="unit" />
+                                  <Select
+                                    name="unit"
+                                    onChange={(selectedOption) => {
+                                      onchangeItem(selectedOption);
+                                    }}
+                                    options={unitdetails}
+                                  />
                                 </td>
                                 <td data-label="Qty">
                                   <Input defaultValue={item.qty} type="number" name="qty" />

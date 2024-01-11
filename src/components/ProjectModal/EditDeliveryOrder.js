@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter,Form,Row,Col } from 'reactstrap';
+import { Input, Button, Modal, ModalHeader, ModalBody, ModalFooter,Form,Row } from 'reactstrap';
 import PropTypes from 'prop-types';
-
+//import { useParams } from 'react-router-dom';
 import message from '../Message';
 import api from '../../constants/api';
- import DeliveryModalTable from './DeliveryOrder/DeliveryModalTable';
+import DeliveryModalTable from './DeliveryOrder/DeliveryModalTable';
 
-const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data, tabdeliveryorder}) => {
-  
+
+const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) => {
   EditDeliveryOrder.propTypes = {
     editDeliveryOrder: PropTypes.bool,
     setEditDeliveryOrder: PropTypes.func,
     data: PropTypes.string,
-    tabdeliveryorder:PropTypes.any
   };
-  const [delivery, setDelivery] = useState({});
+  const [delivery, setDelivery] = useState();
+  //const{id}=useParams();
   const [deliveryHistory, setDeliveryHistory] = useState();
-  
-console.log('tabdeliveryorder',tabdeliveryorder)
+
   const handleInputs = (e) => {
     setDelivery({ ...delivery, [e.target.name]: e.target.value });
   };
 
   const getDeliveryOrder = () => {
     api
-      .post('/projecttabdeliveryorder/getDeliveryOrder', { delivery_order_id: tabdeliveryorder.delivery_order_id})
+      .post('/project/getDeliveryOrder', { delivery_order_id: data})
       .then((res) => {
-        setDelivery(res.data.data[[0]]);
+        setDelivery(res.data.data[0]);
         console.log('deliveryorder',res.data.data);
       });
   };
@@ -36,30 +35,12 @@ console.log('tabdeliveryorder',tabdeliveryorder)
       .post('/projecttabdeliveryorder/TabDeliveryOrderHistoryId', { delivery_order_id: data })
       .then((res) => {
         setDeliveryHistory(res.data.data);
-        console.log("res",res.data.data);
+        console.log('res',res.data.data)
       })
       .catch(() => {
         message('Unable to add Delivery Order Item', 'error');
       });
   };
-
-  
-
-//edit delivery order
-const editDelivery = () => {
-  const updatedDelivery = { ...delivery };
-  updatedDelivery.delivery_order_id = tabdeliveryorder.delivery_order_id;
-
-  api
-    .post('/projecttabdeliveryorder/editTabDeliveryOrder', updatedDelivery)
-    .then(() => {
-      message('Delivery Order edited successfully.', 'success');
-    })
-    .catch(() => {
-      message('Network connection error.');
-    });
-};
-
   //edit delivery items
   const editDeliveryProducts = () => {
     deliveryHistory.forEach((el) => {
@@ -83,7 +64,8 @@ const editDelivery = () => {
   }
 
   useEffect(() => {
-    getDeliveryOrder(data)
+    console.log('Data:', data);
+    getDeliveryOrder(data);
     TabDeliveryOrderHistory(data);
   }, [data]);
 
@@ -102,18 +84,14 @@ const editDelivery = () => {
             X{' '}
           </Button>
         </ModalHeader>
-
-        <ModalBody>
-          
         <Form>
             <Row>
               <DeliveryModalTable delivery={delivery} handleInputs={handleInputs} />
               
             </Row>
-            <Row>
-              <Col>
+        <ModalBody>
           <table className="lineitem">
-            <thead>
+        <thead>
               <tr>
               <th scope="col">Line/Equipment No</th>
                 <th scope="col">Work Description</th>
@@ -130,7 +108,8 @@ const editDelivery = () => {
                     <>
                       <tr>
                       <td data-label="Item">
-                          <Input  type="text" name="equipment_no" value={res.equipment_no} />
+                          <Input  type="text" name="equipment_no" value={res.equipment_no}
+                          onChange={(e) => updateState(index, 'equipment_no', e)} />
                         </td>
                         <td data-label="Item">
                           <Input disabled type="text" name="item_title" value={res.item_title} />
@@ -175,15 +154,13 @@ const editDelivery = () => {
                 })}
             </tbody>
           </table>
-          </Col>
-            </Row>
-                <ModalFooter>
+        </ModalBody>
+        <ModalFooter>
           <Button
             color="primary"
             className="shadow-none"
             onClick={() => {
               editDeliveryProducts();
-              editDelivery();
               setEditDeliveryOrder(false);
             }}
           >
@@ -202,7 +179,6 @@ const editDelivery = () => {
           </Button>
         </ModalFooter>
         </Form>
-        </ModalBody>
       </Modal>
     </>
   );
