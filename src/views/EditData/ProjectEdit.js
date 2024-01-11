@@ -554,7 +554,7 @@ const ProjectEdit = () => {
                   color="primary"
                   className="shadow-none"
                   onClick={(e) => {
-                    insertWorkOrder();
+                    
                     handleClientForms(e);
                     generateCode(e);
                   }}
