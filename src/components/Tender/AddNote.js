@@ -28,9 +28,9 @@ function AddNote({ recordId, roomName }) {
     api.post('/note/addNote', addNoteData).then(() => {
       console.log('note data', addNoteData)
       message('Add Note Successfully', 'success');
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 400);
+      setTimeout(() => {
+        window.location.reload();
+      }, 400);
     });
   };
 
