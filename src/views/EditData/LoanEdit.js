@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Form, FormGroup } from 'reactstrap';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import moment from 'moment';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import LoanMoreDetails from '../../components/LoanTable/LoanMoreDetails';
 import LoanDetailComp from '../../components/LoanTable/LoanDetailComp';
@@ -35,6 +36,7 @@ const LoanEdit = () => {
   //Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
 
   const addpaymentToggle = () => {
     setAddPaymentModal(!addpaymentModal);
@@ -109,6 +111,7 @@ const LoanEdit = () => {
       loanDetails.month_amount !== ''
     ) {
       loanDetails.modification_date = creationdatetime;
+      loanDetails.modified_by = loggedInuser.first_name;
       api
         .post('/loan/edit-Loan', loanDetails)
         .then(() => {
