@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Media } from 'reactstrap';
-import Swal from 'sweetalert2';
-import * as Icon from 'react-feather';
+// import Swal from 'sweetalert2';
+// import * as Icon from 'react-feather';
 import PropTypes from 'prop-types';
 import img1 from '../../assets/images/users/user1.jpg';
 import img2 from '../../assets/images/users/user2.jpg';
-import message from '../Message';
+// import message from '../Message';
 import api from '../../constants/api';
 
 function ViewNote({ roomName, recordId }) {
@@ -31,29 +31,29 @@ function ViewNote({ roomName, recordId }) {
       });
   };
 
-  const deleteNotes = (commentId) => {
-    Swal.fire({
-      title: `Are you sure?`,
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        api
-          .post('/note/deleteNotes', { comment_id: commentId })
-          .then(() => {
-            Swal.fire('Deleted!', 'Media has been deleted.', 'success');
-            window.location.reload();
-          })
-          .catch(() => {
-            message('Unable to Delete Media', 'info');
-          });
-      }
-    });
-  };
+  // const deleteNotes = (commentId) => {
+  //   Swal.fire({
+  //     title: `Are you sure?`,
+  //     text: "You won't be able to revert this!",
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3085d6',
+  //     cancelButtonColor: '#d33',
+  //     confirmButtonText: 'Yes, delete it!',
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       api
+  //         .post('/note/deleteNotes', { comment_id: commentId })
+  //         .then(() => {
+  //           Swal.fire('Deleted!', 'Media has been deleted.', 'success');
+  //           window.location.reload();
+  //         })
+  //         .catch(() => {
+  //           message('Unable to Delete Media', 'info');
+  //         });
+  //     }
+  //   });
+  // };
 
   useEffect(() => {
     getNotes();
@@ -81,8 +81,8 @@ function ViewNote({ roomName, recordId }) {
                     <Media body className="ms-3" style={body}>
                       <Media heading>
                         <div style={{ position: 'relative' }}>
-                          Hello {e.name}
-                          <p style={{ position: 'absolute', top: 0, right: 0, fontSize: 12 }}>
+                        {e.created_by} <span style={{ fontSize: 'small' }}>({e.creation_date})</span>
+                          {/* <p style={{ position: 'absolute', top: 0, right: 0, fontSize: 12 }}>
                             {e.creation_date}
                             <button
                               type="button"
@@ -93,7 +93,7 @@ function ViewNote({ roomName, recordId }) {
                             >
                               <Icon.Trash2 style={{ width: 20 }} />{' '}
                             </button>
-                          </p>
+                          </p> */}
                         </div>
                       </Media>
                       {e.comments}
@@ -114,8 +114,8 @@ function ViewNote({ roomName, recordId }) {
                       <Media body className="ms-3" style={{ width: '100%' }}>
                         <Media heading>
                           <div style={{ position: 'relative' }}>
-                            Hello {e.name}
-                            <p
+                          {e.created_by} <span style={{ fontSize: 'small' }}>({e.creation_date})</span>
+                            {/* <p
                               style={{
                                 position: 'absolute',
                                 top: 0,
@@ -133,7 +133,7 @@ function ViewNote({ roomName, recordId }) {
                               >
                                 <Icon.Trash2 style={{ width: 20 }} />{' '}
                               </button>
-                            </p>
+                            </p> */}
                           </div>
                         </Media>
                         {e.comments}

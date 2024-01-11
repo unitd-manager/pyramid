@@ -45,18 +45,27 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
     setInvoiceData({ ...invoiceData, [e.target.name]: e.target.value });
   };
 
-  function updateState(index, property, e) {
-    const copyDeliverOrderProducts = [...addLineItem];
-    const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e.target.value };
+  // function updateState(index, property, e) {
+  //   const copyDeliverOrderProducts = [...addLineItem];
+  //   const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e.target.value };
     
-  const quantity = parseFloat(updatedObject.qty) || 0;
-  const unitPrice = parseFloat(updatedObject.unit_price) || 0;
-  // const totalCost = parseFloat(updatedObject.total_cost);
-  updatedObject.total_cost = quantity * unitPrice;
+  // const quantity = parseFloat(updatedObject.qty) || 0;
+  // const unitPrice = parseFloat(updatedObject.unit_price) || 0;
+  // // const totalCost = parseFloat(updatedObject.total_cost);
+  // updatedObject.total_cost = quantity * unitPrice;
 
-    copyDeliverOrderProducts[index] = updatedObject;
-    setAddLineItem(copyDeliverOrderProducts);
-  }
+  //   copyDeliverOrderProducts[index] = updatedObject;
+  //   setAddLineItem(copyDeliverOrderProducts);
+  // }
+  const updateState = (e, index) => {
+    const updatedLineItems = [...addLineItem];
+    
+    updatedLineItems[index] = {
+      ...updatedLineItems[index],
+      [e.target.name]: e.target.value,
+    };
+    setAddLineItem(updatedLineItems);
+  };
 
    const handleDataEditor = (e, type) => {
     setInvoiceData({ ...invoiceData, [type]: draftToHtml(convertToRaw(e.getCurrentContent())) });
@@ -96,6 +105,7 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
       .post('/Finance/editInvoicePortalDisplay', invoiceData)
       .then(() => {
         message('Invoice edited successfully.', 'success');
+        window.location.reload();
       })
       .catch(() => {
         message('Network connection error.');
@@ -182,44 +192,48 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
                           <tr key={item.id}>
                             <td data-label="Item">
                               <Input
-                                defaultValue={item.item_title}
+                                value={item.item_title}
                                 type="text"
                                 name="item_title"
-                                onChange={(e) => updateState(index, 'item_title', e)}
+                                //onChange={(e) => updateState(index, 'item_title', e)}
+                                onChange={(e) => updateState(e, index, item.invoice_item_id)}
                               />
                             </td>
-                            <td data-label="Description">
-                              <Input
-                                defaultValue={item.description}
-                                type="text"
-                                name="description"
-                                onChange={(e) => updateState(index, 'description', e)}
-                              />
-                            </td>
+                           <td data-label="Description">
+                            <Input
+                              value={item.description}
+                              type="text"
+                              name="description"
+                              onChange={(e) => updateState(e, index, item.invoice_item_id)} // Pass invoice_item_id
+                            />
+                          </td>
                             <td data-label="UoM">
                               <Input
-                                defaultValue={item.unit}
+                                value={item.unit}
                                 type="text"
                                 name="unit"
-                                onChange={(e) => updateState(index, 'unit', e)}
+                                //onChange={(e) => updateState(index, 'unit', e)}
+                                onChange={(e) => updateState(e, index, item.invoice_item_id)}
                                 
                               />
                             </td>
                             <td data-label="Qty">
                               <Input
-                                defaultValue={item.qty}
+                                value={item.qty}
                                 type="number"
                                 name="qty"
-                                onChange={(e) => updateState(index, 'qty', e)}
+                                //onChange={(e) => updateState(index, 'qty', e)}
+                                onChange={(e) => updateState(e, index, item.invoice_item_id)}
                                 disabled
                               />
                             </td>
                             <td data-label="Unit Price">
                               <Input
-                                defaultValue={item.unit_price}
+                                value={item.unit_price}
                                 type="number"
                                 name="unit_price"
-                                onChange={(e) => updateState(index, 'unit_price', e)}
+                                //onChange={(e) => updateState(index, 'unit_price', e)}
+                                onChange={(e) => updateState(e, index, item.invoice_item_id)}
                                 disabled
                               />
                             </td>
@@ -229,13 +243,15 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
                                 value={item.total_cost}
                                 type="text"
                                 name="total_cost"
-                                onChange={(e) => updateState(index, 'total_cost', e)}
+                                //onChange={(e) => updateState(index, 'total_cost', e)}
+                                onChange={(e) => updateState(e, index, item.invoice_item_id)}
                                 disabled
                               />
                             </td>
                             <td data-label="Remarks">
-                              <Input defaultValue={item.remarks} type="text" name="remarks"
-                              onChange={(e) => updateState(index, 'remarks', e)}
+                              <Input value={item.remarks} type="text" name="remarks"
+                              //onChange={(e) => updateState(index, 'remarks', e)}
+                              onChange={(e) => updateState(e, index, item.invoice_item_id)}
                               />
                             </td>
                            

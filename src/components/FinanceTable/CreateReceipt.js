@@ -37,9 +37,13 @@ const CreateReceipt = ({ editCreateReceipt, setEditCreateReceipt ,getReceiptById
     amount: 0,
     order_id: id,
     receipt_status: "Paid",
-    receipt_date: '',
+    receipt_date: moment,
     receipt_code: '',
-   
+    mode_of_payment: '',
+    cheque_no: '',
+    cheque_date: '',
+    bank_name: '',
+    remarks: '',
   };
   const [createReceipt, setCreateReceipt] =
     useState({ ...initialReceiptState });
@@ -97,7 +101,7 @@ const { loggedInuser } = useContext(AppContext);
         getFinancesById();
         message('data  History inserted successfully.');        message('data inserted successfully.');
         setEditCreateReceipt(false); // Close the modal
-        //window.location.reload()
+        window.location.reload()
       })
       .catch(() => {
         message('Network connection error.');
@@ -154,7 +158,19 @@ const { loggedInuser } = useContext(AppContext);
       }
       }
   };
-  
+  useEffect(() => {
+    // Function to set the receipt date to today's date when the modal is opened
+    const setTodayDate = () => {
+      setCreateReceipt({
+        ...createReceipt,
+        receipt_date: moment().format('YYYY-MM-DD'), // Set the receipt_date to today's date
+      });
+    };
+
+    if (editCreateReceipt) {
+      setTodayDate(); // Set the receipt date when the modal is opened
+    }
+  }, [editCreateReceipt]); 
 
   //Insert Receipt
   const insertReceipt =async (code)=> {
@@ -193,7 +209,7 @@ const { loggedInuser } = useContext(AppContext);
 
   const generateCode = () => {
     api
-      .post('/tender/getCodeValue', { type:'receipt'})
+      .post('/commonApi/getCodeValue', { type:'receipt'})
       .then((res) => {
         insertReceipt(res.data.data);
       })
@@ -220,16 +236,25 @@ const { loggedInuser } = useContext(AppContext);
   //   }
   // };
 
-  const getInvoices = (checkboxVal, invObj) => {
-    if (checkboxVal.target.checked === true) {
-      setSelectedInvoice((prevSelectedInvoice) => [...prevSelectedInvoice, invObj]);
+  const getInvoices = (event, invObj) => {
+       const { checked } = event.target;
+
+    //const index = arr.findIndex(value => {return value.invoice_id ===  invObj.invoice_id});
+    if (checked) {
+      // If the checkbox is checked, add the employeeId to the selectedNames array
+      // arr[index].checked = true;
+      // setSelectedInvoice(arr);
+      setSelectedInvoice([...selectedInvoice, invObj]);
     } else {
-      setSelectedInvoice((prevSelectedInvoice) => prevSelectedInvoice.filter((invoice) => invoice.invoice_id !== invObj.invoice_id));
+      const indofele = selectedInvoice.indexOf(invObj)
+      // If the checkbox is unchecked, remove the employeeId from the selectedNames array
+      selectedInvoice.splice(indofele, 1)
+
+      setSelectedInvoice(selectedInvoice);
     }
+    console.log("select", selectedInvoice);
   };
-  
-
-
+   console.log('selectedInvoice', selectedInvoice)
 
   // const insertInvoices = () => {
   //   invoices.forEach((obj) => {
@@ -339,7 +364,8 @@ const { loggedInuser } = useContext(AppContext);
                           <Input
                             type="date"
                             onChange={handleInputreceipt}
-                            value={createReceipt && moment(createReceipt.receipt_date).format('YYYY-MM-DD')}
+                            // value={createReceipt && moment(createReceipt.receipt_date).format('YYYY-MM-DD')}
+                            defaultValue={createReceipt && createReceipt.receipt_date}
                             name="receipt_date"
                           />
                         </FormGroup>
