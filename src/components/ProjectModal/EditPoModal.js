@@ -12,7 +12,7 @@ import {
   Form,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+//import moment from 'moment';
 import api from '../../constants/api';
 import message from '../Message';
 
@@ -58,9 +58,10 @@ const EditPoModal = ({ editPo, setEditPo, data }) => {
       .post('/purchaseorder/editTabPurchaseOrder', editMaterialTabPurchaseOrder)
       .then(() => {
         message('Record editted successfully', 'success');
-        setTimeout(() => {
-          window.location.reload();
-        }, 300);
+        //setTimeout(() => {
+        //   window.location.reload();
+        // }, 300);
+
       })
       .catch(() => {
         message(' Record Not editted successfully', 'info');
@@ -112,9 +113,9 @@ const EditPoModal = ({ editPo, setEditPo, data }) => {
                       <Input
                         type="date"
                         name="po_date"
-                        defaultValue={moment(
-                          editMaterialTabPurchaseOrder && editMaterialTabPurchaseOrder.po_date,
-                        ).format('YYYY-MM-DD')}
+                        defaultValue={
+                          editMaterialTabPurchaseOrder && editMaterialTabPurchaseOrder.po_date
+                        }
                         onChange={handleInputs}
                       />
                     </FormGroup>
@@ -141,10 +142,10 @@ const EditPoModal = ({ editPo, setEditPo, data }) => {
                       <Input
                         type="date"
                         name="delivery_date"
-                        defaultValue={moment(
+                        defaultValue={
                           editMaterialTabPurchaseOrder &&
-                            editMaterialTabPurchaseOrder.delivery_date,
-                        ).format('YYYY-MM-DD')}
+                            editMaterialTabPurchaseOrder.delivery_date
+                        }
                         onChange={handleInputs}
                       />
                     </FormGroup>

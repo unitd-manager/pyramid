@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Row,
   Col,
@@ -13,6 +13,8 @@ import {
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import random from 'random';
+import Select from 'react-select';
 import api from '../../constants/api';
 import message from '../Message';
 import creationdatetime from '../../constants/creationdatetime';
@@ -38,9 +40,22 @@ const EditPOLineItemsModal = ({ editPOLineItemsModal, setEditPOLineItemsModal, d
     price: null,
     published: 0,
   });
+  const [getProductValue, setProductValue] = useState();
 
   const AddMoreItem = () => {
-    setMoreItem(addMoreItem + 1);
+    setMoreItem([
+      ...addMoreItem,
+      {
+        id: random.int(0, 9999).toString(),
+        itemId: '',
+        unit: '',
+        qty: '',
+        price: '',
+        mrp: '',
+        gst: '',
+        description: '',
+      },
+    ]);
   };
 console.log('po',data)
   const handleInputs = (e) => {
@@ -64,6 +79,15 @@ console.log('po',data)
     setNewItems(copyDeliverOrderProducts);
   }
 
+  // const onchangeItem = (str, itemId) => {
+  //   const element = addMoreItem.find((el) => el.id === itemId);
+  //   //element.title = str.label;
+  //   console.log('element',element)
+  //   console.log('str',str)
+  //   element.item_title = str.label;
+  //   element.product_id = str.value.toString();
+  //   setMoreItem(addMoreItem);
+  // };
   const insertProduct = (ProductCode, ItemCode) => {
     if (productDetail.title !== '') {
       productDetail.product_code = ProductCode;
@@ -85,6 +109,10 @@ console.log('po',data)
             .then(() => {
               message('inventory created successfully.', 'success');
               //  getProduct();
+              setTimeout(() => {
+                //getProduct();
+                setAddNewProductModal(false);
+              }, 500);
             })
             })
             .catch(() => {
@@ -154,7 +182,17 @@ console.log('po',data)
     });
     return total;
   };
-
+  const getProduct = () => {
+    api.get('/product/getProducts').then((res) => {
+      const counts = res.data.data;
+      const finaldat = [];
+      counts.forEach((item) => {
+        finaldat.push({ value: item.product_id, label: item.title });
+      });
+      setProductValue(finaldat);
+      console.log('finaldata',finaldat)
+    });
+  };
   //insert po items
   const insertPoItems = () => {
     newItems.forEach((el) => {
@@ -168,7 +206,9 @@ console.log('po',data)
         });
     });
   };
-
+useEffect(()=>{
+  getProduct();
+},[])
   // Clear row value
   // const ClearValue = (ind) => {
   //   setMoreItem((current) =>
@@ -283,12 +323,21 @@ console.log('po',data)
                   return (
                     <tr key={el.po_product_id}>
                       <td data-label="ProductName">
-                        <Input
+                        {/* <Input
                           type="text"
                           name="item_title"
                           value={el.item_title}
                           onChange={(e) => updateState(index, 'item_title', e)}
+                        /> */}
+                         <Select
+                          key={el.id}
+                          defaultValue={{ value: el.product_id, label: el.item_title }}
+                          onChange={(e) =>  updateState(index, 'item_title', e)}
+                          options={getProductValue}
+                          disabled
                         />
+                        <Input value={el.product_id} type="hidden" name="product_id"></Input>
+                        <Input value={el.item_title} type="hidden" name="item_title"></Input>
                       </td>
                       <td data-label="unit">
                         <Input
@@ -333,7 +382,7 @@ console.log('po',data)
                 })}
                 {[...Array(addMoreItem)].map((elem, index) => {
                   return (
-                    <tr key={addMoreItem}>
+                    <tr key={elem.id}>
                       <td data-label="ProductName">
                         <Input
                           type="text"
@@ -341,6 +390,14 @@ console.log('po',data)
                           value={elem && elem.item_title}
                           onChange={(e) => updateNewItemState(index, 'item_title', e)}
                         />
+                         {/* <Select
+                          key={elem.id}
+                          defaultValue={{ value: elem.product_id, label: elem.item_title }}
+                          onChange={(e) =>    onchangeItem(e, elem.id)}
+                          options={getProductValue}
+                        />
+                        <Input value={elem.product_id} type="hidden" name="product_id"></Input>
+                        <Input value={elem.item_title} type="hidden" name="item_title"></Input> */}
                       </td>
                       <td data-label="UoM">
                         <Input
@@ -445,7 +502,7 @@ console.log('po',data)
                       <Label sm="3">
                         Product Type <span className="required"> *</span>
                       </Label>
-                      <Col sm="9">
+                      <Col sm="8">
                         <Input type="select" name="product_type"
                           onChange={handleNewProductDetails}
                           value={productDetail.product_type}>
@@ -470,10 +527,7 @@ console.log('po',data)
             onClick={() => {
              
               generateCode();
-              setTimeout(() => {
-                //getProduct();
-                setAddNewProductModal(false);
-              }, 500);
+              
             }}
           >
             Submit

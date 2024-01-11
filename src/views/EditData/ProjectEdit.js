@@ -412,9 +412,14 @@ const ProjectEdit = () => {
   const getTotalOfPurchase = (pItems) => {
     let total = 0;
     pItems.forEach((a) => {
-      total += parseInt(a.qty, 10) * parseFloat(a.cost_price, 10);
+      total += parseFloat(a.qty) * parseFloat(a.cost_price);
     });
-    return total;
+    if(total){
+      return total;
+    }
+      return 0;
+    
+    
   };
 
   return (

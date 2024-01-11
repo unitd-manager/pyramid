@@ -75,7 +75,8 @@ const ContentUpdate = () => {
   //Edit Content
   const editContentData = () => {
     if (
-      contentDetails.content_title !== '' &&
+      contentDetails.title !== '' &&
+      contentDetails.title &&
       contentDetails.sub_category_id !== '' &&
       contentDetails.published !== ''
     ) {
@@ -95,7 +96,7 @@ const ContentUpdate = () => {
 
   const editContentData1 = () => {
     if (
-      contentDetails.content_title !== '' &&
+      contentDetails.title !== '' &&
       contentDetails.sub_category_id !== '' &&
       contentDetails.published !== ''
     ) {
@@ -198,7 +199,7 @@ const ContentUpdate = () => {
             <Row>
               <Col md="3">
                 <FormGroup>
-                  <Label> Title </Label>
+                  <Label> Title <span className="required"> *</span>{' '}</Label>
                   <Input
                     type="text"
                     onChange={handleInputs}
@@ -290,6 +291,7 @@ const ContentUpdate = () => {
                   <Label> Show Title</Label>
                   <br></br>
                   <Label> Yes </Label>
+                  &nbsp;
                   <Input
                     name="show_title"
                     value="1"
@@ -297,7 +299,10 @@ const ContentUpdate = () => {
                     defaultChecked={contentDetails && contentDetails.show_title === 1 && true}
                     onChange={handleInputs}
                   />
+                   &nbsp;
+                   &nbsp;
                   <Label> No </Label>
+                  &nbsp;
                   <Input
                     name="show_title"
                     value="0"
@@ -312,6 +317,7 @@ const ContentUpdate = () => {
                   <Label>Published</Label>
                   <br></br>
                   <Label>Yes</Label>
+                  &nbsp;
                   <Input
                     name="published"
                     value="1"
@@ -319,7 +325,10 @@ const ContentUpdate = () => {
                     defaultChecked={contentDetails && contentDetails.published === 1 && true}
                     onChange={handleInputs}
                   />
+                   &nbsp;
+                   &nbsp;
                   <Label>No</Label>
+                  &nbsp;
                   <Input
                     name="published"
                     value="0"

@@ -4,11 +4,12 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import { ToastContainer } from 'react-toastify';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
-import ValueListButton from '../../components/ValueListTable/ValueListButton';
+//import ValueListButton from '../../components/ValueListTable/ValueListButton';
 import ValueListEditDetails from '../../components/ValueListTable/ValueListEditDetails';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
+import ApiButton from '../../components/ApiButton';
 
 const ValueListEdit = () => {
   // All state variables
@@ -102,7 +103,7 @@ const ValueListEdit = () => {
       <ToastContainer></ToastContainer>
 
       {/* ValueList Button Details */}
-      <ValueListButton
+      {/* <ValueListButton
         saveChanges={saveChanges}
         applyChanges={applyChanges}
         backToList={backToList}
@@ -110,8 +111,18 @@ const ValueListEdit = () => {
         deleteValueListData={deleteValueListData}
         navigate={navigate}
         id={id}
-      ></ValueListButton>
+      ></ValueListButton> */}
+      <ApiButton
+saveChanges={saveChanges}
+applyChanges={applyChanges}
+backToList={backToList}
+editData={editValueListData}
+deleteData={deleteValueListData}
+navigate={navigate}
 
+module='Valuelist'>
+
+</ApiButton>
       {/* ValueList Edit Details */}
       <ValueListEditDetails
         valuelisteditdetails={valuelisteditdetails}
