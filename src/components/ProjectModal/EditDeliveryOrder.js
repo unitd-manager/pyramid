@@ -41,6 +41,20 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
         message('Unable to add Delivery Order Item', 'error');
       });
   };
+
+  const editDeliveryorder = () => {
+    //invoiceData.invoice_amount = totalAmount + (7 / 100) * totalAmount;
+    //delivery.project_id = id;
+    api
+      .post('/projecttabdeliveryorder/editTabDeliveryOrder', delivery)
+      .then(() => {
+        message('Invoice edited successfully.', 'success');
+        //window.location.reload();
+      })
+      .catch(() => {
+        message('Network connection error.');
+      });
+  };
   //edit delivery items
   const editDeliveryProducts = () => {
     deliveryHistory.forEach((el) => {
@@ -161,6 +175,7 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
             className="shadow-none"
             onClick={() => {
               editDeliveryProducts();
+              editDeliveryorder();
               setEditDeliveryOrder(false);
             }}
           >
