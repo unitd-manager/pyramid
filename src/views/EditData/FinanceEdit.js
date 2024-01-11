@@ -125,6 +125,7 @@ console.log('ids',id)
       .post('/invoice/getReceiptCancel', { order_id: id })
       .then((res) => {
         setCancelReceipt(res.data.data);
+        
       })
       .catch(() => {
         message('Cannot get Invoice Data', 'error');

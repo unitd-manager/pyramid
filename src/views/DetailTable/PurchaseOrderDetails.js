@@ -6,6 +6,7 @@ import moment from 'moment';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
+import creationdatetime from '../../constants/creationdatetime';
 import message from '../../components/Message';
 
 const PurchaseOrderDetails = () => {
@@ -36,6 +37,7 @@ const PurchaseOrderDetails = () => {
    //inserting data of Purchase Order
    const insertPurchaseOrder = (code) => {
     purchaseForms.purchase_order_date = moment();
+    purchaseForms.creation_date = creationdatetime;
     purchaseForms.po_code=code;
     if (purchaseForms.supplier_id !== '') {
       api

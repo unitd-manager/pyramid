@@ -137,7 +137,7 @@ const PurchaseOrderlineItemEdit = ({
                       ></Input>
                     </FormGroup>
                     <FormGroup>
-                      <Label>VAT%</Label>
+                      <Label>GST%</Label>
                       <Input
                         type="number"
                         name="gst"
@@ -177,7 +177,7 @@ const PurchaseOrderlineItemEdit = ({
               //insertPayment();
               editPoProductData();
               getAllValues();
-              setEditModal(false);
+             // setEditModal(false);
               // setTimeout(() => {
               //   window.location.reload();
               // }, 300);

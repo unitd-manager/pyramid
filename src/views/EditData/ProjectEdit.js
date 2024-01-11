@@ -49,7 +49,7 @@ const ProjectEdit = () => {
   const [editQuoteModal, setEditQuoteModal] = useState(false);
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
   const [attachmentModal, setAttachmentModal] = useState(false);
-  const [tabdeliveryorder, setTabdeliveryorder] = useState();
+  const [tabdeliveryorder, setTabdeliveryorder] = useState([]);
   const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
   const [checkId, setCheckId] = useState([]);
   const [editDeliveryOrder, setEditDeliveryOrder] = useState(false);
@@ -412,9 +412,14 @@ const ProjectEdit = () => {
   const getTotalOfPurchase = (pItems) => {
     let total = 0;
     pItems.forEach((a) => {
-      total += parseInt(a.qty, 10) * parseFloat(a.cost_price, 10);
+      total += parseFloat(a.qty) * parseFloat(a.cost_price);
     });
-    return total;
+    if(total){
+      return total;
+    }
+      return 0;
+    
+    
   };
 
   return (
@@ -458,6 +463,7 @@ const ProjectEdit = () => {
           editDeliveryOrder={editDeliveryOrder}
           setEditDeliveryOrder={setEditDeliveryOrder}
           data={deliveryData}
+          tabdeliveryorder={tabdeliveryorder}
         />
         {editPo && <EditPoModal editPo={editPo} setEditPo={setEditPo} data={POId} />}
         {editPOLineItemsModal && (

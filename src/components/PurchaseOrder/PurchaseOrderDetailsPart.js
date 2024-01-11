@@ -3,7 +3,7 @@ import { Row, Col, Input, Form, FormGroup, Label } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import ComponentCard from '../ComponentCard';
-
+ 
 function PurchaseOrderDetailsPart({ purchaseDetails, handleInputs, supplier }) {
   PurchaseOrderDetailsPart.propTypes = {
     purchaseDetails: PropTypes.object,
@@ -16,26 +16,9 @@ function PurchaseOrderDetailsPart({ purchaseDetails, handleInputs, supplier }) {
         <FormGroup>
           <ComponentCard
             title="PurchaseOrder Details"
-            righttitle={
-              <Row>
-                <Col className="fs-10 small">
-                  <small>Creation :</small>
-                  <small>
-                    {purchaseDetails && purchaseDetails.created_by}
-                    {purchaseDetails && purchaseDetails.creation_date}
-                  </small>
-                </Col>
-
-                <Col className="fs-10 small">
-                  <small>Modification :</small>
-
-                  <small>
-                    {purchaseDetails && purchaseDetails.modified_by}
-                    {purchaseDetails && purchaseDetails.modification_date}
-                  </small>
-                </Col>
-              </Row>
-            }
+            
+            creationModificationDate={purchaseDetails}
+            
           >
             <Row>
               <Col md="3">

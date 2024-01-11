@@ -92,6 +92,7 @@ const UserGroupEdit = () => {
   };
   //update userGroup
   const editUserGroupData = () => {
+    if(userGroupDetails.title){
     api
       .post('/usergroup/edit-usergroup', userGroupDetails)
       .then(() => {
@@ -99,7 +100,10 @@ const UserGroupEdit = () => {
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
-      });
+      });}
+      else{
+        message('Please enter the title', 'warning');
+      }
   };
   //insert userGroup
   const insertRoomUserGroup = (item) => {
@@ -229,10 +233,11 @@ const UserGroupEdit = () => {
                   <Row>
                     <Col md="6">
                       <FormGroup>
-                        <Label>Title</Label>
+                    
+                        <Label>Title <span className="required"> *</span>{' '}</Label>
                         <Input
                           type="text"
-                          value={userGroupDetails && userGroupDetails.section_title}
+                          value={userGroupDetails && userGroupDetails.title}
                           onChange={handleInputs}
                           name="title"
                         />
@@ -240,7 +245,7 @@ const UserGroupEdit = () => {
                     </Col>
                     <Col md="6">
                       <FormGroup>
-                        <Label>UserGroup Type</Label>
+                        <Label>UserGroup Type </Label>
                         <Input
                           type="select"
                           value={userGroupDetails && userGroupDetails.user_group_type}

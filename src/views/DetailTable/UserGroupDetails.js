@@ -29,6 +29,10 @@ const UserGroupDetails = () => {
 
   //Insert Product Data
   const createUserGroup = () => {
+    
+    if(userGroupDetails.title){
+
+    
     api
       .post('/usergroup/insertUserGroup', userGroupDetails)
       .then((res) => {
@@ -51,6 +55,9 @@ const UserGroupDetails = () => {
       .catch(() => {
         message('Unable to edit record.', 'error');
       });
+    }else{
+      message('Please Enter the title', 'warning');
+    }
   };
 
   useEffect(() => {
@@ -67,7 +74,7 @@ const UserGroupDetails = () => {
               <FormGroup>
                 <Row>
                   <Col md="12">
-                    <Label>Title</Label>
+                    <Label>Title <span className="required"> *</span>{' '}</Label>
                     <Input
                       type="text"
                       onChange={handleInputs}

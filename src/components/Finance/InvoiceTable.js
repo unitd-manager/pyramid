@@ -77,23 +77,23 @@ const CreateReceipt = ({ createInvoice, handleInserts }) => {
       </Col>
       <Col md="4">
         <FormGroup>
-          <Label>Code</Label>
+          <Label> Job Code</Label>
           <Input
             type="text"
             onChange={handleInserts}
-            value={createInvoice && createInvoice.code}
-            name="code"
+            value={createInvoice && createInvoice.job_code}
+            name="job_code"
           />
         </FormGroup>
       </Col>
       <Col md="4">
         <FormGroup>
-          <Label>SO Ref Number</Label>
+          <Label>Revision</Label>
           <Input
             type="text"
             onChange={handleInserts}
-            value={createInvoice && createInvoice.so_ref_no}
-            name="so_ref_no"
+            value={createInvoice && createInvoice.revision}
+            name="revision"
           />
         </FormGroup>
       </Col>

@@ -17,9 +17,10 @@ import api from '../../constants/api';
 import message from '../Message';
 
 
-const QuoteViewEditItem = ({ quoteData, setQuoteData, FetchLineItemData,quoteId, }) => {
+const QuoteViewEditItem = ({ quoteData, setQuoteData, FetchLineItemData,quoteId,QuotationViewLine }) => {
   QuoteViewEditItem.propTypes = {
     quoteData: PropTypes.bool,
+    QuotationViewLine:PropTypes.func,
     setQuoteData: PropTypes.func,
     FetchLineItemData: PropTypes.object,
     quoteId: PropTypes.any,
@@ -69,7 +70,7 @@ const {id}=useParams();
         api
           .post('/project/insertLogLine', element)
           .then(() => {
-             window.location.reload();
+            
           })
           .catch((error) => {
             console.error('Error inserting log line:', error);
@@ -92,7 +93,7 @@ const {id}=useParams();
         if (hasChanges) {
           insertquote();
         }
-        window.location.reload()
+        QuotationViewLine();
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');

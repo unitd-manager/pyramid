@@ -59,11 +59,12 @@ const LoanEdit = () => {
   //All functions/Methods
 
   //Method for getting data by LoanId and Employee Id
-  const getPreviousEarlierLoan = (empId) => {
+  const getPreviousEarlierLoan = (empId)=> {
     api
       .post('/loan/TabPreviousEarlierLoanById', { employee_id: empId })
       .then((res) => {
         setLoan(res.data.data);
+        console.log('loans',res.data.data)
       })
 
       .catch(() => {
@@ -266,7 +267,7 @@ const LoanEdit = () => {
   useEffect(() => {
     getLoanById();
     getPaymentById();
-    getPreviousEarlierLoan();
+    
   }, [id]);
 
   const columns1 = [

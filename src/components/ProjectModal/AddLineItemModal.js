@@ -82,6 +82,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
         });
       result.push(allValues);
     });
+    console.log('resultu',result)
     setTotalAmount(0);
     console.log(result);
     result.forEach((element) => {
@@ -183,13 +184,17 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                                   <Input Value={item.title} type="text" name="title" style={{ width: '100%' }} />
                                 </td>
                                 <td data-label="Description">
-                                  <Input Value={item.description} type="textarea" name="description"style={{ width: '100%' }} />
+                                  <Input Value={item.description} type="text" name="description" style={{ width: '100%' }} />
                                 </td>
                                 <td data-label="Unit">
                                   <Input Value={item.unit} type="text" name="unit" style={{ width: '70%' }}/>
                                 </td>
                                 <td data-label="Qty">
-                                  <Input Value={item.quantity} type="number" name="quantity" style={{ width: '70%' }}/>
+                                  <Input Value={item.quantity} 
+                                  
+                                  onBlur={() => {
+                                    calculateTotal();
+                                  }} type="number" name="quantity" style={{ width: '70%' }}/>
                                 </td>
                                 <td data-label="Unit Price">
                                   <Input
@@ -231,6 +236,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                       color="primary"
                       onClick={() => {
                         getAllValues();
+                        setAddLineItemModal(false);
                       }}
                     >
                       {' '}
