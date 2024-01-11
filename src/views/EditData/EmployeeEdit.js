@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Row, TabContent, TabPane, Form, FormGroup } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ import AttachmentPortalsTab from '../../components/EmployeeTable/AttachmentPorta
 import LinkedPortalsTab from '../../components/EmployeeTable/LinkedPortalsTab';
 import LoginDetailsTab from '../../components/EmployeeTable/LoginDetailsTab';
 //import EmployeeButtons from '../../components/Employee/EmployeeButtons';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import message from '../../components/Message';
 import Tab from '../../components/ProjectTabs/Tab';
@@ -86,6 +87,7 @@ const EmployeeEdit = () => {
   //params and routing
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
   // Route Change
   // const applyChanges = () => {};
   // const saveChanges = () => {
@@ -226,17 +228,17 @@ const EmployeeEdit = () => {
   // Api calls for Editing
   //edit employeedata
   const editEmployeeData = () => {
-    
+      employeeDetails.modified_by = loggedInuser.first_name;
       employeeDetails.modification_date = creationdatetime;
       api
         .post('/employeeModule/edit-Employee', employeeDetails)
         .then(() => {
            message('Record editted successfully', 'success');
+           console.log('message details', employeeDetails)
         })
         .catch(() => {
           message('Unable to edit record.', 'error');
         });
-    
   };
 
   //update tab data
@@ -290,6 +292,7 @@ const EmployeeEdit = () => {
     if (
       employeeDetails.employee_name !== '' &&
       employeeDetails.date_of_birth !== '' &&
+      employeeDetails.gender !== '' &&
       employeeDetails.nationality 
       // Check if nationality is not "Please Select"
     ) {
@@ -371,7 +374,7 @@ const EmployeeEdit = () => {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        api.post('/employeeModule/deleteEmployee', { employee_id: id }).then(() => {
+        api.delete('/employeeModule/deleteEmployee', { employee_id: id }).then(() => {
           Swal.fire('Deleted!', 'Your Employee has been deleted.', 'success');
           //window.location.reload();
         });

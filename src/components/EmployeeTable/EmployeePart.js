@@ -72,7 +72,7 @@ console.log('all countries',allCountries)
                   onChange={handleInputChange}
                   type="select"
                 >
-                  <option defaultValue="selected">Please Select</option>
+                  <option value="">Please Select</option>
                   <option value="Female">Female</option>
                   <option value="Male">Male</option>
                 </Input>
@@ -160,8 +160,8 @@ console.log('all countries',allCountries)
             <Col md="3">
               <FormGroup>
                 <Label>
-                Nationality
-                  {/* Nationality <span style={{ color: 'red' }}>*</span> */}
+                {/* Nationality */}
+                  Nationality <span style={{ color: 'red' }}>*</span>
                 </Label>
                 <Input
                   name="nationality"
