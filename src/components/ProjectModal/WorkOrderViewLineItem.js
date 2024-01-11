@@ -50,7 +50,7 @@ const WorkOrderViewLineItem = ({projectId,workOrderViewLineItem,setWorkOrderView
                         <th scope="col">Qty</th>
                         <th scope="col">Unit Price</th>
                         <th scope="col">Amount</th>
-                        <th scope="col">Updated By</th>
+                        {/* <th scope="col">Updated By</th> */}
                         <th scope="col">Action</th>
                     </tr>
                     </thead>
@@ -64,7 +64,7 @@ const WorkOrderViewLineItem = ({projectId,workOrderViewLineItem,setWorkOrderView
                             <td>{e.quantity}</td>
                             <td>{e.unit_rate}</td>
                             <td>{e.amount} </td>
-                            <td>{e.amount}</td>
+                            {/* <td>{e.amount}</td> */}
                             <td>
                             <Row>
                                 <Col md='3'><Label><Link to=""><span  onClick={() => {
