@@ -6,6 +6,7 @@ import '../form-editor/editor.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
 import AppContext from '../../context/AppContext';
@@ -159,17 +160,38 @@ const LoanEdit = () => {
     }
   }, [loanDetails.amount_payable, loanDetails.loan_closing_date, loanDetails.status]);
 
-  //for deleting the data
   const deleteLoanData = () => {
-    api
-      .post('/loan/deleteLoan', { loan_id: id })
-      .then(() => {
-        message('Record deteled successfully', 'success');
-      })
-      .catch(() => {
-        message('Unable to delete record.', 'error');
-      });
+    Swal.fire({
+      title: `Are you sure? ${id}`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('/loan/deleteLoan', { loan_id: id })
+          .then(() => {
+            Swal.fire('Deleted!', 'Your Leave has been deleted.', 'success');
+            window.location.reload();
+          });
+      }
+    });
   };
+
+  // //for deleting the data
+  // const deleteLoanData = () => {
+  //   api
+  //     .post('/loan/deleteLoan', { loan_id: id })
+  //     .then(() => {
+  //       message('Record deteled successfully', 'success');
+  //     })
+  //     .catch(() => {
+  //       message('Unable to delete record.', 'error');
+  //     });
+  // };
 
   //getting payment data By Loan Id
   const getPaymentById = () => {
