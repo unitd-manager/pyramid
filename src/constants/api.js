@@ -4,7 +4,7 @@ import axios from 'axios'
 // let baseURL;
 
 // if (process.env.NODE_ENV === 'production') {
-//   baseURL = 'http://43.228.126.245:5001';
+//   baseURL = 'http://:5001';
 // } else {
 //   baseURL = 'http://localhost:5001';
 // }
