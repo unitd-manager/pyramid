@@ -50,7 +50,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) 
       .catch(() => {});
   };
   useEffect(() => {
-    QuotationViewLineItem();
+    //QuotationViewLineItem();
   }, []);
 
   console.log('data', quote);
@@ -167,7 +167,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) 
                               </span>
                             </Label>
 
-                            <Modal size="xl" isOpen={quoteLogViewLineItem}>
+                           {quoteLogViewLineItem && <Modal size="xl" isOpen={quoteLogViewLineItem}>
                               <ModalHeader>View Quote Log Line Items</ModalHeader>
                               <ModalBody>
                                 <FormGroup>
@@ -179,7 +179,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) 
                                         <th scope="col">Qty </th>
                                         <th scope="col">Unit Price </th>
                                         <th scope="col">Amount</th>
-                                        <th scope="col">Updated By</th>
+                                      
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -213,7 +213,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) 
                                 </Button>
                               </ModalFooter>
                             </Modal>
-
+                  }
                             {/* <QuoteLogViewLineItem
                                   quoteLogViewLineItem={quoteLogViewLineItem}
                                   setQuoteLogViewLineItem={setQuoteLogViewLineItem}

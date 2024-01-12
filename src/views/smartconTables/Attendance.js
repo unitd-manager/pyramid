@@ -126,13 +126,7 @@ const getAttendance = () => {
                 );
               })}
           </tbody>
-          <tfoot>
-            <tr>
-              {columns.map((cell) => {
-                return <td key={cell.name}>{cell.name}</td>;
-              })}
-            </tr>
-          </tfoot>
+         
         </CommonTable>
       </div>
     </div>

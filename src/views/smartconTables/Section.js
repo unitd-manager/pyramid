@@ -36,11 +36,11 @@ const SectionDetails = () => {
           processing: true,
           dom: 'Bfrtip',
           buttons: [
-            {
-              extend: 'print',
-              text: 'Print',
-              className: 'shadow-none btn btn-primary',
-            },
+            // {
+            //   extend: 'print',
+            //   text: 'Print',
+            //   className: 'shadow-none btn btn-primary',
+            // },
           ],
         });
         setLoading(false);

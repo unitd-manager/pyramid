@@ -88,6 +88,8 @@ export default function CategoryDetailComp({ categoryDetails, handleInputs, sect
                 <FormGroup>
                   <Label>Published</Label>
                   <br></br>
+                  <Label> Yes </Label>
+                  &nbsp;
                   <Input
                     name="published"
                     value="1"
@@ -95,7 +97,10 @@ export default function CategoryDetailComp({ categoryDetails, handleInputs, sect
                     defaultChecked={categoryDetails && categoryDetails.published === 1 && true}
                     onChange={handleInputs}
                   />
-                  <Label> Yes </Label>
+                  &nbsp;
+                  &nbsp;
+                   <Label>No</Label>
+                   &nbsp;
                   <Input
                     name="published"
                     value="0"
@@ -103,7 +108,7 @@ export default function CategoryDetailComp({ categoryDetails, handleInputs, sect
                     defaultChecked={categoryDetails && categoryDetails.published === 0 && true}
                     onChange={handleInputs}
                   />
-                  <Label>No</Label>
+                 
                 </FormGroup>
               </Col>
             </Row>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Row,
   Col,
@@ -13,11 +13,8 @@ import {
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import random from 'random';
-import Select from 'react-select';
 import api from '../../constants/api';
 import message from '../Message';
-import creationdatetime from '../../constants/creationdatetime';
 
 const EditPOLineItemsModal = ({ editPOLineItemsModal, setEditPOLineItemsModal, data }) => {
   EditPOLineItemsModal.propTypes = {
@@ -31,39 +28,12 @@ const EditPOLineItemsModal = ({ editPOLineItemsModal, setEditPOLineItemsModal, d
   const [items, setItems] = useState(data);
   const [addNewProductModal, setAddNewProductModal] = useState(false);
   const [addMoreItem, setMoreItem] = useState(0);
-  const [productDetail, setProductDetail] = useState({
-    category_id: null,
-    sub_category_id: null,
-    title: '',
-    product_code: '',
-    qty_in_stock: null,
-    price: null,
-    published: 0,
-  });
-  const [getProductValue, setProductValue] = useState();
-
   const AddMoreItem = () => {
-    setMoreItem([
-      ...addMoreItem,
-      {
-        id: random.int(0, 9999).toString(),
-        itemId: '',
-        unit: '',
-        qty: '',
-        price: '',
-        mrp: '',
-        gst: '',
-        description: '',
-      },
-    ]);
+    setMoreItem(addMoreItem + 1);
   };
-console.log('po',data)
+console.log('purchase',purchase);
   const handleInputs = (e) => {
     setPurchase({ ...purchase, [e.target.name]: e.target.value });
-  };
-
-  const handleNewProductDetails = (e) => {
-    setProductDetail({ ...productDetail, [e.target.name]: e.target.value });
   };
 
   function updateState(index, property, e) {
@@ -79,86 +49,15 @@ console.log('po',data)
     setNewItems(copyDeliverOrderProducts);
   }
 
-  // const onchangeItem = (str, itemId) => {
-  //   const element = addMoreItem.find((el) => el.id === itemId);
-  //   //element.title = str.label;
-  //   console.log('element',element)
-  //   console.log('str',str)
-  //   element.item_title = str.label;
-  //   element.product_id = str.value.toString();
-  //   setMoreItem(addMoreItem);
-  // };
-  const insertProduct = (ProductCode, ItemCode) => {
-    if (productDetail.title !== '') {
-      productDetail.product_code = ProductCode;
-      productDetail.item_code = ItemCode;
-      productDetail.creation_date = creationdatetime;
-      api
-        .post('/purchaseorder/insertPurchaseProduct', productDetail)
-        .then((res) => {
-          const insertedDataId = res.data.data.insertId;
-          message('Product inserted successfully.', 'success');
-          api
-            .post('/product/getCodeValue', { type: 'InventoryCode' })
-            .then((res1) => {
-              const InventoryCode = res1.data.data;
-              message('inventory created successfully.', 'success');
-              api
-              .post('/inventory/insertinventory', { product_id: insertedDataId, inventory_code:InventoryCode  })
-            
-            .then(() => {
-              message('inventory created successfully.', 'success');
-              //  getProduct();
-              setTimeout(() => {
-                //getProduct();
-                setAddNewProductModal(false);
-              }, 500);
-            })
-            })
-            .catch(() => {
-              message('Unable to create inventory.', 'error');
-            });
-        })
-        .catch(() => {
-          message('Unable to insert product.', 'error');
-        });
-      } else {
-        message('Please fill the Product Name ', 'warning');
-      }
-    };
-  //Auto generation code
-  const generateCode = () => {
-    api
-      .post('/product/getCodeValue', { type: 'ProductCode' })
-      .then((res) => {
-        const ProductCode = res.data.data
-      api
-      .post('/product/getCodeValue', { type: 'ItemCode' })
-      .then((response) => {
-        const ItemCode = response.data.data
-        insertProduct(ProductCode, ItemCode);
-      })
-      })
-      .catch(() => {
-        insertProduct('');
-      });
-  };
-
   //edit purchase
   const editPurchase = () => {
-    const purchaseRecord={
-      po_code:purchase.po_code,
-      purchase_order_id:purchase.purchase_order_id,
-      purchase_order_date:purchase.purchase_order_date,
-      gst:purchase.gst
-    }
-    api.post('/purchaseorder/editPurchaseOrder',purchaseRecord)
-    .then(() => {
-      message('Record editted successfully', 'success');
-    })
-    .catch(() => {
-      message('Unable to edit record.', 'error');
-    });
+    // api.post('/purchaseorder/editTabPurchaseOrder',purchase)
+    // .then(() => {
+    //   message('Record editted successfully', 'success');
+    // })
+    // .catch(() => {
+    //   message('Unable to edit record.', 'error');
+    // });
   };
 
   //edit delivery items
@@ -182,17 +81,7 @@ console.log('po',data)
     });
     return total;
   };
-  const getProduct = () => {
-    api.get('/product/getProducts').then((res) => {
-      const counts = res.data.data;
-      const finaldat = [];
-      counts.forEach((item) => {
-        finaldat.push({ value: item.product_id, label: item.title });
-      });
-      setProductValue(finaldat);
-      console.log('finaldata',finaldat)
-    });
-  };
+
   //insert po items
   const insertPoItems = () => {
     newItems.forEach((el) => {
@@ -206,9 +95,7 @@ console.log('po',data)
         });
     });
   };
-useEffect(()=>{
-  getProduct();
-},[])
+
   // Clear row value
   // const ClearValue = (ind) => {
   //   setMoreItem((current) =>
@@ -261,7 +148,7 @@ useEffect(()=>{
                     <Input
                       type="date"
                       name="po_date"
-                      value={moment(purchase && purchase.purchase_order_date).format('YYYY-MM-DD')}
+                      value={moment(purchase && purchase.po_date).format('YYYY-MM-DD')}
                       onChange={handleInputs}
                     />
                   </Col>
@@ -269,14 +156,14 @@ useEffect(()=>{
                     <Label>PO No.</Label>
                     <Input
                       type="text"
-                      name="po_code"
+                      name="po_no"
                       value={purchase && purchase.po_code}
                       onChange={handleInputs}
                     />
                   </Col>
                   <Col md="3">
                     <FormGroup>
-                      <Label>VAT</Label>
+                      <Label>Gst</Label>
                       <br></br>
                       <Label>Yes</Label>
                       &nbsp;
@@ -284,7 +171,7 @@ useEffect(()=>{
                         name="gst"
                         value="1"
                         type="radio"
-                        defaultChecked={purchase && purchase.gst === "1" && true}
+                        defaultChecked={purchase && purchase.gst === 1 && true}
                         onChange={handleInputs}
                       />
                       &nbsp; &nbsp;
@@ -294,7 +181,7 @@ useEffect(()=>{
                         name="gst"
                         value="0"
                         type="radio"
-                        defaultChecked={purchase && purchase.gst === "0" && true}
+                        defaultChecked={purchase && purchase.gst === 0 && true}
                         onChange={handleInputs}
                       />
                     </FormGroup>
@@ -323,21 +210,12 @@ useEffect(()=>{
                   return (
                     <tr key={el.po_product_id}>
                       <td data-label="ProductName">
-                        {/* <Input
+                        <Input
                           type="text"
                           name="item_title"
                           value={el.item_title}
                           onChange={(e) => updateState(index, 'item_title', e)}
-                        /> */}
-                         <Select
-                          key={el.id}
-                          defaultValue={{ value: el.product_id, label: el.item_title }}
-                          onChange={(e) =>  updateState(index, 'item_title', e)}
-                          options={getProductValue}
-                          disabled
                         />
-                        <Input value={el.product_id} type="hidden" name="product_id"></Input>
-                        <Input value={el.item_title} type="hidden" name="item_title"></Input>
                       </td>
                       <td data-label="unit">
                         <Input
@@ -382,28 +260,20 @@ useEffect(()=>{
                 })}
                 {[...Array(addMoreItem)].map((elem, index) => {
                   return (
-                    <tr key={elem.id}>
+                    <tr key={addMoreItem}>
                       <td data-label="ProductName">
                         <Input
                           type="text"
                           name="item_title"
-                          value={elem && elem.item_title}
+                          value={elem.item_title}
                           onChange={(e) => updateNewItemState(index, 'item_title', e)}
                         />
-                         {/* <Select
-                          key={elem.id}
-                          defaultValue={{ value: elem.product_id, label: elem.item_title }}
-                          onChange={(e) =>    onchangeItem(e, elem.id)}
-                          options={getProductValue}
-                        />
-                        <Input value={elem.product_id} type="hidden" name="product_id"></Input>
-                        <Input value={elem.item_title} type="hidden" name="item_title"></Input> */}
                       </td>
                       <td data-label="UoM">
                         <Input
                           type="text"
                           name="unit"
-                          value={elem && elem.unit}
+                          value={elem.unit}
                           onChange={(e) => updateNewItemState(index, 'unit', e)}
                         />
                       </td>
@@ -411,7 +281,7 @@ useEffect(()=>{
                         <Input
                           type="text"
                           name="qty"
-                          value={elem && elem.qty}
+                          value={elem.qty}
                           onChange={(e) => updateNewItemState(index, 'qty', e)}
                         />
                       </td>
@@ -419,16 +289,16 @@ useEffect(()=>{
                         <Input
                           type="text"
                           name="cost_price"
-                          value={elem && elem.cost_price}
+                          value={elem.cost_price}
                           onChange={(e) => updateNewItemState(index, 'cost_price', e)}
                         />
                       </td>
-                      <td data-label="Total Price">{elem && elem.cost_price * elem && elem.qty}</td>
+                      <td data-label="Total Price">{elem.cost_price * elem.qty}</td>
                       <td data-label="Remarks">
                         <Input
                           type="textarea"
                           name="description"
-                          value={elem && elem.description}
+                          value={elem.description}
                           onChange={(e) => updateNewItemState(index, 'description', e)}
                         />
                       </td>
@@ -448,15 +318,11 @@ useEffect(()=>{
           <Button
             color="primary"
             className="shadow-none"
-            onClick={async() => {
-              await editPurchase();
-              await editLineItems();
-              await insertPoItems();
-              await setEditPOLineItemsModal(false);
-              setTimeout(()=>{
-                window.location.reload()
-              },1500)
-              
+            onClick={() => {
+              editPurchase();
+              editLineItems();
+              insertPoItems();
+              setEditPOLineItemsModal(false);
             }}
           >
             Submit
@@ -476,7 +342,7 @@ useEffect(()=>{
       {/* Add New Product Modal */}
       <Modal size="lg" isOpen={addNewProductModal}>
         <ModalHeader>Add New Materials / Tools</ModalHeader>
-       
+
         <ModalBody>
           <FormGroup>
             <Row>
@@ -487,13 +353,8 @@ useEffect(()=>{
                       <Label sm="3">
                         Product Name <span className="required"> *</span>
                       </Label>
-                      <Col sm="8">
-                        <Input
-                          type="text"
-                          name="title"
-                          onChange={handleNewProductDetails}
-                          value={productDetail.title}
-                        />
+                      <Col sm="9">
+                        <Input type="text" name="product_name" />
                       </Col>
                     </Row>
                   </FormGroup>
@@ -502,10 +363,8 @@ useEffect(()=>{
                       <Label sm="3">
                         Product Type <span className="required"> *</span>
                       </Label>
-                      <Col sm="8">
-                        <Input type="select" name="product_type"
-                          onChange={handleNewProductDetails}
-                          value={productDetail.product_type}>
+                      <Col sm="9">
+                        <Input type="select" name="product_type">
                           <option value="">Please Select</option>
                           <option defaultValue="selected" value="Materials">
                             Materials
@@ -525,9 +384,7 @@ useEffect(()=>{
             color="primary"
             className="shadow-none"
             onClick={() => {
-             
-              generateCode();
-              
+              setAddNewProductModal(false);
             }}
           >
             Submit

@@ -12,17 +12,19 @@ import '../form-editor/editor.scss';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import AttachmentModalV2 from '../../components/Tender/AttachmentModalV2';
 import ComponentCard from '../../components/ComponentCard';
-import ComponentCardV2 from '../../components/ComponentCardV2';
+//import ComponentCardV2 from '../../components/ComponentCardV2';
 import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
 //import PictureAttachmentModalV2 from '../../components/Tender/PictureAttachmentModalV2';
 import message from '../../components/Message';
 import api from '../../constants/api';
+import ApiButton from '../../components/ApiButton';
 
 const ContentUpdate = () => {
   // All state variables
   const [lineItem] = useState(null);
   const [RoomName, setRoomName] = useState('');
   const [contentDetails, setContentDetails] = useState();
+  const [valuelist, setValuelist] = useState();
   const [sectionLinked, setSectionLinked] = useState();
   const [categoryLinked, setCategoryLinked] = useState();
   const [subcategoryLinked, setSubCategoryLinked] = useState();
@@ -39,7 +41,9 @@ const ContentUpdate = () => {
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const backToList = () => {
+    navigate('/Content');
+  };
   //Setting data in contentDetails
   const handleInputs = (e) => {
     setContentDetails({ ...contentDetails, [e.target.name]: e.target.value });
@@ -72,6 +76,18 @@ const ContentUpdate = () => {
        
       });
   };
+
+   //Api call for getting valuelist dropdown
+   const getValuelist = () => {
+    api
+      .get('/content/getValueList')
+      .then((res) => {
+        setValuelist(res.data.data);
+      })
+      .catch(() => {
+        message('valuelist not found', 'info');
+      });
+  };
   //Edit Content
   const editContentData = () => {
     if (
@@ -84,7 +100,7 @@ const ContentUpdate = () => {
         .post('/content/editContent', contentDetails)
         .then(() => {
           message('Record edited successfully', 'success');
-          navigate('/Content');
+          
         })
         .catch(() => {
           message('Unable to edit record.', 'error');
@@ -94,46 +110,72 @@ const ContentUpdate = () => {
     }
   };
 
-  const editContentData1 = () => {
-    if (
-      contentDetails.title !== '' &&
-      contentDetails.sub_category_id !== '' &&
-      contentDetails.published !== ''
-    ) {
+  // const editContentData1 = () => {
+  //   if (
+  //     contentDetails.title !== '' &&
+  //     contentDetails.sub_category_id !== '' &&
+  //     contentDetails.published !== ''
+  //   ) {
+  //     api
+  //       .post('/content/editContent', contentDetails)
+  //       .then(() => {
+  //         message('Record edited successfully', 'success');
+  //         setTimeout(() => {
+  //           window.location.reload();
+  //         }, 400);
+  //       })
+  //       .catch(() => {
+  //         message('Unable to edit record.', 'error');
+  //       });
+  //   } else {
+  //     message('Please fill all required fields', 'warning');
+  //   }
+  // };
+ // getting data from Section
+ const getsection = () => {
+  api.get('/content/getSection', sectionLinked).then((res) => {
+    setSectionLinked(res.data.data);
+  });
+};
+// getting data from Category
+const getCategory = (sectionId) => {
+  api.post('/section/getSectionCategoryById', { section_id: sectionId }).then((res) => {
+    setCategoryLinked(res.data.data);
+  });
+};
+
+// getting data from SubCategory
+const getSubCategory = (categoryId) => {
+  api.post('/section/getSectionSubCategoryById', { category_id: categoryId }).then((res) => {
+    setSubCategoryLinked(res.data.data);
+  });
+};
+useEffect(() => {
+  if (contentDetails?.section_id) {
+    // Use taskdetails.project_milestone_id directly to get the selected project ID
+    const selectedSection = contentDetails.section_id;
+    getCategory(selectedSection);
+  }
+}, [contentDetails && contentDetails.section_id]);
+useEffect(() => {
+  if (contentDetails?.category_id) {
+    // Use taskdetails.project_milestone_id directly to get the selected project ID
+    const selectedcategory = contentDetails.category_id;
+    getSubCategory(selectedcategory);
+  }
+}, [contentDetails && contentDetails.category_id]);
+
+    //For delete data in db
+    const deleteContentData = () => {
       api
-        .post('/content/editContent', contentDetails)
+        .post('/content/deleteContent', { content_id: id })
         .then(() => {
-          message('Record edited successfully', 'success');
-          setTimeout(() => {
-            window.location.reload();
-          }, 400);
+          message('Record deteled successfully', 'success');
         })
         .catch(() => {
-          message('Unable to edit record.', 'error');
+          message('Unable to delete record.', 'error');
         });
-    } else {
-      message('Please fill all required fields', 'warning');
-    }
-  };
-  // getting data from Section
-  const getsection = () => {
-    api.get('/content/getSection', sectionLinked).then((res) => {
-      setSectionLinked(res.data.data);
-    });
-  };
-  // getting data from Category
-  const getCategory = () => {
-    api.get('/content/getCategory', categoryLinked).then((res) => {
-      setCategoryLinked(res.data.data);
-    });
-  };
-  // getting data from SubCategory
-  const getSubCategory = () => {
-    api.get('/content/getSubCategory', subcategoryLinked).then((res) => {
-      setSubCategoryLinked(res.data.data);
-    });
-  };
-
+    };
   //Attachments
   const dataForAttachment = () => {
     setDataForAttachment({
@@ -148,9 +190,8 @@ const ContentUpdate = () => {
   // };
   useEffect(() => {
     getsection();
-    getCategory();
-    getSubCategory();
     getContentById();
+    getValuelist();
     console.log(lineItem);
   }, [id]);
 
@@ -159,7 +200,7 @@ const ContentUpdate = () => {
       <BreadCrumbs heading={contentDetails && contentDetails.title} />
       <Form>
         <FormGroup>
-          <ComponentCardV2>
+          {/* <ComponentCardV2>
             <Row>
               <Col>
                 <Button
@@ -192,7 +233,15 @@ const ContentUpdate = () => {
                 </Button>
               </Col>
             </Row>
-          </ComponentCardV2>
+          </ComponentCardV2> */}
+           <ApiButton
+            editData={editContentData}
+            navigate={navigate}
+            //applyChanges={updateData}
+            backToList={backToList}
+            deleteData={deleteContentData}
+            module="Content"
+          ></ApiButton>
           {/* Content Details Form */}
           <ComponentCard title="Content details">
             <ToastContainer></ToastContainer>
@@ -274,11 +323,21 @@ const ContentUpdate = () => {
                 <FormGroup>
                   <Label>Content Type</Label>
                   <Input
-                    type="text"
+                    type="select"
                     onChange={handleInputs}
-                    defaultValue={contentDetails && contentDetails.content_type}
+                    value={contentDetails && contentDetails.content_type}
                     name="content_type"
-                  />
+                  >
+                   <option defaultValue="selected">Please Select</option>
+                    {valuelist &&
+                      valuelist.map((e) => {
+                        return (
+                          <option key={e.value} value={e.value}>
+                            {e.value}
+                          </option>
+                        );
+                      })}
+                  </Input>
                 </FormGroup>
               </Col>
             </Row>

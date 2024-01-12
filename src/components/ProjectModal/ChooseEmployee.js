@@ -25,7 +25,7 @@ const ChooseEmployee = ({ chooseEmp, setChooseEmp }) => {
       const items = res.data.data;
       const finaldat = [];
       items.forEach((item) => {
-        finaldat.push({ value: item.employee_id, label: item.first_name });
+        finaldat.push({ value: item.employee_id, label: item.employee_name });
       });
       setEmployeeLinked(finaldat);
     });

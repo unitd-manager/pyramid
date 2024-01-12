@@ -92,6 +92,9 @@ export default function SubCategoryEditDetails({ subcategoryeditdetails, handleI
               <FormGroup>
                 <Label>Published</Label>
                 <br></br>
+                <Label>Yes</Label>
+                &nbsp;
+                
                 <Input
                   name="published"
                   value="1"
@@ -101,7 +104,10 @@ export default function SubCategoryEditDetails({ subcategoryeditdetails, handleI
                   }
                   onChange={handleInputs}
                 />
-                <Label> Yes </Label>
+                &nbsp;
+                &nbsp;
+                <Label> No </Label>
+                &nbsp;
                 <Input
                   name="published"
                   value="0"
@@ -111,7 +117,8 @@ export default function SubCategoryEditDetails({ subcategoryeditdetails, handleI
                   }
                   onChange={handleInputs}
                 />
-                <Label>No</Label>
+                
+                
               </FormGroup>
             </Col>
           </Row>
