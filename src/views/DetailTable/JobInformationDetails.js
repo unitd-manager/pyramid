@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import creationdatetime from '../../constants/creationdatetime';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import api from '../../constants/api';
 import message from '../../components/Message';
@@ -36,6 +37,7 @@ const JobInformationDetails = () => {
   };
   //inserting data of job information
   const insertJobInformation = () => {
+    jobForms.creation_date = creationdatetime;
     if (jobForms.employee_id !== '') {
       api
         .post('/jobinformation/insertjob_information', jobForms)
