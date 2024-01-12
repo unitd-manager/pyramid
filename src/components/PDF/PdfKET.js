@@ -1,24 +1,16 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import PropTypes from 'prop-types';
-// import { pdf } from 'pdfjs-dist';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Button } from 'reactstrap';
 import api from '../../constants/api';
-import message from '../Message';
 import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
-// import ArabicMagic from "../../assets/fonts/ArabicMagic.ttf";
 
-const PdfKET = ({ lang = 'arabic' }) => {
-  PdfKET.propTypes = {
-    lang: PropTypes.string,
-   
-  };
+const PdfKET = () => {
   const { id } = useParams();
   const [hfdata, setHeaderFooterData] = React.useState();
-  const [job, setJob] = useState();
+  const [job, setJob] = useState([]);
 
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
@@ -40,11 +32,12 @@ const PdfKET = ({ lang = 'arabic' }) => {
         console.log(job);
       })
       .catch(() => {
-        message('Job information Data Not Found', 'info');
+        //message('Job information Data Not Found', 'info');
       });
   };
 
   React.useEffect(() => {
+    //getPurchaseOrderId();
     getKET();
   }, []);
 
@@ -74,8 +67,11 @@ const PdfKET = ({ lang = 'arabic' }) => {
               return '#eaeaea';
             },
             hLineStyle: () => {
+              // if (i === 0 || i === node.table.body.length) {
               return null;
+              //}
             },
+            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
             paddingLeft: () => {
               return 10;
             },
@@ -95,12 +91,12 @@ const PdfKET = ({ lang = 'arabic' }) => {
           table: {
             headerRows: 1,
             widths: ['101%'],
+
             body: [
               [
                 {
-                  text: lang === 'arabic' ? `إنها تبدو اليوم حزينة` : "~Employment Key Terms~",
+                  text: `~Employment Key Terms~`,
                   alignment: 'center',
-                  font: lang === 'arabic' ? 'ArabicMagic' : undefined,
                   style: 'tableHead',
                 },
               ],
@@ -127,8 +123,11 @@ const PdfKET = ({ lang = 'arabic' }) => {
               return '#eaeaea';
             },
             hLineStyle: () => {
+              // if (i === 0 || i === node.table.body.length) {
               return null;
+              //}
             },
+            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
             paddingLeft: () => {
               return 10;
             },
@@ -165,7 +164,7 @@ const PdfKET = ({ lang = 'arabic' }) => {
               [
                 {
                   text: `Company Name:
-                  Cubosale Pte ltd`,
+                  ${job.company_name ? job.company_name : ''}`,
                   border: [false, false, false, true],
                   style: 'tableBody',
                 },
@@ -173,7 +172,7 @@ const PdfKET = ({ lang = 'arabic' }) => {
                 {
                   border: [false, false, false, true],
                   text: `Job Title,Main Duties and Responsibilities:
-                  ${job && job.duty_responsibility ? job.duty_responsibility : ''}`,
+                  ${job.duty_responsibility ? job.duty_responsibility : ''}`,
                   fillColor: '#f5f5f5',
                   style: 'tableBody',
                 },
@@ -182,7 +181,7 @@ const PdfKET = ({ lang = 'arabic' }) => {
               [
                 {
                   text: `Employee Name:
-                  ${job && job.employee_name ? job.employee_name : ''}`,
+                  ${job.employee_name ? job.employee_name : ''}`,
                   border: [false, false, false, true],
                   style: 'tableBody',
                 },
@@ -191,11 +190,11 @@ const PdfKET = ({ lang = 'arabic' }) => {
                   ul: [
                     {
                       text: 'Full Time Employment',
-                      listType: job && job.emp_type === 'full time' ? 'square' : 'circle',
+                      listType: job.emp_type === 'full time' ? 'square' : 'circle',
                     },
                     {
                       text: 'Part Time Employment',
-                      listType: job && job.emp_type === 'part time' ? 'square' : 'circle',
+                      listType: job.emp_type === 'part time' ? 'square' : 'circle',
                     },
                   ],
                   border: [false, false, false, true],
@@ -204,11 +203,35 @@ const PdfKET = ({ lang = 'arabic' }) => {
                 },
               ],
               [
+                // job.nric_no && {
+                //   text: `Employee NRIC:
+                //   ${job.nric_no ? job.nric_no : ''}`,
+                //   border: [false, false, false, true],
+                //   style: 'tableBody',
+                // },
+
+                // job.fin_no && {
+                //   text: `Employee FIN:
+                // ${job.fin_no ? job.fin_no : ''}`,
+                //   border: [false, false, false, true],
+                //   style: 'tableBody',
+                // },
                 {
-                  text: `Employee NRIC/FIN:
-                  ${job.nric_no ? job.nric_no : ''}`,
-                  border: [false, false, false, true],
-                  style: 'tableBody',
+                  stack: [
+                    job.nric_no && {
+                        text: `Employee NRIC:
+                        ${job.nric_no ? job.nric_no : ''}`,
+                        border: [false, false, false, true],
+                        style: 'tableBody',
+                      },
+      
+                      job.fin_no && {
+                        text: `Employee FIN:
+                      ${job.fin_no ? job.fin_no : ''}`,
+                        border: [false, false, false, true],
+                        style: 'tableBody',
+                      },
+                  ],
                 },
 
                 {
@@ -255,8 +278,11 @@ const PdfKET = ({ lang = 'arabic' }) => {
             },
 
             hLineStyle: () => {
+              // if (i === 0 || i === node.table.body.length) {
               return null;
+              //}
             },
+            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
             paddingLeft: () => {
               return 10;
             },
@@ -327,8 +353,11 @@ const PdfKET = ({ lang = 'arabic' }) => {
               return '#eaeaea';
             },
             hLineStyle: () => {
+              // if (i === 0 || i === node.table.body.length) {
               return null;
+              //}
             },
+            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
             paddingLeft: () => {
               return 10;
             },
@@ -391,7 +420,7 @@ const PdfKET = ({ lang = 'arabic' }) => {
                     job.salary_payment_dates ? job.salary_payment_dates : ''
                   } \n
                     Date(s) of Overtime Payment:${
-                      job.overtime_payment_date ? job.overtime_payment_date : ''
+                      job.overtime_payment_dates ? job.overtime_payment_dates : ''
                     }`,
                   border: [false, false, false, true],
                   fillColor: '#f5f5f5',
@@ -530,8 +559,11 @@ const PdfKET = ({ lang = 'arabic' }) => {
               return '#eaeaea';
             },
             hLineStyle: () => {
+              // if (i === 0 || i === node.table.body.length) {
               return null;
+              //}
             },
+            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
             paddingLeft: () => {
               return 10;
             },
@@ -664,8 +696,11 @@ const PdfKET = ({ lang = 'arabic' }) => {
               return '#eaeaea';
             },
             hLineStyle: () => {
+              // if (i === 0 || i === node.table.body.length) {
               return null;
+              //}
             },
+            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
             paddingLeft: () => {
               return 10;
             },
@@ -759,6 +794,7 @@ const PdfKET = ({ lang = 'arabic' }) => {
           fillColor: '#eaf2f5',
           margin: [0, 5, 0, 5],
           fontSize: 10,
+          bold: 'true',
         },
         tableBody: {
           border: [false, false, false, true],
@@ -777,48 +813,8 @@ const PdfKET = ({ lang = 'arabic' }) => {
         columnGap: 20,
       },
     };
-    // pdfMake.fonts = {
-    //   ArabicMagic: {
-    //     normal: '../../assets/fonts/ArabicMagic.ttf',
-    //     bold: '../fonts/ArabicMagic.ttf',
-    //     italics: '../fonts/ArabicMagic.ttf',
-    //     bolditalics: '../fonts/ArabicMagic.ttf',
-    //   },
-    // };
-    // pdfMake.vfs = pdfFonts.pdfMake.vfs;
-    // pdfMake.fonts = ArabicMagic
-
-    // var Roboto = require('../fonts/Roboto');
-    // pdfMake.addFonts(Roboto);
-
-    // pdfMake.addFontContainer(ArabicMagic);
-
-    pdfMake.fonts = {
-      ArabicMagic: {
-        normal: 'http://localhost:3000/fonts/ArabicFont-Regular.ttf',
-        bold: 'http://localhost:3000/fonts/ArabicFont-Regular.ttf',
-        italics: 'http://localhost:3000/fonts/ArabicFont-Regular.ttf',
-        bolditalics: 'http://localhost:3000/fonts/ArabicFont-Regular.ttf',
-      },
-      // download default Roboto font from cdnjs.com
-      Roboto: {
-        normal:
-          'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
-        bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-        italics:
-          'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-        bolditalics:
-          'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf',
-      },
-    };
-
-    // const pdf = pdfMake.createPdf(dd);
-    // pdf.open();
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
     pdfMake.createPdf(dd, null, null, pdfFonts.pdfMake.vfs).open();
-
-    // const win = window.open('', '_blank');
-    // pdfMake.createPdf(dd).open({}, win);
   };
 
   return (

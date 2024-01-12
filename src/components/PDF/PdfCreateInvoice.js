@@ -285,7 +285,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
                   margin: [30, 0, 0, 0],
                 },
                 {
-                  text: ` \n${createInvoice.company_name ? createInvoice.company_name : ''}`,
+                  text: ` \n${createInvoice.cust_company_name ? createInvoice.cust_company_name : ''}`,
                   color: 'blue',
                   style: ['textSize'],
                   margin: [30, 3, 0, 0],

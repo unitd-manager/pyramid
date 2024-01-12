@@ -135,11 +135,22 @@ const JobInformation = ({ JobInformationEditModal, setJobInformationEditModal })
         <BreadCrumbs />
         <CardTitle>
           <Label>Employee Name:</Label>
-          {jobModal && jobModal.first_name}
+          {jobModal && jobModal.employee_name}
         </CardTitle>
         <CardTitle>
-          <Label>Fin no:</Label>
-          {jobModal && jobModal.fin_no}
+        {jobModal && jobModal.fin_no ? null : (
+          <>
+            <Label>NRIC No:</Label>
+            {jobModal && jobModal.nric_no}
+            <br />
+          </>
+        )}
+        {jobModal && jobModal.nric_no && !jobModal.fin_no ? null : (
+          <>
+            <Label>FIN No:</Label>
+            {jobModal && jobModal.fin_no}
+          </>
+        )}
         </CardTitle>
         <Form>
           <FormGroup>

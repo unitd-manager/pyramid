@@ -23,11 +23,13 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
     editCreateNote: PropTypes.bool,
     setEditCreateNote: PropTypes.func,
   };
-  const [createNoteAmount, setCreateNoteAmount] = useState(null);
+  //const [createNoteAmount, setCreateNoteAmount] = useState(null);
   const [createInvoiceNote, setCreateInvoiceNote] = useState(null);
   //edit Tab Costing Summary Form
   const { id } = useParams();
-
+  const [createNoteAmount, setCreateNoteAmount] = useState({
+    from_date: new Date().toISOString().split('T')[0],
+  });
   const [amount, setAmount] = useState({
     amount: 0,
     order_id: id,
@@ -245,6 +247,12 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
                           </tbody>
                         </Table>
                         <Label>Date</Label>
+                        {/* <Input
+                          type="date"
+                          name="from_date"
+                          onChange={handleInputs}
+                          value={createNoteAmount && createNoteAmount.from_date}
+                        ></Input> */}
                         <Input
                           type="date"
                           name="from_date"
