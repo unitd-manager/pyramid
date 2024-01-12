@@ -214,13 +214,13 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
             },
             '\n',
             {
-              text: `Location:${projectDetail.location ? projectDetail.location : ''}`,
+              text: `Location:${deliveryData.location ? deliveryData.location : ''}`,
               style: ['notesText', 'textSize'],
               bold: 'true',
             },
             '\n',
             {
-              text: `Scope of Work: ${projectDetail.scope_of_work ? projectDetail.scope_of_work : ''}`,
+              text: `Scope of Work: ${deliveryData.scope_of_work ? deliveryData.scope_of_work : ''}`,
               style: ['notesText', 'textSize'],
               
 
@@ -246,7 +246,7 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
         '\n',
         {
           text: `P.O.Date :${
-            deliveryData && deliveryData.po_date ? moment(deliveryData.po_date).format('DD-MM-YYYY') : ''
+            deliveryData && deliveryData.purchase_order_date ? moment(deliveryData.purchase_order_date).format('DD-MM-YYYY') : ''
           }`,
           
           style: ['invoiceAdd', 'textSize'],

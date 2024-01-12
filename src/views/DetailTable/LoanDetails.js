@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -6,8 +6,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import message from '../../components/Message';
+import creationdatetime from '../../constants/creationdatetime';
 
 const LoanDetails = () => {
   //state variable
@@ -16,7 +18,7 @@ const LoanDetails = () => {
   //Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const { loggedInuser } = useContext(AppContext);
   // Get Employee By Id
   const getEmployee = () => {
     api
@@ -42,6 +44,8 @@ const LoanDetails = () => {
   const insertLoan = () => {
     if (loanForms.employee_id !== '' && loanForms.amount !== '' && loanForms.month_amount !== '') {
       loanForms.date = moment();
+      loanForms.creation_date = creationdatetime;
+      loanForms.created_by = loggedInuser.first_name;
       api
         .post('/loan/insertLoan', loanForms)
         .then((res) => {
