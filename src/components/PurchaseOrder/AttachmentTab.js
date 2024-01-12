@@ -60,8 +60,8 @@ function AttachmentTab({
                   setAttachmentModal={setPictureAttachmentModal}
                   roomName={roomName}
                   fileTypes={fileTypes}
-                  altTagData="Product Data"
-                  desc="Product Data"
+                  altTagData="PurchaseOrder Data"
+                  desc="PurchaseOrder Data"
                   recordType="Picture"
                   mediaType={pictureData.modelType}
                   update={update}

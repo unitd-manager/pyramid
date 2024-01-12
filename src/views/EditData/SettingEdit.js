@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
+import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
-import ComponentCardV2 from '../../components/ComponentCardV2';
+//import ComponentCardV2 from '../../components/ComponentCardV2';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
-import DeleteButton from '../../components/DeleteButton';
+import ApiButton from '../../components/ApiButton';
+//import DeleteButton from '../../components/DeleteButton';
 
 const SettingEdit = () => {
   //All state variable
@@ -20,7 +21,7 @@ const SettingEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const applyChanges = () => {};
+  //const applyChanges = () => {};
   const backToList = () => {
     navigate('/Setting');
   };
@@ -48,6 +49,7 @@ const SettingEdit = () => {
         .post('/setting/editSetting', settingdetails)
         .then(() => {
           message('Record editted successfully', 'success');
+          getSettingById();
         })
         .catch(() => {
           message('Unable to edit record.', 'error');
@@ -57,6 +59,16 @@ const SettingEdit = () => {
     }
   };
 
+  const DeleteSetting = () => {
+    api
+      .post('/setting/DeleteSetting', { setting_id: id })
+      .then(() => {
+        message('Record editted successfully', 'success');
+      })
+      .catch(() => {
+        message('Unable to edit record.', 'error');
+      });
+  };
   useEffect(() => {
     getSettingById();
   }, [id]);
@@ -67,63 +79,16 @@ const SettingEdit = () => {
       <Form>
         <FormGroup>
           <ToastContainer></ToastContainer>
-          <ComponentCardV2>
-            <Row>
-              <Col>
-                <Button
-                  className="shadow-none"
-                  color="primary"
-                  onClick={() => {
-                    editSettingData();
-                    navigate('/Setting');
-                  }}
-                >
-                  Save
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  className="shadow-none"
-                  color="primary"
-                  onClick={() => {
-                    editSettingData();
-                    applyChanges();
-                  }}
-                >
-                  Apply
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  type="submit"
-                  className="btn btn-dark shadow-none"
-                  onClick={(e) => {
-                    if (window.confirm('Are you sure you want to cancel? ')) {
-                      navigate('/Setting');
-                    } else {
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Col>
-              <Col>
-                <DeleteButton id={id} columnname="setting_id" tablename="setting"></DeleteButton>
-              </Col>
-              <Col>
-                <Button
-                  className="shadow-none"
-                  color="dark"
-                  onClick={() => {
-                    backToList();
-                  }}
-                >
-                  Back to List
-                </Button>
-              </Col>
-            </Row>
-          </ComponentCardV2>
+        
+          <ApiButton
+            editData={editSettingData}
+            navigate={navigate}
+            //applyChanges={updateData}
+            backToList={backToList}
+            deleteData={DeleteSetting}
+            module="Setting"
+          ></ApiButton>
+
         </FormGroup>
       </Form>
       {/* Setting Details */}
@@ -173,7 +138,10 @@ const SettingEdit = () => {
                   <FormGroup>
                     <Label> Value</Label>
                     <br></br>
+                    &nbsp;
+                    &nbsp;
                     <Label> Yes </Label>
+                    &nbsp;
                     <Input
                       name="value"
                       value="1"
@@ -181,7 +149,10 @@ const SettingEdit = () => {
                       defaultChecked={settingdetails && settingdetails.value === '1' && true}
                       onChange={handleInputs}
                     />
+                    &nbsp;
+                    &nbsp;
                     <Label> No </Label>
+                    &nbsp;
                     <Input
                       name="value"
                       value="0"

@@ -5,12 +5,13 @@ import '../form-editor/editor.scss';
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
-import SubCategoryButton from '../../components/SubCategoryTable/SubCategoryButton';
+//import SubCategoryButton from '../../components/SubCategoryTable/SubCategoryButton';
 import SubCategoryEditDetails from '../../components/SubCategoryTable/SubCategoryEditDetails';
 import SubCategoryPageMetaData from '../../components/SubCategoryTable/SubCategoryPageMetaData';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
+import ApiButton from '../../components/ApiButton';
 
 const SubCategoryEdit = () => {
   // All state variables
@@ -30,13 +31,13 @@ const SubCategoryEdit = () => {
   };
 
   // Route Change
-  const applyChanges = () => {};
-  const saveChanges = () => {
-    if (subcategoryeditdetails.sub_category_title !== '') {
-      navigate('/SubCategory');
-    }
-    window.location.reload();
-  };
+  // const applyChanges = () => {};
+  // const saveChanges = () => {
+  //   if (subcategoryeditdetails.sub_category_title !== '') {
+  //     navigate('/SubCategory');
+  //   }
+  //   window.location.reload();
+  // };
   const backToList = () => {
     navigate('/SubCategory');
   };
@@ -123,7 +124,7 @@ const SubCategoryEdit = () => {
       <BreadCrumbs />
       <ToastContainer />
       {/* SubCategory Button Details */}
-      <SubCategoryButton
+      {/* <SubCategoryButton
         saveChanges={saveChanges}
         applyChanges={applyChanges}
         backToList={backToList}
@@ -131,10 +132,17 @@ const SubCategoryEdit = () => {
         deleteSubCategoryData={deleteSubCategoryData}
         navigate={navigate}
         id={id}
-      ></SubCategoryButton>
-
+      ></SubCategoryButton> */}
+<ApiButton
+            editData={editSubCategoryData}
+            navigate={navigate}
+            //applyChanges={updateData}
+            backToList={backToList}
+            deleteData={deleteSubCategoryData}
+            module="SubCategory"
+          ></ApiButton>
       {/* Sub Category  Details */}
-      <BreadCrumbs />
+    
       <SubCategoryEditDetails
         subcategoryeditdetails={subcategoryeditdetails}
         handleInputs={handleInputs}

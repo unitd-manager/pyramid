@@ -23,6 +23,7 @@ function SubconWorkPaymentHistory({ workOrderPaymentHistory, setWorkOrderPayment
     setWorkOrderPaymentHistory: PropTypes.func,
     subCon: PropTypes.any,
   };
+  console.log("de11111tails",subCon)
 
   const [paymentHistoryData, setPaymentHistoryData] = useState([]);
 

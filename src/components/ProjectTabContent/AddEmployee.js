@@ -5,7 +5,7 @@ import CommonTable from '../CommonTable';
 import TimesheetModal from '../ProjectModal/TimesheetModal';
 import ChooseEmployee from '../ProjectModal/ChooseEmployee';
 import api from '../../constants/api';
-import PdfEmpTimesheet from '../PDF/PdfEmpTimesheet';
+import MonthYear from '../ProjectModal/MonthYear';
 
 const AddEmployee = () => {
 
@@ -13,9 +13,9 @@ const AddEmployee = () => {
 
   const [timesheet, setTimesheet] = useState(false);
   const [chooseEmp, setChooseEmp] = useState(false);
+  const [chooseMonthYear, setChooseMonthYear] = useState(false);
   const [getemployeeLinked, setGetEmployeeLinked] = useState();
   const [getSingleEmployeeData, setSingleEmployeeData] = useState();
-  const [totalEmpTimesheetRecord, setTotalEmpTimesheetRecord] = useState();
 
     const Employeecolumns = [
         {
@@ -27,7 +27,7 @@ const AddEmployee = () => {
         {
           name: 'Name',
           selector: 'name',
-        },
+        }
       ];
 
   //getting Employee data by Employee id
@@ -40,16 +40,8 @@ const AddEmployee = () => {
       })
   }
 
-  const showEmpDataInTimsheet = () => {
-    api.get('/timesheet/getAllEmpTimesheet').then((res) => {
-      setTotalEmpTimesheetRecord(res.data.data);
-    });
-  };
-
-
   useEffect(() => {
     getLinkedEmployee();
-    showEmpDataInTimsheet();
     }, [id])
 
     const uniqueEmployeeData = getemployeeLinked?.reduce((acc, curr) => {
@@ -83,15 +75,14 @@ const AddEmployee = () => {
              return (
              <tr>
               <td>{i+1}</td>
-              <td>{e.first_name}</td>
-              <td>
+              <td>{e.employee_name}</td>
+              <td style={{display:'flex',justifyContent:'center'}}>
                   <Button color="primary" className="shadow-none" 
                   onClick={() => { 
-                    setTimesheet(true)
+                    setChooseMonthYear(true)
                     setSingleEmployeeData(e)
                   }}> New Timesheet </Button>
               </td>
-              <td> < PdfEmpTimesheet getSingleEmployeeData={e} totalEmpTimesheetRecord={totalEmpTimesheetRecord} /> </td>
            </tr>) 
             })}
           </tbody>
@@ -99,6 +90,8 @@ const AddEmployee = () => {
       </Col>
     </Row>
      <ChooseEmployee chooseEmp={chooseEmp} setChooseEmp={setChooseEmp} />
+     <MonthYear chooseMonthYear={chooseMonthYear} setChooseMonthYear={setChooseMonthYear} getSingleEmployeeData={getSingleEmployeeData} 
+    setSingleEmployeeData={setSingleEmployeeData} />
     <TimesheetModal timesheet={timesheet} setTimesheet={setTimesheet} 
     getSingleEmployeeData={getSingleEmployeeData} 
     setSingleEmployeeData={setSingleEmployeeData} />

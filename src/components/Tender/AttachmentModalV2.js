@@ -58,6 +58,9 @@ const AttachmentModalV2 = ({
         })
         .then(() => {
           message('Files Uploaded Successfully', 'success');
+          setTimeout(() => {
+                        window.location.reload()
+                    }, 400);
           setUploaded(null)
           setHandleValue()
           setFile([])

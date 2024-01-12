@@ -77,7 +77,7 @@ const PdfPurchaseOrder = () => {
           style: 'tableHead',
         },
         {
-          text: 'Product Name',
+          text: 'Description',
           style: 'tableHead',
         },
         {
@@ -212,29 +212,14 @@ const PdfPurchaseOrder = () => {
                 },
               ],
             },
-            {
+            { 
               stack: [
                 {text:` Po Number :${purchaseDetails.po_code?purchaseDetails.po_code:''} `,style: [ 'textSize'],margin:[120,0,0,0]  },
-                {text:` Po Date : ${(purchaseDetails.purchase_order_date)? moment(purchaseDetails.purchase_order_date).format('DD-MM-YYYY'):''} `,style: [ 'textSize'],margin:[135,0,0,0]  },
-                {text:` Your Ref :${purchaseDetails.supplier_reference_no?purchaseDetails.supplier_reference_no:''} `,style: [ 'textSize'],margin:[132,0,0,0]  },
-                {text:` Our Ref : ${purchaseDetails.our_reference_no?purchaseDetails.our_reference_no:''}`,style: [ 'textSize'],margin:[137,0,0,0]  },
-                {
-                  text: ` Ship To :${
-                    purchaseDetails.shipping_address_flat
-                      ? purchaseDetails.shipping_address_flat
-                      : ''
-                  }\n${
-                    purchaseDetails.shipping_address_street
-                      ? purchaseDetails.shipping_address_street
-                      : ''
-                  }\n ${
-                    purchaseDetails.shipping_address_country
-                      ? purchaseDetails.shipping_address_country
-                      : ''
-                  }`,
-                  style: ['textSize'],
-                  margin: [130, 0, 0, 0],
-                },
+                {text:` Date : ${(purchaseDetails.purchase_order_date)? moment(purchaseDetails.purchase_order_date).format('DD-MM-YYYY'):''} `,style: [ 'textSize'],margin:[120,0,0,0]  },
+                {text:` Yr Ref No :${purchaseDetails.supplier_reference_no?purchaseDetails.supplier_reference_no:''} `,style: [ 'textSize'],margin:[120,0,0,0]  },
+                {text:` Yr Quote Date : ${(purchaseDetails.yr_quote_date)? moment(purchaseDetails.yr_quote_date).format('DD-MM-YYYY'):''} `,style: [ 'textSize'],margin:[120,0,0,0]  },
+                {text:` Delivery Date : ${(purchaseDetails.delivery_date)? moment(purchaseDetails.delivery_date).format('DD-MM-YYYY'):''} `,style: [ 'textSize'],margin:[120,0,0,0]  },
+
               ],
             },
           ],
@@ -283,107 +268,42 @@ const PdfPurchaseOrder = () => {
           },
           table: {
             headerRows: 1,
-            widths: ['50%', '51%'],
+            widths: ['34%','33%', '33%'],
 
             body: [
               [
                 {
-                  text: 'Vendor Name',
-                  alignment: 'center',
+                  text: 'Item',
+                  alignment: 'left',
                   style: 'tableHead',
                 },
-                {
-                  text: 'Company Name',
-                  alignment: 'center',
-                  style: 'tableHead',
-                },
-              ],
-            ],
-          },
-        },
-        '\n',
-        {
-          columns: [
-            {
-              text: ` To : ${purchaseDetails.supplier_name ? purchaseDetails.supplier_name : ''}`,
-              margin: [20, 0, 0, 0],
-              style: ['notesText', 'textSize'],
-            },
-            {
-              text: `${purchaseDetails.company_name ? purchaseDetails.company_name : ''}`,
-              alignment: 'center',
-              style: ['invoiceAdd', 'textSize'],
-            },
-          ],
-        },
-        '\n',
-        {
-          layout: {
-            defaultBorder: false,
-            hLineWidth: () => {
-              return 1;
-            },
-            vLineWidth: () => {
-              return 1;
-            },
-            hLineColor: (i) => {
-              if (i === 1 || i === 0) {
-                return '#bfdde8';
-              }
-              return '#eaeaea';
-            },
-            vLineColor: () => {
-              return '#eaeaea';
-            },
-            hLineStyle: () => {
-              // if (i === 0 || i === node.table.body.length) {
-              return null;
-              //}
-            },
-            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
-            paddingLeft: () => {
-              return 10;
-            },
-            paddingRight: () => {
-              return 10;
-            },
-            paddingTop: () => {
-              return 2;
-            },
-            paddingBottom: () => {
-              return 2;
-            },
-            fillColor: () => {
-              return '#fff';
-            },
-          },
-          table: {
-            headerRows: 1,
-            widths: ['50%', '51%'],
-
-            body: [
-              [
                 {
                   text: 'Payment Terms',
-                  alignment: 'center',
+                  alignment: 'right',
                   style: 'tableHead',
                 },
                 {
-                  text: 'Required By Date',
-                  alignment: 'center',
+                  text: 'Currency',
+                  alignment: 'right',
                   style: 'tableHead',
                 },
               ],
               [
                 {
-                  text: `${purchaseDetails.payment_terms ? purchaseDetails.payment_terms : ''}`,
-                  alignment: 'center',
+                  text: `${purchaseDetails.purchase_item ? purchaseDetails.purchase_item : ''}`,
+                  alignment: 'left',
                   style: 'tableBody',
                   border: [false, false, false, true],
                 },
                 {
-                  text: `${(purchaseDetails.creation_date)? moment(purchaseDetails.creation_date).format('DD-MM-YYYY'):''}`,
-                  alignment: 'center',
+                  text: `${purchaseDetails.payment_terms ? purchaseDetails.payment_terms : ''}`,
+                  alignment: 'right',
+                  style: 'tableBody',
+                  border: [false, false, false, true],
+                },
+                {
+                  text: `${purchaseDetails.currency ? purchaseDetails.currency : ''}`,
+                  alignment: 'right',
                   border: [false, false, false, true],
                   style: 'tableBody',
                 },
@@ -443,15 +363,16 @@ const PdfPurchaseOrder = () => {
         {
           columns: [
               {
-              text: `Approved By :`,
+              text: `General Condition : \n${(purchaseDetails.notes ? purchaseDetails.notes : '')}`,
               alignment: 'left',
+              bold: true,
               style: ['invoiceAdd', 'textSize']
             },
+          
              {   stack:[
     {text:`SubTotal $ : ${(gTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[130,0,0,0] },
      '\n',
-    {text:`Freight :`, style: [ 'textSize'], margin :[145,0,0,0]  },
-    '\n',
+   
      {text:`GST:    ${(gstTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[160,0,0,0]  },
      '\n',
       {text:`Total $ :  ${(Total.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[145,0,0,0] },
@@ -460,16 +381,28 @@ const PdfPurchaseOrder = () => {
       
             
           ],
+          
         },
         '\n',
-    
-        
+    {
+        columns: [
+          {
+            width: '80%',
+            text: `Authorized By`,
+            alignment: 'right',
+            bold: true,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
+      },
+      '\n',
         {
           width: '100%',
           alignment: 'center',
           text: 'PURCHASE ORDER CREATED',
           bold: true,
-          margin: [0, 10, 0, 10],
+          margin: [10, 10, 0, 10],
           fontSize: 12,
         },
       ],

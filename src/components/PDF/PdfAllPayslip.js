@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Button } from 'reactstrap';
@@ -8,15 +8,15 @@ import api from '../../constants/api';
 import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
-const PdfPaySlip = ({payrolls}) => {
+const PdfPaySlip = ({ payrollsYear, payrollsMonth }) => {
   PdfPaySlip.propTypes = {
-    payrolls: PropTypes.array,
-  }
-  // const { id } = useParams();
-  const [hfdata, setHeaderFooterData] = React.useState();
-  // const [payroll, setPayroll] = React.useState();
+    payrollsYear: PropTypes.any,
+    payrollsMonth: PropTypes.any,
+  };
+  const [hfdata, setHeaderFooterData] = useState();
+  const [payrollss, setPayrolls] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
       setHeaderFooterData(res.data.data);
     });
@@ -26,35 +26,31 @@ const PdfPaySlip = ({payrolls}) => {
     const filteredResult = hfdata.find((e) => e.key_text === key);
     return filteredResult.value;
   };
-  // Gettind data from Job By Id
-  // const getPayslip = () => {
-  //   api
-  //     .post('/PayrollManagement/getpayrollmanagementById', { payroll_management_id: id })
-  //     .then((res) => {
-  //       setPayroll(res.data.data[0]);
-  //     })
-  //     .catch(() => {
-  //       message('payroll Data Not Found', 'info');
-  //     });
-  // };
+  // console.log('payrollsYear',payrollsYear)
+  //  console.log('payrollsMonth',payrollsMonth)
+  const getPayslip = () => {
+    api
+      .post('/PayrollManagement/getpayrollmanagementFilterYearMonth', {
+        month: payrollsMonth,
+        year: payrollsYear,
+      })
+      .then((res) => {
+        setPayrolls(res.data.data);
+      })
+      .catch(() => {
+        // Handle error
+      });
+  };
 
-  // React.useEffect(() => {
-  //   getPayslip();
-  // }, []);
+  useEffect(() => {
+    getPayslip();
+  }, []);
 
-  const GetPdf = () => {
-
-    const pdfArray = [];
-
+  const generatePayslipPdf = (payrolls) => {
+    const contents = [];
     payrolls.forEach((payroll) => {
-        console.log('payrolpdf',payroll)
-    const dd = {
-      pageSize: 'A4',
-      header: PdfHeader({ findCompany }),
-      pageMargins: [40, 150, 40, 80],
-      footer: PdfFooter,
-      content: [
-        {
+      contents.push(
+        [{
           layout: {
             defaultBorder: false,
             hLineWidth: () => {
@@ -970,15 +966,24 @@ const PdfPaySlip = ({payrolls}) => {
         {
           width: '100%',
           alignment: 'center',
-          text: 'PAYSLIP CREATED',
+          text: '',
           bold: true,
           margin: [0, 10, 0, 10],
           fontSize: 12,
         },
-      ],
+     ],) }
+    
+);
+    const dd = {
+      pageSize: 'A4',
+      header: PdfHeader({ findCompany }),
+      pageMargins: [40, 180, 40, 80],
+      footer: PdfFooter,
+      content: contents,
+
       margin: [0, 50, 50, 50],
 
-      styles: {
+      styles:  {
         logo: {
           margin: [-20, 20, 0, 0],
         },
@@ -1027,27 +1032,23 @@ const PdfPaySlip = ({payrolls}) => {
     const pdfDocGenerator = pdfMake.createPdf(dd, null, null, pdfFonts.pdfMake.vfs);
 
     pdfDocGenerator.getDataUrl((dataUrl) => {
-        pdfArray.push(dataUrl);
-      });
-    });
-
-    // Download the PDFs
-    pdfArray.forEach((dataUrl, index) => {
       const downloadLink = document.createElement('a');
       downloadLink.href = dataUrl;
-      downloadLink.download = `pdf-${index + 1}.pdf`;
+      downloadLink.download = `pdf-Allpayslip.pdf`;
       downloadLink.click();
     });
-    
+  };
+
+  const handleGenerateAllPdfs = () => {
+    generatePayslipPdf(payrollss);
   };
 
   return (
     <>
-      <Button type="button" className="btn btn-primary mr-2" onClick={GetPdf}>
-        Submit
+      <Button type="button" className="btn btn-primary mr-2" onClick={handleGenerateAllPdfs}>
+        Generate PDFs
       </Button>
     </>
   );
 };
-
 export default PdfPaySlip;
