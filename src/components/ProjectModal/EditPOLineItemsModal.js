@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Row,
   Col,
@@ -11,6 +11,7 @@ import {
   ModalFooter,
   Label,
 } from 'reactstrap';
+import Select from 'react-select';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import api from '../../constants/api';
@@ -23,13 +24,15 @@ const EditPOLineItemsModal = ({ editPOLineItemsModal, setEditPOLineItemsModal, d
     data: PropTypes.array,
   };
 
+  const [getProductValue, setProductValue] = useState();
   const [newItems, setNewItems] = useState([]);
   const [purchase, setPurchase] = useState(data[0]);
   const [items, setItems] = useState(data);
   const [addNewProductModal, setAddNewProductModal] = useState(false);
-  const [addMoreItem, setMoreItem] = useState(0);
   const AddMoreItem = () => {
-    setMoreItem(addMoreItem + 1);
+    const item = newItems.slice();
+    item.push(1);
+    setNewItems(item)
   };
 console.log('purchase',purchase);
   const handleInputs = (e) => {
@@ -44,7 +47,7 @@ console.log('purchase',purchase);
   }
   function updateNewItemState(index, property, e) {
     const copyDeliverOrderProducts = [...newItems];
-    const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e.target.value };
+    const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e?.target?.value || e?.value };
     copyDeliverOrderProducts[index] = updatedObject;
     setNewItems(copyDeliverOrderProducts);
   }
@@ -77,7 +80,8 @@ console.log('purchase',purchase);
   const getTotalOfPurchase = () => {
     let total = 0;
     items.forEach((a) => {
-      total += parseInt(a.qty, 10) * parseFloat(a.cost_price, 10);
+      const amount = parseInt(a.qty, 10) * parseFloat(a.cost_price, 10);
+       total += Number.isNaN(amount) ? 0 : amount;
     });
     return total;
   };
@@ -96,14 +100,48 @@ console.log('purchase',purchase);
     });
   };
 
-  // Clear row value
-  // const ClearValue = (ind) => {
-  //   setMoreItem((current) =>
-  //     current.filter((obj) => {
-  //       return obj.id !== ind.id;
-  //     }),
-  //   );
-  // };
+  //Clear row value
+  const ClearValue = (index, newItem) => {
+    let arr = [];
+    let setArr;
+    
+    if (newItem) {
+      arr = [...newItems];
+      setArr = setNewItems;
+    }else {
+      arr = [...items];
+      setArr = setItems;
+    }
+
+    const updatedObject = { ...arr[index], 
+      item_title: "",
+      unit: "",
+      qty: "0",
+      cost_price: "0",
+      description: "",
+    };
+    arr[index] = updatedObject;
+    setArr(arr);
+  };
+
+  const getProduct = () => {
+    api.get('/product/getProducts').then((res) => {
+      const arr = res.data.data;
+      const finaldat = [];
+      arr.forEach((item) => {
+        finaldat.push({ value: item.product_id, label: item.title });
+      });
+      setProductValue(finaldat);
+    });
+  };
+  useEffect(
+    () => {
+      getProduct();
+      return () => {
+        setItems(data);
+      }
+    }, []
+  )
 
   return (
     <>
@@ -207,6 +245,7 @@ console.log('purchase',purchase);
               </thead>
               <tbody>
                 {items.map((el, index) => {
+                  const amount = el.cost_price * el.qty;
                   return (
                     <tr key={el.po_product_id}>
                       <td data-label="ProductName">
@@ -241,7 +280,7 @@ console.log('purchase',purchase);
                           onChange={(e) => updateState(index, 'cost_price', e)}
                         />
                       </td>
-                      <td data-label="Total Price">{el.cost_price * el.qty}</td>
+                      <td data-label="Total Price">{Number.isNaN(amount) ? 0 : amount}</td>
                       <td data-label="Remarks">
                         <Input
                           type="textarea"
@@ -252,22 +291,43 @@ console.log('purchase',purchase);
                       </td>
                       <td data-label="Action">
                         <div className='anchor'>
-                          <span>Clear</span>
+                          <span onClick={()=>ClearValue(index)}>Clear</span>
                         </div>
                       </td>
                     </tr>
                   );
                 })}
-                {[...Array(addMoreItem)].map((elem, index) => {
+                {newItems?.map((elem, index) => {
+                  const amount = elem.cost_price * elem.qty;
                   return (
-                    <tr key={addMoreItem}>
+                    <tr key={elem}>
                       <td data-label="ProductName">
+                        <Select
+                          key={elem.id}
+                          defaultValue={{ value: elem.product_id, label: elem.title }}
+                          onChange={(e) => {
+                            updateNewItemState(index, 'item_title', e)
+                          }}
+                          options={getProductValue}
+                        />
                         <Input
+                          value={elem.product_id}
+                          type="hidden"
+                          name="product_id"
+                          onChange={(e) => updateState(index, 'product_id', e)}
+                        ></Input>
+                        <Input
+                          value={elem.title}
+                          type="hidden"
+                          name="title"
+                          onChange={(e) => updateState(index, 'title', e)}
+                        ></Input>
+                        {/* <Input
                           type="text"
                           name="item_title"
                           value={elem.item_title}
                           onChange={(e) => updateNewItemState(index, 'item_title', e)}
-                        />
+                        /> */}
                       </td>
                       <td data-label="UoM">
                         <Input
@@ -293,7 +353,7 @@ console.log('purchase',purchase);
                           onChange={(e) => updateNewItemState(index, 'cost_price', e)}
                         />
                       </td>
-                      <td data-label="Total Price">{elem.cost_price * elem.qty}</td>
+                      <td data-label="Total Price">{Number.isNaN(amount) ? 0 : amount}</td>
                       <td data-label="Remarks">
                         <Input
                           type="textarea"
@@ -304,7 +364,7 @@ console.log('purchase',purchase);
                       </td>
                       <td data-label="Action">
                         <div className='anchor'>
-                          <span>Clear</span>
+                          <span onClick={()=>ClearValue(index, true)}>Clear</span>
                         </div>
                       </td>
                     </tr>

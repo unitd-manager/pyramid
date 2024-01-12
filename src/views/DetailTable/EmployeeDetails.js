@@ -86,18 +86,21 @@ const EmployeeDetails = () => {
         employeeData.work_permit !== ''
       ) {
         api
-          .post('/employeemodule/getEmployeeById', {
-            nric_no: employeeData.nric_no,
-            employee_id:employeeData.employee_id
-          })
-          .then((response) => {
-            if (response.data.error) {
-              // Number already exists, show an alert message
-              setIsNricAlreadyInserted(true); // Set the state to indicate that NRIC is already inserted
-              message('NRIC is already inserted. Please provide a different number.', 'warning');
-            } else {
-              // No duplicates found, proceed with inserting the employee
-              setIsNricAlreadyInserted(false); // Reset the state
+  .get('/employeemodule/CheckNricNo')
+  .then((response) => {
+    const existingNricNumbers = response.data.data;
+  
+
+    // Check if the dynamically provided NRIC number exists in the array
+    const isNricAlreadyExists = existingNricNumbers.includes(employeeData.nric_no);
+
+    if (isNricAlreadyExists) {
+      // Number already exists, show an alert message or handle it as needed
+      setIsNricAlreadyInserted(true);
+      message('NRIC is already inserted. Please provide a different number.', 'warning');
+    } else {
+      // No duplicates found, proceed with your logic
+      setIsNricAlreadyInserted(false);
 
               api
                 .post('/commonApi/getCodeValue', { type: 'employee' })
@@ -204,7 +207,7 @@ const EmployeeDetails = () => {
                       type="text"
                     />
                     {(isNricAlreadyInserted && (
-                      <alert color="warning">
+                      <alert className="error-message">
                         NRIC is already inserted. Please provide a different number.
                       </alert>
                     )) ||

@@ -416,14 +416,10 @@ const ProjectEdit = () => {
   const getTotalOfPurchase = (pItems) => {
     let total = 0;
     pItems.forEach((a) => {
-      total += parseFloat(parseFloat(a.qty) * parseFloat(a.cost_price));
-    });
-    if(total){
-      return total;
-    }
-      return 0;
-    
-    
+      const amount = parseFloat(parseFloat(a.qty) * parseFloat(a.cost_price));
+      total += Number.isNaN(amount) ? 0 : amount;
+    });  
+    return total;
   };
 
   return (

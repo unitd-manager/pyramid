@@ -111,9 +111,10 @@ const CpfCalculatorEdit = () => {
       message('Please fill all required fields', 'warning');
     }
   };
+
   const deleteData = () => {
     Swal.fire({
-      title: `Are you sure?`,
+      title: `Are you sure? ${id}`,
       text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
@@ -122,15 +123,15 @@ const CpfCalculatorEdit = () => {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        api
-          .delete('/cpfCalculator/deleteCpfCalculator', { cpf_calculator_id: id })
-          .then(() => {
-            Swal.fire('Deleted!', 'CPF Calculator has been deleted.', 'success');
-            //window.location.reload();
-          });
+        api.post('/cpfCalculator/deleteCpfCalculator', { cpf_calculator_id: id }).then(() => {
+          Swal.fire('Deleted!', 'Your employee has been deleted.', 'success');
+          window.location.reload();
+        });
       }
     });
   };
+
+ 
   useEffect(() => {
     editCpfRecordById();
   }, [id]);
