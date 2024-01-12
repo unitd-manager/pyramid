@@ -245,8 +245,8 @@ export default function TenderMoreDetails({
                     {incharge &&
                       incharge.map((e) => {
                         return (
-                          <option value={e.employee_id} key={e.first_name}>
-                            {e.first_name}
+                          <option value={e.employee_id} key={e.employee_name}>
+                            {e.employee_name}
                           </option>
                         );
                       })}

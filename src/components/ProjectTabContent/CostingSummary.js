@@ -17,7 +17,7 @@ export default function CostingSummary() {
       .post('/projecttabcostingsummary/getTabCostingSummaryById', { project_id: id })
       .then((res) => {
         setGetCostingSummary(res.data.data[0]);
-      });
+      }).catch(()=>{});
   };
   const getCostingSummaryChargesById = () => {
     api
@@ -26,7 +26,7 @@ export default function CostingSummary() {
       })
       .then((res) => {
         setChargesDetails(res.data.data);
-      });
+      }).catch(()=>{});
   };
   useEffect(() => {
     getCostingSummaryChargesById();

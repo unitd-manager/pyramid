@@ -37,14 +37,15 @@ const QuotationViewLineItem = ({
       });
   };
 
-  console.log('qoute',quote)
-  const QuotationDeleteItem = () => {
+  console.log('quotation',quotation)
+  const QuotationDeleteItem = (quoteItemsId) => {
     api
       .post('/projecttabquote/deleteQuoteItems', {
-        quote_items_id: quote,
+        quote_items_id: quoteItemsId,
       })
       .then(() => {
         message('Record deteled successfully', 'success');
+        QuotationViewLine();
       })
       .catch(() => {
         message(' delete Line Data not found', 'info');
@@ -63,12 +64,12 @@ const QuotationViewLineItem = ({
             <thead>
               <tr>
                 <th scope="col">Title </th>
-                <th scope="col">Desription </th>
+                <th scope="col">Description </th>
                 <th scope="col">Qty</th>
                 <th scope="col">UOM</th>
                 <th scope="col">Unit Price</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Updated By</th>
+                <th scope="col"></th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
@@ -84,6 +85,7 @@ const QuotationViewLineItem = ({
                       <td>{e.unit}</td>
                       <td>{e.unit_price}</td>
                       <td>{e.amount} </td>
+                      
                       <td></td>
 
                       <td>
@@ -108,7 +110,7 @@ const QuotationViewLineItem = ({
                                 <span
                                   onClick={() => {
                                     setQuoteLine(e);
-                                    QuotationDeleteItem();
+                                    QuotationDeleteItem(e.quote_items_id);
                                   }}
                                 >
                                   <Icon.Delete />

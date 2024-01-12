@@ -41,11 +41,11 @@ const Content = () => {
         processing: true,
         dom: 'Bfrtip',
         buttons: [
-          {
-            extend: 'print',
-            text: 'Print',
-            className: 'shadow-none btn btn-primary',
-          },
+          // {
+          //   extend: 'print',
+          //   text: 'Print',
+          //   className: 'shadow-none btn btn-primary',
+          // },
         ],
       });
     }, 1000);

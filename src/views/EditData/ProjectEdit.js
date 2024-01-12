@@ -50,7 +50,7 @@ const ProjectEdit = () => {
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
   const [attachmentModal, setAttachmentModal] = useState(false);
   const [tabdeliveryorder, setTabdeliveryorder] = useState([]);
-  const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
+  //const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
   const [checkId, setCheckId] = useState([]);
   const [editDeliveryOrder, setEditDeliveryOrder] = useState(false);
   const [editPo, setEditPo] = useState(false);
@@ -142,22 +142,26 @@ const ProjectEdit = () => {
   };
 
   const UpdateData = () => {
+    if(projectDetail.category){
     api.post('/project/edit-Project', projectDetail).then(() => {
       message('Record editted successfully', 'success');
       setTimeout(() => {
         window.location.reload();
       }, 300);
     });
+  }else{
+    message('Please Enter Category', 'warning');
+  }
   };
 
-  // Tab PurchaseOrder LineItem Table
-  const TabPurchaseOrderLineItemTable = () => {
-    api.post('/purchaseorder/TabPurchaseOrderLineItemTable', { project_id: id }).then((res) => {
-      let arrayOfObj = Object.entries(res.data.data).map((e) => ({ id: e[0], data: e[1] }));
-      arrayOfObj = arrayOfObj.reverse();
-      setTabPurchaseOrderLineItemTable(arrayOfObj);
-    });
-  };
+  // // Tab PurchaseOrder LineItem Table
+  // const TabPurchaseOrderLineItemTable = () => {
+  //   api.post('/purchaseorder/TabPurchaseOrderLineItemTable', { project_id: id }).then((res) => {
+  //     let arrayOfObj = Object.entries(res.data.data).map((e) => ({ id: e[0], data: e[1] }));
+  //     arrayOfObj = arrayOfObj.reverse();
+  //     setTabPurchaseOrderLineItemTable(arrayOfObj);
+  //   }).catch(()=>{});
+  // };
 
   // Tab Delivery Order
   const TabDeliveryOrder = () => {
@@ -398,21 +402,21 @@ const ProjectEdit = () => {
   useEffect(() => {
     getProjectById();
     TabDeliveryOrder();
-    getLineItem();
-    TabPurchaseOrderLineItemTable();
+   // getLineItem();
+    //TabPurchaseOrderLineItemTable();
     getContactById();
   }, [id]);
 
   useEffect(() => {
     setTimeout(() => {
-      TabPurchaseOrderLineItemTable();
+     // TabPurchaseOrderLineItemTable();
     }, 2000);
   }, [addPurchaseOrderModal]);
 
   const getTotalOfPurchase = (pItems) => {
     let total = 0;
     pItems.forEach((a) => {
-      total += parseFloat(a.qty) * parseFloat(a.cost_price);
+      total += parseFloat(parseFloat(a.qty) * parseFloat(a.cost_price));
     });
     if(total){
       return total;
@@ -501,8 +505,8 @@ const ProjectEdit = () => {
               setAddPurchaseOrderModal={setAddPurchaseOrderModal}
               insertDelivery={insertDelivery}
               addQtytoStocks={addQtytoStocks}
-              tabPurchaseOrderLineItemTable={tabPurchaseOrderLineItemTable}
-              setTabPurchaseOrderLineItemTable={setTabPurchaseOrderLineItemTable}
+             // tabPurchaseOrderLineItemTable={tabPurchaseOrderLineItemTable}
+             // setTabPurchaseOrderLineItemTable={setTabPurchaseOrderLineItemTable}
               testJsonData={testJsonData}
               setEditPo={setEditPo}
               setPOId={setPOId}
@@ -554,7 +558,7 @@ const ProjectEdit = () => {
                   color="primary"
                   className="shadow-none"
                   onClick={(e) => {
-                    insertWorkOrder();
+                    
                     handleClientForms(e);
                     generateCode(e);
                   }}

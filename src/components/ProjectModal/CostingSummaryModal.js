@@ -77,6 +77,10 @@ const CostingSummaryModal = ({ addCostingSummaryModal, setAddCostingSummaryModal
             description:''
           })
           getsummaryChargesById();
+          setTimeout(()=>{
+            window.location.reload();
+          },400)
+          
           message('Costing summary Charges Data Inserted Successfully', 'success');
         })
         .catch(() => {

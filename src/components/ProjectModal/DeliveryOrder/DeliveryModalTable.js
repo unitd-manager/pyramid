@@ -51,10 +51,10 @@ const DeliveryModalTable = ({ delivery, handleInputs, }) => {
                       <FormGroup>
                         <Label>PO Date</Label>
                         <Input
-                          type="text"
-                          value={delivery && delivery.po_date}
+                          type="date"
+                          value={delivery && delivery.purchase_order_date}
                           onChange={handleInputs}
-                          name="po_date"
+                          name="purchase_order_date"
                           disabled
                         />
                       </FormGroup>
@@ -66,7 +66,7 @@ const DeliveryModalTable = ({ delivery, handleInputs, }) => {
                           type="text"
                           value={delivery && delivery.location}
                           onChange={handleInputs}
-                          name="po_number"
+                          name="location"
                         />
                       </FormGroup>
                     </Col>

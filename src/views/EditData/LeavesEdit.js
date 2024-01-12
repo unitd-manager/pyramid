@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import { Row, Col, Form, FormGroup, Button, TabPane, TabContent } from 'reactstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
@@ -15,6 +15,7 @@ import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../form-editor/editor.scss';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import LeaveMainDetails from '../../components/LeaveTable/LeaveMainDetails';
 import ApiButton from '../../components/ApiButton';
@@ -38,6 +39,7 @@ const LeavesEdit = () => {
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
 
   // Button Save Apply Back List
   const applyChanges = () => {};
@@ -111,6 +113,7 @@ const LeavesEdit = () => {
       ) {
         
         leavesDetails.modification_date = creationdatetime;
+        leavesDetails.modified_by = loggedInuser.first_name;
         api
           .post('/leave/editleave', leavesDetails)
           .then(() => {

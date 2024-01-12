@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -7,7 +7,9 @@ import moment from 'moment';
 import message from '../../components/Message';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
+import creationdatetime from '../../constants/creationdatetime';
 
 const LeaveDetails = () => {
   //Navigation and parameters
@@ -24,6 +26,7 @@ const LeaveDetails = () => {
   const handleInputs = (e) => {
     setLeaveInsertData({ ...leaveInsertData, [e.target.name]: e.target.value });
   };
+  const { loggedInuser } = useContext(AppContext);
 
   function isDateInRange(dateToCheck, fromDateArray, toDateArray) {
     for (let i = 0; i < fromDateArray.length; i++) {
@@ -39,7 +42,8 @@ const LeaveDetails = () => {
   }
   //Api insertLeave
   const insertLeave = () => {
-   
+   leaveInsertData.creation_date=creationdatetime;
+   leaveInsertData.created_by=loggedInuser.first_name;
     if (
       leaveInsertData.employee_id !== '' &&
       leaveInsertData.from_date !== '' &&

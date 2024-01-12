@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Row, Col, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -6,7 +6,9 @@ import { ToastContainer } from 'react-toastify';
 import message from '../../components/Message';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
+import creationdatetime from '../../constants/creationdatetime';
 
 const CpfCalculatorDetails = () => {
   const navigate = useNavigate();
@@ -28,10 +30,14 @@ const CpfCalculatorDetails = () => {
     setCpfRecord({ ...cpfRecord, [e.target.name]: e.target.value });
   };
 
+  const { loggedInuser } = useContext(AppContext);
+
   // Client Insert
   const insertCpfCalculator = () => {
     if(cpfRecord.to_age!=='' && cpfRecord.from_age!==''){
     cpfRecord.year = currentYear;
+    cpfRecord.created_by = loggedInuser.first_name;;
+    cpfRecord.creation_date = creationdatetime;
     api
       .post('/cpfCalculator/insertCpfCalculator', cpfRecord)
       .then((res) => {

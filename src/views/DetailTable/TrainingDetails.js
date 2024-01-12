@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -6,7 +6,9 @@ import { ToastContainer } from 'react-toastify';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
+import creationdatetime from '../../constants/creationdatetime';
 
 const TrainingDetails = () => {
   // All State variable
@@ -17,6 +19,7 @@ const TrainingDetails = () => {
   });
   //Navigation and parameter
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
 
   ///getting data from Training
   const getTraining = () => {
@@ -36,6 +39,8 @@ const TrainingDetails = () => {
   //Insert Training
   const insertTrainingDetailData = () => {
     if (trainingDetails.title !== '') {
+      trainingDetails.creation_date = creationdatetime;
+        trainingDetails.created_by = loggedInuser.first_name;
       api
         .post('/training/insertTraining', trainingDetails)
         .then((res) => {

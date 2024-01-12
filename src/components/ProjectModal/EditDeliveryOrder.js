@@ -26,7 +26,7 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
       .post('/project/getDeliveryOrder', { delivery_order_id: data})
       .then((res) => {
         setDelivery(res.data.data[0]);
-        console.log('deliveryorder',res.data.data);
+        console.log('delivery order response', res.data.data[0]);
       });
   };
 
@@ -68,6 +68,7 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
         });
     });
   };
+  
 
   //handle inputs
   function updateState(index, property, e) {

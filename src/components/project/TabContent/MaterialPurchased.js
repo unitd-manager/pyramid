@@ -297,6 +297,7 @@ export default function MaterialPurchased({
               <th>Amount</th>
               <th>Status</th>
               <th>Remarks</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>

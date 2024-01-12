@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,44 +8,42 @@ import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import '../form-editor/editor.scss';
-import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
+import AttachmentModalV2 from '../../components/Tender/AttachmentModalV2';
 import ComponentCard from '../../components/ComponentCard';
 //import ComponentCardV2 from '../../components/ComponentCardV2';
 import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
-import PictureAttachmentModalV2 from '../../components/Tender/PictureAttachmentModalV2';
+//import PictureAttachmentModalV2 from '../../components/Tender/PictureAttachmentModalV2';
 import message from '../../components/Message';
 import api from '../../constants/api';
 import ApiButton from '../../components/ApiButton';
-import AppContext from '../../context/AppContext';
-import creationdatetime from '../../constants/creationdatetime';
-
-
 
 const ContentUpdate = () => {
   // All state variables
   const [lineItem] = useState(null);
-  const [contentDetails, setContentDetails] = useState([]);
+  const [RoomName, setRoomName] = useState('');
+  const [contentDetails, setContentDetails] = useState();
   const [valuelist, setValuelist] = useState();
   const [sectionLinked, setSectionLinked] = useState();
   const [categoryLinked, setCategoryLinked] = useState();
   const [subcategoryLinked, setSubCategoryLinked] = useState();
   const [description, setDescription] = useState('');
   const [attachmentModal, setAttachmentModal] = useState(false);
-  const [pictureData, setDataForPicture] = useState({
+  const [attachmentData, setDataForAttachment] = useState({
     modelType: '',
   });
-    const { loggedInuser } = useContext(AppContext);
-
-
+  // const [pictureData, setDataForPicture] = useState({
+  //   modelType: '',
+  // });
+  const [fileTypes, setFileTypes] = useState('');
+  const [update, setUpdate] = useState(false);
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
-const backToList=()=>{
-  navigate('/Content')
-}
+  const backToList = () => {
+    navigate('/Content');
+  };
   //Setting data in contentDetails
   const handleInputs = (e) => {
     setContentDetails({ ...contentDetails, [e.target.name]: e.target.value });
@@ -56,17 +54,6 @@ const backToList=()=>{
       ...contentDetails,
       [type]: draftToHtml(convertToRaw(e.getCurrentContent())),
     });
-  };
-   //Api call for getting valuelist dropdown
-   const getValuelist = () => {
-    api
-      .get('/content/getValueList')
-      .then((res) => {
-        setValuelist(res.data.data);
-      })
-      .catch(() => {
-        message('valuelist not found', 'info');
-      });
   };
   //Description Modal
   const convertHtmlToDraft = (existingQuoteformal) => {
@@ -86,22 +73,34 @@ const backToList=()=>{
         convertHtmlToDraft(res.data.data.description);
       })
       .catch(() => {
-        //message('Content Data Not Found', 'info');
+       
+      });
+  };
+
+   //Api call for getting valuelist dropdown
+   const getValuelist = () => {
+    api
+      .get('/content/getValueList')
+      .then((res) => {
+        setValuelist(res.data.data);
+      })
+      .catch(() => {
+        message('valuelist not found', 'info');
       });
   };
   //Edit Content
   const editContentData = () => {
-    console.log(contentDetails);
     if (
       contentDetails.title !== '' &&
+      contentDetails.title &&
       contentDetails.sub_category_id !== '' &&
       contentDetails.published !== ''
-    ) {contentDetails.modified_date = creationdatetime;
-      contentDetails.modified_by= loggedInuser.first_name;
+    ) {
       api
         .post('/content/editContent', contentDetails)
         .then(() => {
           message('Record edited successfully', 'success');
+          
         })
         .catch(() => {
           message('Unable to edit record.', 'error');
@@ -110,75 +109,87 @@ const backToList=()=>{
       message('Please fill all required fields', 'warning');
     }
   };
-  // getting data from Section
-  const getsection = () => {
-    api.get('/content/getSection', sectionLinked).then((res) => {
-      setSectionLinked(res.data.data);
-    });
-  };
-  // getting data from Category
-  const getCategory = (sectionId) => {
-    api.post('/section/getSectionCategoryById', { section_id: sectionId }).then((res) => {
-      setCategoryLinked(res.data.data);
-    });
-  };
-  
-  // getting data from SubCategory
-  const getSubCategory = (categoryId) => {
-    api.post('/section/getSectionSubCategoryById', { category_id: categoryId }).then((res) => {
-      setSubCategoryLinked(res.data.data);
-    });
-  };
-  useEffect(() => {
-    if (contentDetails.section_id) {
-      // Use taskdetails.project_milestone_id directly to get the selected project ID
-      const selectedSection = contentDetails.section_id;
-      getCategory(selectedSection);
-    }
-  }, [contentDetails && contentDetails.section_id]);
-  useEffect(() => {
-    if (contentDetails.category_id) {
-      // Use taskdetails.project_milestone_id directly to get the selected project ID
-      const selectedcategory = contentDetails.category_id;
-      getSubCategory(selectedcategory);
-    }
-  }, [contentDetails && contentDetails.category_id]);
 
-   const deleteContentData = () => {
-    Swal.fire({
-      title: `Are you sure? `,
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        api
-          .post('/content/deleteContent', { content_id: id })
-          .then(() => {
-            Swal.fire('Deleted!', 'Contact has been deleted.', 'success');
-            message('Record deleted successfully', 'success');
-            window.location.reload();
-          })
-          .catch(() => {
-            message('Unable to delete record.', 'error');
-          });
-      }
+  // const editContentData1 = () => {
+  //   if (
+  //     contentDetails.title !== '' &&
+  //     contentDetails.sub_category_id !== '' &&
+  //     contentDetails.published !== ''
+  //   ) {
+  //     api
+  //       .post('/content/editContent', contentDetails)
+  //       .then(() => {
+  //         message('Record edited successfully', 'success');
+  //         setTimeout(() => {
+  //           window.location.reload();
+  //         }, 400);
+  //       })
+  //       .catch(() => {
+  //         message('Unable to edit record.', 'error');
+  //       });
+  //   } else {
+  //     message('Please fill all required fields', 'warning');
+  //   }
+  // };
+ // getting data from Section
+ const getsection = () => {
+  api.get('/content/getSection', sectionLinked).then((res) => {
+    setSectionLinked(res.data.data);
+  });
+};
+// getting data from Category
+const getCategory = (sectionId) => {
+  api.post('/section/getSectionCategoryById', { section_id: sectionId }).then((res) => {
+    setCategoryLinked(res.data.data);
+  });
+};
+
+// getting data from SubCategory
+const getSubCategory = (categoryId) => {
+  api.post('/section/getSectionSubCategoryById', { category_id: categoryId }).then((res) => {
+    setSubCategoryLinked(res.data.data);
+  });
+};
+useEffect(() => {
+  if (contentDetails?.section_id) {
+    // Use taskdetails.project_milestone_id directly to get the selected project ID
+    const selectedSection = contentDetails.section_id;
+    getCategory(selectedSection);
+  }
+}, [contentDetails && contentDetails.section_id]);
+useEffect(() => {
+  if (contentDetails?.category_id) {
+    // Use taskdetails.project_milestone_id directly to get the selected project ID
+    const selectedcategory = contentDetails.category_id;
+    getSubCategory(selectedcategory);
+  }
+}, [contentDetails && contentDetails.category_id]);
+
+    //For delete data in db
+    const deleteContentData = () => {
+      api
+        .post('/content/deleteContent', { content_id: id })
+        .then(() => {
+          message('Record deteled successfully', 'success');
+        })
+        .catch(() => {
+          message('Unable to delete record.', 'error');
+        });
+    };
+  //Attachments
+  const dataForAttachment = () => {
+    setDataForAttachment({
+      modelType: 'attachment',
     });
   };
   //Pictures
-  const dataForPicture = () => {
-    setDataForPicture({
-      modelType: 'picture',
-    });
-    console.log('inside DataForPicture');
-  };
+  // const dataForPicture = () => {
+  //   setDataForPicture({
+  //     modelType: 'picture',
+  //   });
+  // };
   useEffect(() => {
     getsection();
-    getCategory();
-    getSubCategory();
     getContentById();
     getValuelist();
     console.log(lineItem);
@@ -187,23 +198,57 @@ const backToList=()=>{
   return (
     <>
       <BreadCrumbs heading={contentDetails && contentDetails.title} />
-       
-          {/* <ComponentCardV2> */}
-          <ApiButton
-              editData={editContentData}
-              navigate={navigate}
-              applyChanges={editContentData}
-              backToList={backToList}
-             deleteData={deleteContentData}
-              module="Content"
-            ></ApiButton>
-       
+      <Form>
+        <FormGroup>
+          {/* <ComponentCardV2>
+            <Row>
+              <Col>
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    editContentData();
+                  }}
+                >
+                  Save
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  color="secondary"
+                  onClick={() => {
+                    editContentData1();
+                  }}
+                >
+                  Apply
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  color="dark"
+                  onClick={() => {
+                    navigate('/Content');
+                  }}
+                >
+                  Back to List
+                </Button>
+              </Col>
+            </Row>
+          </ComponentCardV2> */}
+           <ApiButton
+            editData={editContentData}
+            navigate={navigate}
+            //applyChanges={updateData}
+            backToList={backToList}
+            deleteData={deleteContentData}
+            module="Content"
+          ></ApiButton>
+          {/* Content Details Form */}
           <ComponentCard title="Content details">
             <ToastContainer></ToastContainer>
             <Row>
               <Col md="3">
                 <FormGroup>
-                  <Label> Title<span className='required'>*</span> </Label>
+                  <Label> Title <span className="required"> *</span>{' '}</Label>
                   <Input
                     type="text"
                     onChange={handleInputs}
@@ -274,27 +319,6 @@ const backToList=()=>{
                   </Input>
                 </FormGroup>
               </Col>
-              {/* <Col md="4">
-                <FormGroup>
-                  <Label>Section Type</Label>
-                  <Input
-                    type="select"
-                    onChange={handleInputs}
-                    value={contentDetails && contentDetails.content_type}
-                    name="content_type"
-                  >
-                    <option defaultValue="selected">Please Select</option>
-                    {valuelist &&
-                      valuelist.map((e) => {
-                        return (
-                          <option key={e.value} value={e.value}>
-                            {e.value}
-                          </option>
-                        );
-                      })}
-                  </Input>
-                </FormGroup>
-              </Col> */}
               <Col md="3">
                 <FormGroup>
                   <Label>Content Type</Label>
@@ -321,35 +345,12 @@ const backToList=()=>{
           {/* Content Details Form */}
           <ComponentCard title="Content details">
             <Row>
-             
-               
               <Col md="4">
                 <FormGroup>
-                  <Label>Published</Label>
+                  <Label> Show Title</Label>
                   <br></br>
-                  <Label>Yes</Label>
-                  <Input
-                    name="published"
-                    value="1"
-                    type="radio"
-                    Checked={contentDetails && contentDetails.published === 1 && true}
-                    onChange={handleInputs}
-                  />
-                  <Label>No</Label>
-                  <Input
-                    name="published"
-                    value="0"
-                    type="radio"
-                    defaultChecked={contentDetails && contentDetails.published === 0 && true}
-                    onChange={handleInputs}
-                  />
-                </FormGroup>
-              </Col>
-              <Col md="4">
-                <FormGroup>
-                  <Label>Show Title</Label>
-                  <br></br>
-                  <Label>Yes</Label>
+                  <Label> Yes </Label>
+                  &nbsp;
                   <Input
                     name="show_title"
                     value="1"
@@ -357,12 +358,41 @@ const backToList=()=>{
                     defaultChecked={contentDetails && contentDetails.show_title === 1 && true}
                     onChange={handleInputs}
                   />
-                  <Label>No</Label>
+                   &nbsp;
+                   &nbsp;
+                  <Label> No </Label>
+                  &nbsp;
                   <Input
                     name="show_title"
                     value="0"
                     type="radio"
-                    Checked={contentDetails && contentDetails.show_title === 0 && true}
+                    defaultChecked={contentDetails && contentDetails.show_title === 0 && true}
+                    onChange={handleInputs}
+                  />
+                </FormGroup>
+              </Col>
+              <Col md="4">
+                <FormGroup>
+                  <Label>Published</Label>
+                  <br></br>
+                  <Label>Yes</Label>
+                  &nbsp;
+                  <Input
+                    name="published"
+                    value="1"
+                    type="radio"
+                    defaultChecked={contentDetails && contentDetails.published === 1 && true}
+                    onChange={handleInputs}
+                  />
+                   &nbsp;
+                   &nbsp;
+                  <Label>No</Label>
+                  &nbsp;
+                  <Input
+                    name="published"
+                    value="0"
+                    type="radio"
+                    defaultChecked={contentDetails && contentDetails.published === 0 && true}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -394,11 +424,12 @@ const backToList=()=>{
               </ComponentCard>
             </Row>
           </ComponentCard>
-       
+        </FormGroup>
+      </Form>
       {/* Picture and Attachments Form */}
       <Form>
         <FormGroup>
-          <ComponentCard title="Picture">
+          {/* <ComponentCard title="Picture">
             <Row>
               <Col xs="12" md="3" className="mb-3">
                 <Button
@@ -422,8 +453,45 @@ const backToList=()=>{
               setAttachmentModal={setAttachmentModal}
             />
             <ViewFileComponentV2 moduleId={id} roomName="Content" />
+          </ComponentCard> */}
+          <ComponentCard title="Attachments">
+            <Row>
+              <Col xs="12" md="3" className="mb-3">
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    setRoomName('Staff');
+                    setFileTypes(['JPG', 'JPEG', 'PNG', 'GIF', 'PDF']);
+                    dataForAttachment();
+                    setAttachmentModal(true);
+                  }}
+                >
+                  Add
+                </Button>
+              </Col>
+            </Row>
+          
+            <AttachmentModalV2
+              moduleId={id}
+              attachmentModal={attachmentModal}
+              setAttachmentModal={setAttachmentModal}
+              roomName={RoomName}
+              fileTypes={fileTypes}
+              altTagData="StaffRelated Data"
+              desc="StaffRelated Data"
+              recordType="RelatedPicture"
+              mediaType={attachmentData.modelType}
+              update={update}
+              setUpdate={setUpdate}
+            />
+            <ViewFileComponentV2
+              moduleId={id}
+              roomName="Staff"
+              recordType="RelatedPicture"
+              update={update}
+              setUpdate={setUpdate}
+            />
           </ComponentCard>
-        
         </FormGroup>
       </Form>
 

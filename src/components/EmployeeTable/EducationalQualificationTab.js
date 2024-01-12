@@ -57,13 +57,12 @@ function EducationalQualificationTab({
             <Label>Year of completion</Label>
             <Input
               name="year_of_completion1"
-              value={moment(
-                educationalQualificationDetails &&
-                  educationalQualificationDetails.year_of_completion1,
-              ).format('YYYY-MM-DD')}
+              value={
+                educationalQualificationDetails && moment(educationalQualificationDetails.year_of_completion1).format('YYYY-MM-DD')
+              }
+              max={moment().format('YYYY-MM-DD')}
               onChange={handleEduInputs}
               type="date"
-              max={moment().format('YYYY-MM-DD')}
             />
           </FormGroup>
         </Col>
@@ -109,10 +108,10 @@ function EducationalQualificationTab({
             <Label>Year of completion</Label>
             <Input
               name="year_of_completion2"
-              value={moment(
-                educationalQualificationDetails &&
-                  educationalQualificationDetails.year_of_completion2,
-              ).format('YYYY-MM-DD')}
+              value={
+                educationalQualificationDetails && moment(educationalQualificationDetails.year_of_completion2).format('YYYY-MM-DD')
+              }
+              max={moment().format('YYYY-MM-DD')}
               onChange={handleEduInputs}
               type="date"
             />
@@ -160,10 +159,10 @@ function EducationalQualificationTab({
             <Label>Year of completion</Label>
             <Input
               name="year_of_completion3"
-              value={moment(
-                educationalQualificationDetails &&
-                  educationalQualificationDetails.year_of_completion3,
-              ).format('YYYY-MM-DD')}
+              value={
+                educationalQualificationDetails && moment(educationalQualificationDetails.year_of_completion3).format('YYYY-MM-DD')
+              }
+              max={moment().format('YYYY-MM-DD')}
               onChange={handleEduInputs}
               type="date"
             />

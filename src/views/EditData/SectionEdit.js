@@ -24,8 +24,9 @@ import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import api from '../../constants/api';
-import SectionButton from '../../components/SectionTable/SectionButton';
+//import SectionButton from '../../components/SectionTable/SectionButton';
 import creationdatetime from '../../constants/creationdatetime';
+import ApiButton from '../../components/ApiButton';
 
 const SectionEdit = () => {
   //Const Variables
@@ -54,7 +55,7 @@ const SectionEdit = () => {
   };
 
   //  button position
-  const applyChanges = () => {};
+ // const applyChanges = () => {};
 
   const backToList = () => {
     navigate('/Section');
@@ -122,15 +123,22 @@ const SectionEdit = () => {
     <>
       <BreadCrumbs heading={section && section.section_title} />
       {/* Button */}
-      <SectionButton
+      {/* <SectionButton
         editSectionData={editSectionData}
         navigate={navigate}
         applyChanges={applyChanges}
         DeleteSection={DeleteSection}
         backToList={backToList}
         id={id}
-      ></SectionButton>
-
+      ></SectionButton> */}
+<ApiButton
+            editData={editSectionData}
+            navigate={navigate}
+            //applyChanges={updateData}
+            backToList={backToList}
+            deleteData={DeleteSection}
+            module="Menu"
+          ></ApiButton>
       {/* Main Details */}
       <Form>
         <FormGroup>
