@@ -140,7 +140,6 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     shipping_method: '',
     payment_terms: '',
     delivery_date: '',
-    po_date: '',
     shipping_address_flat: '',
     shipping_address_street: '',
     shipping_address_country: '',
@@ -152,6 +151,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     title: 'Purchase Order',
     priority: '1',
     follow_up_date: new Date(),
+    po_date:new Date(),
     notes: 'test',
     supplier_inv_code: '',
     gst: '',
@@ -245,7 +245,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
       .then(() => {
         //setAddPurchaseOrderModal(false);
         message('Product Added!', 'success');
-        window.location.reload();
+        //window.location.reload();
       })
       .catch(() => {
         message('Unable to add Product!', 'error');
@@ -268,7 +268,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
       result.push(allValues);
     });
     purchaseDetails.project_id = projectId;
-    if (purchaseDetails.supplier_id !== '' && purchaseDetails.purchase_order_date !== '' && purchaseDetails.po_code !=='') {
+    if (purchaseDetails.supplier_id !== '' && purchaseDetails.po_date !== '' && purchaseDetails.po_code !=='') {
       
         if (purchaseDetails.gst === '1') {
           purchaseDetails.gst_percentage = gstPercentageValue;
@@ -304,7 +304,11 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
             // },1300)
             }
         }
-      });
+      })
+      setTimeout(()=>{
+              setAddPurchaseOrderModal(false);
+              window.location.reload()
+            },1300);
     });
   } else {
     message('Please fill all required fields.', 'warning');
@@ -481,9 +485,9 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                       <Label>Po_Date <span className="required"> *</span></Label>
                       <Input
                         type="date"
-                        name="purchase_order_date"
+                        name="po_date"
                         value={moment(
-                          purchaseDetails && purchaseDetails.purchase_order_date,
+                          purchaseDetails && purchaseDetails.po_date,
                         ).format('YYYY-MM-DD')}
                         onChange={handleInputs}
                       />

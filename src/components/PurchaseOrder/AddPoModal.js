@@ -543,15 +543,15 @@ const insertProduct = (ProductCode, ItemCode) => {
                         />
                         {item.price}
                       </td>
-                      <td data-label="VAT">
+                      <td data-label="GST">
                         <Input
                           type="number"
                           defaultValue={item.gst}
                           name="gst"
                           onChange={(e) => updateState(index, 'gst', e)}
-                          value={insertPurchaseOrderData && insertPurchaseOrderData.gst}
                         />
                       </td>
+                      
                       <td data-label="Action">
                         {' '}
                         <Input defaultValue={item.id} type="hidden" name="id"></Input>

@@ -12,6 +12,7 @@ export default function AccountsMainDetails({ handleInputs, AccountsDetail }) {
     <Form>
       <FormGroup>
         <Row>
+          
           <Col md="3">
             <FormGroup>
               <Label>
@@ -58,39 +59,7 @@ export default function AccountsMainDetails({ handleInputs, AccountsDetail }) {
               />
             </FormGroup>
           </Col>
-          <Col md="3">
-            <FormGroup>
-              <Label>Payment Date </Label>
-              <Input
-                type="date"
-                onChange={handleInputs}
-                value={AccountsDetail && moment(AccountsDetail.payment_date).format('YYYY-MM-DD')}
-                name="payment_date"
-              />
-            </FormGroup>
-          </Col>
-          <Col md="3">
-            <FormGroup>
-              <Label>Job Id </Label>
-              <Input
-                type="text"
-                onChange={handleInputs}
-                value={AccountsDetail && AccountsDetail.job_id}
-                name="job_id"
-              />
-            </FormGroup>
-          </Col>
-          <Col md="3">
-            <FormGroup>
-              <Label>Remarks </Label>
-              <Input
-                type="textarea"
-                onChange={handleInputs}
-                value={AccountsDetail && AccountsDetail.remarks}
-                name="remarks"
-              />
-            </FormGroup>
-          </Col>
+         
         </Row>
       </FormGroup>
     </Form>

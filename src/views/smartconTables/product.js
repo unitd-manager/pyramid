@@ -55,7 +55,7 @@ setLoading(true)
       bDestroy: true,
       ajax: {
         type: 'POST',
-        url: 'http://43.228.126.245:3001/product/getPaginationForProducts',
+        url: 'http://43.228.126.245:4011/product/getPaginationForProducts',
       },
       lengthMenu: [
         [10, 100, -1],
@@ -159,7 +159,7 @@ setLoading(true)
               </Col>
               <Col>
                 <a
-                  href="http://43.228.126.245/smartco-api/storage/excelsheets/Product.xlsx"
+                  href="http://43.228.126.245/pyramidapi/storage/excelsheets/Product.xlsx"
                   download
                 >
                   <Button color="primary" className="shadow-none">

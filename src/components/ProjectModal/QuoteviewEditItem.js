@@ -128,7 +128,7 @@ const {id}=useParams();
           </FormGroup>
           <FormGroup>
             <Row>
-              <Label sm="2">Desciption</Label>
+              <Label sm="2">Description</Label>
               <Col sm="10">
                 <Input
                   type="textarea"

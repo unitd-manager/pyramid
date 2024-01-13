@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-feather';
-import moment from 'moment';
 import { Button } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'datatables.net-dt/js/dataTables.dataTables';
 import 'datatables.net-dt/css/jquery.dataTables.min.css';
 import $ from 'jquery';
-import 'datatables.net-buttons/js/buttons.colVis';
+import moment from 'moment';
+// import 'datatables.net-buttons/js/buttons.colVis';
 // import 'datatables.net-buttons/js/buttons.flash';
 // import 'datatables.net-buttons/js/buttons.html5';
-import 'datatables.net-buttons/js/buttons.print';
+// import 'datatables.net-buttons/js/buttons.print';
 import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import CommonTable from '../../components/CommonTable';
 
-const Loan = () => {
-  //state variale
+const Leaves = () => {
+  //Const Variables
   const [loan, setLoan] = useState(null);
   const [loading, setLoading] = useState(false);
-  //getting loan data in db
+
+  // get Leave
   const getLoan = () => {
-    setLoading(true);
     api
       .get('/loan/getLoan')
       .then((res) => {
@@ -42,18 +42,17 @@ const Loan = () => {
         setLoading(false);
       })
       .catch(() => {
-        setLoading(false);
+        // setLoading(false);
       });
   };
 
   useEffect(() => {
     getLoan();
   }, []);
-
-  //  stucture of loan list view
+  //  stucture of leave list view
   const columns = [
     {
-      name: '#',
+      name: 'id',
       selector: '',
       grow: 0,
       wrap: true,
@@ -68,6 +67,7 @@ const Loan = () => {
       button: true,
       sortable: false,
     },
+
     {
       name: 'Employee Name',
       selector: 'employee_name',
@@ -88,33 +88,38 @@ const Loan = () => {
       sortable: true,
       grow: 0,
     },
+    // {
+    //   name: 'From date',
+    //   selector: 'from_date',
+    //   sortable: true,
+    //   width: 'auto',
+    //   grow: 3,
+    // },
     {
       name: 'Amount Payable(per month)',
-      selector: 'month_amount',
+      selector: '	month_amount',
       sortable: true,
+      grow: 2,
       width: 'auto',
-      grow: 3,
     },
     {
       name: 'Total Amount Paid',
       selector: 'total_repaid_amount',
       sortable: true,
-      width: 'auto',
-      grow: 3,
+      grow: 2,
+      wrap: true,
     },
     {
       name: 'Amount Payable',
       selector: 'amount_payable',
       sortable: true,
       width: 'auto',
-      grow: 3,
     },
     {
       name: 'Status',
       selector: 'status',
       sortable: true,
       width: 'auto',
-      grow: 3,
     },
   ];
 
@@ -122,13 +127,12 @@ const Loan = () => {
     <div className="MainDiv">
       <div className=" pt-xs-25">
         <BreadCrumbs />
-
         <CommonTable
           loading={loading}
           title="Loan List"
           Button={
             <Link to="/LoanDetails">
-              <Button color="primary" className="shadow-none">
+              <Button color="primary" className="shadow-none add-new">
                 Add New
               </Button>
             </Link>
@@ -143,12 +147,12 @@ const Loan = () => {
           </thead>
           <tbody>
             {loan &&
-              loan.map((element, index) => {
+              loan.map((element, i) => {
                 return (
-                  <tr key={element.loan_id}>
-                    <td>{index + 1}</td>
+                  <tr key={element.leave_id}>
+                    <td>{i + 1}</td>
                     <td>
-                      <Link to={`/LoanEdit/${element.loan_id}?tab=1`}>
+                      <Link to={`/LoanEdit/${element.loan_id}?tab=1`} className='editlink'>
                         <Icon.Edit2 />
                       </Link>
                     </td>
@@ -169,4 +173,4 @@ const Loan = () => {
   );
 };
 
-export default Loan;
+export default Leaves;

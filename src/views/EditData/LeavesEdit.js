@@ -152,7 +152,7 @@ const LeavesEdit = () => {
           .post('/leave/deleteLeave', { leave_id: id })
           .then(() => {
             Swal.fire('Deleted!', 'Your Leave has been deleted.', 'success');
-            //window.location.reload();
+            window.location.reload();
           });
       }
     });

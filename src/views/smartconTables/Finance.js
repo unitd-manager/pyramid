@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-feather';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'datatables.net-dt/js/dataTables.dataTables';
-import 'datatables.net-dt/css/jquery.dataTables.min.css';
-import $ from 'jquery';
+
+import moment from 'moment';
 import 'datatables.net-buttons/js/buttons.colVis';
 import 'datatables.net-buttons/js/buttons.flash';
-// import 'datatables.net-buttons/js/buttons.html5';
-// import 'datatables.net-buttons/js/buttons.print';
+import 'datatables.net-buttons/js/buttons.html5';
+import 'datatables.net-buttons/js/buttons.print';
 import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
@@ -16,35 +16,37 @@ import CommonTable from '../../components/CommonTable';
 const Finance = () => {
   //All State Variable
   const [finance, setFinance] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   //getting data from Finance
   const getFinance = () => {
-    api
-      .get('/Finance/getFinances')
-      .then((res) => {
-        setFinance(res.data.data);
-        $('#example').DataTable({
-          pagingType: 'full_numbers',
-          pageLength: 20,
-          processing: true,
-          dom: 'Bfrtip',
-          // buttons: [
-          //   {
-          //     extend: 'print',
-          //     text: 'Print',
-          //     className: 'shadow-none btn btn-primary',
-          //   },
-          // ],
-        });
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    api.get('/finance/getFinances').then((res) => {
+      setFinance(res.data.data);
+    
+      setLoading(false)
+    }).catch(()=>{
+      setLoading(false)
+    });
   };
 
   useEffect(() => {
+    // setTimeout(() => {
+    //   $('#example').DataTable({
+    //     pagingType: 'full_numbers',
+    //     pageLength: 20,
+    //     processing: true,
+    //     dom: 'Bfrtip',
+    //     buttons: [
+    //       'csv',
+    //       {
+    //         extend: 'print',
+    //         text: 'Print',
+    //         className: 'shadow-none btn btn-primary',
+    //       },
+    //     ],
+    //   });
+    // }, 1000);
+
     getFinance();
   }, []);
 
@@ -69,8 +71,15 @@ const Finance = () => {
       sortable: false,
     },
     {
-      name: 'Order id',
+      name: 'Order Id',
       selector: 'order_id',
+      sortable: true,
+      grow: 0,
+      wrap: true,
+    },
+    {
+      name: 'Project Name',
+      selector: 'title',
       sortable: true,
       grow: 0,
       wrap: true,
@@ -89,6 +98,13 @@ const Finance = () => {
       grow: 3,
     },
     {
+      name: 'Invoice Date',
+      selector: 'invoice_date',
+      sortable: true,
+      width: 'auto',
+      grow: 3,
+    },
+    {
       name: 'Project Type',
       selector: 'project_type',
       sortable: true,
@@ -96,15 +112,15 @@ const Finance = () => {
       width: 'auto',
     },
     {
-      name: 'Amount',
+      name: 'Invoice Amount',
       selector: 'invoice_amount',
-      se: true,
+      sortable: true,
       width: 'auto',
     },
 
     {
       name: 'Status',
-      selector: 'order_status',
+      selector: 'status',
       sortable: true,
       grow: 2,
       wrap: true,
@@ -116,7 +132,9 @@ const Finance = () => {
       <div className=" pt-xs-25">
         <BreadCrumbs />
 
-        <CommonTable loading={loading} title="Finance List">
+        <CommonTable 
+      loading={loading}
+        title="Finance List">
           <thead>
             <tr>
               {columns.map((cell) => {
@@ -136,8 +154,10 @@ const Finance = () => {
                       </Link>
                     </td>
                     <td>{element.order_id}</td>
+                    <td>{element.title}</td>
                     <td>{element.cust_company_name}</td>
-                    <td>{element.order_date}</td>
+                    <td>{(element.order_date)? moment(element.order_date).format('DD-MM-YYYY'):''}</td>
+                    <td>{(element.invoice_date)? moment(element.invoice_date).format('DD-MM-YYYY'):''}</td>
                     <td>{element.project_type}</td>
                     <td>{element.invoice_amount}</td>
                     <td>{element.status}</td>

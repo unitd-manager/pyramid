@@ -170,7 +170,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                 </Row>
 
                 <Row>
-                  <Col md="4">
+                  {/* <Col md="4">
                     <FormGroup>
                       <Label>Drawing Nos</Label>
                     </FormGroup>
@@ -188,7 +188,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                       value="0"
                     />
                     <Label for="inlineradio2">No</Label>{' '}
-                  </Col>
+                  </Col> */}
                   <Col md="4">
                     <FormGroup>
                       <Label>Project Location</Label>
@@ -211,12 +211,13 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                       />
                     </FormGroup>
                   </Col>
-                </Row>
-                <Row>
                   <Col md="4">
                     <FormGroup>
                       <Label>Mode of Payment</Label>
-                      <Input type="select" name="payment_method">
+                      <Input type="select" name="payment_method"
+                       value={quotationeditDetails && quotationeditDetails.payment_method}
+                       onChange={handleQuoteInputs}
+                      >
                         <option value="">Please Select</option>
                         <option value="15 days">15 days</option>
                         <option defaultValue="selected" value="40 days">
@@ -227,14 +228,17 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                       </Input>
                     </FormGroup>
                   </Col>
+                </Row>
+                <Row>
+                 
                   <Col md="4">
                     <FormGroup>
                       <Label>Ref No</Label>
                       <Input
                         type="text"
-                        name="Ref_No"
+                        name="ref_no_quote"
                         onChange={handleQuoteInputs}
-                        value={quotationeditDetails && quotationeditDetails.Ref_No}
+                        value={quotationeditDetails && quotationeditDetails.ref_no_quote}
                       />
                     </FormGroup>
                   </Col>
@@ -255,9 +259,9 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                     <Label>Terms & Condition</Label>
                     <Input
                       type="textarea"
-                      name="terms_condition"
+                      name="invoices_payment_terms"
                       onChange={handleQuoteInputs}
-                      value={quotationeditDetails && quotationeditDetails.terms_condition}
+                      value={quotationeditDetails && quotationeditDetails.invoices_payment_terms}
                     />
                   </FormGroup>
                 </Row>

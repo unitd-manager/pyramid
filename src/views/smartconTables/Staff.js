@@ -31,13 +31,13 @@ const Staff = () => {
           pageLength: 20,
           processing: true,
           dom: 'Bfrtip',
-          // buttons: [
-          //   {
-          //     extend: 'print',
-          //     text: 'Print',
-          //     className: 'shadow-none btn btn-primary',
-          //   },
-          // ],
+          buttons: [
+            // {
+            //   extend: 'print',
+            //   text: 'Print',
+            //   className: 'shadow-none btn btn-primary',
+            // },
+          ],
         });
         setLoading(false);
       })
