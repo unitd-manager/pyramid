@@ -253,11 +253,13 @@ console.log('elem',elem)
     if (isEmpty) {
       Swal.fire('Please select atleast one product!');
     } else {
+      // Assuming you want to associate the delivery order with the first selected purchase order
+      const firstSelectedProduct = checkId[0].item;
       api
         .post('/projecttabdeliveryorder/insertdelivery_order', {
           project_id: id,
           company_id: projectDetail.company_id,
-          purchase_order_id: '',
+          purchase_order_id: firstSelectedProduct.purchase_order_id,
           date: new Date(),
           created_by: '1',
           creation_date: new Date(),

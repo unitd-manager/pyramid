@@ -79,7 +79,10 @@ const ExpenseEdit = () => {
         .post('/expensehead/editExpenseHead', expenseDetails)
         .then(() => {
           message('Record editted successfully', 'success');
-          navigate('/ExpenseHead');
+          editExpenseById();
+          setTimeout(() => {
+            window.location.reload();
+          }, 400);
 
         })
         .catch(() => {

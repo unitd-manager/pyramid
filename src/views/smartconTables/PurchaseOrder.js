@@ -132,7 +132,7 @@ const PurchaseOrder = () => {
             </Link>
             </Col>
             <Col md="6">
-            <a href="http://43.228.126.245/pms-shimi/storage/excelsheets/PurchaseOrder.xlsx" download>
+            <a href="http://43.228.126.245/pyramidapi/storage/excelsheets/PurchaseOrder.xlsx" download>
              <Button color="primary" className="shadow-none" >
                Sample
              </Button>
