@@ -200,21 +200,23 @@ const ProjectEdit = () => {
     } else {
       const selectedProducts = checkId;
       setCheckId([]);
+      console.log('selectedproducts',selectedProducts)
       selectedProducts.forEach((elem) => {
      
         if (elem.item.status !== 'Closed') {
           elem.item.status = 'Closed';
           elem.item.qty_updated = elem.item.qty_delivered;
           elem.item.qty_in_stock += parseFloat(elem.item.qty_delivered);
-
+console.log('elem',elem)
           api
             .post('/inventory/editInventoryStock', elem.item)
             .then(() => {
               message('Quantity added successfully.', 'success');
                
             })
-            .catch(() => {
-              message('unable to add quantity.', 'danger');
+            .catch((err) => {
+              console.log('err',err)
+              message(err.message, 'danger');
             });
         } else {
           message('This product is already added', 'danger');
