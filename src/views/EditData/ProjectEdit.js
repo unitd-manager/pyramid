@@ -98,7 +98,7 @@ const ProjectEdit = () => {
   const [fileTypes, setFileTypes] = useState('');
   const [contactLinked, setContactLinked] = useState('');
   const [subConWorkOrdeData, setSubConWorkOrdeData] = useState([]);
-
+  const [update, setUpdate] = useState(false);
 
   // Start for tab refresh navigation #Renuka 31-05-23
   const tabs =  [
@@ -634,8 +634,11 @@ console.log('elem',elem)
               desc="ProjectAttach Data"
               recordType="Picture"
               mediaType={attachmentData.modelType}
+              update={update}
+              setUpdate={setUpdate}
             />
-            <ViewFileComponentV2 moduleId={id} roomName="ProjectAttach" recordType="Picture" />
+            <ViewFileComponentV2 moduleId={id} roomName="ProjectAttach" recordType="Picture"   update={update}
+              setUpdate={setUpdate}/>
           </TabPane>
 
           {/* End Tab Content 10 */}

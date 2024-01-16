@@ -35,47 +35,80 @@ const EditPOLineItemsModal = ({ editPOLineItemsModal, setEditPOLineItemsModal, d
     setNewItems(item)
   };
 console.log('purchase',purchase);
+console.log('purchase',data[0]);
   const handleInputs = (e) => {
     setPurchase({ ...purchase, [e.target.name]: e.target.value });
   };
 
-  function updateState(index, property, e) {
+  function updateState(index, property, e, ProductName) {
     const copyDeliverOrderProducts = [...items];
-    const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e.target.value };
-    copyDeliverOrderProducts[index] = updatedObject;
+    if (ProductName) {
+      const updatedObject = { ...copyDeliverOrderProducts[index], 'product_id': e?.value, 'item_title': e?.label };
+      copyDeliverOrderProducts[index] = updatedObject;
+    }else {
+      const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e.target.value };
+      copyDeliverOrderProducts[index] = updatedObject;
+    }
     setItems(copyDeliverOrderProducts);
   }
-  function updateNewItemState(index, property, e) {
+
+  function updateNewItemState(index, property, e, ProductName) {
     const copyDeliverOrderProducts = [...newItems];
-    const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e?.target?.value || e?.value };
-    copyDeliverOrderProducts[index] = updatedObject;
+    if (ProductName) {
+      const updatedObject = { ...copyDeliverOrderProducts[index], 'product_id': e?.value, 'item_title': e?.label };
+      copyDeliverOrderProducts[index] = updatedObject;
+    }else {
+      const updatedObject = { ...copyDeliverOrderProducts[index], [property]: e?.target?.value || e };
+      copyDeliverOrderProducts[index] = updatedObject;
+    }
     setNewItems(copyDeliverOrderProducts);
   }
 
   //edit purchase
   const editPurchase = () => {
-    // api.post('/purchaseorder/editTabPurchaseOrder',purchase)
-    // .then(() => {
-    //   message('Record editted successfully', 'success');
-    // })
-    // .catch(() => {
-    //   message('Unable to edit record.', 'error');
-    // });
+    
+    api.post('/purchaseorder/editTabPurchaseOrder',purchase)
+    .then(() => {
+      newItems.forEach((el) => {
+        api
+          .post('/purchaseorder/insertPoProduct', el)
+          .then(() => {
+            // message('Record editted successfully', 'success');
+          })
+          .catch(() => {
+            message('Unable to edit record.', 'error');
+          });
+      });
+      items.forEach((el) => {
+        api
+          .post('/purchaseorder/editTabPurchaseOrderLineItem', el)
+          .then(() => {
+            // message('Record editted successfully', 'success');
+          })
+          .catch(() => {
+            message('Unable to edit record.', 'error');
+          });
+      });
+      message('Record editted successfully', 'success');
+    })
+    .catch(() => {
+      message('Unable to edit record.', 'error');
+    });
   };
 
   //edit delivery items
-  const editLineItems = () => {
-    items.forEach((el) => {
-      api
-        .post('/purchaseorder/editTabPurchaseOrderLineItem', el)
-        .then(() => {
-          message('Record editted successfully', 'success');
-        })
-        .catch(() => {
-          message('Unable to edit record.', 'error');
-        });
-    });
-  };
+  // const editLineItems = () => {
+  //   items.forEach((el) => {
+  //     api
+  //       .post('/purchaseorder/editTabPurchaseOrderLineItem', el)
+  //       .then(() => {
+  //         message('Record editted successfully', 'success');
+  //       })
+  //       .catch(() => {
+  //         message('Unable to edit record.', 'error');
+  //       });
+  //   });
+  // };
 
   const getTotalOfPurchase = () => {
     let total = 0;
@@ -87,18 +120,18 @@ console.log('purchase',purchase);
   };
 
   //insert po items
-  const insertPoItems = () => {
-    newItems.forEach((el) => {
-      api
-        .post('/purchaseorder/insertPoProduct', el)
-        .then(() => {
-          message('Record editted successfully', 'success');
-        })
-        .catch(() => {
-          message('Unable to edit record.', 'error');
-        });
-    });
-  };
+  // const insertPoItems = () => {
+  //   newItems.forEach((el) => {
+  //     api
+  //       .post('/purchaseorder/insertPoProduct', el)
+  //       .then(() => {
+  //         message('Record editted successfully', 'success');
+  //       })
+  //       .catch(() => {
+  //         message('Unable to edit record.', 'error');
+  //       });
+  //   });
+  // };
 
   //Clear row value
   const ClearValue = (index, newItem) => {
@@ -114,6 +147,7 @@ console.log('purchase',purchase);
     }
 
     const updatedObject = { ...arr[index], 
+      product_id: "",
       item_title: "",
       unit: "",
       qty: "0",
@@ -194,7 +228,7 @@ console.log('purchase',purchase);
                     <Label>PO No.</Label>
                     <Input
                       type="text"
-                      name="po_no"
+                      name="po_code"
                       value={purchase && purchase.po_code}
                       onChange={handleInputs}
                     />
@@ -209,7 +243,7 @@ console.log('purchase',purchase);
                         name="gst"
                         value="1"
                         type="radio"
-                        defaultChecked={purchase && purchase.gst === 1 && true}
+                        defaultChecked={purchase && purchase.gst === "1" && true}
                         onChange={handleInputs}
                       />
                       &nbsp; &nbsp;
@@ -219,7 +253,7 @@ console.log('purchase',purchase);
                         name="gst"
                         value="0"
                         type="radio"
-                        defaultChecked={purchase && purchase.gst === 0 && true}
+                        defaultChecked={purchase && purchase.gst === "0" && true}
                         onChange={handleInputs}
                       />
                     </FormGroup>
@@ -249,12 +283,32 @@ console.log('purchase',purchase);
                   return (
                     <tr key={el.po_product_id}>
                       <td data-label="ProductName">
+                      <Select
+                          key={el.id}
+                          value={{ value: el.product_id, label: el.item_title }}
+                          onChange={(e) => {
+                            updateState(index, null, e, true);
+                          }}
+                          options={getProductValue}
+                        />
                         <Input
+                          value={el.product_id}
+                          type="hidden"
+                          name="product_id"
+                          onChange={(e) => updateState(index, 'product_id', e)}
+                        ></Input>
+                        <Input
+                          value={el.title}
+                          type="hidden"
+                          name="title"
+                          onChange={(e) => updateState(index, 'title', e)}
+                        ></Input>
+                        {/* <Input
                           type="text"
                           name="item_title"
                           value={el.item_title}
                           onChange={(e) => updateState(index, 'item_title', e)}
-                        />
+                        /> */}
                       </td>
                       <td data-label="unit">
                         <Input
@@ -304,9 +358,9 @@ console.log('purchase',purchase);
                       <td data-label="ProductName">
                         <Select
                           key={elem.id}
-                          defaultValue={{ value: elem.product_id, label: elem.title }}
+                          value={{ value: elem.product_id, label: elem.item_title }}
                           onChange={(e) => {
-                            updateNewItemState(index, 'item_title', e)
+                            updateNewItemState(index, null, e, true);
                           }}
                           options={getProductValue}
                         />
@@ -314,13 +368,13 @@ console.log('purchase',purchase);
                           value={elem.product_id}
                           type="hidden"
                           name="product_id"
-                          onChange={(e) => updateState(index, 'product_id', e)}
+                          onChange={(e) => updateNewItemState(index, 'product_id', e)}
                         ></Input>
                         <Input
                           value={elem.title}
                           type="hidden"
                           name="title"
-                          onChange={(e) => updateState(index, 'title', e)}
+                          onChange={(e) => updateNewItemState(index, 'title', e)}
                         ></Input>
                         {/* <Input
                           type="text"
@@ -380,8 +434,8 @@ console.log('purchase',purchase);
             className="shadow-none"
             onClick={() => {
               editPurchase();
-              editLineItems();
-              insertPoItems();
+              // editLineItems();
+              // insertPoItems();
               setEditPOLineItemsModal(false);
             }}
           >

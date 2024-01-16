@@ -60,29 +60,30 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
         message('unable to get products', 'error');
       });
   };
-
+  console.log('loggedinuser',loggedInuser)
   //Insert claim line items
   const insertTransferItems = (elem) => {
     elem.product_id = transferItem.product_id;
     elem.from_project_id = id;
     elem.created_by = loggedInuser.name;
-    api
-      .post('/projecttabmaterialstransferredportal/insertstock_transfer', elem)
-      .then(() => {
-        transferItem.qty -= elem.quantity;
-        api
-          .post('/purchaseorder/editTabPurchaseOrderLineItem', transferItem)
-          .then(() => {
-            message('Record created successfully', 'success');
-          })
-          .catch(() => {
-            message('Unable to edit record.', 'error');
-          });
-        message('Record created successfully', 'success');
-      })
-      .catch(() => {
-        message('Unable to edit record.', 'error');
-      });
+    console.log('lem',elem)
+    // api
+    //   .post('/projecttabmaterialstransferredportal/insertstock_transfer', elem)
+    //   .then(() => {
+    //     transferItem.qty -= elem.quantity;
+    //     api
+    //       .post('/purchaseorder/editTabPurchaseOrderLineItem', transferItem)
+    //       .then(() => {
+    //         message('Record created successfully', 'success');
+    //       })
+    //       .catch(() => {
+    //         message('Unable to edit record.', 'error');
+    //       });
+    //     message('Record created successfully', 'success');
+    //   })
+    //   .catch(() => {
+    //     message('Unable to edit record.', 'error');
+    //   });
   };
 
   function updateState(index, property, e) {

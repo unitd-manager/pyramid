@@ -41,6 +41,7 @@ const MaterialsusedTab = ({ projectId }) => {
       <AddMaterialsUsed
         addMaterialsUsed={addMaterialsUsed}
         setAddMaterialsUsed={setAddMaterialsUsed}
+        getTableData={getTableData}
       />
       <EditMaterialused
         editMaterialsUsed={editMaterialsUsed}
