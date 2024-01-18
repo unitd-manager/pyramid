@@ -13,7 +13,7 @@ export default function ExpenseHeadMainDetails({ handleInputs, expenseDetails })
         <Row>
           <Col md="6">
             <FormGroup>
-              <Label>Title *</Label>
+              <Label>Title<span className="required"> *</span></Label>
               <Input
                 type="text"
                 onChange={handleInputs}

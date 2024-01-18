@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -8,6 +8,7 @@ import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import AccountsMainDetails from '../../components/AccountTable/AccountsMainDetails';
 import AccountsDetailsButton from '../../components/AccountTable/AccountsDetailsButton';
@@ -20,7 +21,7 @@ const AccountsDetails = () => {
   const [groups, setGroup] = useState();
   const [subgroup, setSubgroup] = useState();
   const [selectedType, setSelectedType] = useState(''); // Default to 'Expense'
-
+  const { loggedInuser } = useContext(AppContext);
 
   // Navigation and Parameter Constants
   const navigate = useNavigate();
@@ -142,6 +143,7 @@ const insertExpense = () => {
           AccountsDetail.total_amount = totalAmount;
           AccountsDetail.gst_amount = gstAmount;
           AccountsDetail.creation_date = creationdatetime;
+          AccountsDetail.created_by = loggedInuser.first_name;
           api
             .post('/accounts/insertexpense', AccountsDetail)
             .then((res) => {
