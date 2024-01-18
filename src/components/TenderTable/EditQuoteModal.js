@@ -55,7 +55,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
         element.quote_log_id = res.data.data.insertId;
         api.post('/tender/insertLogLine', element).then(() => {
           getQuoteFun();
-          // window.location.reload();
+            setTimeout(() => {
+          window.location.reload();
+        }, 1000);
         });
       });
     });
@@ -66,7 +68,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
       .then(() => {
         message('Quote Edited Successfully.', 'success');
         getQuoteFun();
-        // window.location.reload();
+          setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');

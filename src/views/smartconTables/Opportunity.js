@@ -92,7 +92,7 @@ const Opportunity = () => {
     },
     {
       name: 'Actual Closing',
-      selector: 'closinactual_closing',
+      selector: 'actual_closing',
       sortable: true,
       grow: 2,
       width: 'auto',
@@ -104,12 +104,7 @@ const Opportunity = () => {
       grow: 2,
       wrap: true,
     },
-    {
-      name: 'Quoted By',
-      selector: 'quote_ref',
-      sortable: true,
-      width: 'auto',
-    },
+
   ];
 
   return (
@@ -149,9 +144,9 @@ const Opportunity = () => {
                     <td>{element.title}</td>
                     <td>{element.office_ref_no}</td>
                     <td>{element.company_name}</td>
-                    <td>{element.closinactual_closing}</td>
+                    <td>{element.actual_closing}</td>
                     <td>{element.status}</td>
-                    <td>{element.quote_ref}</td>
+                    {/* <td>{element.quote_ref}</td> */}
                   </tr>
                 );
               })}

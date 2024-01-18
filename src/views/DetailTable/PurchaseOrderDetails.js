@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,6 +8,8 @@ import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
+
 
 const PurchaseOrderDetails = () => {
   //All state variables
@@ -33,11 +35,13 @@ const PurchaseOrderDetails = () => {
   const handleInputs = (e) => {
     setPurchaseForms({ ...purchaseForms, [e.target.name]: e.target.value });
   };
-  
+  const { loggedInuser } = useContext(AppContext);
    //inserting data of Purchase Order
-   const insertPurchaseOrder = (code) => {
+   const insertPurchaseOrder = (code) => { 
     purchaseForms.purchase_order_date = moment();
     purchaseForms.creation_date = creationdatetime;
+    purchaseForms.created_by = loggedInuser.first_name;
+
     purchaseForms.po_code=code;
     if (purchaseForms.supplier_id !== '') {
       api

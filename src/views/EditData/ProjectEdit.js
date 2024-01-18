@@ -325,6 +325,7 @@ const ProjectEdit = () => {
   const getLineItem = (quotationId) => {
     api.post('/project/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
       setLineItem(res.data.data);
+      console.log("1111",quotationId)
       //setViewLineModal(true);
     });
   };
