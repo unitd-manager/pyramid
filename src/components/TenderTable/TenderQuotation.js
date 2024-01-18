@@ -365,7 +365,7 @@ export default function TenderQuotation({
                   )}
                   <Col md="4">
                     <Label className='pointer'>
-                      <PdfQuote quote={quote} id={id} lineItem={quote.quote_id}></PdfQuote>
+                      <PdfQuote quoteId={quote.quote_id} id={id} ></PdfQuote>
                       {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
                     </Label>
                   </Col>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
@@ -9,6 +9,7 @@ import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import AccountsMainEdit from '../../components/AccountTable/AccountsMainEdit';
 import AddNote from '../../components/Tender/AddNote';
@@ -32,6 +33,7 @@ const AccountsEdit = () => {
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
   // Button
   // const applyChanges = () => {};
   const backToList = () => {
@@ -103,6 +105,7 @@ const editAccountsData = () => {
          
             AccountsDetails.total_amount = totalAmount;
             AccountsDetails.modification_date = creationdatetime;
+            AccountsDetails.modified_by = loggedInuser.first_name;
             AccountsDetails.gst_amount = gstAmount;
             api.post('/accounts/editAccounts', AccountsDetails)
               .then(() => {

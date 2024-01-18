@@ -25,7 +25,7 @@ export default function SupplierDetails({
       <FormGroup>
         <ComponentCard title="Supplier Details">
           <Row>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>
                   Name <span className="required"> *</span>
@@ -38,7 +38,7 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>Email</Label>
                 <Input
@@ -49,7 +49,7 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>Fax</Label>
                 <Input
@@ -60,9 +60,7 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-          </Row>
-          <Row>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>Mobile</Label>
                 <Input
@@ -73,7 +71,9 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-            <Col md="4">
+            </Row>
+            <Row>
+            <Col md="3">
               <FormGroup>
                 <Label>Status</Label>
                 <Input
@@ -92,7 +92,7 @@ export default function SupplierDetails({
                 </Input>
               </FormGroup>
             </Col>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>GST NO</Label>
                 <Input
@@ -103,9 +103,7 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-          </Row>
-          <Row>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>Payment Details</Label>
                 <Input
@@ -116,7 +114,7 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>Terms</Label>
                 <Input
@@ -127,7 +125,9 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-            <Col md="4">
+            </Row>
+            <Row>
+            <Col md="3">
               <FormGroup>
                 <Label>Contact Person</Label>
                 <Input
@@ -144,7 +144,7 @@ export default function SupplierDetails({
       <FormGroup>
         <ComponentCard title="Address">
           <Row>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>Address 1</Label>
                 <Input
@@ -155,7 +155,7 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>Address 2</Label>
                 <Input
@@ -166,7 +166,7 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>State/Zip</Label>
                 <Input
@@ -177,9 +177,7 @@ export default function SupplierDetails({
                 />
               </FormGroup>
             </Col>
-          </Row>
-          <Row>
-            <Col md="4">
+            <Col md="3">
               <FormGroup>
                 <Label>Country</Label>
                 <Input
@@ -196,7 +194,9 @@ export default function SupplierDetails({
                 </Input>
               </FormGroup>
             </Col>
-            <Col md="4">
+            </Row>
+            <Row>
+            <Col md="3">
               <FormGroup>
                 <Label>Pin Code</Label>
                 <Input

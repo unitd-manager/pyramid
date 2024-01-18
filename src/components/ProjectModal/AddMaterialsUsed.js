@@ -18,11 +18,12 @@ import Select from 'react-select';
 import api from '../../constants/api';
 import message from '../Message';
 
-const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed }) => {
+const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed ,getTableData}) => {
   const { id } = useParams();
   AddMaterialsUsed.propTypes = {
     addMaterialsUsed: PropTypes.bool,
     setAddMaterialsUsed: PropTypes.func,
+    getTableData: PropTypes.func
   };
   // Logic for Add New Item Row
 
@@ -131,6 +132,11 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed }) => {
         }
       }
     });
+    setTimeout(()=>{
+      getTableData();
+      setAddMaterialsUsed(false)
+    },1000)
+    
   };
   const submitData = (itemObj) => {
     if (itemObj.title !== '') {
@@ -222,7 +228,7 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed }) => {
         <Button
             color="secondary"
             onClick={() => {
-              setAddMaterialsUsed();
+              setAddMaterialsUsed(false);
             }}
           >
             {' '}

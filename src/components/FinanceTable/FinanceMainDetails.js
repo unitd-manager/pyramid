@@ -9,14 +9,12 @@ export default function FinanceMainDetails({ financeDetails, handleInputs }) {
   FinanceMainDetails.propTypes = {
     financeDetails: PropTypes.object,
     handleInputs: PropTypes.func,
-
-
   };
 
   return (
     <Form>
       <FormGroup>
-        <ComponentCard title="Main Details">
+        <ComponentCard title="Main Details" creationModificationDate={financeDetails}>
           <Row>
             <Col md="3">
               <FormGroup>

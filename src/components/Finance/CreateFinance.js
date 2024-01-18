@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import {
   Row,
   Col,
@@ -14,6 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import api from '../../constants/api';
 import message from '../Message';
+import AppContext from '../../context/AppContext';
 
 const CreateFinance = ({ financeModal, setFinanceModal, projectId,getOrdersById }) => {
   CreateFinance.propTypes = {
@@ -24,6 +25,7 @@ const CreateFinance = ({ financeModal, setFinanceModal, projectId,getOrdersById 
   };
 
   const [projectDetails, setCreateOrder] = useState();
+  const { loggedInuser } = useContext(AppContext);
 
   const handleInserts = (e) => {
     setCreateOrder({ ...projectDetails, [e.target.name]: e.target.value });
@@ -42,6 +44,7 @@ const CreateFinance = ({ financeModal, setFinanceModal, projectId,getOrdersById 
   //Insert order for finance module
   const insertOrder = () => {
     projectDetails.project_id = projectId;
+    projectDetails.created_by = loggedInuser.first_name;
     api
       .post('/finance/insertOrder', projectDetails)
       .then(() => {

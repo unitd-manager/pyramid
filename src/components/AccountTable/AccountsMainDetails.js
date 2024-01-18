@@ -28,7 +28,7 @@ export default function AccountsMainDetails({ handleInputs, AccountsDetail }) {
           </Col>
           <Col md="3">
             <FormGroup>
-              <Label>Invoice No </Label>
+              <Label>Invoice No <span className="required"> *</span></Label>
               <Input
                 type="text"
                 onChange={handleInputs}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Row, Col, Form } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,6 +9,7 @@ import 'datatables.net-buttons/js/buttons.flash';
 import 'datatables.net-buttons/js/buttons.html5';
 import 'datatables.net-buttons/js/buttons.print';
 import { useParams } from 'react-router-dom';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import message from '../../components/Message';
 import ComponentCard from '../../components/ComponentCard';
@@ -37,6 +38,7 @@ const Test = () => {
 
   //params and routing
   const { id } = useParams();
+  const { loggedInuser } = useContext(AppContext);
 
   //handle input change
   const handleInputs = (e) => {
@@ -93,7 +95,7 @@ const Test = () => {
   //update Inventory
   const editinventoryData = () => {
     inventoryDetails.modification_date = creationdatetime;
-
+    inventoryDetails.modified_by = loggedInuser.first_name;
     api
       .post('/inventory/editinventoryMain', inventoryDetails)
       .then(() => {

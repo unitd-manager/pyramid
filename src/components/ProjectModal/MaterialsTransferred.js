@@ -55,12 +55,17 @@ function MaterialsTransferred({ projectId }) {
               <Label>Updated By</Label>{' '}
             </FormGroup>
           </Col>
+          <Col>
+            <FormGroup>
+              <Label></Label>{' '}
+            </FormGroup>
+          </Col>
         </Row>
-
+        
         {materialsTransferredData &&
           materialsTransferredData.map((e) => {
             return (
-              <Row key={e.to_project_id}>
+              <Row key={e.to_project_id} className="border-bottom">
                 <Col>
                   <FormGroup>
                     <Label>{e.pro_name}</Label>
@@ -68,7 +73,7 @@ function MaterialsTransferred({ projectId }) {
                 </Col>
                 <Col>
                   <FormGroup>
-                    <span>{e.title}</span>
+                    <Label>{e.title}</Label>
                   </FormGroup>
                 </Col>
                 <Col>
@@ -76,7 +81,12 @@ function MaterialsTransferred({ projectId }) {
                     <Label>{e.quantity}</Label>
                   </FormGroup>
                 </Col>
-               
+                
+                <Col>
+                  <FormGroup>
+                    <Label>{e.created_by}</Label>
+                  </FormGroup>
+                </Col>
                 <Col>
                   <FormGroup>
                     <Label></Label>
@@ -85,7 +95,8 @@ function MaterialsTransferred({ projectId }) {
               </Row>
             );
           })}
-      </Form>
+          </Form>
+     
     </>
   );
 }

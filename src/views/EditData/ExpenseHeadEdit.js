@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import {
@@ -22,6 +22,7 @@ import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 //import ExpenseButton from '../../components/ExpenseHeadTable/ExpenseButton';
 import ExpenseHeadMainDetails from '../../components/ExpenseHeadTable/ExpenseHeadMainDetails';
@@ -42,6 +43,7 @@ const ExpenseEdit = () => {
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
 
   //Setting data in expenseDetails
   const handleInputs = (e) => {
@@ -75,6 +77,7 @@ const ExpenseEdit = () => {
   const editExpenseData = () => {
     if (expenseDetails.title !== '') {
       expenseDetails.modification_date = creationdatetime;
+      expenseDetails.modified_by = loggedInuser.first_name;
       api
         .post('/expensehead/editExpenseHead', expenseDetails)
         .then(() => {
@@ -167,6 +170,28 @@ const ExpenseEdit = () => {
     });
   };
  
+  const deleteExpenseData = () => {
+    Swal.fire({
+      title: `Are you sure? ${id}`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('/expensehead/deleteExpGroup', { expense_group_id: id })
+          .then(() => {
+            Swal.fire('Deleted!', 'Your Leave has been deleted.', 'success');
+            window.location.reload();
+          });
+      }
+    });
+  };
+
+ 
   useEffect(() => {
     editExpenseById();
     SubExpenseById();
@@ -188,6 +213,7 @@ const ExpenseEdit = () => {
               navigate={navigate}
               applyChanges={editExpenseData}
               backToList={backToList}
+              deleteData={deleteExpenseData}
               module="ExpenseHead"
             ></ApiButton>
       {/* Expense Head Details */}
@@ -234,7 +260,7 @@ const ExpenseEdit = () => {
                             <Row>
                               <Col md="12">
                                 <FormGroup>
-                                  <Label>Title</Label>
+                                  <Label>Title <span className="required"> *</span></Label>
                                   <Input
                                     type="text"
                                     name="title"

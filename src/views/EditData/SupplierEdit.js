@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import {  Form, FormGroup } from 'reactstrap';
+import React, { useState, useEffect, useContext } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'datatables.net-dt/js/dataTables.dataTables';
@@ -10,11 +9,12 @@ import 'datatables.net-buttons/js/buttons.html5';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../form-editor/editor.scss';
+import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
-import ComponentCardV2 from '../../components/ComponentCardV2';
 import creationdatetime from '../../constants/creationdatetime';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import PurchaseOrderLinked from '../../components/SupplierModal/Purchaseorderlinked';
 import SupplierTable from '../../components/SupplierModal/SupplierTable';
@@ -33,6 +33,7 @@ const SupplierEdit = () => {
   //navigation and params
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
   //const applyChanges = () => {};
 const backToList=() => {
   navigate('/Supplier');
@@ -42,7 +43,6 @@ const backToList=() => {
   };
   // Get Supplier By Id
   const editSupplierById = () => {
-
     api
       .post('/supplier/get-SupplierById', { supplier_id: id })
       .then((res) => {
@@ -58,7 +58,7 @@ const backToList=() => {
   const editSupplierData = () => {
     if (supplier.company_name !== '') {
       supplier.modification_date = creationdatetime;
-
+      supplier.modified_by = loggedInuser.first_name;
       api
         .post('/supplier/edit-Supplier', supplier)
         .then(() => {
@@ -128,18 +128,37 @@ const backToList=() => {
     getSupplierStatus();
     Status();
   }, []);
+  const deleteSupplierData = () => {
+    Swal.fire({
+      title: `Are you sure? ${id}`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('/supplier/deleteSupplier', { supplier_id: id })
+          .then(() => {
+            Swal.fire('Deleted!', 'Your Leave has been deleted.', 'success');
+            window.location.reload();
+          });
+      }
+    });
+  };
 
   return (
     <>
       <BreadCrumbs heading={supplier && supplier.company_name} />
-      <Form>
-        <FormGroup>
-          <ComponentCardV2>
+     
           <ApiButton
               editData={editSupplierData}
               navigate={navigate}
               applyChanges={editSupplierData}
               backToList={backToList}
+              deleteData={deleteSupplierData}
               module="Supplier"
             ></ApiButton>
             {/* <Row>
@@ -183,9 +202,7 @@ const backToList=() => {
                 </Button>
               </Col>
             </Row> */}
-          </ComponentCardV2>
-        </FormGroup>
-      </Form>
+          
       <ComponentCard title="Supplier Details" creationModificationDate={supplier}>
 
       <SupplierDetails

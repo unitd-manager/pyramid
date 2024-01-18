@@ -9,13 +9,14 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
+  
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import api from '../../constants/api';
 //import QuoteLogViewLineItem from './QuoteLogViewLineItem';
 import PdfProjectQuoteLog from '../PDF/PdfProjectQuoteLog';
+import ViewQuotelogLineItemsModal from './ViewQuotelogLineItemsModal';
 
 const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) => {
   ViewQuoteLogModal.propTypes = {
@@ -27,7 +28,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) 
 
   console.log("quoteId",quoteId)
   console.log("id",id)
-
+  const[quoteLogId,setQuoteLogId]=useState();
   const [quoteLogViewLineItem, setQuoteLogViewLineItem] = useState(false);
   const [quote, setQuote] = useState();
   const getquotations = () => {
@@ -39,16 +40,7 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) 
       .catch(() => {});
   };
 
-  const [quotation, setQuotelogLineItems] = useState();
-  const QuotationViewLineItem = (logId) => {
-    api
-      .post('/project/getTabQuoteLineItems', { quote_log_id: logId })
-      .then((res) => {
-        setQuotelogLineItems(res.data.data);
-        console.log('tender', res.data.data);
-      })
-      .catch(() => {});
-  };
+  
   useEffect(() => {
     //QuotationViewLineItem();
   }, []);
@@ -160,60 +152,20 @@ const ViewQuoteLogModal = ({ quotationsModal, setquotationsModal, quoteId ,id}) 
                                 className="addline"
                                 onClick={() => {
                                   setQuoteLogViewLineItem(true);
-                                  QuotationViewLineItem(element.quote_log_id);
+                                  setQuoteLogId(element.quote_log_id);
                                 }}
                               >
+                                {quoteLogViewLineItem && quoteLogId===element.quote_log_id &&
+  <ViewQuotelogLineItemsModal
+  quoteLogViewLineItem={quoteLogViewLineItem} setQuoteLogViewLineItem={setQuoteLogViewLineItem} logId={quoteLogId}
+  ></ViewQuotelogLineItemsModal>
+}
                                 <u>View Line Items</u>
                               </span>
                             </Label>
 
-                           {quoteLogViewLineItem && <Modal size="xl" isOpen={quoteLogViewLineItem}>
-                              <ModalHeader>View Quote Log Line Items</ModalHeader>
-                              <ModalBody>
-                                <FormGroup>
-                                  <table className="lineitem">
-                                    <thead>
-                                      <tr>
-                                        <th scope="col">Title </th>
-                                        <th scope="col">Description </th>
-                                        <th scope="col">Qty </th>
-                                        <th scope="col">Unit Price </th>
-                                        <th scope="col">Amount</th>
-                                      
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {quotation &&
-                                        quotation.map((e) => {
-                                          return (
-                                            <tr>
-                                              <td>{e.title}</td>
-                                              <td>{e.description}</td>
-                                              <td>{e.quantity}</td>
-                                              <td>{e.unit_price}</td>
-                                              <td>{e.amount}</td>
-                                              <td></td>
-                                              <td></td>
-                                            </tr>
-                                          );
-                                        })}
-                                    </tbody>
-                                  </table>
-                                </FormGroup>
-                              </ModalBody>
-                              <ModalFooter>
-                                <Button
-                                  color="primary"
-                                  className="shadow-none"
-                                  onClick={() => {
-                                    setQuoteLogViewLineItem(false);
-                                  }}
-                                >
-                                  Cancel
-                                </Button>
-                              </ModalFooter>
-                            </Modal>
-                  }
+                           
+                  
                             {/* <QuoteLogViewLineItem
                                   quoteLogViewLineItem={quoteLogViewLineItem}
                                   setQuoteLogViewLineItem={setQuoteLogViewLineItem}
