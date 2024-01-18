@@ -15,6 +15,7 @@ import { Editor } from 'react-draft-wysiwyg';
 import { useParams } from 'react-router-dom';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
+import Select from 'react-select';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import api from '../../constants/api';
 import message from '../Message';
@@ -57,6 +58,30 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
   //   copyDeliverOrderProducts[index] = updatedObject;
   //   setAddLineItem(copyDeliverOrderProducts);
   // }
+  
+  const [unitdetails, setUnitDetails] = useState();
+  // Fetch data from API
+  const getUnit = () => {
+    api.get('/product/getUnitFromValueList', unitdetails).then((res) => {
+      const items = res.data.data;
+      const finaldat = [];
+      items.forEach((item) => {
+        finaldat.push({ value: item.value, label: item.value });
+      });
+      setUnitDetails(finaldat);
+    });
+  };
+  const onchangeItem = (selectedValue, index) => {
+    const updatedItems = [...addLineItem];
+
+    updatedItems[index] = {
+      ...updatedItems[index],
+      unit: selectedValue.value,
+      value: selectedValue.value,
+    };
+
+    setAddLineItem(updatedItems);
+  };
   const updateState = (e, index) => {
     const updatedLineItems = [...addLineItem];
     
@@ -136,6 +161,7 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
   useEffect(() => {
     getLineItem();
     getInvoice();
+    getUnit();
     convertHtmlToDraftcondition(invoiceDatas);
     setInvoiceData(editInvoiceModal);
   }, [invoiceDatas,editInvoiceModal]);
@@ -207,7 +233,7 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
                               onChange={(e) => updateState(e, index, item.invoice_item_id)} // Pass invoice_item_id
                             />
                           </td>
-                            <td data-label="UoM">
+                            {/* <td data-label="UoM">
                               <Input
                                 value={item.unit}
                                 type="text"
@@ -216,7 +242,15 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
                                 onChange={(e) => updateState(e, index, item.invoice_item_id)}
                                 
                               />
-                            </td>
+                            </td> */}
+                            <td>
+  <Select
+    name="unit"
+    value={{ value: item.unit, label: item.unit }}
+    onChange={(selectedOption) => onchangeItem(selectedOption, index)}
+    options={unitdetails}
+  />
+</td>
                             <td data-label="Qty">
                               <Input
                                 value={item.qty}

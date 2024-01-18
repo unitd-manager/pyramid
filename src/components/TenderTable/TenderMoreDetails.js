@@ -308,9 +308,9 @@ export default function TenderMoreDetails({
                   <Label>Email</Label>
                   <Input
                     type="text"
-                    value={tenderDetails && tenderDetails.email}
+                    value={tenderDetails && tenderDetails.opp_email}
                     onChange={handleInputs}
-                    name="email"
+                    name="opp_email"
                   />
                 </FormGroup>
               </Col>

@@ -1,115 +1,197 @@
-import React from 'react';
+import React, { useState } from 'react';
+//import PropTypes from 'prop-types';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import Converter from 'number-to-words';
-import * as Icon from 'react-feather';
+import * as numberToWords from 'number-to-words';
 import PropTypes from 'prop-types';
+import * as Icon from 'react-feather';
+import moment from 'moment';
+// import message from '../Message';
 import api from '../../constants/api';
-import message from '../Message';
-import PdfFooter from './PdfFooter';
-import PdfHeader from './PdfHeader';
 
-
-const PdfQuote = ({ quote }) => {
+const PdfQuote = ({ id, quoteId }) => {
   PdfQuote.propTypes = {
-    quote: PropTypes.object
+    id: PropTypes.any,
+    quoteId: PropTypes.any,
+  }
+  const [quote, setQuote] = React.useState([]);
+  const [tenderDetails, setTenderDetails] = useState(null);
+  const [lineItem, setLineItem] = useState([]);
+  const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+
+  const getCompany = () => {
+    api
+      .post('/tender/getTendersById', { opportunity_id: id })
+      .then((res) => {
+        setTenderDetails(res.data.data);
+        console.log(res);
+      })
+      .catch(() => { });
   };
-  const [hfdata, setHeaderFooterData] = React.useState();
-  const [gTotal, setGtotal] = React.useState(0);
-  const [gstTotal, setGsttotal] = React.useState(0);
-  const [Total, setTotal] = React.useState(0);
+
+  // Get Quote By Id
+  const getQuote = () => {
+    api.post('/tender/getQuoteById', { opportunity_id: id }).then((res) => {
+      setQuote(res.data.data[0]);
+      console.log('quote', res.data.data[0]);
+    });
+  };
+  const calculateTotal = () => {
+    const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
+    return grandTotal;
+    // const gstValue = quote.gst_value || 0;
+    // const total = grandTotal + gstValue;
+    // return total;
+  };
+  const getQuoteById = () => {
+    api
+      .post('/tender/getQuoteLineItemsById', { quote_id: quoteId })
+      .then((res) => {
+        setLineItem(res.data.data);
+        console.log('quote1', res.data.data);
+        // let grandTotal = 0;
+        // res.data.data.forEach((elem) => {
+        //   grandTotal += elem.amount;
+        // });
+        //setGtotal(grandTotal);
+      })
+      .catch(() => {
+        //message('Invoice Data Not Found', 'info');
+      });
+  };
 
   React.useEffect(() => {
-    api.get('/setting/getSettingsForCompany').then((res) => {
-      setHeaderFooterData(res.data.data);
+    const parseHTMLContent = (htmlContent) => {
+      if (htmlContent) {
+        // Replace all occurrences of &nbsp; with an empty string
+        const plainText = htmlContent.replace(/&nbsp;/g, '');
+
+        // Remove HTML tags using a regular expression
+        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+
+        setParsedQuoteCondition(plainTextWithoutTags);
+      }
+    };
+    // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
+    parseHTMLContent(quote.quote_condition);
+
+    // Other logic you have here...
+  }, [quote.quote_condition]);
+
+  //The quote_condition content and format it as bullet points
+  const formatQuoteConditions = (conditionsText) => {
+    const formattedConditions = conditionsText.split(':-').map((condition, index) => {
+      const trimmedCondition = condition.trim();
+      return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
     });
+    return formattedConditions;
+  };
+
+  // Format the conditions content for PDF
+  const conditions = formatQuoteConditions(parsedQuoteCondition);
+  // const conditionsContent = conditions.map((condition) => ({
+  //   text: `${condition}`,
+  //   fontSize: 10,
+  //   margin: [15, 5, 0, 0],
+  //   style: ['notesText', 'textSize'],
+  // }));
+  // / Format the conditions content for PDF
+  const conditionsContent = conditions.map((condition) => ({
+    text: `${condition}`,
+    fontSize: 10,
+    margin: [15, 5, 0, 0],
+    style: ['notesText', 'textSize'],
+    lineHeight: 1.2,
+  }));
+
+  React.useEffect(() => {
+    getQuote();
+    getQuoteById();
+    getCompany();
   }, []);
 
-  const findCompany = (key) => {
-    const filteredResult = hfdata.find((e) => e.key_text === key);
-    return filteredResult.value;
-  };
-  const GetPdf = (lineItem) => {
-    console.log(lineItem);
+  const GetPdf = () => {
     const lineItemBody = [
       [
+        // {
+        //   text: 'SN',
+        //   style: 'tableHead',
+        // },
         {
-          text: 'SN',
+          text: 'Item',
           style: 'tableHead',
+          alignment: 'center'
         },
         {
           text: 'Description',
           style: 'tableHead',
-        },
-        {
-          text: 'EA',
-          style: 'tableHead',
+          alignment: 'center'
         },
         {
           text: 'Qty',
           style: 'tableHead',
+          alignment: 'center'
         },
         {
-          text: 'U/R(S$) ',
+          text: 'Unit Price',
           style: 'tableHead',
+          alignment: 'right'
         },
+
         {
-          text: 'Amt S$',
+          text: 'Amount S$',
           style: 'tableHead',
+          alignment: 'right'
         },
-        {
-          text: 'Remarks',
-          style: 'tableHead',
-        },
+
       ],
     ];
     lineItem.forEach((element) => {
       lineItemBody.push([
-        {
-          text: '1',
-          style: 'tableBody',
-          border: [false, false, false, true],
-        },
+        // {
+        //   text: `${index + 1}`,
+        //   style: 'tableBody',
+        //   border: [false, false, false, true],
+        // },
         {
           text: `${element.title}`,
           border: [false, false, false, true],
           style: 'tableBody',
+          alignment: 'center'
         },
         {
-          text: `${element.unit}`,
+          text: `${element.description}`,
           border: [false, false, false, true],
           style: 'tableBody',
+          alignment: 'center'
         },
         {
           text: `${element.quantity}`,
           border: [false, false, false, true],
           style: 'tableBody',
+          alignment: 'center'
         },
         {
-          text: `${element.unit_price}`,
-          border: [false, false, false, true],
-          margin: [0, 5, 0, 5],
-          style: 'tableBody',
-        },
-        {
-          text: `${parseInt(element.quantity,10) * parseFloat(element.unit_price)}`,
+          text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
           style: 'tableBody',
+          alignment: 'right'
         },
+
         {
+          text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
-          text: `${element.remarks}`,
           fillColor: '#f5f5f5',
           style: 'tableBody',
+          alignment: 'right'
         },
+
       ]);
     });
 
     const dd = {
+
       pageSize: 'A4',
-      header: PdfHeader({ findCompany }),
-      pageMargins: [40, 150, 40, 80],
-      footer: PdfFooter,
       content: [
         {
           layout: {
@@ -167,39 +249,102 @@ const PdfQuote = ({ quote }) => {
           },
         },
         '\n',
-        {
-          columns: [
-            {
-              text: `TO:${quote.company_name ? quote.company_name : ''}`,
-              style: ['notesText', 'textSize'],
-            },
 
-            {
-              text: `Date :${quote.quote_date ? quote.quote_date : ''}\n  Quote Code : ${
-                quote.quote_code ? quote.quote_code : ''
-              }\n \n  `,
-              style: ['invoiceAdd', 'textSize'],
-            },
-          ],
-        },
-        '\n',
         {
-          text: `Att :${quote.first_name ? quote.first_name : ''}`,
+          text: `Client:${tenderDetails.company_name ? tenderDetails.company_name : ''}`,
           style: ['notesText', 'textSize'],
+          bold: 'true',
+        },
+        '\n',
+        {
+          text: `Att : ${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
+          style: ['notesText', 'textSize'],
+          bold: 'true'
         },
 
         '\n',
+        {
+          text: `Email:${tenderDetails.email ? tenderDetails.email : ''}`,
+          style: ['notesText', 'textSize'],
+          bold: 'true',
+        },
+        '\n',
+        {
+          text: `Project: ${tenderDetails.title ? tenderDetails.title : ''}`,
+          style: ['notesText', 'textSize'],
+
+
+          bold: 'true',
+        },
+
 
         {
-          text: `Project:- ${quote.title ? quote.title : ''}
-           Dear Sir,
+          text: `Quotation No :${quote.quote_code ? quote.quote_code : ''}`,
 
-           With reference to the above captions, we would like to thank you for inviting us to quote for the above mentioned works and we are pleased to submit herewith our Value Quotation for you kind persual.`,
-
-          style: ['notesText', 'textSize'],
+          style: ['invoiceAdd', 'textSize'],
+          margin: [0, -90, 0, 0],
         },
         '\n',
+        // {
+        //   text: `Date :${
+        //     quote.quote_date ? quote.quote_date  : ''
+        //   }`,
+
+        //   style: ['invoiceAdd', 'textSize'],
+
+        // },
+        {
+          text: `Date :   ${(quote.quote_date) ? moment(quote.quote_date).format('DD-MM-YYYY') : ''} `,
+          style: ['invoiceAdd', 'textSize'],
+
+        },
         '\n',
+        {
+          text: `validity :${quote.validity ? quote.validity : ''
+            }`,
+
+          style: ['invoiceAdd', 'textSize'],
+
+        },
+        '\n',
+        {
+          text: `Terms of Payment :${quote.payment_method ? quote.payment_method : ''
+            }`,
+
+          style: ['invoiceAdd', 'textSize'],
+
+        }, '\n',
+        {
+          text: `Price : $ ${quote.amount ? quote.amount : ''
+            }`,
+
+          style: ['invoiceAdd', 'textSize'],
+
+        },
+
+
+        // {
+        //   text: `Date :   ${(quote.quote_date) ? moment(quote.quote_date).format('DD-MM-YYYY') : ''}
+        //    Quote Code :  ${quote.quote_code ? quote.quote_code : ''
+        //     }\n \n  `,
+        //   style: ['invoiceAdd', 'textSize'],
+        //   margin: [0, -60, 0, 0]
+        // },
+
+        // '\n\n\n',
+        // {
+        //   text: `Att : ${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
+        //   style: ['notesText', 'textSize'],
+        //   bold: 'true'
+        // },
+
+        // '\n',
+
+        // {
+        //   text: `Project :-    ${tenderDetails.title ? tenderDetails.title : ''}`,
+        //   bold: 'true',
+        //   style: ['notesText', 'textSize'],
+        // },
 
         '\n',
 
@@ -245,7 +390,7 @@ const PdfQuote = ({ quote }) => {
           },
           table: {
             headerRows: 1,
-            widths: ['8%', '15%', '14%', '14%', '17%', '18%', '14%'],
+            widths: [50, 105, 85, 80, 90],
 
             body: lineItemBody,
           },
@@ -253,44 +398,57 @@ const PdfQuote = ({ quote }) => {
         '\n',
         {
           stack: [
-            {
-              text: `SubTotal $ :    ${gTotal.toLocaleString('en-IN', {
-                minimumFractionDigits: 2,
-              })}`,
-              style: ['textSize'],
-              margin: [300, 0, 0, 0],
-            },
+            // {
+            //   text: `SubTotal $ :     ${gTotal.toLocaleString('en-IN', {
+            //     minimumFractionDigits: 2,
+            //   })}`,
+            //   alignment: 'right',
+            //   margin: [0, 0, 60, 0],
+            //   style: 'textSize',
+            // },
+            // '\n',
+            // {
+            //   text: `Discount  :         ${quote.discount ? quote.discount : ''}`,
+            //   alignment: 'right',
+            //   margin: [0, 0, 60, 0],
+            //   style: 'textSize',
+            // },
+
+            // '\n',
+            //   {
+            //     text: `Total $ :     ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+            //     alignment: 'right',
+            // margin: [0, 0, 60, 0],
+            // style: 'textSize',
+            //   },
             '\n',
             {
-              text: `GST:       ${gstTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
-              style: ['textSize'],
-              margin: [330, 0, 0, 0],
-            },
-            '\n',
-            {
-              text: `Total $ :     ${Total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
-              style: ['textSize'],
-              margin: [320, 0, 0, 0],
+              text: `GRAND TOTAL ($) :  ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+              alignment: 'right',
+              margin: [0, 0, 10, 0],
+              style: 'textSize',
             },
             '\n\n\n',
-            { text: `TOTAL : ${Converter.toWords(Total)}`, style: 'bold', margin: [40, 0, 0, 0] },
+            {
+              text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
+              style: 'bold',
+              fontSize: 11,
+              margin: [40, 0, 0, 0],
+            },
           ],
         },
         '\n\n',
         '\n',
 
         {
-          columns: [
-            {
-              text: `Terms and Condition:- \n
-:- Payment : COD \n
-:- The above quote does not cover replacement of any parts unless expressly stated above. \n
-:- We reserve the right to terminate any scope of work in event where there is a default to our Payment Schedule`,
-
-              style: ['notesText', 'textSize'],
-            },
-          ],
+          text: `Terms and Conditions: `,
+          fontSize: 11,
+          decoration: 'underline',
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
         },
+        ...conditionsContent, // Add each condition as a separate paragraph
+
 
         '\n',
         '\n',
@@ -323,17 +481,6 @@ const PdfQuote = ({ quote }) => {
         textSize: {
           fontSize: 10,
         },
-        textSize1: {
-          fontSize: 10,
-          alignment: 'right',
-          margin: [0, 0, 200, 0],
-        },
-        textSize2: {
-          fontSize: 15,
-          bold: 'true',
-          alignment: 'left',
-          margin: [100, 0, 0, 0],
-        },
         notesTitle: {
           bold: true,
           margin: [0, 50, 0, 3],
@@ -349,18 +496,18 @@ const PdfQuote = ({ quote }) => {
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
           alignment: 'left',
-          fontSize: 10,
+          fontSize: 10.5,
         },
         tableBody1: {
           border: [false, false, false, true],
-          margin: [10, 5, 0, 5],
-          alignment: 'right',
+          margin: [0, 5, 0, 5],
+          alignment: 'center',
           fontSize: 10,
         },
         tableBody2: {
           border: [false, false, false, true],
-          margin: [15, 5, 0, 5],
-          alignment: 'center',
+          margin: [0, 5, 35, 5],
+          alignment: 'right',
           fontSize: 10,
         },
       },
@@ -371,41 +518,10 @@ const PdfQuote = ({ quote }) => {
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
     pdfMake.createPdf(dd, null, null, pdfFonts.pdfMake.vfs).open();
   };
-  const getQuoteById = () => {
-    api
-      .post('/tender/getQuoteLineItemsById', { quote_id: quote.quote_id })
-      .then((res) => {
-        let grandTotal = 0;
-        let grand = 0;
-        let gst = 0;
-
-        console.log("getQuoteLineItemsById",res.data.data)
-
-        res.data.data.forEach((elem) => {
-          grandTotal += elem.amount;
-          //  grand += elem.actual_value;
-        });
-
-        console.log("grandTotal",grandTotal)
-        
-        setGtotal(grandTotal);
-        gst = grandTotal * 0.07;
-        setGsttotal(gst);
-        grand = grandTotal + gst;
-        setTotal(grand);
-        if(res.data.data.length > 0){
-          GetPdf(res.data.data);
-        }else{
-          message('No Items Found','warning')
-        }
-        
-      })
-      .catch(() => {});
-  };
 
   return (
     <>
-      <span onClick={getQuoteById}>
+      <span onClick={GetPdf}>
         <Icon.Printer />
       </span>
     </>
