@@ -23,13 +23,11 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
     editCreateNote: PropTypes.bool,
     setEditCreateNote: PropTypes.func,
   };
-  //const [createNoteAmount, setCreateNoteAmount] = useState(null);
+  const [createNoteAmount, setCreateNoteAmount] = useState(null);
   const [createInvoiceNote, setCreateInvoiceNote] = useState(null);
   //edit Tab Costing Summary Form
   const { id } = useParams();
-  const [createNoteAmount, setCreateNoteAmount] = useState({
-    from_date: new Date().toISOString().split('T')[0],
-  });
+
   const [amount, setAmount] = useState({
     amount: 0,
     order_id: id,
@@ -71,16 +69,14 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
       .then((res) => {
         setCreateNoteAmount(res.data.data);
         finalapicall(res.data.data.insertId, results);
-        setTimeout(() => {
-          window.location.reload();
-        }, 600);
+        window.location.reload();
       })
   };
 
   //generateCode
-  const generateCode = (results) => {
+  const generateCode = (results, type) => {
     api
-      .post('/commonApi/getCodeValue', { type:'creditNote'  })
+      .post('/tender/getCodeValue', { type })
       .then((res) => {
         editCreditData(results, res.data.data);
       })
@@ -116,7 +112,7 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
         editInvoiceCreditData(obj, totalValue);
       }
     });
-   
+
     // editCreditData(amount);
   };
 
@@ -247,12 +243,6 @@ const CreateNote = ({ editCreateNote, setEditCreateNote }) => {
                           </tbody>
                         </Table>
                         <Label>Date</Label>
-                        {/* <Input
-                          type="date"
-                          name="from_date"
-                          onChange={handleInputs}
-                          value={createNoteAmount && createNoteAmount.from_date}
-                        ></Input> */}
                         <Input
                           type="date"
                           name="from_date"

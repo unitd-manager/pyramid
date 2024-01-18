@@ -47,7 +47,34 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
       setQuoteData(res.data.data[0]);
     });
   };
-
+  const fetchTermsAndConditions = () => {
+    api.get('/setting/getSettingsForTerms')
+      .then((res) => {
+        const settings = res.data.data;
+        if (settings && settings.length > 0) {
+          const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
+          console.log("1", res.data.data);
+          // Update the quote condition in quoteData
+          setQuoteData({ ...quoteData, quote_condition: fetchedTermsAndCondition });
+          // Convert fetched terms and conditions to EditorState
+          const contentBlock = htmlToDraft(fetchedTermsAndCondition);
+          if (contentBlock) {
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            const editorState = EditorState.createWithContent(contentState);
+            setConditions(editorState);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching terms and conditions:', error);
+      });
+  };
+  // Call fetchTermsAndConditions within useEffect or when required
+  useEffect(() => {
+    fetchTermsAndConditions();
+    // Other useEffect logic
+  }, []);
+  
   const insertquote = () => {
     api.post('/tender/insertLog', quoteData).then((res) => {
       message('quote inserted successfully.', 'success');
@@ -171,11 +198,11 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
               <Row>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Project Location</Label>
+                    <Label>Validity</Label>
                     <Input
                       type="text"
-                      name="project_location"
-                      defaultValue={quoteData && quoteData.project_location}
+                      name="validity"
+                      defaultValue={quoteData && quoteData.validity}
                       onChange={handleData}
                     />
                   </FormGroup>
