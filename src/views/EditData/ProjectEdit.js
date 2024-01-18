@@ -98,7 +98,7 @@ const ProjectEdit = () => {
   const [fileTypes, setFileTypes] = useState('');
   const [contactLinked, setContactLinked] = useState('');
   const [subConWorkOrdeData, setSubConWorkOrdeData] = useState([]);
-
+  const [update, setUpdate] = useState(false);
 
   // Start for tab refresh navigation #Renuka 31-05-23
   const tabs =  [
@@ -200,21 +200,23 @@ const ProjectEdit = () => {
     } else {
       const selectedProducts = checkId;
       setCheckId([]);
+      console.log('selectedproducts',selectedProducts)
       selectedProducts.forEach((elem) => {
      
         if (elem.item.status !== 'Closed') {
           elem.item.status = 'Closed';
           elem.item.qty_updated = elem.item.qty_delivered;
           elem.item.qty_in_stock += parseFloat(elem.item.qty_delivered);
-
+console.log('elem',elem)
           api
             .post('/inventory/editInventoryStock', elem.item)
             .then(() => {
               message('Quantity added successfully.', 'success');
                
             })
-            .catch(() => {
-              message('unable to add quantity.', 'danger');
+            .catch((err) => {
+              console.log('err',err)
+              message(err.message, 'danger');
             });
         } else {
           message('This product is already added', 'danger');
@@ -251,11 +253,13 @@ const ProjectEdit = () => {
     if (isEmpty) {
       Swal.fire('Please select atleast one product!');
     } else {
+      // Assuming you want to associate the delivery order with the first selected purchase order
+      const firstSelectedProduct = checkId[0].item;
       api
         .post('/projecttabdeliveryorder/insertdelivery_order', {
           project_id: id,
           company_id: projectDetail.company_id,
-          purchase_order_id: '',
+          purchase_order_id: firstSelectedProduct.purchase_order_id,
           date: new Date(),
           created_by: '1',
           creation_date: new Date(),
@@ -630,8 +634,11 @@ const ProjectEdit = () => {
               desc="ProjectAttach Data"
               recordType="Picture"
               mediaType={attachmentData.modelType}
+              update={update}
+              setUpdate={setUpdate}
             />
-            <ViewFileComponentV2 moduleId={id} roomName="ProjectAttach" recordType="Picture" />
+            <ViewFileComponentV2 moduleId={id} roomName="ProjectAttach" recordType="Picture"   update={update}
+              setUpdate={setUpdate}/>
           </TabPane>
 
           {/* End Tab Content 10 */}

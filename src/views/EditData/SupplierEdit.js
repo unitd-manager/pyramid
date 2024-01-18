@@ -63,6 +63,9 @@ const backToList=() => {
         .post('/supplier/edit-Supplier', supplier)
         .then(() => {
           message('Record editted successfully', 'success');
+          setTimeout(() => {
+            window.location.reload();
+          }, 400);
         })
         .catch(() => {
           message('Unable to edit record.', 'error');

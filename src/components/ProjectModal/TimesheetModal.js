@@ -282,7 +282,7 @@ const totalHrValue =
         }
       })
       .catch(() => {
-        message('Unable to fetch data.', 'error');
+        //message('Unable to fetch data.', 'error');
         setSalary(''); 
       });
   };

@@ -147,7 +147,7 @@ function Inventory() {
                 </Col>
                 <Col md="6">
                   <a
-                    href="http://43.228.126.245/smartco-api/storage/excelsheets/Inventory.xlsx"
+                    href="http://43.228.126.245/pyramidapi/storage/excelsheets/Inventory.xlsx"
                     download
                   >
                     <Button color="primary" className="shadow-none">
