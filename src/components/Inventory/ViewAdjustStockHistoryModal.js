@@ -77,10 +77,7 @@ function ViewAdjustStockHistoryModal({
                             <tr key={element.adjust_stock_log_id}>
                               <td>{element.adjust_stock}</td>
                               <td>{element.current_stock}</td>
-                              <td>
-                                {element.creation_date
-                                  ? moment(element.creation_date).format('YYYY-MM-DD  hh:mm:ss')
-                                  : ''}
+                              <td>{element.created_by}-{element.creation_date ? moment(element.creation_date).format('YYYY-MM-DD  hh:mm:ss'): ''}
                               </td>
                             </tr>
                           );

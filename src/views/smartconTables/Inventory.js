@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import * as Icon from 'react-feather';
 import { Input, Button, Row, Col } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,12 +11,14 @@ import 'datatables.net-buttons/js/buttons.html5';
 import 'datatables.net-buttons/js/buttons.print';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import message from '../../components/Message';
 import { columns } from '../../data/Tender/InventoryData';
 import ViewAdjustStockHistoryModal from '../../components/Inventory/ViewAdjustStockHistoryModal';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import CommonTable from '../../components/CommonTable';
+import creationdatetime from '../../constants/creationdatetime';
 
 function Inventory() {
   //statevariables
@@ -41,6 +43,7 @@ function Inventory() {
   });
   //navigate
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
   // Get All inventories
   const getAllinventories = () => {
     setLoading(false);
@@ -61,6 +64,7 @@ function Inventory() {
       inventory_id: element.inventory_id,
       stock: e.target.value,
     });
+    
   
     const adjustedStockValue = parseFloat(e.target.value);
     const currentStockValue = parseFloat(element.stock) || 0; // If element.stock is null, set it to 0
@@ -79,6 +83,8 @@ function Inventory() {
   
   //adjust stock
   const adjuststock = () => {
+    adjuststockDetails.creation_date = creationdatetime;
+    adjuststockDetails.created_by = loggedInuser.first_name;
     api
       .post('/inventory/insertadjust_stock_log', adjuststockDetails)
       .then(() => {
@@ -92,6 +98,8 @@ function Inventory() {
   };
   //update stock
   const updateStockinInventory = () => {
+    inventoryStock.modification_date = creationdatetime;
+    inventoryStock.modified_by = loggedInuser.first_name;
     api
       .post('/inventory/updateInventoryStock', inventoryStock)
       .then(() => {
@@ -168,10 +176,10 @@ function Inventory() {
           </thead>
           <tbody>
             {inventories &&
-              inventories.map((element) => {
+              inventories.map((element,i) => {
                 return (
                   <tr key={element.inventory_id}>
-                    <td>{element.inventory_id}</td>
+                    <td>{i+1}</td>
                     <td>
                       <Link to={`/inventoryEdit/${element.inventory_id}`}>
                         <Icon.Edit2 />
