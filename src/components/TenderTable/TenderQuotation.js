@@ -33,7 +33,7 @@ export default function TenderQuotation({
   setAddLineItemModal,
   setEditQuoteModal,
   viewLineModal,
-  viewLineToggle,
+ // viewLineToggle,
   editQuoteModal,
   addLineItemModal,
   project,
@@ -51,7 +51,7 @@ export default function TenderQuotation({
     viewLineModal: PropTypes.object,
     getLineItem: PropTypes.object,
     getLine: PropTypes.object,
-    viewLineToggle: PropTypes.object,
+   // viewLineToggle: PropTypes.object,
     setEditQuoteModal: PropTypes.object,
     setAddLineItemModal: PropTypes.object,
     editQuoteModal: PropTypes.object,
@@ -101,6 +101,11 @@ export default function TenderQuotation({
   };
 
   useEffect(() => {}, [tenderId]);
+  const handleEditSuccess = () => {
+    // Handle the refresh of the View Line Item Modal
+    getLineItem(quote.quote_id);
+    setViewLineModal(true);
+  };
 
   return (
     <div>
@@ -171,6 +176,7 @@ export default function TenderQuotation({
         FetchLineItemData={editLineModelItem}
         getLineItem={getLineItem}
         setViewLineModal={setViewLineModal}
+        onEditSuccess={handleEditSuccess}
       >
         {' '}
       </EditLineItemModal>
@@ -279,8 +285,8 @@ export default function TenderQuotation({
                 </u>
               </Label>
 
-              <Modal size="xl" isOpen={viewLineModal} toggle={viewLineToggle.bind(null)}>
-                <ModalHeader toggle={viewLineToggle.bind(null)}>Line Items</ModalHeader>
+              <Modal size="xl" isOpen={viewLineModal} toggle={() => setViewLineModal(false)}>
+            <ModalHeader toggle={() => setViewLineModal(false)}>Line Items</ModalHeader>
                 <ModalBody>
                   <FormGroup>
                     <table className="lineitem border border-secondary rounded">

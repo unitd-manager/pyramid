@@ -358,10 +358,7 @@ const insertProduct = (ProductCode, ItemCode) => {
     setMoreItem(copyDeliverOrderProducts);
   }
 
-  useEffect(() => {
-     getProduct();
-    TabMaterialsPurchased();
-  }, []);
+
   useEffect(() => {
     setMoreItem([
       {
@@ -404,7 +401,30 @@ const insertProduct = (ProductCode, ItemCode) => {
     element.product_id = str.value.toString();
     setMoreItem(addMoreItem);
   };
+  const [unitOptions, setUnitOptions] = useState([]);
 
+  // Fetch data from API for unit options
+  const getUnitOptions = () => {
+    api.get('/product/getUnitFromValueList', unitOptions).then((res) => {
+      const items = res.data.data;
+      const finaldat = [];
+      items.forEach((item) => {
+        finaldat.push({ value: item.value, label: item.value });
+      });
+      setUnitOptions(finaldat);
+    });
+  };
+  const onchangeItem1 = (selectedValue, index) => {
+    const copyAddMoreItem = [...addMoreItem];
+    copyAddMoreItem[index].unit = selectedValue.value;
+    setMoreItem(copyAddMoreItem);
+  };
+
+  useEffect(() => {
+    getProduct();
+    TabMaterialsPurchased();
+    getUnitOptions(); // Fetch unit options
+  }, []);
   // Clear row value
   const ClearValue = (ind) => {
     setMoreItem((current) =>
@@ -505,7 +525,7 @@ const insertProduct = (ProductCode, ItemCode) => {
                         <Input value={item.title} type="hidden" name="title"></Input> 
     </div> */}
                       </td>
-
+{/* 
                       <td data-label="Unit">
                         <Input
                           defaultValue={item.uom}
@@ -513,6 +533,15 @@ const insertProduct = (ProductCode, ItemCode) => {
                           name="unit"
                           onChange={(e) => updateState(index, 'unit', e)}
                           value={insertPurchaseOrderData && insertPurchaseOrderData.unit}
+                        /> 
+                      </td> */}
+                    
+                    <td data-label="Unit">
+                        <Select
+                          name="unit"
+                          defaultValue={{ value: item.unit, label: item.unit }}
+                          onChange={(selectedOption) => onchangeItem1(selectedOption, index)}
+                          options={unitOptions}
                         />
                       </td>
                       <td data-label="Qty">

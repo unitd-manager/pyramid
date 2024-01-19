@@ -13,7 +13,7 @@ export default function AccountsMainEdit({ handleInputs, AccountsDetails }) {
       <Row>
         <Col md="3">
           <FormGroup>
-            <Label>Description </Label>
+            <Label>Description<span className="required"> *</span> </Label>
             <Input
               type="text"
               onChange={handleInputs}
@@ -24,7 +24,7 @@ export default function AccountsMainEdit({ handleInputs, AccountsDetails }) {
         </Col>
         <Col md="3">
           <FormGroup>
-            <Label>Invoice No </Label>
+            <Label>Invoice No<span className="required"> *</span> </Label>
             <Input
               type="text"
               onChange={handleInputs}
