@@ -253,6 +253,12 @@ const OpportunityEdit = () => {
   const getLineItem = (quotationId) => {
     api.post('/tender/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
       setLineItem(res.data.data);
+      console.log('Error fetching line items111111:', quotationId);
+
+    })
+    .catch((error) => {
+      console.error('Error fetching line items:', error);
+      message('LineItem Data not found', 'info');
     });
   };
 
@@ -331,7 +337,7 @@ const OpportunityEdit = () => {
         insertProject(res.data.data);
         setTimeout(() => {
           window.location.reload();
-        }, 400);
+        }, 1000);
       })
       .catch(() => {
         insertProject('');
@@ -447,6 +453,7 @@ const OpportunityEdit = () => {
               setEditQuoteModal={setEditQuoteModal}
               addLineItemModal={addLineItemModal}
               lineItem={lineItem}
+              setLineItem={setLineItem}
               viewLineModal={viewLineModal}
               setViewLineModal={setViewLineModal}
               id={id}

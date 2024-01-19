@@ -9,6 +9,7 @@ export default function CostingSummary() {
   const [addCostingSummaryModal, setAddCostingSummaryModal] = React.useState(false);
   const [chargesdetails, setChargesDetails] = React.useState('');
   const [getCostingSummary, setGetCostingSummary] = React.useState('');
+  const [totalMaterial, setTotalMaterial] = React.useState('');
   const { id } = useParams();
   //Api call for getting Vehicle Fuel Data By ID
 
@@ -19,6 +20,38 @@ export default function CostingSummary() {
         setGetCostingSummary(res.data.data[0]);
       }).catch(()=>{});
   };
+  const getTotalMaterial = () => {
+    api
+      .post('/projecttabcostingsummary/getTotalMaterial', { project_id: id })
+      .then((res) => {
+        setTotalMaterial(res.data.data[0]);
+      }).catch(()=>{});
+  };
+  const [quotation, setQuotation] = React.useState();
+  const [receive, setReceive] = React.useState();
+
+  const getQuotations = () => {
+    api
+      .post('/projecttabquote/getTabQuoteById', { project_id: id })
+      .then((res) => {
+        setQuotation(res.data.data[0]);
+      })
+  };
+  const getAmountById = () => {
+    api
+      .post('/project/getAmountByProjectIds', { project_id: id })
+      .then((res) => {
+        setReceive(res.data.data);
+      })
+      .catch(() => {
+
+      });
+  };
+
+  const [totalCost, setTotalCost] = React.useState(0); // New state for total cost
+
+  // ... (existing code)
+
   const getCostingSummaryChargesById = () => {
     api
       .post('/projecttabcostingsummary/getCostingSummaryproject', {
@@ -26,12 +59,39 @@ export default function CostingSummary() {
       })
       .then((res) => {
         setChargesDetails(res.data.data);
-      }).catch(()=>{});
+        
+        // Calculate total cost by summing up individual charges
+        const totalCost = (
+          (res.data.data && res.data.data.transport_charges) +
+          (res.data.data && res.data.data.labour_charges) +
+          (res.data.data && res.data.data.sales_commision) +
+          (res.data.data && res.data.data.finance_charges) +
+          (res.data.data && res.data.data.office_overheads) +
+          (res.data.data && res.data.data.other_charges)
+        ) || 0;
+
+        setTotalCost(totalCost);
+      })
+      .catch(() => {});
   };
   useEffect(() => {
     getCostingSummaryChargesById();
     getCostingbySummary();
+    getQuotations();
+    getAmountById();
+    getTotalMaterial();
   }, [id]);
+
+  const profitMargin =
+  ((quotation && quotation.totalamount) - totalCost) > 0
+    ? (
+       
+        ((quotation && quotation.totalamount) - totalCost)
+      ).toFixed(2) /100
+    : 0;
+
+const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
+
 
   return (
     <>
@@ -63,28 +123,26 @@ export default function CostingSummary() {
         <Col md="2">
           <FormGroup>
             <Label>
-              PO Price (S$ W/o GST) : <b>{getCostingSummary && getCostingSummary.po_price}</b>
+              PO Price (S$ W/o GST) : <b>{quotation && quotation.totalamount}</b>
             </Label>{' '}
           </FormGroup>
         </Col>
         <Col md="3">
           <FormGroup>
             <Label>
-              {' '}
+              {' '} 
               Invoiced Price (S$ W/o GST) :
-              <b>{getCostingSummary && getCostingSummary.invoiced_price}</b>
+              <b>{receive && receive.amount}</b>
             </Label>{' '}
           </FormGroup>
         </Col>
         <Col md="2">
           <FormGroup>
-            <Label>
-              Profit Margin :{' '}
-              <b>
-                {getCostingSummary && getCostingSummary.profit_percentage}%(
-                {getCostingSummary && getCostingSummary.profit})
-              </b>
-            </Label>{' '}
+          <Label>
+  Profit Margin :{' '}
+  <b>{formattedProfitMargin}% ({getCostingSummary && getCostingSummary.profit})</b>
+</Label>
+{' '}
           </FormGroup>
         </Col>
       </Row>
@@ -94,7 +152,7 @@ export default function CostingSummary() {
           <FormGroup>
             <Label>Total Material</Label>
             <br />
-            <span>{getCostingSummary && getCostingSummary.total_material_price}</span>
+            <span>{totalMaterial?.total_cost_price * totalMaterial?.total_qty ?? 'N/A'}</span>
           </FormGroup>
         </Col>
         <Col md="3">

@@ -194,9 +194,9 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                       <Label>Project Location</Label>
                       <Input
                         type="text"
-                        name="project_location"
+                        name="validity"
                         onChange={handleQuoteInputs}
-                        value={quotationeditDetails && quotationeditDetails.project_location}
+                        value={quotationeditDetails && quotationeditDetails.validity}
                       />
                     </FormGroup>
                   </Col>

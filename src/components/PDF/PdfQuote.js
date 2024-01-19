@@ -8,6 +8,7 @@ import * as Icon from 'react-feather';
 import moment from 'moment';
 // import message from '../Message';
 import api from '../../constants/api';
+import PdfHeader from './PdfHeader';
 
 const PdfQuote = ({ id, quoteId }) => {
   PdfQuote.propTypes = {
@@ -17,7 +18,18 @@ const PdfQuote = ({ id, quoteId }) => {
   const [quote, setQuote] = React.useState([]);
   const [tenderDetails, setTenderDetails] = useState(null);
   const [lineItem, setLineItem] = useState([]);
+  const [hfdata, setHeaderFooterData] = React.useState();
   const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+  React.useEffect(() => {
+    api.get('/setting/getSettingsForCompany').then((res) => {
+      setHeaderFooterData(res.data.data);
+    });
+  }, [0]);
+
+  const findCompany = (key) => {
+    const filteredResult = hfdata.find((e) => e.key_text === key);
+    return filteredResult.value;
+  };
 
   const getCompany = () => {
     api
@@ -190,7 +202,8 @@ const PdfQuote = ({ id, quoteId }) => {
     });
 
     const dd = {
-
+      header: PdfHeader({ findCompany }),
+      pageMargins: [40, 120, 40, 80],
       pageSize: 'A4',
       content: [
         {
@@ -346,7 +359,7 @@ const PdfQuote = ({ id, quoteId }) => {
         //   style: ['notesText', 'textSize'],
         // },
 
-        '\n',
+        '\n\n',
 
         {
           layout: {
@@ -450,7 +463,7 @@ const PdfQuote = ({ id, quoteId }) => {
         ...conditionsContent, // Add each condition as a separate paragraph
 
 
-        '\n',
+        '\n\n\n',
         '\n',
 
         {

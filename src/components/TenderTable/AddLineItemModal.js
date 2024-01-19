@@ -48,7 +48,9 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
         setAddLineItemModal(false);
-        // window.location.reload();
+         setTimeout(() => {
+            window.location.reload();
+          }, 1000);
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
