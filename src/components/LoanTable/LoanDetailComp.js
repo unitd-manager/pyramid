@@ -14,7 +14,7 @@ export default function LoanDetailComp({ loanDetails, loanStatus, handleInputs }
   return (
     <Form>
       <FormGroup>
-        <ComponentCard title="Loan Details" creationModificationDate={loanDetails}>
+        <ComponentCard title="Loan Details">
           <Row>
             <Col md="3">
               <FormGroup>
