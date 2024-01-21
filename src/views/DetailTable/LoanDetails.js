@@ -3,6 +3,7 @@ import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import moment from 'moment';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import AppContext from '../../context/AppContext';
@@ -28,29 +29,30 @@ const LoanDetails = () => {
       .catch(() => {});
   };
 
-  const [expenseForms, setExpenseForms] = useState({
+  const [loanForms, setLoanForms] = useState({
     employee_id: '',
     amount: '',
     month_amount: '',
   });
 
-  //setting data in expenseForms
-  const handleExpenseForms = (e) => {
-    setExpenseForms({ ...expenseForms, [e.target.name]: e.target.value });
+  //setting data in loanForms
+  const handleLoanForms = (e) => {
+    setLoanForms({ ...loanForms, [e.target.name]: e.target.value });
   };
 
   //Logic for adding Loan in db
-  const insertExpense = () => {
-    if (expenseForms.title !== '') {
-      expenseForms.creation_date = creationdatetime;
-      expenseForms.created_by = loggedInuser.first_name;
+  const insertLoan = () => {
+    if (loanForms.employee_id !== '' && loanForms.amount !== '' && loanForms.month_amount !== '') {
+      loanForms.date = moment();
+      loanForms.creation_date = creationdatetime;
+      loanForms.created_by = loggedInuser.first_name;
       api
-        .post('/expensehead/insertExpGroup', expenseForms)
+        .post('/loan/insertLoan', loanForms)
         .then((res) => {
           const insertedDataId = res.data.data.insertId;
-          message('Expense head inserted successfully.', 'success');
+          message('Loan inserted successfully.', 'success');
           setTimeout(() => {
-            navigate(`/ExpenseHeadEdit/${insertedDataId}`);
+            navigate(`/LoanEdit/${insertedDataId}?tab=1`);
           }, 300);
         })
         .catch(() => {
@@ -71,20 +73,20 @@ const LoanDetails = () => {
       <ToastContainer />
       <Row>
         <Col md="6">
-          <ComponentCard title="Expense haed Details">
+          <ComponentCard title="Loan Details">
             <Form>
               <FormGroup>
                 <Row>
                   <Col md="12">
                     <FormGroup>
                       <Label>
-                         Title <span className="required"> *</span>
+                        Employee Name <span className="required"> *</span>
                       </Label>
                       <Input
-                        type="text"
-                        name="title"
-                        onChange={handleExpenseForms}
-                        value={expenseForms && expenseForms.employee_id}
+                        type="select"
+                        name="employee_id"
+                        onChange={handleLoanForms}
+                        value={loanForms && loanForms.employee_id}
                       >
                         <option value="" selected>
                           Please Select
@@ -103,13 +105,25 @@ const LoanDetails = () => {
                       </Label>
                       <Input
                         type="number"
-                        onChange={handleExpenseForms}
-                        value={expenseForms && expenseForms.title}
-                        name="title"
+                        onChange={handleLoanForms}
+                        value={loanForms && loanForms.amount}
+                        name="amount"
                       />
                     </FormGroup>
                   </Col>
-                  
+                  <Col md="12">
+                    <FormGroup>
+                      <Label>
+                        Amount Payable(per month)<span className="required"> *</span>
+                      </Label>
+                      <Input
+                        type="number"
+                        onChange={handleLoanForms}
+                        value={loanForms && loanForms.month_amount}
+                        name="month_amount"
+                      />
+                    </FormGroup>
+                  </Col>
                 </Row>
               </FormGroup>
               <FormGroup>
@@ -118,7 +132,7 @@ const LoanDetails = () => {
                     <Button
                       color="primary"
                       onClick={() => {
-                        insertExpense();
+                        insertLoan();
                       }}
                       type="button"
                       className="btn mr-2 shadow-none"

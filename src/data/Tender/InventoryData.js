@@ -11,7 +11,7 @@ export const columns = [
     },
     {
       id:2,
-      name: "",
+      name: "Edit",
       selector: "edit",
       sortable: true,
       grow: 0,

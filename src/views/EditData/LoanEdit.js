@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Form, FormGroup } from 'reactstrap';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -6,17 +6,14 @@ import '../form-editor/editor.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment';
-import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
-import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import LoanMoreDetails from '../../components/LoanTable/LoanMoreDetails';
 import LoanDetailComp from '../../components/LoanTable/LoanDetailComp';
 //import ComponentCardV2 from '../../components/ComponentCardV2';
 //import LoanButtons from '../../components/LoanTable/LoanButton';
 import ApiButton from '../../components/ApiButton';
-import creationdatetime from '../../constants/creationdatetime';
 
 const LoanEdit = () => {
   //All state variables
@@ -37,7 +34,6 @@ const LoanEdit = () => {
   //Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
-  const { loggedInuser } = useContext(AppContext);
 
   const addpaymentToggle = () => {
     setAddPaymentModal(!addpaymentModal);
@@ -62,12 +58,11 @@ const LoanEdit = () => {
   //All functions/Methods
 
   //Method for getting data by LoanId and Employee Id
-  const getPreviousEarlierLoan = (empId)=> {
+  const getPreviousEarlierLoan = (empId) => {
     api
       .post('/loan/TabPreviousEarlierLoanById', { employee_id: empId })
       .then((res) => {
         setLoan(res.data.data);
-        console.log('loans',res.data.data)
       })
 
       .catch(() => {
@@ -111,8 +106,6 @@ const LoanEdit = () => {
       loanDetails.amount !== '' &&
       loanDetails.month_amount !== ''
     ) {
-      loanDetails.modification_date = creationdatetime;
-      loanDetails.modified_by = loggedInuser.first_name;
       api
         .post('/loan/edit-Loan', loanDetails)
         .then(() => {
@@ -123,6 +116,9 @@ const LoanEdit = () => {
 
           message('Record edited successfully', 'success');
           getLoanById();
+          setTimeout(() => {
+            window.location.reload();
+          }, 700);
         })
         .catch(() => {
           message('Unable to edit record.', 'error');
@@ -152,6 +148,7 @@ const LoanEdit = () => {
         .then(() => {
           // Handle the API call success
           console.log('Loan closing date updated successfully.');
+          
         })
         .catch((error) => {
           // Handle the API call error
@@ -160,38 +157,20 @@ const LoanEdit = () => {
     }
   }, [loanDetails.amount_payable, loanDetails.loan_closing_date, loanDetails.status]);
 
+  //for deleting the data
   const deleteLoanData = () => {
-    Swal.fire({
-      title: `Are you sure? ${id}`,
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        api
-          .post('/loan/deleteLoan', { loan_id: id })
-          .then(() => {
-            Swal.fire('Deleted!', 'Your Leave has been deleted.', 'success');
-            window.location.reload();
-          });
-      }
-    });
+    api
+      .post('/loan/deleteLoan', { loan_id: id })
+      .then(() => {
+        message('Record deteled successfully', 'success');
+        setTimeout(() => {
+          window.location.reload();
+        }, 700);
+      })
+      .catch(() => {
+        message('Unable to delete record.', 'error');
+      });
   };
-
-  // //for deleting the data
-  // const deleteLoanData = () => {
-  //   api
-  //     .post('/loan/deleteLoan', { loan_id: id })
-  //     .then(() => {
-  //       message('Record deteled successfully', 'success');
-  //     })
-  //     .catch(() => {
-  //       message('Unable to delete record.', 'error');
-  //     });
-  // };
 
   //getting payment data By Loan Id
   const getPaymentById = () => {
@@ -261,6 +240,9 @@ const LoanEdit = () => {
               })
               .then(() => {
                 console.log('Loan status updated to Closed.');
+                setTimeout(() => {
+                  window.location.reload();
+                }, 700);
               })
               .catch((error) => {
                 console.error('Failed to update loan status:', error);
@@ -292,7 +274,7 @@ const LoanEdit = () => {
   useEffect(() => {
     getLoanById();
     getPaymentById();
-    
+    getPreviousEarlierLoan();
   }, [id]);
 
   const columns1 = [

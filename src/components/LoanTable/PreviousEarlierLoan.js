@@ -5,20 +5,16 @@ import moment from 'moment';
 
 export default function PreviousEarlierLoan({ loan ,loanDetails}) {
   PreviousEarlierLoan.propTypes = {
-    loan: PropTypes.array,
+    loan: PropTypes.any,
     loanDetails:PropTypes.any
   };
- 
-   let prevloan=[];
-  if(loan?.length){
+  let prevloan=[];
+  if(loan){
    prevloan=loan.filter((el)=>{
-    return (el.loan_id !== loanDetails.loan_id && (new Date(loanDetails.date)< new Date(el.date) ) )
+    return (el.loan_id !== loanDetails.loan_id && (new Date(loanDetails.date)>= new Date(el.date) ) )
   })
-  
-  }
-  console.log('loanlength',loan?.length)
-  console.log('loan',loan)
-  console.log('prev loan',prevloan)
+  console.log('prev loan',prevloan)}
+
   const columns = [
     {
       name: '#',

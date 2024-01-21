@@ -13,6 +13,7 @@ import {
 import random from 'random';
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import AsyncSelect from 'react-select/async';
 import message from '../Message';
 import api from '../../constants/api';
 import AppContext from '../../context/AppContext';
@@ -62,28 +63,28 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
   };
   console.log('loggedinuser',loggedInuser)
   //Insert claim line items
+  //Insert claim line items
   const insertTransferItems = (elem) => {
     elem.product_id = transferItem.product_id;
     elem.from_project_id = id;
     elem.created_by = loggedInuser.name;
-    console.log('lem',elem)
-    // api
-    //   .post('/projecttabmaterialstransferredportal/insertstock_transfer', elem)
-    //   .then(() => {
-    //     transferItem.qty -= elem.quantity;
-    //     api
-    //       .post('/purchaseorder/editTabPurchaseOrderLineItem', transferItem)
-    //       .then(() => {
-    //         message('Record created successfully', 'success');
-    //       })
-    //       .catch(() => {
-    //         message('Unable to edit record.', 'error');
-    //       });
-    //     message('Record created successfully', 'success');
-    //   })
-    //   .catch(() => {
-    //     message('Unable to edit record.', 'error');
-    //   });
+    api
+      .post('/projecttabmaterialstransferredportal/insertstock_transfer', elem)
+      .then(() => {
+        transferItem.qty -= elem.quantity;
+        api
+          .post('/purchaseorder/editTabPurchaseOrderLineItem', transferItem)
+          .then(() => {
+            message('Record created successfully', 'success');
+          })
+          .catch(() => {
+            message('Unable to edit record.', 'error');
+          });
+        message('Record created successfully', 'success');
+      })
+      .catch(() => {
+        message('Unable to edit record.', 'error');
+      });
   };
 
   function updateState(index, property, e) {
@@ -105,6 +106,40 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
     } else {
       alert(`Please Enter the Quantity less than ${transferItem.qty}`);
     }
+  };
+
+  
+  
+  const onchangeItems = (selectedProduct, itemId) => {
+    const updatedItems = addLineItem.map((item) => {
+      if (item.id === itemId) {
+        return {
+          ...item,
+          company_id: selectedProduct.value.toString(),
+          company_name: selectedProduct.label,
+          
+        };
+      }
+      return item;
+    });
+    setAddLineItem(updatedItems);
+  };
+  
+  
+  
+
+  // ... (previous code)
+
+  const loadOptions = (inputValue, callback) => {
+    api.get(`/clients/getClientsbyfilter`, { params: { keyword: inputValue } })
+      .then((res) => {
+        const items = res.data.data;
+        const options = items.map((item) => ({
+          value: item.company_id,
+          label: item.company_name,
+        }));
+        callback(options);
+      });
   };
 
   useEffect(() => {
@@ -155,14 +190,22 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
                       addLineItem.map((item, index) => {
                         return (
                           <tr key={item.id}>
-                            <td data-label="title">
-                              <Input
-                                defaultValue={item.client}
-                                type="text"
-                                name="client"
-                                onChange={(e) => updateState(index, 'client', e)}
-                              />
-                            </td>
+                           <td data-label="title">
+          <AsyncSelect
+            defaultValue={{
+              value: item.company_id,
+              label: item.company_name,
+            }}
+            onChange={(selectedOption) => {
+              onchangeItems(selectedOption, item.id); // Pass item.id as the itemId
+            }}
+            loadOptions={loadOptions}
+          />
+          {/* Remove hidden inputs, update state instead */}
+          {/* <Input value={item.company_id} type="hidden" name="company_id" />
+          <Input value={item.company_name} type="hidden" name="company_name" /> */}
+        </td>
+                
 
                             <td data-label="Project Name">
                               <Input

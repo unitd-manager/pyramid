@@ -59,8 +59,11 @@ const AccountsEdit = () => {
   
     
   let calculatedGstAmount = 0;
-  if (radioVal === '1') {
+  if (radioVal == '1') {
     calculatedGstAmount = parseFloat(totalAmountF) * (gstPercentageValue / 100);
+  }else{
+    calculatedGstAmount = 0;
+
   }
 
   setGstAmount(calculatedGstAmount);
