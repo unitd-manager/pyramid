@@ -328,8 +328,7 @@ const PdfQuote = ({ id, quoteId }) => {
 
         }, '\n',
         {
-          text: `Price : $ ${quote.amount ? quote.amount : ''
-            }`,
+          text: `Price : $ ${quote.totalamount ? quote.totalamount.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0'}`,
 
           style: ['invoiceAdd', 'textSize'],
 

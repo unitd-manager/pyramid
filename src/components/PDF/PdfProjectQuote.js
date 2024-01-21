@@ -317,9 +317,9 @@ const PdfProjectQuote = ({ id, quoteId }) => {
 
         }, '\n',
         {
-          text: `Price : $ ${quote.amount ? quote.amount : ''
-            }`,
-
+          text: `Price :  $  ${quote.totalamount ? quote.totalamount.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0'} `,
+margin:[0,0,0,0],
+alignment:"right",
           style: ['invoiceAdd', 'textSize'],
 
         },
