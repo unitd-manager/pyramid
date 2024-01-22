@@ -48,8 +48,8 @@ const EditDeliveryOrder = ({ editDeliveryOrder, setEditDeliveryOrder, data }) =>
     api
       .post('/projecttabdeliveryorder/editTabDeliveryOrder', delivery)
       .then(() => {
-        message('Invoice edited successfully.', 'success');
-        //window.location.reload();
+        message('Record edited successfully.', 'success');
+        window.location.reload();
       })
       .catch(() => {
         message('Network connection error.');

@@ -268,7 +268,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
       result.push(allValues);
     });
     purchaseDetails.project_id = projectId;
-    if (purchaseDetails.supplier_id !== '' && purchaseDetails.po_date !== '' && purchaseDetails.po_code !=='') {
+    if (purchaseDetails.supplier_id !== '' && purchaseDetails.purchase_order_date !== '' && purchaseDetails.po_code !=='') {
       
         if (purchaseDetails.gst === '1') {
           purchaseDetails.gst_percentage = gstPercentageValue;
@@ -485,9 +485,9 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                       <Label>Po_Date <span className="required"> *</span></Label>
                       <Input
                         type="date"
-                        name="po_date"
+                        name="purchase_order_date"
                         value={moment(
-                          purchaseDetails && purchaseDetails.po_date,
+                          purchaseDetails && purchaseDetails.purchase_order_date,
                         ).format('YYYY-MM-DD')}
                         onChange={handleInputs}
                       />
