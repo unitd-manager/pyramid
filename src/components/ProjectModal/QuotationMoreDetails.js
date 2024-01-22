@@ -121,7 +121,7 @@ export default function QuotationMoreDetails({
               <Label>Discount </Label>
             </FormGroup>
           </Col>
-          <Col>
+          <Col md="2">
             <FormGroup>
               <Label>Amount </Label>
             </FormGroup>
@@ -172,7 +172,7 @@ export default function QuotationMoreDetails({
                   </FormGroup>
                 </Col>
 
-                <Col>
+                <Col md="2">
                   <FormGroup>
                     <Label>
                       <div className='anchor'>
@@ -193,9 +193,10 @@ export default function QuotationMoreDetails({
                 <Col>
                   <FormGroup>
                     <Row>
-                      <Col md="2">
+                      <Col md="3">
                         <Label>
                           <div color="primary" className='anchor'>
+                          {' '}
                             <span
                               onClick={() => {
                                 setQuoteData(element);
@@ -203,11 +204,11 @@ export default function QuotationMoreDetails({
                               }}
                             >
                               <Icon.Edit />
-                            </span>
+                            </span>{' '}
                           </div>
                         </Label>
                       </Col>
-                      <Col md="4">
+                      <Col md="3">
                         <Label>
                         <PdfProjectQuote id={id} quoteId={element.quote_id}></PdfProjectQuote>
                         </Label>
@@ -242,6 +243,7 @@ export default function QuotationMoreDetails({
                     editQuoteModal={editQuoteModal}
                     setEditQuoteModal={setEditQuoteModal}
                     quoteData={quoteData}
+                    setQuoteData={setQuoteData}
                     lineItem={lineItem}
                     quoteId={element.quote_id}
                     projectInfo={id}

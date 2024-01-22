@@ -133,6 +133,13 @@ const EmployeeSalary = () => {
       grow: 0,
       wrap: true,
     },
+    {
+      name: 'Status',
+      selector: 'status',
+      sortable: true,
+      grow: 0,
+      wrap: true,
+    },
 
   ];
   return (
@@ -155,7 +162,7 @@ const EmployeeSalary = () => {
                 >
                   <option value="Current">Current</option>
                   <option value="Archive">Archive</option>
-                  <option value="">Cancel</option>
+                  <option value="Cancel">Cancel</option>
                 </Input>
                 </FormGroup>
             </Col>
@@ -215,6 +222,7 @@ const EmployeeSalary = () => {
                     <td>{element.total_allowance}</td>
                     <td>{element.total_deductions}</td> 
                     <td>{element.net_total}</td> 
+                    <td>{element.status}</td> 
                   </tr>
                 );
               })}

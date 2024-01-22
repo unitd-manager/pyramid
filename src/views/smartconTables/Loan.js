@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-feather';
+import moment from 'moment';
 import { Button } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'datatables.net-dt/js/dataTables.dataTables';
 import 'datatables.net-dt/css/jquery.dataTables.min.css';
 import $ from 'jquery';
-import moment from 'moment';
-// import 'datatables.net-buttons/js/buttons.colVis';
+import 'datatables.net-buttons/js/buttons.colVis';
 // import 'datatables.net-buttons/js/buttons.flash';
 // import 'datatables.net-buttons/js/buttons.html5';
-// import 'datatables.net-buttons/js/buttons.print';
+import 'datatables.net-buttons/js/buttons.print';
 import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import CommonTable from '../../components/CommonTable';
 
-const Leaves = () => {
-  //Const Variables
+const Loan = () => {
+  //state variale
   const [loan, setLoan] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  // get Leave
+  //getting loan data in db
   const getLoan = () => {
+    setLoading(true);
     api
       .get('/loan/getLoan')
       .then((res) => {
@@ -31,28 +31,29 @@ const Leaves = () => {
           pageLength: 20,
           processing: true,
           dom: 'Bfrtip',
-          // buttons: [
-          //   {
-          //     extend: 'print',
-          //     text: 'Print',
-          //     className: 'shadow-none btn btn-primary',
-          //   },
-          // ],
+          buttons: [
+            {
+              extend: 'print',
+              text: 'Print',
+              className: 'shadow-none btn btn-primary',
+            },
+          ],
         });
         setLoading(false);
       })
       .catch(() => {
-        // setLoading(false);
+        setLoading(false);
       });
   };
 
   useEffect(() => {
     getLoan();
   }, []);
-  //  stucture of leave list view
+
+  //  stucture of loan list view
   const columns = [
     {
-      name: 'id',
+      name: '#',
       selector: '',
       grow: 0,
       wrap: true,
@@ -67,7 +68,6 @@ const Leaves = () => {
       button: true,
       sortable: false,
     },
-
     {
       name: 'Employee Name',
       selector: 'employee_name',
@@ -88,38 +88,33 @@ const Leaves = () => {
       sortable: true,
       grow: 0,
     },
-    // {
-    //   name: 'From date',
-    //   selector: 'from_date',
-    //   sortable: true,
-    //   width: 'auto',
-    //   grow: 3,
-    // },
     {
       name: 'Amount Payable(per month)',
-      selector: '	month_amount',
+      selector: 'month_amount',
       sortable: true,
-      grow: 2,
       width: 'auto',
+      grow: 3,
     },
     {
       name: 'Total Amount Paid',
       selector: 'total_repaid_amount',
       sortable: true,
-      grow: 2,
-      wrap: true,
+      width: 'auto',
+      grow: 3,
     },
     {
       name: 'Amount Payable',
       selector: 'amount_payable',
       sortable: true,
       width: 'auto',
+      grow: 3,
     },
     {
       name: 'Status',
       selector: 'status',
       sortable: true,
       width: 'auto',
+      grow: 3,
     },
   ];
 
@@ -127,12 +122,13 @@ const Leaves = () => {
     <div className="MainDiv">
       <div className=" pt-xs-25">
         <BreadCrumbs />
+
         <CommonTable
           loading={loading}
           title="Loan List"
           Button={
             <Link to="/LoanDetails">
-              <Button color="primary" className="shadow-none add-new">
+              <Button color="primary" className="shadow-none">
                 Add New
               </Button>
             </Link>
@@ -147,12 +143,12 @@ const Leaves = () => {
           </thead>
           <tbody>
             {loan &&
-              loan.map((element, i) => {
+              loan.map((element, index) => {
                 return (
-                  <tr key={element.leave_id}>
-                    <td>{i + 1}</td>
+                  <tr key={element.loan_id}>
+                    <td>{index + 1}</td>
                     <td>
-                      <Link to={`/LoanEdit/${element.loan_id}?tab=1`} className='editlink'>
+                      <Link to={`/LoanEdit/${element.loan_id}?tab=1`}>
                         <Icon.Edit2 />
                       </Link>
                     </td>
@@ -173,4 +169,4 @@ const Leaves = () => {
   );
 };
 
-export default Leaves;
+export default Loan;
