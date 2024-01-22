@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
 
@@ -23,6 +24,7 @@ const ContentDetails = () => {
   const handleInputs = (e) => {
     setContentDetails({ ...contentDetails, [e.target.name]: e.target.value });
   };
+  const { loggedInuser } = useContext(AppContext);
   //getting data from content
   const getContent = () => {
     api.get('/content/getContent').then((res) => {
@@ -33,6 +35,7 @@ const ContentDetails = () => {
   const insertContentData = () => {
     if (contentDetails.title !== '') {
       contentDetails.creation_date = creationdatetime;
+      contentDetails.created_by = loggedInuser.first_name;
       api
         .post('/content/insertContent', contentDetails)
         .then((res) => {
@@ -46,7 +49,7 @@ const ContentDetails = () => {
           message('Network connection error.', 'error');
         });
     } else {
-      message('Please fill all required fields.', 'error');
+      message('Please fill all required fields.', 'warning');
     }
   };
   useEffect(() => {
@@ -65,7 +68,7 @@ const ContentDetails = () => {
               <FormGroup>
                 <Row>
                   <Col md="12">
-                    <Label>Title</Label>
+                    <Label>Title<span className='required'>*</span></Label>
                     <Input
                       type="text"
                       onChange={handleInputs}
