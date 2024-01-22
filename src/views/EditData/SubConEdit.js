@@ -52,7 +52,7 @@ const SubConEdit = () => {
   };
   //Logic for edit data in db
   const editSubConData = () => {
-    if (subCon.company_name !== ''){
+    if (subCon.company_name !== ''&& subCon.address_flat){
       subCon.modification_date = creationdatetime;
       subCon.modified_by = loggedInuser.first_name;
       api

@@ -108,9 +108,9 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
       .then((res) => {
         setSubConWork(res.data.data[0].sub_con_work_order_id);
       })
-      // .catch(() => {
-      //   message('Cannot get Invoice Data', 'error');
-      // });
+      .catch(() => {
+        // message('Cannot get Invoice Data', 'error');
+      });
   };
   
 

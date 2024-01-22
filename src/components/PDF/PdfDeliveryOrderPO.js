@@ -1,4 +1,5 @@
 import React from 'react';
+//import { useParams } from 'react-router-dom';
 import pdfMake from 'pdfmake';
 import * as Icon from 'react-feather';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -9,15 +10,15 @@ import message from '../Message';
 import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
-const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
+const PdfDeliveryOrderPO = ({ deliveryOrderId }) => {
   PdfDeliveryOrderPO.propTypes = {
     deliveryOrderId: PropTypes.any,
-    date: PropTypes.any,
+    
   };
   const [hfdata, setHeaderFooterData] = React.useState();
-
+  const[deliveryData,setdeliveryData]=React.useState();
   const [deliverOrderProducts, setDeliveryOrderProducts] = React.useState();
-
+  //const { id } = useParams();
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
       setHeaderFooterData(res.data.data);
@@ -27,6 +28,17 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
   const findCompany = (key) => {
     const filteredResult = hfdata.find((e) => e.key_text === key);
     return filteredResult.value;
+  };
+
+  const GetDeliveryOrder = () => {
+    api
+      .post('/purchaseorder/getDeliveryOrderPO', { delivery_order_id: deliveryOrderId})
+      .then((res) => {
+        setdeliveryData(res.data.data[0]);
+      })
+      .catch(() => {
+        
+      });
   };
 
   const getDeliveryOrderId = () => {
@@ -42,25 +54,38 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
 
   React.useEffect(() => {
     getDeliveryOrderId();
+    GetDeliveryOrder();
   }, []);
 
   const GetPdf = () => {
     const productItems = [
       [
         {
-          text: 'Sn',
+          text: 'S.NO',
           style: 'tableHead',
         },
         {
-          text: 'Product Name',
+          text: 'EQUIPMENT NO',
           style: 'tableHead',
         },
         {
-          text: 'Qty',
+          text: 'WORK DESCRTPTION',
           style: 'tableHead',
         },
         {
-          text: 'Remarks',
+          text: 'ITEM',
+          style: 'tableHead',
+        },
+        {
+          text: 'SIZE',
+          style: 'tableHead',
+        },
+        {
+          text: 'QTY',
+          style: 'tableHead',
+        },
+        {
+          text: 'UNIT',
           style: 'tableHead',
         },
       ],
@@ -73,7 +98,22 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
           border: [false, false, false, true],
         },
         {
+          text: `${element.equipment_no ? element.equipment_no : ''}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
           text: `${element.item_title ? element.item_title : ''}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
+          text: `${element.item ? element.item : ''}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+        },
+        {
+          text: `${element.size ? element.size : ''}`,
           border: [false, false, false, true],
           style: 'tableBody',
         },
@@ -83,7 +123,7 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
           style: 'tableBody',
         },
         {
-          text: `${element.remarks ? element.remarks : ''}`,
+          text: `${element.unit ? element.unit : ''}`,
           border: [false, false, false, true],
           style: 'tableBody',
         },
@@ -92,7 +132,7 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
     const dd = {
       pageSize: 'A4',
       header: PdfHeader({ findCompany }),
-      pageMargins: [40, 150, 40, 80],
+      pageMargins: [40, 120, 40, 80],
       footer: PdfFooter,
 
       content: [
@@ -149,20 +189,56 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
           },
         },
         '\n\n',
+        
         {
-          columns: [
-            {
-              text: `Date :${date ? moment(date).format('DD-MM-YYYY') : ''} `,
-              style: 'textSize',
-              margin: [0, 0, 65, 0],
-              bold: true,
-            },
-          ],
+          text: `Location:${deliveryData.location ? deliveryData.location : ''}`,
+          style: ['notesText', 'textSize'],
+          margin: [0, 0, 400, 0],
+        },
+        '\n',
+        {
+          text: `Scope of Work: ${deliveryData.scope_of_work ? deliveryData.scope_of_work : ''}`,
+          style: ['notesText', 'textSize'],
+          margin: [0, 0, 400, 0],
+
+          
         },
         '\n',
 
-        '\n',
-        '\n',
+    {
+      text: `Job No :${deliveryData.delivery_order_code ? deliveryData.delivery_order_code : ''}`,
+      
+      style: ['invoiceAdd', 'textSize'],
+      margin: [0, -70, 0, 0],
+    },
+    '\n',
+    {
+      text: `P.O No :${
+        deliveryData.po_code ? deliveryData.po_code  : ''
+      }`,
+      
+      style: ['invoiceAdd', 'textSize'],
+      
+    },
+    '\n',
+    {
+      text: `P.O.Date :${
+        deliveryData && deliveryData.purchase_order_date ? moment(deliveryData.purchase_order_date).format('DD-MM-YYYY') : ''
+      }`,
+      
+      style: ['invoiceAdd', 'textSize'],
+      
+    },
+    '\n',
+    {
+      text: `Date :${
+        deliveryData && deliveryData.date ? moment(deliveryData.date).format('DD-MM-YYYY') : ''
+      }`,
+      
+      style: ['invoiceAdd', 'textSize'],
+      
+    },
+    '\n\n\n\n\n\n',
 
         {
           layout: {
@@ -203,7 +279,7 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
           },
           table: {
             headerRows: 1,
-            widths: ['10%', '41%', '20%', '30%'],
+            widths: ['10%','15%', '31%', '15%', '10%','10%','10%'],
 
             body: productItems,
           },
@@ -299,6 +375,9 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId, date }) => {
           alignment: 'left',
           fontSize: 10,
         },
+      },
+      defaultStyle: {
+        columnGap: 20,
       },
     };
     pdfMake.vfs = pdfFonts.pdfMake.vfs;

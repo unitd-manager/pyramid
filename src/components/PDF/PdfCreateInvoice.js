@@ -9,7 +9,7 @@ import * as numberToWords from 'number-to-words';
 import api from '../../constants/api';
 import message from '../Message';
 import PdfFooter from './PdfFooter';
-//import PdfHeader2 from './PdfHeader2';
+import PdfHeader from './PdfHeader';
 //import PdfHeader2 from './PdfHeader2';
 
 const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
@@ -42,7 +42,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
     const filteredResult = hfdata.find((e) => e.key_text === key);
     return filteredResult.value;
   };
-
+ 
 
   // Gettind data from Job By Id
   const getInvoiceById = () => {
@@ -206,40 +206,43 @@ const conditionsContent = conditions.map((condition) => ({
           text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
-          style: 'tableBody1',
+          style: 'tableBody1',  
+          alignment: 'right',
         },
         {
           text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
           style: 'tableBody1',
+          alignment: 'right',
         },
       ]);
     });
 
     const dd = {
       pageSize: 'A4',
-
-      pageMargins: [40, 40, 30, 0],
+      header: PdfHeader({ findCompany }),
+       pageMargins: [40, 120, 40, 10],
+      //pageMargins: [40, 40, 30, 0],
       footer: PdfFooter,
 
 
       content: [
-        {
-          columns: [
-            {
-              image: `${findCompany("cp.companyLogo")}`,
-              style: 'logo', width: 80, alignment: 'left', margin: [0, -20, 0, 0]
-            },
+        // {
+        //   columns: [
+        //     {
+        //       image: `${findCompany("cp.companyLogo")}`,
+        //       style: 'logo', width: 80, alignment: 'left', margin: [0, -20, 0, 0]
+        //     },
 
-            // { text: `${findCompany("cp.companyName")}`, alignment: 'center', bold: true, fontSize: 17, color: 'Blue', margin: [0, -20, 80, 0] },
-          ],
-        },
+        //     // { text: `${findCompany("cp.companyName")}`, alignment: 'center', bold: true, fontSize: 17, color: 'Blue', margin: [0, -20, 80, 0] },
+        //   ],
+        // },
 
 
-        '\n\n',
-        { text: `${findCompany("cp.companyName")}`, alignment: 'center', bold: true, fontSize: 14, color: 'Blue', margin: [0, -70, 0, 0] },
-        '\n\n\n',
+        // '\n\n',
+        // { text: `${findCompany("cp.companyName")}`, alignment: 'center', bold: true, fontSize: 14, color: 'Blue', margin: [0, -70, 0, 0] },
+        '\n',
         {
           layout: {
             defaultBorder: false,
@@ -491,7 +494,7 @@ const conditionsContent = conditions.map((condition) => ({
           },
           table: {
             headerRows: 1,
-            widths: [20, 160, 40, 50, 60, 70],
+            widths: [20, 160, 38, 40, 65, 70],
 
             body: productItems,
           },
@@ -504,7 +507,7 @@ const conditionsContent = conditions.map((condition) => ({
                 minimumFractionDigits: 2,
               })}`,
               alignment: 'right',
-              margin: [0, 0, 28, 0],
+              margin: [0, 0, 5, 0],
               style: 'textSize',
             },
             '\n',
@@ -513,14 +516,14 @@ const conditionsContent = conditions.map((condition) => ({
                 minimumFractionDigits: 2,
               })}`,
               alignment: 'right',
-              margin: [0, 0, 28, 0],
+              margin: [0, 0, 5, 0],
               style: 'textSize',
             },
             '\n',
             {
               text: `GRAND TOTAL ($) : ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
               alignment: 'right',
-              margin: [0, 0, 28, 0],
+              margin: [0, 0, 5, 0],
               style: 'textSize',
             },
             '\n\n\n',

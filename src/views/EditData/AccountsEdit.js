@@ -59,8 +59,11 @@ const AccountsEdit = () => {
   
     
   let calculatedGstAmount = 0;
-  if (radioVal === '1') {
+  if (radioVal == '1') {
     calculatedGstAmount = parseFloat(totalAmountF) * (gstPercentageValue / 100);
+  }else{
+    calculatedGstAmount = 0;
+
   }
 
   setGstAmount(calculatedGstAmount);
@@ -91,7 +94,7 @@ const AccountsEdit = () => {
 
 const editAccountsData = () => {
   // Check if the description is not empty
-  if (AccountsDetails.invoice_code !== '') {
+  if (AccountsDetails.invoice_code !== '' && AccountsDetails.date) {
     // Check if the description already exists in the database
     api.post('/accounts/checkInvoiceCode', { invoice_code: AccountsDetails.invoice_code,expense_id: id })
       .then((response) => {

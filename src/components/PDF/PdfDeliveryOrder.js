@@ -42,7 +42,7 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
   };
   const TabDeliveryOrder = () => {
     api
-      .post('/projecttabdeliveryorder/TabDeliveryOrder', { project_id: id })
+      .post('/purchaseorder/getDeliveryOrderPO', { delivery_order_id: deliverOrderId })
       .then((res) => {
         setdeliveryData(res.data.data[0]);
       })
