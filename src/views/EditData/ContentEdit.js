@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import Swal from 'sweetalert2';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
@@ -16,8 +17,10 @@ import ComponentCard from '../../components/ComponentCard';
 import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
 //import PictureAttachmentModalV2 from '../../components/Tender/PictureAttachmentModalV2';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import ApiButton from '../../components/ApiButton';
+import creationdatetime from '../../constants/creationdatetime';
 
 const ContentUpdate = () => {
   // All state variables
@@ -44,6 +47,7 @@ const ContentUpdate = () => {
   const backToList = () => {
     navigate('/Content');
   };
+  const { loggedInuser } = useContext(AppContext);
   //Setting data in contentDetails
   const handleInputs = (e) => {
     setContentDetails({ ...contentDetails, [e.target.name]: e.target.value });
@@ -96,6 +100,8 @@ const ContentUpdate = () => {
       contentDetails.sub_category_id !== '' &&
       contentDetails.published !== ''
     ) {
+      contentDetails.modification_date = creationdatetime;
+      contentDetails.modified_by = loggedInuser.first_name;
       api
         .post('/content/editContent', contentDetails)
         .then(() => {
@@ -167,15 +173,36 @@ useEffect(() => {
 
     //For delete data in db
     const deleteContentData = () => {
-      api
-        .post('/content/deleteContent', { content_id: id })
-        .then(() => {
-          message('Record deteled successfully', 'success');
-        })
-        .catch(() => {
-          message('Unable to delete record.', 'error');
-        });
+      Swal.fire({
+        title: `Are you sure? ${id}`,
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          api
+            .post('/content/deleteContent', { content_id: id })
+            .then(() => {
+              Swal.fire('Deleted!', 'Your Content has been deleted.', 'success');
+              window.location.reload();
+            });
+        }
+      });
     };
+
+    // const deleteContentData = () => {
+    //   api
+    //     .post('/content/deleteContent', { content_id: id })
+    //     .then(() => {
+    //       message('Record deteled successfully', 'success');
+    //     })
+    //     .catch(() => {
+    //       message('Unable to delete record.', 'error');
+    //     });
+    // };
   //Attachments
   const dataForAttachment = () => {
     setDataForAttachment({
@@ -243,7 +270,7 @@ useEffect(() => {
             module="Content"
           ></ApiButton>
           {/* Content Details Form */}
-          <ComponentCard title="Content details">
+          <ComponentCard title="Content details" creationModificationDate={contentDetails}>
             <ToastContainer></ToastContainer>
             <Row>
               <Col md="3">

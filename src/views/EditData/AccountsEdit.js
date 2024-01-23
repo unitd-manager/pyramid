@@ -94,7 +94,7 @@ const AccountsEdit = () => {
 
 const editAccountsData = () => {
   // Check if the description is not empty
-  if (AccountsDetails.invoice_code !== '') {
+  if (AccountsDetails.invoice_code !== '' && AccountsDetails.date) {
     // Check if the description already exists in the database
     api.post('/accounts/checkInvoiceCode', { invoice_code: AccountsDetails.invoice_code,expense_id: id })
       .then((response) => {
@@ -139,10 +139,10 @@ const editAccountsData = () => {
     api
       .post('/accounts/deleteExpense', { expense_id: id })
       .then(() => {
-        message('Record editted successfully', 'success');
+        message('Record deleted successfully', 'success');
       })
       .catch(() => {
-        message('Unable to edit record.', 'error');
+        message('Unable to delete record.', 'error');
       });
   };
   useEffect(() => {

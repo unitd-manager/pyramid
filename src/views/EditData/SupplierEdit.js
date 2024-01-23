@@ -203,7 +203,7 @@ const backToList=() => {
               </Col>
             </Row> */}
           
-      <ComponentCard title="Supplier Details" creationModificationDate={supplier}>
+     
 
       <SupplierDetails
         handleInputs={handleInputs}
@@ -213,7 +213,7 @@ const backToList=() => {
         status={status}
         setEditPurchaseOrderLinked={setEditPurchaseOrderLinked}
       ></SupplierDetails>
-  </ComponentCard>
+ 
       <PurchaseOrderLinked
         editPurchaseOrderLinked={editPurchaseOrderLinked}
         setEditPurchaseOrderLinked={setEditPurchaseOrderLinked}
