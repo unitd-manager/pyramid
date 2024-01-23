@@ -138,9 +138,11 @@ const InvoiceData = () => {
                     <td>{element.invoice_code}</td>
                     <td>{element.project_title}</td>
                     <td>{element.company_name}</td>
-                    <td>{moment(element.invoice_date).format('YYYY-MM-DD')}</td>
+                    {/* <td>{moment(element.invoice_date).format('YYYY-MM-DD')}</td> */}
+                    <td>{(element.invoice_date)? moment(element.invoice_date).format('DD-MM-YYYY'):''}</td>
                     <td>{element.invoice_amount}</td>
-                    <td>{moment(element.invoice_due_date).format('YYYY-MM-DD')}</td>
+                    {/*<td>{moment(element.invoice_due_date).format('YYYY-MM-DD')}</td> */}
+                    <td>{(element.invoice_due_date)? moment(element.invoice_due_date).format('DD-MM-YYYY'):''}</td>
                     <td>{element.age}</td>
                     <td>{element.status}</td>
                     <td>{element.invoice_type}</td>
