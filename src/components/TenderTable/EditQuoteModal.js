@@ -193,7 +193,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     <Input
                       type="text"
                       name="discount"
-                      defaultValue={quoteData && quoteData.discount}
+                      defaultValue={quoteData && quoteData.discount || 0}
                       onChange={handleData}
                     />
                   </FormGroup>

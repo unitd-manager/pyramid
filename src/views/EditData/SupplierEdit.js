@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import '../form-editor/editor.scss';
 import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
-import ComponentCard from '../../components/ComponentCard';
+//import ComponentCard from '../../components/ComponentCard';
 import creationdatetime from '../../constants/creationdatetime';
 import message from '../../components/Message';
 import AppContext from '../../context/AppContext';

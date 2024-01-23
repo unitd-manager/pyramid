@@ -168,7 +168,7 @@ export default function QuotationMoreDetails({
                 </Col>
                 <Col>
                   <FormGroup>
-                    <Label>{element.totalamount}</Label>
+                    <Label>{element.totalamount - element.discount}</Label>
                   </FormGroup>
                 </Col>
 

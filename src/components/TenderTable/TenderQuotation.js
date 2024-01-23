@@ -94,7 +94,9 @@ export default function TenderQuotation({
       if (result.isConfirmed) {
         api.post('/tender/deleteEditItem', { quote_items_id: deleteID }).then(() => {
           Swal.fire('Deleted!', 'Your Line Items has been deleted.', 'success');
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);
         });
       }
     });
@@ -268,10 +270,11 @@ export default function TenderQuotation({
               </FormGroup>
             </Col>
             <Col>
-              <FormGroup>
-                <Label>{quote && quote.totalamount}</Label>
-              </FormGroup>
-            </Col>
+  <FormGroup>
+    <Label>{quote && quote.totalamount - quote.discount}</Label>
+  </FormGroup>
+</Col>
+
 
             <Col md="2">
               <Label className='anchor'>
