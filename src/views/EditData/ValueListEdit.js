@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext,useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
@@ -10,12 +10,14 @@ import message from '../../components/Message';
 import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
 import ApiButton from '../../components/ApiButton';
+import AppContext from '../../context/AppContext';
+
 
 const ValueListEdit = () => {
   // All state variables
   const [valuelisteditdetails, setValueListEDitDetails] = useState();
   const [valuelistname, setValueListName] = useState();
-
+  const { loggedInuser } = useContext(AppContext);
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
@@ -66,6 +68,7 @@ const ValueListEdit = () => {
   const editValueListData = () => {
     if (valuelisteditdetails.key_text !== '' && valuelisteditdetails.value !== '') {
       valuelisteditdetails.modification_date = creationdatetime;
+      valuelisteditdetails.modified_by = loggedInuser.first_name;
       api
         .post('/valuelist/editValueList', valuelisteditdetails)
         .then(() => {
@@ -85,7 +88,7 @@ const ValueListEdit = () => {
     api
       .post('/valuelist/deleteValueList', { valuelist_id: id })
       .then(() => {
-        message('Record editted successfully', 'success');
+        message('Record deleted successfully', 'success');
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
