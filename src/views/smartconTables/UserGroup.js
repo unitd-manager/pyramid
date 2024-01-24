@@ -120,10 +120,10 @@ function UserGroup() {
             </thead>
             <tbody>
               {userGroups &&
-                userGroups.map((element) => {
+                userGroups.map((element,index) => {
                   return (
                     <tr key={element.user_group_id}>
-                      <td>{element.user_group_id}</td>
+                      <td>{index+1}</td>
                       <td>
                         <Link to={`/UserGroupEdit/${element.user_group_id}`}>
                           <Icon.Edit2 />
