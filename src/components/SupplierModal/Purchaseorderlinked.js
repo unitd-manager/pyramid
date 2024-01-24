@@ -164,6 +164,12 @@ console.log('createsupamount',createSupplier.amount)
         message('data inserted successfully.');
         
         finalCalculation(res.data.data.insertId);
+        setTimeout(() => {
+          //console.log('Data saved successfully.');
+          // Reload the page after saving data
+          setEditPurchaseOrderLinked(false);
+          window.location.reload();
+        }, 2000);
       })
       .catch(() => {
       });
@@ -327,12 +333,8 @@ console.log('createsupamount',createSupplier.amount)
             color="primary"
             onClick={() => {
               insertReceipt();
-              setEditPurchaseOrderLinked(false);
-              setTimeout(() => {
-                //console.log('Data saved successfully.');
-                // Reload the page after saving data
-                window.location.reload();
-              }, 2000);
+              
+              
             }}
           >
             {' '}
