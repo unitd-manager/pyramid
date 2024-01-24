@@ -146,9 +146,18 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
   //Insert Receipt
   const insertReceipt = () => {
     createSupplier.supplier_id = id
+console.log('selectedSupplier',selectedSupplier)
+let amount=0;
+selectedSupplier.forEach((el)=>{
+  amount +=parseFloat(el.remainingAmount);
+})
 
+console.log('remamount',amount)
+console.log('createsupamount',createSupplier.amount)
+  if((selectedSupplier.length>0)){
     if (createSupplier.amount &&
-      createSupplier.mode_of_payment && (selectedSupplier.length>0)) {
+      createSupplier.mode_of_payment) {
+        if(parseFloat(createSupplier.amount) <= parseFloat(amount)){
       api
       .post('/supplier/insert-SupplierReceipt', createSupplier)
       .then((res) => {
@@ -158,7 +167,15 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
       })
       .catch(() => {
       });
+    }else{
+      message('Your amount Exceeds the limit.','warning');
+    }}
+    else{
+      message('Please fill the required Fields.','warning');
+    }}else{
+      message('Please select Purchase order to pay.','warning');
     }
+  
   };
   let invoices = [];
   const removeObjectWithId = (arr, poCode) => {
@@ -312,7 +329,7 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
               insertReceipt();
               setEditPurchaseOrderLinked(false);
               setTimeout(() => {
-                console.log('Data saved successfully.');
+                //console.log('Data saved successfully.');
                 // Reload the page after saving data
                 window.location.reload();
               }, 2000);

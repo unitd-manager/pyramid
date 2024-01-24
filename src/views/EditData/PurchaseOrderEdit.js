@@ -130,7 +130,7 @@ const PurchaseOrderEdit = () => {
               message('Quantity added successfully.', 'success');
                setTimeout(() => {
           window.location.reload();
-        }, 300);
+        }, 800);
             })
             .catch(() => {
               message('unable to add quantity.', 'danger');

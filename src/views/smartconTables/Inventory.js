@@ -233,11 +233,11 @@ function Inventory() {
                         <Link to="">view</Link>
                       </span>
                     </td>
-                    <ViewAdjustStockHistoryModal
+                   {adjustStockHistoryModal&& modalId === element.inventory_id && <ViewAdjustStockHistoryModal
                       adjustStockHistoryModal={adjustStockHistoryModal}
                       setAdjustStockHistoryModal={setAdjustStockHistoryModal}
                       inventoryId={modalId}
-                    />
+                    />}
                     <td>{element.minimum_order_level}</td>
                   </tr>
                 );
