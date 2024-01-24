@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext,useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
@@ -12,13 +12,15 @@ import message from '../../components/Message';
 import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
 import ApiButton from '../../components/ApiButton';
+import AppContext from '../../context/AppContext';
 
 const SubCategoryEdit = () => {
   // All state variables
   const [category, setCategory] = useState();
   const [subcategoryeditdetails, setSubCategoryEditDetails] = useState();
   const [subcategorytypedetails, setSubCategoryTypetDetails] = useState();
-
+  const { loggedInuser } = useContext(AppContext);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
@@ -84,9 +86,11 @@ const SubCategoryEdit = () => {
 
   //Api call for Editing SubCategory Details
   const editSubCategoryData = () => {
+    setFormSubmitted(true);
     subcategoryeditdetails.modification_date = moment().format('DD-MM-YYYY');
     if (subcategoryeditdetails.sub_category_title !== '') {
       subcategoryeditdetails.modification_date = creationdatetime;
+      subcategoryeditdetails.modified_by = loggedInuser.first_name;
       api
         .post('/subcategory/editSubCategory', subcategoryeditdetails)
         .then(() => {
@@ -106,7 +110,7 @@ const SubCategoryEdit = () => {
     api
       .post('/subcategory/deleteSubCategory', { sub_category_id: id })
       .then(() => {
-        message('Record editted successfully', 'success');
+        message('Record deleted successfully', 'success');
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
@@ -148,6 +152,7 @@ const SubCategoryEdit = () => {
         handleInputs={handleInputs}
         category={category}
         subcategorytypedetails={subcategorytypedetails}
+        formSubmitted={formSubmitted}
       ></SubCategoryEditDetails>
 
       {/* Page Meta Data Details */}
