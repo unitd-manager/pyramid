@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
 import { ToastContainer } from 'react-toastify';
+import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
 import api from '../../constants/api';
+import AppContext from '../../context/AppContext';
 //import CategoryButton from '../../components/CategoryTable/CategoryButton';
 import CategoryDetailComp from '../../components/CategoryTable/CategoryDetailComp';
 import creationdatetime from '../../constants/creationdatetime';
@@ -20,7 +22,7 @@ const CategoryEdit = () => {
   //Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const { loggedInuser } = useContext(AppContext);
   // // Button Save Apply Back List
   // const applyChanges = () => {};
   // const saveChanges = () => {
@@ -75,6 +77,7 @@ const CategoryEdit = () => {
   //Logic for edit data in db
   const editCategoryData = () => {
     categoryDetails.modification_date = creationdatetime;
+    categoryDetails.modified_by = loggedInuser.first_name;
     if (categoryDetails.category_title !== '') {
       api
         .post('/category/edit-Category', categoryDetails)
@@ -91,15 +94,36 @@ const CategoryEdit = () => {
 
   //For delete data in db
   const deleteCategoryData = () => {
-    api
-      .post('/category/deleteCategory', { category_id: id })
-      .then(() => {
-        message('Record deteled successfully', 'success');
-      })
-      .catch(() => {
-        message('Unable to delete record.', 'error');
-      });
+    Swal.fire({
+      title: `Are you sure? ${id}`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('/category/deleteCategory', { category_id: id })
+          .then(() => {
+            Swal.fire('Deleted!', 'Your Category has been deleted.', 'success');
+            window.location.reload();
+          });
+      }
+    });
   };
+
+  // const deleteCategoryData = () => {
+  //   api
+  //     .post('/category/deleteCategory', { category_id: id })
+  //     .then(() => {
+  //       message('Record deteled successfully', 'success');
+  //     })
+  //     .catch(() => {
+  //       message('Unable to delete record.', 'error');
+  //     });
+  // };
 
   useEffect(() => {
     CategoryById();

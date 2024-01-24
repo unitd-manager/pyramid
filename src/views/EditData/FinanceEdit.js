@@ -35,7 +35,7 @@ const FinanceEdit = () => {
   const [editReceiptModal, setEditReceiptModal] = useState(false);
   const [editReceiptDataModal, setReceiptDataModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-  const [financeDetails, setFinanceDetails] = useState();
+  const [financeDetails, setFinanceDetails] = useState(null);
   const [createInvoice, setCreateInvoice] = useState(null);
   const [cancelInvoice, setCancelInvoice] = useState(null);
   const [cancelReceipt, setCancelReceipt] = useState(null);
@@ -198,6 +198,7 @@ console.log('ids1',financeDetails);
       .post('/Finance/getFinancesById', { order_id: id })
       .then((res) => {
         setFinanceDetails(res.data.data);
+        console.log("res",res.data.data);
       })
       .catch(() => {
         message('Fianance Data Not Found', 'info');

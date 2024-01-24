@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 import * as Icon from 'react-feather';
-import message from '../Message';
+//import message from '../Message';
 import api from '../../constants/api';
 
 function ViewFileComponentV2({ moduleId, roomName,update,setUpdate }) {
@@ -38,10 +38,14 @@ function ViewFileComponentV2({ moduleId, roomName,update,setUpdate }) {
           .then((res) => {
             console.log(res);
             Swal.fire('Deleted!', 'Media has been deleted.', 'success');
+            setTimeout(() => {
+              window.location.reload()
+          }, 400);
             setUpdate(!update)
+            
           })
           .catch(() => {
-            message('Unable to Delete Media', 'info');
+           // message('Unable to Delete Media', 'info');
           });
       }
     });

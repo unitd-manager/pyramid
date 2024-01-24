@@ -212,7 +212,9 @@ console.log('elem',elem)
             .post('/inventory/editInventoryStock', elem.item)
             .then(() => {
               message('Quantity added successfully.', 'success');
-               
+              setTimeout(() => {
+                window.location.reload();
+              }, 300);
             })
             .catch((err) => {
               console.log('err',err)
@@ -241,6 +243,9 @@ console.log('elem',elem)
       })
       .then(() => {
         message('Delivery Order Item Inserted', 'success');
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       })
       .catch(() => {
         message('Unable to add Delivery Order Item', 'error');
@@ -297,7 +302,9 @@ console.log('elem',elem)
           })
           .then(() => {
             Swal.fire('Deleted!', 'Delivery Order has been deleted.', 'success');
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
+            }, 300);
           })
           .catch(() => {
             message('Unable to Delete Delivery Order', 'info');
@@ -320,7 +327,9 @@ console.log('elem',elem)
       if (result.isConfirmed) {
         api.post('/project/deleteProject', { project_id: id }).then(() => {
           Swal.fire('Deleted!', 'Project has been deleted.', 'success');
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);
         });
       }
     });
@@ -352,7 +361,9 @@ console.log('elem',elem)
       .post('/projecttabquote/insertquote', newQuoteId)
       .then(() => {
         message('Quote inserted successfully.', 'success');
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       })
       .catch(() => {
         message('Network connection error.', 'error');
@@ -368,7 +379,9 @@ console.log('elem',elem)
       .post('/projecttabsubconworkorder/insertsub_con_work_order', newWorkOrderId)
       .then(() => {
         message('WorkOrder inserted successfully.', 'success');
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       })
       .catch(() => {
         message('Network connection error.', 'error');

@@ -51,9 +51,9 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
   const { id } = useParams();
 
   //get line items
-  const getProjects = () => {
+  const getProjects = (clientId) => {
     api
-      .get('/project/getProjects')
+      .post('/project/getprojectcompanyById', {company_id: clientId  })
       .then((res) => {
         setProject(res.data.data);
       })
@@ -61,7 +61,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
         message('unable to get products', 'error');
       });
   };
-  console.log('loggedinuser',loggedInuser)
+  console.log('loggedinuser',project)
   //Insert claim line items
   //Insert claim line items
   const insertTransferItems = (elem) => {
@@ -117,7 +117,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
           ...item,
           company_id: selectedProduct.value.toString(),
           company_name: selectedProduct.label,
-          
+          selectedClientId: selectedProduct.value.toString(),
         };
       }
       return item;
@@ -191,16 +191,18 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
                         return (
                           <tr key={item.id}>
                            <td data-label="title">
-          <AsyncSelect
-            defaultValue={{
-              value: item.company_id,
-              label: item.company_name,
-            }}
-            onChange={(selectedOption) => {
-              onchangeItems(selectedOption, item.id); // Pass item.id as the itemId
-            }}
-            loadOptions={loadOptions}
-          />
+                           <AsyncSelect
+  defaultValue={{
+    value: item.company_id,
+    label: item.company_name,
+  }}
+  onChange={(selectedOption) => {
+    onchangeItems(selectedOption, item.id); // Pass item.id as the itemId
+    getProjects(selectedOption.value); // Fetch projects based on selected client's ID
+  }}
+  loadOptions={loadOptions}
+/>
+
           {/* Remove hidden inputs, update state instead */}
           {/* <Input value={item.company_id} type="hidden" name="company_id" />
           <Input value={item.company_name} type="hidden" name="company_name" /> */}
@@ -214,7 +216,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
                                 name="to_project_id"
                                 onChange={(e) => updateState(index, 'to_project_id', e)}
                               >
-                                <option value=""> </option>
+                                <option value="">Please Select</option>
                                 {project &&
                                   project.map((e) => {
                                     return <option value={e.project_id}>{e.title}</option>;

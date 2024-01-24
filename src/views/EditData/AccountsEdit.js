@@ -142,7 +142,7 @@ const editAccountsData = () => {
         message('Record deleted successfully', 'success');
       })
       .catch(() => {
-        message('Unable to edit record.', 'error');
+        message('Unable to delete record.', 'error');
       });
   };
   useEffect(() => {

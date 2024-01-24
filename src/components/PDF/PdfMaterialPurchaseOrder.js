@@ -454,7 +454,7 @@ const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder
                
 
                 {
-                  text: `VAT:        ${calculateGSTTotal().toLocaleString('en-IN', {
+                  text: `GST:        ${calculateGSTTotal().toLocaleString('en-IN', {
                     minimumFractionDigits: 2,
                   })}`,
                   style: ['textSize'],

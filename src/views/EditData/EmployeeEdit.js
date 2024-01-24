@@ -376,7 +376,7 @@ const EmployeeEdit = () => {
       if (result.isConfirmed) {
         api.delete('/employeeModule/deleteEmployee', { employee_id: id }).then(() => {
           Swal.fire('Deleted!', 'Your Employee has been deleted.', 'success');
-          //window.location.reload();
+          window.location.reload();
         });
       }
     });

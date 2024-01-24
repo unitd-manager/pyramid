@@ -16,7 +16,7 @@ export default function CategoryDetailComp({ categoryDetails, handleInputs, sect
         <FormGroup>
           <ComponentCard title="Category Details" creationModificationDate={categoryDetails}>
             <Row>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>
                     Title <span className="required"> *</span>
@@ -29,7 +29,7 @@ export default function CategoryDetailComp({ categoryDetails, handleInputs, sect
                   />
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Section</Label>
                   <Input
@@ -50,7 +50,7 @@ export default function CategoryDetailComp({ categoryDetails, handleInputs, sect
                   </Input>
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Category Type</Label>
                   <Input
@@ -71,9 +71,7 @@ export default function CategoryDetailComp({ categoryDetails, handleInputs, sect
                   </Input>
                 </FormGroup>
               </Col>
-            </Row>
-            <Row>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Internal Link</Label>
                   <Input
@@ -84,7 +82,9 @@ export default function CategoryDetailComp({ categoryDetails, handleInputs, sect
                   ></Input>
                 </FormGroup>
               </Col>
-              <Col md="4">
+              </Row>
+            <Row>
+              <Col md="3">
                 <FormGroup>
                   <Label>Published</Label>
                   <br></br>
