@@ -154,7 +154,12 @@ const StaffEdit = () => {
     api
       .post('/staff/deleteStaff', { staff_id: id })
       .then(() => {
-        message('Record editted successfully', 'success');
+        message('Record deleted successfully', 'success');
+        setTimeout(() => {
+          backToList();
+          window.location.reload()
+         
+      }, 400);
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
