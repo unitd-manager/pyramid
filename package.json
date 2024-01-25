@@ -104,7 +104,7 @@
     "simplebar-react": "^2.3.6",
     "styled-components": "^5.3.5",
     "sweetalert2": "^11.4.24",
-    "uuid": "^9.0.0",
+    "uuid": "^9.0.1",
     "vazirmatn": "^33.0.3",
     "web-vitals": "^1.1.2",
     "yup": "^0.32.11"
