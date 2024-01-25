@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,12 +7,14 @@ import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
 import message from '../../components/Message';
 import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
+
 
 const ValueListDetails = () => {
   // All state variables
   const [valuelistname, setValueListName] = useState();
   const [valuelistdetails, setValueListDetails] = useState({ key_text: '', value: '' });
-
+  const { loggedInuser } = useContext(AppContext);
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
@@ -40,6 +42,7 @@ const ValueListDetails = () => {
   const insertValueListData = () => {
     if (valuelistdetails.key_text !== '' && valuelistdetails.value !== '') {
       valuelistdetails.creation_date = creationdatetime;
+      valuelistdetails.created_by = loggedInuser.first_name;
       api
         .post('/valuelist/insertValueList', valuelistdetails)
         .then((res) => {

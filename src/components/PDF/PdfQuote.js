@@ -14,12 +14,13 @@ const PdfQuote = ({ id, quoteId }) => {
   PdfQuote.propTypes = {
     id: PropTypes.any,
     quoteId: PropTypes.any,
-  }
+  };
   const [quote, setQuote] = React.useState([]);
   const [tenderDetails, setTenderDetails] = useState(null);
   const [lineItem, setLineItem] = useState([]);
   const [hfdata, setHeaderFooterData] = React.useState();
   const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+  const [gTotal, setGtotal] = React.useState(0);
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
       setHeaderFooterData(res.data.data);
@@ -38,7 +39,7 @@ const PdfQuote = ({ id, quoteId }) => {
         setTenderDetails(res.data.data);
         console.log(res);
       })
-      .catch(() => { });
+      .catch(() => {});
   };
 
   // Get Quote By Id
@@ -48,12 +49,19 @@ const PdfQuote = ({ id, quoteId }) => {
       console.log('quote', res.data.data[0]);
     });
   };
+  // const calculateTotal = () => {
+  //   const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
+  //   return grandTotal;
+  //   // const gstValue = quote.gst_value || 0;
+  //   // const total = grandTotal + gstValue;
+  //   // return total;
+  // };
   const calculateTotal = () => {
     const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
-    return grandTotal;
-    // const gstValue = quote.gst_value || 0;
-    // const total = grandTotal + gstValue;
-    // return total;
+    const discount = quote.discount || 0; // Get the discount from the quote or default to 0 if not provided
+    const total = grandTotal - discount; // Deduct the discount from the grand total
+
+    return total;
   };
   const getQuoteById = () => {
     api
@@ -61,11 +69,11 @@ const PdfQuote = ({ id, quoteId }) => {
       .then((res) => {
         setLineItem(res.data.data);
         console.log('quote1', res.data.data);
-        // let grandTotal = 0;
-        // res.data.data.forEach((elem) => {
-        //   grandTotal += elem.amount;
-        // });
-        //setGtotal(grandTotal);
+        let grandTotal = 0;
+        res.data.data.forEach((elem) => {
+          grandTotal += elem.amount;
+        });
+        setGtotal(grandTotal);
       })
       .catch(() => {
         //message('Invoice Data Not Found', 'info');
@@ -132,30 +140,29 @@ const PdfQuote = ({ id, quoteId }) => {
         {
           text: 'Item',
           style: 'tableHead',
-          alignment: 'center'
+          alignment: 'center',
         },
         {
           text: 'Description',
           style: 'tableHead',
-          alignment: 'center'
+          alignment: 'center',
         },
         {
           text: 'Qty',
           style: 'tableHead',
-          alignment: 'center'
+          alignment: 'center',
         },
         {
           text: 'Unit Price',
           style: 'tableHead',
-          alignment: 'right'
+          alignment: 'right',
         },
 
         {
           text: 'Amount S$',
           style: 'tableHead',
-          alignment: 'right'
+          alignment: 'right',
         },
-
       ],
     ];
     lineItem.forEach((element) => {
@@ -169,25 +176,25 @@ const PdfQuote = ({ id, quoteId }) => {
           text: `${element.title}`,
           border: [false, false, false, true],
           style: 'tableBody',
-          alignment: 'center'
+          alignment: 'center',
         },
         {
           text: `${element.description}`,
           border: [false, false, false, true],
           style: 'tableBody',
-          alignment: 'center'
+          alignment: 'center',
         },
         {
           text: `${element.quantity}`,
           border: [false, false, false, true],
           style: 'tableBody',
-          alignment: 'center'
+          alignment: 'center',
         },
         {
           text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
           style: 'tableBody',
-          alignment: 'right'
+          alignment: 'right',
         },
 
         {
@@ -195,9 +202,8 @@ const PdfQuote = ({ id, quoteId }) => {
           border: [false, false, false, true],
           fillColor: '#f5f5f5',
           style: 'tableBody',
-          alignment: 'right'
+          alignment: 'right',
         },
-
       ]);
     });
 
@@ -272,7 +278,7 @@ const PdfQuote = ({ id, quoteId }) => {
         {
           text: `Att : ${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true'
+          bold: 'true',
         },
 
         '\n',
@@ -286,10 +292,8 @@ const PdfQuote = ({ id, quoteId }) => {
           text: `Project: ${tenderDetails.title ? tenderDetails.title : ''}`,
           style: ['notesText', 'textSize'],
 
-
           bold: 'true',
         },
-
 
         {
           text: `Quotation No :${quote.quote_code ? quote.quote_code : ''}`,
@@ -307,33 +311,33 @@ const PdfQuote = ({ id, quoteId }) => {
 
         // },
         {
-          text: `Date :   ${(quote.quote_date) ? moment(quote.quote_date).format('DD-MM-YYYY') : ''} `,
+          text: `Date :   ${
+            quote.quote_date ? moment(quote.quote_date).format('DD-MM-YYYY') : ''
+          } `,
           style: ['invoiceAdd', 'textSize'],
-
         },
         '\n',
         {
-          text: `validity :${quote.validity ? quote.validity : ''
-            }`,
+          text: `validity :${quote.validity ? quote.validity : ''}`,
 
           style: ['invoiceAdd', 'textSize'],
-
         },
         '\n',
         {
-          text: `Terms of Payment :${quote.payment_method ? quote.payment_method : ''
-            }`,
+          text: `Terms of Payment :${quote.payment_method ? quote.payment_method : ''}`,
 
           style: ['invoiceAdd', 'textSize'],
-
-        }, '\n',
-        {
-          text: `Price : $ ${quote.totalamount ? quote.totalamount.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0'}`,
-
-          style: ['invoiceAdd', 'textSize'],
-
         },
+        '\n',
+        {
+          text: `Price : $ ${
+            quote.totalamount
+              ? quote.totalamount.toLocaleString('en-IN', { minimumFractionDigits: 2 })
+              : '0'
+          }`,
 
+          style: ['invoiceAdd', 'textSize'],
+        },
 
         // {
         //   text: `Date :   ${(quote.quote_date) ? moment(quote.quote_date).format('DD-MM-YYYY') : ''}
@@ -410,37 +414,36 @@ const PdfQuote = ({ id, quoteId }) => {
         '\n',
         {
           stack: [
-            // {
-            //   text: `SubTotal $ :     ${gTotal.toLocaleString('en-IN', {
-            //     minimumFractionDigits: 2,
-            //   })}`,
-            //   alignment: 'right',
-            //   margin: [0, 0, 60, 0],
-            //   style: 'textSize',
-            // },
-            // '\n',
-            // {
-            //   text: `Discount  :         ${quote.discount ? quote.discount : ''}`,
-            //   alignment: 'right',
-            //   margin: [0, 0, 60, 0],
-            //   style: 'textSize',
-            // },
-
-            // '\n',
-            //   {
-            //     text: `Total $ :     ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
-            //     alignment: 'right',
-            // margin: [0, 0, 60, 0],
-            // style: 'textSize',
-            //   },
+            {
+              text: `SubTotal $ :     ${gTotal.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+              })}`,
+              alignment: 'right',
+              margin: [0, 0, 10, 0],
+              style: 'textSize',
+            },
             '\n',
             {
-              text: `GRAND TOTAL ($) :  ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+              text: `Discount  :       ${
+                quote.discount
+                  ? quote.discount.toLocaleString('en-IN', { minimumFractionDigits: 2 })
+                  : '0'
+              }`,
+              alignment: 'right',
+              margin: [0, 0, 10, 0],
+              style: 'textSize',
+            },
+            '\n',
+            {
+              text: `Total $ :     ${calculateTotal().toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+              })}`,
               alignment: 'right',
               margin: [0, 0, 10, 0],
               style: 'textSize',
             },
             '\n\n\n',
+
             {
               text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
               style: 'bold',
@@ -460,7 +463,6 @@ const PdfQuote = ({ id, quoteId }) => {
           style: ['notesText', 'textSize'],
         },
         ...conditionsContent, // Add each condition as a separate paragraph
-
 
         '\n\n\n',
         '\n',

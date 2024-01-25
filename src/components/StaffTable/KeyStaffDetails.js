@@ -167,7 +167,7 @@ export default function KeyStaffDetails({
                   name="published"
                   value="1"
                   type="radio"
-                  checked={staffeditdetails && staffeditdetails.published === 1 && true}
+                  defaultChecked={staffeditdetails && staffeditdetails.published === 1 && true}
                   onChange={handleInputs}
                 />
                 <Label>Yes</Label>
@@ -175,7 +175,7 @@ export default function KeyStaffDetails({
                   name="published"
                   value="0"
                   type="radio"
-                  checked={staffeditdetails && staffeditdetails.published === 0 && true}
+                  defaultChecked={staffeditdetails && staffeditdetails.published === 0 && true}
                   onChange={handleInputs}
                 />
                 <Label>No</Label>

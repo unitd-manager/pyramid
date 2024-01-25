@@ -20,7 +20,7 @@ import ApiButton from '../../components/ApiButton';
 
 const StaffEdit = () => {
   // All state variables
-  const [staffeditdetails, setStaffEditDetails] = useState('');
+  const [staffeditdetails, setStaffEditDetails] = useState();
   const [stafftypedetails, setStaffTypetDetails] = useState();
   const [staffteamdetails, setStaffTeamDetails] = useState();
   const [userdetails, setUserDetails] = useState();
