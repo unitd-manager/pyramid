@@ -64,9 +64,9 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
   };
   const getStock = () => {
     api
-      .post('/project/getstockById', {product_id:transferItem && transferItem.product_id  })
+      .post('/inventory/getstockById', {product_id:transferItem && transferItem.product_id  })
       .then((res) => {
-        setStock(res.data.data);
+        setStock(res.data.data[0]);
       })
       .catch(() => {
         message('unable to get products', 'error');
@@ -235,7 +235,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
                                   })}
                               </Input>
                             </td>
-                            <td data-label="Stock">{stock && stock.qty}</td>
+                            <td data-label="Stock">{stock && stock.actual_stock}</td>
                             <td data-label="Quantity">
                               <Input
                                 defaultValue={item.quantity}
