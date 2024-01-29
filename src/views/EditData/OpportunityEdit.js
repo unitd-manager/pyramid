@@ -318,6 +318,15 @@ const OpportunityEdit = () => {
 
       const projectId = response.data.data.insertId;
 
+      const newDataWithId = costingsummaries;
+      newDataWithId.project_id = projectId;
+      api.post('/project/insertCostingSummary', newDataWithId).then(() => {
+  
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 300);
+      });
+
       const updateQuoteData = {
         project_id: projectId,
         quote_id: quote.quote_id,

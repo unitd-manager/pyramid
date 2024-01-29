@@ -68,19 +68,19 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
       });
   };
 
-  const editPurchasePartialStatus = (supplierId, Status) => {
-    api
-      .post('/supplier/editPartialPurchaseStatus', {
-        purchase_order_id: supplierId,
-        payment_status: Status,
-      })
-      .then(() => {
-        message('data inserted successfully.');
-      })
-      .catch(() => {
-        message('Network connection error.');
-      });
-  };
+  // const editPurchasePartialStatus = (supplierId, Status) => {
+  //   api
+  //     .post('/supplier/editPartialPurchaseStatus', {
+  //       purchase_order_id: supplierId,
+  //       status: Status,
+  //     })
+  //     .then(() => {
+  //       message('data inserted successfully.');
+  //     })
+  //     .catch(() => {
+  //       message('Network connection error.');
+  //     });
+  // };
   
 
   //Logic for deducting receipt amount
@@ -115,7 +115,7 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
         })
       } else {
         selectedSupplier[j].paid = true;
-        editPurchasePartialStatus(selectedSupplier[j].purchase_order_id, 'Partially Paid');
+        editPurchaseStatus(selectedSupplier[j].purchase_order_id, 'Partially Paid');
         insertReceiptHistory({
           creation_date: moment().format(),
           modification_date: moment().format(),
