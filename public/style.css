@@ -12,3 +12,7 @@
 input[type="text"], select {
     width: 100%;
 }
+.redText {
+    color: red;
+  }
+  

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -7,13 +7,16 @@ import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
 import message from '../../components/Message';
 import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
 
 const SubCategoryDetails = () => {
   // All state variables
   const [subcategorydetails, setSubCategoryDetails] = useState({
     sub_category_title: '',
   });
+  const { loggedInuser } = useContext(AppContext);
 
+  const [formSubmitted, setFormSubmitted] = useState(false);
   // Navigation and Parameter Constants
   const navigate = useNavigate();
 
@@ -27,6 +30,7 @@ const SubCategoryDetails = () => {
   //Api call for insert SubCategory Data
   const insertSubCategoryData = () => {
     subcategorydetails.creation_date = creationdatetime;
+    subcategorydetails.created_by = loggedInuser.first_name;
     if (subcategorydetails.sub_category_title !== '') {
       api
         .post('/subcategory/insertSubCategory', subcategorydetails)
@@ -41,6 +45,7 @@ const SubCategoryDetails = () => {
           message('Unable to edit record.', 'error');
         });
     } else {
+      setFormSubmitted(true)
       message('Please fill all required fields', 'warning');
     }
   };
@@ -66,7 +71,12 @@ const SubCategoryDetails = () => {
                       onChange={(e) => {
                         handleInputs(e);
                       }}
-                    />
+                      className={`form-control ${formSubmitted && subcategorydetails && subcategorydetails.sub_category_title.trim() === '' ? 'highlight' : ''
+                  }`}
+              />
+              {formSubmitted && subcategorydetails && subcategorydetails.sub_category_title.trim() === '' && (
+                <div className="error-message">Please Enter</div>
+              )}
                   </Col>
                 </Row>
               </FormGroup>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,11 +12,15 @@ import api from '../../constants/api';
 import creationdatetime from '../../constants/creationdatetime';
 import ApiButton from '../../components/ApiButton';
 //import DeleteButton from '../../components/DeleteButton';
+import AppContext from '../../context/AppContext';
+
 
 const SettingEdit = () => {
   //All state variable
   const [settingdetails, setSettingDetails] = useState();
   const [valueType, setValueType] = useState();
+  const { loggedInuser } = useContext(AppContext);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   //navigation and parameters
   const { id } = useParams();
   const navigate = useNavigate();
@@ -43,8 +47,11 @@ const SettingEdit = () => {
   };
   //Update Setting
   const editSettingData = () => {
-    settingdetails.modification_date = creationdatetime;
+    setFormSubmitted(true);
+    
     if (settingdetails.key_text !== '') {
+      settingdetails.modification_date = creationdatetime;
+    settingdetails.modified_by = loggedInuser.first_name;
       api
         .post('/setting/editSetting', settingdetails)
         .then(() => {
@@ -63,10 +70,10 @@ const SettingEdit = () => {
     api
       .post('/setting/DeleteSetting', { setting_id: id })
       .then(() => {
-        message('Record editted successfully', 'success');
+        message('Record deleted successfully', 'success');
       })
       .catch(() => {
-        message('Unable to edit record.', 'error');
+        message('Unable to delete record.', 'error');
       });
   };
   useEffect(() => {
@@ -100,14 +107,21 @@ const SettingEdit = () => {
             <Row>
               <Col md="4">
                 <FormGroup>
-                  <Label>Key Text</Label>
+                  <Label>Key Text <span className="required"> *</span>
+                  </Label>
                   <Input
                     type="text"
                     onChange={handleInputs}
                     value={settingdetails && settingdetails.key_text}
                     name="key_text"
+                    className={`form-control ${
+                      formSubmitted && settingdetails.key_text.trim() === '' ? 'highlight' : ''
+                    }`}
                   ></Input>
                 </FormGroup>
+                {formSubmitted && settingdetails.key_text.trim() === '' && (
+                  <div className="error-message">Please Enter</div>
+                )}
               </Col>
               <Col md="4">
                 <FormGroup>

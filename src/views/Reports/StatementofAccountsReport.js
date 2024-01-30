@@ -23,7 +23,7 @@ function StatementofAccountsReport() {
     startDate: null,
     endDate: null,
     companyName:null,
-    company_id:''
+    company_id:null,
   });
   const [userSearchData, setUserSearchData] = useState();
   const [totalOutstandAmount, setTotalOutstandAmount] = useState();
@@ -103,15 +103,25 @@ function StatementofAccountsReport() {
   // };
 
   
-
   const handleInputs = (e) => {
-    setSearchData({ ...searchData, [e.target.name]: e.target.value });
+    if (e.target.name === 'companyName') {
+      // Find the company object by its name
+      const selectedCompany = company.find(company1 => company1.company_name === e.target.value);
+      // Set both companyName and company_id in the state
+      setSearchData({
+        ...searchData,
+        companyName: e.target.value,
+        company_id: selectedCompany ? selectedCompany.company_id : null
+      });
+    } else {
+      setSearchData({ ...searchData, [e.target.name]: e.target.value });
+    }
   };
-
+  
   //Get data from Reports table
   const getAccountReports = () => {
     api
-      .post('/project/getAccountReport', searchData)
+      .post('/project/getAccountStatementReport', searchData)
       .then((res) => {
         setUserSearchData(res.data.data);
         let totalInvoiceAmount = 0;

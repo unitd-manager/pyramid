@@ -6,6 +6,6 @@ const formattedDatetime = moment().format('DD-MM-YYYY h:mm:ss a');
 // Parse the datetime value to the MySQL datetime format 'YYYY-MM-DD HH:mm:ss'
 const creationdatetime = moment(formattedDatetime, 'DD-MM-YYYY h:mm:ss a').format('YYYY-MM-DD HH:mm:ss');
 
-console.log(creationdatetime); // Output: "2023-07-24 12:44:43"
+console.log(creationdatetime,formattedDatetime); // Output: "2023-07-24 12:44:43"
 
 export default creationdatetime 

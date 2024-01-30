@@ -170,7 +170,7 @@ export default function KeyStaffDetails({
                   defaultChecked={staffeditdetails && staffeditdetails.published === 1 && true}
                   onChange={handleInputs}
                 />
-                <Label>Yes</Label>
+                <Label>Yes</Label>&nbsp;&nbsp;
                 <Input
                   name="published"
                   value="0"
