@@ -136,7 +136,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   // / Format the conditions content for PDF
   const conditionsContent = conditions.map((condition) => ({
     text: `${condition}`,
-    fontSize: 8,
+    fontSize: 10,
     margin: [15, 5, 0, 0],
     style: ['notesText', 'textSize'],
     lineHeight: 1.2,
@@ -156,7 +156,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   // / Format the conditions content for PDF
   const conditionsContent1 = conditions1.map((condition) => ({
     text: `${condition}`,
-    fontSize: 9,
+    fontSize: 10,
     margin: [15, 5, 0, 0],
     style: ['notesText', 'textSize'],
     lineHeight: 1.2,
@@ -182,6 +182,11 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           alignment: 'center',
         },
         {
+            text: 'Asset No.',
+            style: 'tableHead',
+            alignment: 'center',
+          },
+        {
           text: 'Description',
           style: 'tableHead',
           alignment: 'center',
@@ -201,7 +206,16 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           style: 'tableHead',
           alignment: 'right',
         },
-
+        {
+            text: 'Duration',
+            style: 'tableHead',
+            alignment: 'center',
+          },
+          {
+            text: 'No of days',
+            style: 'tableHead',
+            alignment: 'center',
+          },
         {
           text: 'Amount S$',
           style: 'tableHead',
@@ -222,6 +236,12 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           style: 'tableBody',
           alignment: 'center',
         },
+        {
+            text: `${element.asset_no}`,
+            border: [false, false, false, true],
+            style: 'tableBody',
+            alignment: 'center',
+          },
         {
           text: `${element.description}`,
           border: [false, false, false, true],
@@ -246,7 +266,18 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           style: 'tableBody',
           alignment: 'right',
         },
-
+        {
+            text: `${element.duration}`,
+            border: [false, false, false, true],
+            style: 'tableBody',
+            alignment: 'center',
+          },
+          {
+            text: `${element.no_of_days}`,
+            border: [false, false, false, true],
+            style: 'tableBody',
+            alignment: 'center',
+          },
         {
           text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
@@ -506,18 +537,11 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
         '\n',
 
         {
-            text: `Remarks: `,
-            fontSize: 11,
-            decoration: 'underline',
-            margin: [0, 5, 0, 0],
-            style: ['notesText', 'textSize'],
-          },
-        {
-          text: ` `,
-          fontSize: 6,
+          text: `Remarks: `,
+          fontSize: 11,
           decoration: 'underline',
-          margin: [0, 0, 0, 0],
-          //style: ['notesText', 'textSize'],
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
         },
         ...conditionsContent, // Add each condition as a separate paragraph
 

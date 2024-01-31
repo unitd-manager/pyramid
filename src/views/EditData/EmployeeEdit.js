@@ -362,11 +362,17 @@ const EmployeeEdit = () => {
       employeeDetails.nationality !== 'Please Select'
     ) {
       try {
+      
         const response = await api.get('/employeemodule/CheckNricNo');
         const existingNricNumbers = response.data.data.filter(nric => nric !== null);
-      
-        const isNricAlreadyExists = existingNricNumbers.some(nric => nric.toLowerCase() === employeeDetails.nric_no.toLowerCase());
-      
+  
+        //const isNricAlreadyExists = existingNricNumbers.some(nric => nric.toLowerCase() === tabPassTypeDetails.nric_no.toLowerCase());
+        const isNricAlreadyExists = existingNricNumbers.some(
+          nric =>
+            nric.toLowerCase() === tabPassTypeDetails.nric_no.toLowerCase() &&
+            tabPassTypeDetails.employee_id === employeeDetails.employee_id
+        );
+  
         if (isNricAlreadyExists) {
           setIsNricAlreadyInserted(true);
           message('NRIC is already inserted. Please provide a different number.', 'warning');
@@ -379,9 +385,10 @@ const EmployeeEdit = () => {
           await editCIData();
           message('Success', 'success');
         }
+      
       } catch (error) {
-        console.error('Error fetching existing NRIC numbers:', error); // Log error for debugging
-        message('Unable to check for duplicate NRIC numbers. Please try again later.', 'error'); // Display user-friendly error message
+        console.error('Error fetching existing NRIC numbers:', error);
+        message('Unable to check for duplicate NRIC numbers. Please try again later.', 'error');
       }
     } else if (['DP', 'EP', 'SP'].includes(tabPassTypeDetails.citizen)) {
       // Additional checks for specific citizenship types
@@ -418,6 +425,7 @@ const EmployeeEdit = () => {
       message('Please fill the PassType', 'warning');
     }
   };
+  
 
   //Attachments
   const dataForAttachment = () => {
