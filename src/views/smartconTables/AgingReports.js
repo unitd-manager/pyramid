@@ -62,21 +62,21 @@ const AgingReports = () => {
       width: '4%',
     },
     {
-      name: '15-30 days',
+      name: '31-60 days',
       selector: 'firstdays',
       grow: 0,
       wrap: true,
       width: '4%',
     },
     {
-      name: '30-45days',
+      name: '61-90 days',
       selector: 'seconddays',
       grow: 0,
       wrap: true,
       width: '4%',
     },
     {
-      name: '45-60days',
+      name: 'Above 90 days',
       selector: 'thirddays',
       grow: 0,
       wrap: true,
@@ -107,9 +107,9 @@ const AgingReports = () => {
                   <tr key={element.invoice_id}>
                     <td>{index + 1}</td>
                     <td>{element.cust_company_name}</td>
-                    <td>{element.status==='Paid'?0:element.firstdays}</td>
-                    <td>{element.status==='Paid'?0:element.seconddays}</td>
-                    <td>{element.status==='Paid'?0:element.thirddays}</td>
+                    <td>{element.firstdays}</td>
+                    <td>{element.seconddays}</td>
+                    <td>{element.thirddays}</td>
                   </tr>
                 );
               })}
