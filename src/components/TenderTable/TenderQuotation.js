@@ -22,6 +22,7 @@ import EditQuoteModal from './EditQuoteModal';
 import ViewQuoteLogModal from './ViewQuoteLogModal';
 import EditLineItemModal from './EditLineItemModal';
 import PdfQuote from '../PDF/PdfQuote';
+import PdfQuoteFormat2 from '../PDF/PdfQuoteFormat2';
 
 export default function TenderQuotation({
   tenderId,
@@ -369,6 +370,7 @@ export default function TenderQuotation({
                   <Col md="4">
                     <Label className='pointer'>
                       <PdfQuote quoteId={quote.quote_id} id={id} ></PdfQuote>
+                      <PdfQuoteFormat2 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat2>
                       {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
                     </Label>
                   </Col>
