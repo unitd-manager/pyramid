@@ -76,9 +76,34 @@ const EditQuoteModal = ({
         console.error('Error fetching terms and conditions:', error);
       });
   };
+
+  const fetchTermsAndConditions1= () => {
+    api
+      .get('/setting/getSettingsForJobScope')
+      .then((res) => {
+        const settings = res.data.data;
+        if (settings && settings.length > 0) {
+          const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
+          console.log('1', res.data.data);
+          // Update the quote condition in quoteData
+          setQuoteData({ ...quoteData, job_scope: fetchedTermsAndCondition });
+          // Convert fetched terms and conditions to EditorState
+          const contentBlock = htmlToDraft(fetchedTermsAndCondition);
+          if (contentBlock) {
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            const editorState = EditorState.createWithContent(contentState);
+            setConditions(editorState);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching terms and conditions:', error);
+      });
+  };
   // Call fetchTermsAndConditions within useEffect or when required
   useEffect(() => {
     fetchTermsAndConditions();
+    fetchTermsAndConditions1();
     // Other useEffect logic
   }, []);
 
@@ -296,7 +321,7 @@ const EditQuoteModal = ({
                 </Col> */}
               </Row>
               <Row>
-                <Label>Intro Line Items</Label>
+                <Label>JOB SCOPE</Label>
               </Row>
               <Editor
                 editorState={lineItems}

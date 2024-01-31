@@ -136,7 +136,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   // / Format the conditions content for PDF
   const conditionsContent = conditions.map((condition) => ({
     text: `${condition}`,
-    fontSize: 10,
+    fontSize: 8,
     margin: [15, 5, 0, 0],
     style: ['notesText', 'textSize'],
     lineHeight: 1.2,
@@ -156,7 +156,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   // / Format the conditions content for PDF
   const conditionsContent1 = conditions1.map((condition) => ({
     text: `${condition}`,
-    fontSize: 10,
+    fontSize: 9,
     margin: [15, 5, 0, 0],
     style: ['notesText', 'textSize'],
     lineHeight: 1.2,
@@ -506,11 +506,18 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
         '\n',
 
         {
-          text: `Remarks: `,
-          fontSize: 11,
+            text: `Remarks: `,
+            fontSize: 11,
+            decoration: 'underline',
+            margin: [0, 5, 0, 0],
+            style: ['notesText', 'textSize'],
+          },
+        {
+          text: ` `,
+          fontSize: 6,
           decoration: 'underline',
-          margin: [0, 5, 0, 0],
-          style: ['notesText', 'textSize'],
+          margin: [0, 0, 0, 0],
+          //style: ['notesText', 'textSize'],
         },
         ...conditionsContent, // Add each condition as a separate paragraph
 
