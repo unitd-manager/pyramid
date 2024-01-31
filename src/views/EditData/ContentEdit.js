@@ -161,6 +161,9 @@ useEffect(() => {
     // Use taskdetails.project_milestone_id directly to get the selected project ID
     const selectedSection = contentDetails.section_id;
     getCategory(selectedSection);
+  }else{
+    getCategory(null)
+    getSubCategory(null)
   }
 }, [contentDetails && contentDetails.section_id]);
 useEffect(() => {
@@ -168,6 +171,8 @@ useEffect(() => {
     // Use taskdetails.project_milestone_id directly to get the selected project ID
     const selectedcategory = contentDetails.category_id;
     getSubCategory(selectedcategory);
+  }else{
+    getSubCategory(null)
   }
 }, [contentDetails && contentDetails.category_id]);
 

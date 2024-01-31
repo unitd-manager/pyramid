@@ -94,9 +94,9 @@ const Claim = ({
     newclaim.project_title = projectDetail.title;
     api.post('/claim/insertProjectClaim', newclaim).then(() => {
       message('Claim added successfully', 'success');
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 300);
     });
   };
   const generateCodes = () => {
@@ -104,9 +104,9 @@ const Claim = ({
       .post('/tender/getCodeValue', { type: 'claim' })
       .then((res) => {
         insertProjectClaim(res.data.data);
-        setTimeout(() => {
-          window.location.reload();
-        }, 900);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 900);
       })
       .catch(() => {
         insertProjectClaim('');

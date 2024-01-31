@@ -50,7 +50,7 @@ const SupplierHistory = () => {
     },
   ];
 
-  const Supplier = (subConPaymentsId) => {
+  const Supplier = (subConPaymentsId,PaymentsId) => {
     Swal.fire({
       title: `Are you sure? ${id}`,
       text: 'Do you like to cancel the receipt?',
@@ -61,7 +61,7 @@ const SupplierHistory = () => {
       confirmButtonText: 'Yes!',
     }).then((result) => {
       if (result.isConfirmed) {
-        api.put('/supplier/updateSupplierPaymentsAndPurchaseOrder', { supplier_receipt_id: subConPaymentsId,purchase_order_id: id }).then(() => {
+        api.put('/supplier/updateSupplierPaymentsAndPurchaseOrder', {supplier_receipt_history_id: PaymentsId, supplier_receipt_id: subConPaymentsId,purchase_order_id: id }).then(() => {
           Swal.fire('Cancelled!');
           navigate(-1);
         });
@@ -93,9 +93,9 @@ const SupplierHistory = () => {
                           <td>{element.amount}</td>
                           <td>{element.mode_of_payment}</td>
                           <td>
-              {element.receipt_status !== 'Cancelled' ? (
+              {element.invoice_paid_status !== 'Cancelled' ? (
                 <Link to="">
-                <span onClick={() => Supplier(element.supplier_receipt_id,element.purchase_order_id,element.supplier_id)}>
+                <span onClick={() => Supplier(element.supplier_receipt_id,element.supplier_receipt_history_id,element.purchase_order_id,element.supplier_id)}>
                   <u>Cancel</u>
                   </span>
                   </Link>

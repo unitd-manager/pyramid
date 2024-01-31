@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import {
   Row,
   Col,
@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import * as $ from 'jquery';
 import random from 'random';
 import Select from 'react-select';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import message from '../Message'
 import creationdatetime from '../../constants/creationdatetime';
@@ -35,6 +36,7 @@ const AddPoModal = ({
   };
   const [addNewProductModal, setAddNewProductModal] = useState(false);
    const [getProductValue, setProductValue] = useState();
+   const { loggedInuser } = useContext(AppContext);
   const [productDetail, setProductDetail] = useState({
     category_id: null,
     sub_category_id: null,
@@ -210,6 +212,7 @@ const insertProduct = (ProductCode, ItemCode) => {
     productDetail.product_code = ProductCode;
     productDetail.item_code = ItemCode;
     productDetail.creation_date = creationdatetime;
+    productDetail.created_by = loggedInuser.first_name;
     api
       .post('/purchaseorder/insertPurchaseProduct', productDetail)
       .then((res) => {
@@ -221,7 +224,7 @@ const insertProduct = (ProductCode, ItemCode) => {
             const InventoryCode = res1.data.data;
             message('inventory created successfully.', 'success');
             api
-            .post('/inventory/insertinventory', { product_id: insertedDataId, inventory_code:InventoryCode  })
+            .post('/inventory/insertinventory', { product_id: insertedDataId, inventory_code:InventoryCode, creation_date:creationdatetime,created_by:loggedInuser.first_name })
           
           .then(() => {
             message('inventory created successfully.', 'success');
@@ -274,6 +277,7 @@ const insertProduct = (ProductCode, ItemCode) => {
       });
   };
   const poProduct = (itemObj) => {
+    console.log('supplierid',supplierId)
     api
       .post('/purchaseorder/insertPoProduct', {
         purchase_order_id: PurchaseOrderId,
@@ -292,7 +296,7 @@ const insertProduct = (ProductCode, ItemCode) => {
         qty_updated: 0,
         qty: parseInt(itemObj.qty, 10),
         product_id: itemObj.product_id,
-        supplier_id: insertPurchaseOrderData.supplier_id,
+        supplier_id:supplierId,
         gst: itemObj.gst,
         damage_qty: 0,
         brand: '',
@@ -302,9 +306,9 @@ const insertProduct = (ProductCode, ItemCode) => {
       })
       .then(() => {
         message('Product Added!', 'success');
-        setTimeout(() => {
-          window.location.reload();
-        }, 300);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 300);
       })
       .catch(() => {
         message('Unable to add Product!', 'error');

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Form, FormGroup } from 'reactstrap';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -6,14 +6,17 @@ import '../form-editor/editor.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import LoanMoreDetails from '../../components/LoanTable/LoanMoreDetails';
 import LoanDetailComp from '../../components/LoanTable/LoanDetailComp';
 //import ComponentCardV2 from '../../components/ComponentCardV2';
 //import LoanButtons from '../../components/LoanTable/LoanButton';
 import ApiButton from '../../components/ApiButton';
+import creationdatetime from '../../constants/creationdatetime';
 
 const LoanEdit = () => {
   //All state variables
@@ -30,7 +33,7 @@ const LoanEdit = () => {
   const [attachmentData, setDataForAttachment] = useState({
     modelType: '',
   });
-
+  const { loggedInuser } = useContext(AppContext);
   //Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
@@ -106,6 +109,8 @@ const LoanEdit = () => {
       loanDetails.amount !== '' &&
       loanDetails.month_amount !== ''
     ) {
+      loanDetails.modified_by = loggedInuser.first_name;
+      loanDetails.modification_date = creationdatetime;
       api
         .post('/loan/edit-Loan', loanDetails)
         .then(() => {
@@ -158,18 +163,39 @@ const LoanEdit = () => {
   }, [loanDetails.amount_payable, loanDetails.loan_closing_date, loanDetails.status]);
 
   //for deleting the data
+  // const deleteLoanData = () => {
+  //   api
+  //     .post('/loan/deleteLoan', { loan_id: id })
+  //     .then(() => {
+  //       message('Record deteled successfully', 'success');
+  //       setTimeout(() => {
+  //         window.location.reload();
+  //       }, 700);
+  //     })
+  //     .catch(() => {
+  //       message('Unable to delete record.', 'error');
+  //     });
+  // };
+
   const deleteLoanData = () => {
-    api
-      .post('/loan/deleteLoan', { loan_id: id })
-      .then(() => {
-        message('Record deteled successfully', 'success');
-        setTimeout(() => {
-          window.location.reload();
-        }, 700);
-      })
-      .catch(() => {
-        message('Unable to delete record.', 'error');
-      });
+    Swal.fire({
+      title: `Are you sure? ${id}`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('/loan/deleteLoan', { loan_id: id })
+          .then(() => {
+            Swal.fire('Deleted!', 'Your loan has been deleted.', 'success');
+            window.location.reload();
+          });
+      }
+    });
   };
 
   //getting payment data By Loan Id
@@ -211,6 +237,10 @@ const LoanEdit = () => {
   };
 
   const insertPayment = () => {
+    if (!newpaymentData.loan_repayment_amount_per_month) {
+      message('Please fill in the Amount value.', 'warning');
+      return; // Exit the function if amount is not filled
+    }
     newpaymentData.generated_date = moment();
     const newLoanId = newpaymentData;
     newLoanId.loan_id = id;

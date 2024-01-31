@@ -3,6 +3,7 @@ import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
+import creationdatetime from '../../constants/creationdatetime';
 import ComponentCard from '../../components/ComponentCard';
 import api from '../../constants/api';
 import message from '../../components/Message';
@@ -29,7 +30,7 @@ const UserGroupDetails = () => {
 
   //Insert Product Data
   const createUserGroup = () => {
-    
+    userGroupDetails.creation_date = creationdatetime;
     if(userGroupDetails.title){
 
     

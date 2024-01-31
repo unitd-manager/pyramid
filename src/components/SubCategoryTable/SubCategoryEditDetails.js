@@ -3,11 +3,12 @@ import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 import ComponentCard from '../ComponentCard';
 
-export default function SubCategoryEditDetails({ subcategoryeditdetails, handleInputs, category }) {
+export default function SubCategoryEditDetails({ subcategoryeditdetails, handleInputs, category,formSubmitted }) {
   SubCategoryEditDetails.propTypes = {
     subcategoryeditdetails: PropTypes.object,
     handleInputs: PropTypes.func,
     category: PropTypes.array,
+    formSubmitted: PropTypes.object,
   };
   return (
     <Form>
@@ -20,14 +21,21 @@ export default function SubCategoryEditDetails({ subcategoryeditdetails, handleI
           <Row>
             <Col md="3">
               <FormGroup>
-                <Label>Title</Label>
+                <Label>Title<span className="required"> *</span>
+                </Label>
                 <Input
                   type="text"
                   onChange={handleInputs}
                   value={subcategoryeditdetails && subcategoryeditdetails.sub_category_title}
                   name="sub_category_title"
+                  className={`form-control ${
+                    formSubmitted && subcategoryeditdetails.sub_category_title.trim() === '' ? 'highlight' : ''
+                  }`}
                 />
               </FormGroup>
+              {formSubmitted && subcategoryeditdetails.sub_category_title.trim() === '' && (
+                  <div className="error-message">Please Enter</div>
+                )}
             </Col>
             <Col md="3">
               <FormGroup>

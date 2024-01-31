@@ -40,6 +40,20 @@ const Test = () => {
   const { id } = useParams();
   const { loggedInuser } = useContext(AppContext);
 
+  const [adjustStocks, setAdjustStocks] = useState([]);
+  const [changedStock, setChangedStock] = useState();
+  
+  const getAdjustStocklogsById = () => {
+    api
+      .post('/inventory/getAdjustStock', { inventory_id: id })
+      .then((res) => {
+        setAdjustStocks(res.data.data);
+      })
+      .catch(() => {
+        message('adjuststock logs Data Not Found', 'info');
+      });
+  };
+
   //handle input change
   const handleInputs = (e) => {
     setInventoryDetails({ ...inventoryDetails, [e.target.name]: e.target.value, inventory_id: id });
@@ -113,9 +127,17 @@ const Test = () => {
     getInventoryData();
     getAllpurchaseOrdersLinked();
     getAllProjectsLinked();
+  getAdjustStocklogsById();
     getproductquantity( inventoryDetails && inventoryDetails.productId);
   }, [ inventoryDetails && inventoryDetails.productId]);
 
+  useEffect(() => {
+    let changes=0;
+    adjustStocks.forEach((el)=>{
+changes +=parseFloat(el.adjust_stock);
+    })
+    setChangedStock(changes)
+  }, [ adjustStocks]);
   return (
       <>
         <ToastContainer></ToastContainer>
@@ -128,21 +150,29 @@ const Test = () => {
           <Form>
             <ComponentCard title="Stock Details">
               <Row>
-                <Col xs="12" md="4">
+                <Col xs="12" md="3">
                   <Row>
                     <h5>Total Purchased quantity</h5>
                   </Row>
                   <span>{productQty && productQty.materials_purchased}</span>
                   <Row></Row>
                 </Col>
-                <Col xs="12" md="4">
+                <Col xs="12" md="3">
                   <Row>
                     <h5>Sold quantity</h5>
                   </Row>
                   <span>{productQty && productQty.materials_used}</span>
                   <Row></Row>
                 </Col>
-                <Col xs="12" md="4">
+                <Col xs="12" md="3">
+                  <Row>
+                    <h5>Adjusted quantity</h5>
+                  </Row>
+                  <span>{changedStock&&changedStock}</span>
+                  <Row></Row>
+                </Col>
+                
+                <Col xs="12" md="3">
                   <Row>
                     <h5>Remaining quantity</h5>
                   </Row>

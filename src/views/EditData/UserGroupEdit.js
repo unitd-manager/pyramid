@@ -158,6 +158,11 @@ const UserGroupEdit = () => {
       .post('/usergroup/deleteUserGroup', { user_group_id: id })
       .then(() => {
         message('Record deleted successfully', 'success');
+        setTimeout(() => {
+          backToList();
+          window.location.reload()
+         
+      }, 400);
       })
       .catch(() => {
         message('Unable to delete record.', 'error');
@@ -264,7 +269,7 @@ const UserGroupEdit = () => {
             ></ApiButton>
             <Form>
               <FormGroup>
-                <ComponentCard title="UserGroup Details">
+                <ComponentCard title="UserGroup Details" creationModificationDate={userGroupDetails}>
                   <Row>
                     <Col md="6">
                       <FormGroup>
