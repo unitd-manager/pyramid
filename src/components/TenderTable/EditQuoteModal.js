@@ -21,7 +21,13 @@ import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import api from '../../constants/api';
 import message from '../Message';
 
-const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineItem, getQuoteFun }) => {
+const EditQuoteModal = ({
+  editQuoteModal,
+  setEditQuoteModal,
+  quoteDatas,
+  lineItem,
+  getQuoteFun,
+}) => {
   EditQuoteModal.propTypes = {
     editQuoteModal: PropTypes.bool,
     setEditQuoteModal: PropTypes.func,
@@ -48,12 +54,13 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
     });
   };
   const fetchTermsAndConditions = () => {
-    api.get('/setting/getSettingsForTerms')
+    api
+      .get('/setting/getSettingsForTerms')
       .then((res) => {
         const settings = res.data.data;
         if (settings && settings.length > 0) {
           const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
-          console.log("1", res.data.data);
+          console.log('1', res.data.data);
           // Update the quote condition in quoteData
           setQuoteData({ ...quoteData, quote_condition: fetchedTermsAndCondition });
           // Convert fetched terms and conditions to EditorState
@@ -74,7 +81,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
     fetchTermsAndConditions();
     // Other useEffect logic
   }, []);
-  
+
   const insertquote = () => {
     api.post('/tender/insertLog', quoteData).then((res) => {
       message('quote inserted successfully.', 'success');
@@ -82,9 +89,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
         element.quote_log_id = res.data.data.insertId;
         api.post('/tender/insertLogLine', element).then(() => {
           getQuoteFun();
-            setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         });
       });
     });
@@ -95,7 +102,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
       .then(() => {
         message('Quote Edited Successfully.', 'success');
         getQuoteFun();
-          setTimeout(() => {
+        setTimeout(() => {
           window.location.reload();
         }, 1000);
       })
@@ -120,9 +127,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
   };
 
   const convertHtmlToDraft = (existingQuoteformal) => {
-    if (existingQuoteformal && existingQuoteformal.intro_drawing_quote) {
+    if (existingQuoteformal && existingQuoteformal.job_scope) {
       const contentBlock = htmlToDraft(
-        existingQuoteformal && existingQuoteformal.intro_drawing_quote,
+        existingQuoteformal && existingQuoteformal.job_scope,
       );
       if (contentBlock) {
         const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
@@ -193,7 +200,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     <Input
                       type="text"
                       name="discount"
-                      defaultValue={quoteData && quoteData.discount || 0}
+                      defaultValue={(quoteData && quoteData.discount) || 0}
                       onChange={handleData}
                     />
                   </FormGroup>
@@ -276,6 +283,17 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     />
                   </FormGroup>
                 </Col>
+                {/* <Col md="4">
+                  <FormGroup>
+                    <Label>Job Scope</Label>
+                    <Input
+                      type="text"
+                      name="job_scope"
+                      defaultValue={quoteData && quoteData.job_scope}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col> */}
               </Row>
               <Row>
                 <Label>Intro Line Items</Label>
@@ -285,7 +303,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                 wrapperClassName="demo-wrapper mb-0"
                 editorClassName="demo-editor border mb-4 edi-height"
                 onEditorStateChange={(e) => {
-                  handleDataEditor(e, 'intro_drawing_quote');
+                  handleDataEditor(e, 'job_scope');
                   setLineItem(e);
                 }}
               />

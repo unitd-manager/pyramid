@@ -196,9 +196,9 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       .then((res) => {
         message('Invoice inserted successfully.', 'success');
         finalinsertapi(res.data.data.insertId, results);
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 300);
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       })
       .catch(() => {
         message('Network connection error.');
