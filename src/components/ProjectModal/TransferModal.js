@@ -26,6 +26,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
   };
   const { loggedInuser } = React.useContext(AppContext);
   const [project, setProject] = useState([]);
+  const [stock, setStock] = useState();
   const [addLineItem, setAddLineItem] = useState([
     {
       id: random.int(1, 99),
@@ -56,6 +57,16 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
       .post('/project/getprojectcompanyById', {company_id: clientId  })
       .then((res) => {
         setProject(res.data.data);
+      })
+      .catch(() => {
+        message('unable to get products', 'error');
+      });
+  };
+  const getStock = () => {
+    api
+      .post('/inventory/getstockById', {product_id:transferItem && transferItem.product_id  })
+      .then((res) => {
+        setStock(res.data.data[0]);
       })
       .catch(() => {
         message('unable to get products', 'error');
@@ -144,6 +155,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
 
   useEffect(() => {
     getProjects();
+    getStock();
   }, []);
 
   return (
@@ -223,7 +235,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
                                   })}
                               </Input>
                             </td>
-                            <td data-label="Stock">{item.qty}</td>
+                            <td data-label="Stock">{stock && stock.actual_stock}</td>
                             <td data-label="Quantity">
                               <Input
                                 defaultValue={item.quantity}

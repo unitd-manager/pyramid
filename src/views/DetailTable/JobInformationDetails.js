@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
 import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import api from '../../constants/api';
 import message from '../../components/Message';
@@ -18,6 +19,7 @@ const JobInformationDetails = () => {
     fin_no: '',
     status: 'current',
   });
+  const { loggedInuser } = useContext(AppContext);
   //Navigation and Parameters
   const { id } = useParams();
   const navigate = useNavigate();
@@ -38,6 +40,7 @@ const JobInformationDetails = () => {
   //inserting data of job information
   const insertJobInformation = () => {
     jobForms.creation_date = creationdatetime;
+    jobForms.created_by = loggedInuser.first_name;
     if (jobForms.employee_id !== '') {
       api
         .post('/jobinformation/insertjob_information', jobForms)

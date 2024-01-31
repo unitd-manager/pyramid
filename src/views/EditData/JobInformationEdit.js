@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import {
   Row,
   Col,
@@ -34,6 +34,7 @@ import ViewNote from '../../components/Tender/ViewNote';
 import AddNote from '../../components/Tender/AddNote';
 import JobTermination from '../../components/JobInformation/JobInformationTermination';
 import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
 import JobBank from '../../components/JobInformation/Job';
 import Tab from '../../components/ProjectTabs/Tab';
 
@@ -45,6 +46,7 @@ const JobInformationEdit = () => {
   const [attachmentData, setDataForAttachment] = useState({
     modelType: '',
   });
+  const { loggedInuser } = useContext(AppContext);
   const [JobInformationEditModal, setJobInformationEditModal] = useState(false);
   const [overTimeRate, setOverTimeRate] = useState('');
   const [allBank, setAllBank] = useState();
@@ -183,6 +185,7 @@ const JobInformationEdit = () => {
     job.deduction4 = parseFloat(job.deduction4);
     if (job.act_join_date && job.working_days && job.basic_pay && job.join_date && job.govt_donation) {
       job.modification_date = creationdatetime;
+      job.modified_by = loggedInuser.first_name;
       api
         .post('/jobinformation/edit-jobinformation', job)
         .then(() => {

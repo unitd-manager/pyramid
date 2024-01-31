@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Row, Col, Form, FormGroup, Button } from 'reactstrap';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -17,6 +17,7 @@ import KeyStaffAddress from '../../components/StaffTable/KeyStaffAddress';
 //import StaffButton from '../../components/StaffTable/StaffButton';
 import creationdatetime from '../../constants/creationdatetime';
 import ApiButton from '../../components/ApiButton';
+import AppContext from '../../context/AppContext';
 
 const StaffEdit = () => {
   // All state variables
@@ -88,9 +89,11 @@ const StaffEdit = () => {
   };
 
   //Api call for Editing Staff Details
+  const { loggedInuser } = useContext(AppContext);
 
   const editStaffData = () => {
     staffeditdetails.modification_date = creationdatetime;
+    staffeditdetails.modified_by = loggedInuser.first_name;
     if (!staffeditdetails.email) {
       message('Email is required', 'warning');
     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(staffeditdetails.email)) {
@@ -151,7 +154,12 @@ const StaffEdit = () => {
     api
       .post('/staff/deleteStaff', { staff_id: id })
       .then(() => {
-        message('Record editted successfully', 'success');
+        message('Record deleted successfully', 'success');
+        setTimeout(() => {
+          backToList();
+          window.location.reload()
+         
+      }, 400);
       })
       .catch(() => {
         message('Unable to edit record.', 'error');

@@ -104,7 +104,7 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
         <Col md="2">
           <FormGroup>
             <Label>
-              Total Cost :{' '}
+              Total Cost :{' '} <br />
               <b>
                 {
                   <span>
@@ -127,7 +127,7 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
             </Label>{' '}
           </FormGroup>
         </Col>
-        <Col md="3">
+        <Col md="2">
           <FormGroup>
             <Label>
               {' '} 
@@ -173,7 +173,10 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
               </div>
             </Label>
             <br />
-            <span>{chargesdetails && chargesdetails.transport_charges}</span>
+        
+    <span>
+          {chargesdetails && chargesdetails.transport_charges} ({getCostingSummary && getCostingSummary.transport_charges})
+      </span>
           </FormGroup>
         </Col>
         <Col md="3">
@@ -194,7 +197,9 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
               </div>
             </Label>
             <br />
-            <span>{chargesdetails && chargesdetails.labour_charges}</span>
+            <span>{chargesdetails && chargesdetails.labour_charges}(  {(getCostingSummary && getCostingSummary.no_of_days_worked) *
+                (getCostingSummary && getCostingSummary.labour_rates_per_day) *
+                (getCostingSummary && getCostingSummary.no_of_worker_used)})</span>
           </FormGroup>
         </Col>
 
@@ -216,7 +221,7 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
               </div>
             </Label>
             <br />
-            <span>{chargesdetails && chargesdetails.sales_commision}</span>
+            <span>{chargesdetails && chargesdetails.sales_commision}({getCostingSummary && getCostingSummary.salesman_commission})</span>
           </FormGroup>
         </Col>
       </Row>
@@ -241,7 +246,7 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
               </div>
             </Label>
             <br />
-            <span>{chargesdetails && chargesdetails.finance_charges}</span>
+            <span>{chargesdetails && chargesdetails.finance_charges}({getCostingSummary && getCostingSummary.finance_charges})</span>
           </FormGroup>
         </Col>
         <Col md="3">
@@ -262,7 +267,7 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
               </div>
             </Label>
             <br />
-            <span>{chargesdetails && chargesdetails.office_overheads}</span>
+            <span>{chargesdetails && chargesdetails.office_overheads}({getCostingSummary && getCostingSummary.office_overheads})</span>
           </FormGroup>
         </Col>
         <Col md="3">
@@ -283,7 +288,7 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
               </div>
             </Label>
             <br />
-            <span>{chargesdetails && chargesdetails.other_charges}</span>
+            <span>{chargesdetails && chargesdetails.other_charges}({getCostingSummary && getCostingSummary.other_charges})</span>
           </FormGroup>
         </Col>
         <Col md="3">
