@@ -319,6 +319,72 @@ const EditQuoteModal = ({
                     />
                   </FormGroup>
                 </Col> */}
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Monday-Friday Normal Hr</Label>
+                    <Input
+                      type="text"
+                      name="monday_to_friday_normal_timing"
+                      defaultValue={quoteData && quoteData.monday_to_friday_normal_timing}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Monday-Friday OT Hr</Label>
+                    <Input
+                      type="text"
+                      name="monday_to_friday_ot_timing"
+                      defaultValue={quoteData && quoteData.monday_to_friday_ot_timing}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Saturday</Label>
+                    <Input
+                      type="text"
+                      name="saturday_normal_timing"
+                      defaultValue={quoteData && quoteData.saturday_normal_timing}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Sunday & Public Holiday</Label>
+                    <Input
+                      type="text"
+                      name="sunday_and_publicholiday_ot_timing"
+                      defaultValue={quoteData && quoteData.sunday_and_publicholiday_ot_timing}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Meal Chargeable</Label>
+                    <Input
+                      type="text"
+                      name="meal_charges"
+                      defaultValue={quoteData && quoteData.meal_charges}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Shift Allowance</Label>
+                    <Input
+                      type="text"
+                      name="shift_allowance"
+                      defaultValue={quoteData && quoteData.shift_allowance}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
               </Row>
               <Row>
                 <Label>JOB SCOPE</Label>
