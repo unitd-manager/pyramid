@@ -10,8 +10,8 @@ import moment from 'moment';
 import api from '../../constants/api';
 import PdfHeader from './PdfHeader';
 
-const PdfQuoteFormat3 = ({ id, quoteId }) => {
-  PdfQuoteFormat3.propTypes = {
+const PdfQuoteFormat4 = ({ id, quoteId }) => {
+    PdfQuoteFormat4.propTypes = {
     id: PropTypes.any,
     quoteId: PropTypes.any,
   };
@@ -19,7 +19,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   const [tenderDetails, setTenderDetails] = useState(null);
   const [lineItem, setLineItem] = useState([]);
   const [hfdata, setHeaderFooterData] = React.useState();
-  const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+  // const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
   const [gTotal, setGtotal] = React.useState(0);
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
@@ -80,23 +80,23 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
       });
   };
 
-  React.useEffect(() => {
-    const parseHTMLContent = (htmlContent) => {
-      if (htmlContent) {
-        // Replace all occurrences of &nbsp; with an empty string
-        const plainText = htmlContent.replace(/&nbsp;/g, '');
+  // React.useEffect(() => {
+  //   const parseHTMLContent = (htmlContent) => {
+  //     if (htmlContent) {
+  //       // Replace all occurrences of &nbsp; with an empty string
+  //       const plainText = htmlContent.replace(/&nbsp;/g, '');
 
-        // Remove HTML tags using a regular expression
-        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+  //       // Remove HTML tags using a regular expression
+  //       const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
 
-        setParsedQuoteCondition(plainTextWithoutTags);
-      }
-    };
-    // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
-    parseHTMLContent(quote.quote_condition);
+  //       setParsedQuoteCondition(plainTextWithoutTags);
+  //     }
+  //   };
+  //   // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
+  //   parseHTMLContent(quote.quote_condition);
 
-    // Other logic you have here...
-  }, [quote.quote_condition]);
+  //   // Other logic you have here...
+  // }, [quote.quote_condition]);
   const [parsedQuoteCondition1, setParsedQuoteCondition1] = useState('');
   React.useEffect(() => {
     const parseHTMLContent = (htmlContent) => {
@@ -117,16 +117,16 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   }, [quote.job_scope]);
 
   //The quote_condition content and format it as bullet points
-  const formatQuoteConditions = (conditionsText) => {
-    const formattedConditions = conditionsText.split(':-').map((condition, index) => {
-      const trimmedCondition = condition.trim();
-      return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
-    });
-    return formattedConditions;
-  };
+  // const formatQuoteConditions = (conditionsText) => {
+  //   const formattedConditions = conditionsText.split(':-').map((condition, index) => {
+  //     const trimmedCondition = condition.trim();
+  //     return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
+  //   });
+  //   return formattedConditions;
+  // };
 
   // Format the conditions content for PDF
-  const conditions = formatQuoteConditions(parsedQuoteCondition);
+  // const conditions = formatQuoteConditions(parsedQuoteCondition);
   // const conditionsContent = conditions.map((condition) => ({
   //   text: `${condition}`,
   //   fontSize: 10,
@@ -134,13 +134,13 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   //   style: ['notesText', 'textSize'],
   // }));
   // / Format the conditions content for PDF
-  const conditionsContent = conditions.map((condition) => ({
-    text: `${condition}`,
-    fontSize: 10,
-    margin: [15, 5, 0, 0],
-    style: ['notesText', 'textSize'],
-    lineHeight: 1.2,
-  }));
+  // const conditionsContent = conditions.map((condition) => ({
+  //   text: `${condition}`,
+  //   fontSize: 10,
+  //   margin: [15, 5, 0, 0],
+  //   style: ['notesText', 'textSize'],
+  //   lineHeight: 1.2,
+  // }));
 
   const formatQuoteConditions1 = (conditionsText) => {
     const formattedConditions = conditionsText.split(':-').map((condition, index) => {
@@ -207,7 +207,12 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           alignment: 'right',
         },
         {
-            text: 'Duration',
+            text: 'From Date',
+            style: 'tableHead',
+            alignment: 'center',
+          },
+          {
+            text: 'To Date',
             style: 'tableHead',
             alignment: 'center',
           },
@@ -232,66 +237,113 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
         // },
         {
           text: `${element.title}`,
-          border: [false, false, false, true],
+          border: [true, true, true, true],
           style: 'tableBody',
           alignment: 'center',
         },
         {
             text: `${element.asset_no}`,
-            border: [false, false, false, true],
+            border: [true, true, true, true],
             style: 'tableBody',
-            alignment: 'center',
+            alignment: 'left',
           },
         {
           text: `${element.description}`,
-          border: [false, false, false, true],
+          border: [true, true, true, true],
           style: 'tableBody',
-          alignment: 'center',
+          alignment: 'left',
         },
         {
             text: `${element.unit}`,
-            border: [false, false, false, true],
+            border: [true, true, true, true],
             style: 'tableBody',
             alignment: 'center',
           },
         {
           text: `${element.quantity}`,
-          border: [false, false, false, true],
+          border: [true, true, true, true],
           style: 'tableBody',
           alignment: 'center',
         },
         {
-          text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
-          border: [false, false, false, true],
+          stack: [
+            {
+              columns: [
+                {
+                  text: '$', // Add the "$" symbol
+                  alignment: 'left',
+                  width: 'auto',
+                },
+                {
+                  text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+                  alignment: 'right', // Align the amount to the right
+                  width: '*',
+                },
+              ],
+            },
+          ],
+          border: [true, true, true, true],
           style: 'tableBody',
-          alignment: 'right',
         },
-        {
-            text: `${element.duration}`,
-            border: [false, false, false, true],
+        // {
+        //   text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+        //   border: [false, false, false, true],
+        //   style: 'tableBody',
+        //   alignment: 'right',
+        // },
+          {
+            text: `${element.from_date}`,
+            border: [true, true, true, true],
+            style: 'tableBody',
+            alignment: 'center',
+          },
+          {
+            text: `${element.to_date}`,
+            border: [true, true, true, true],
             style: 'tableBody',
             alignment: 'center',
           },
           {
             text: `${element.no_of_days}`,
-            border: [false, false, false, true],
+            border: [true, true, true, true],
             style: 'tableBody',
             alignment: 'center',
           },
-        {
-          text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
-          border: [false, false, false, true],
-          fillColor: '#f5f5f5',
-          style: 'tableBody',
-          alignment: 'right',
-        },
+          {
+            stack: [
+              {
+                columns: [
+                  {
+                    text: '$', // Add the "$" symbol
+                    alignment: 'left',
+                    width: 'auto',
+                  },
+                  {
+                    text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+                    alignment: 'right', // Align the amount to the right
+                    width: '*',
+                  },
+                ],
+              },
+            ],
+            border: [true, true, true, true],
+            style: 'tableBody',
+          },
+        // {
+        //   text: `$  ${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+        //   border: [false, false, false, true],
+        //   fillColor: '#f5f5f5',
+        //   style: 'tableBody',
+        //   alignment: 'right',
+        //   paddingLeft: 5,
+        // },
       ]);
     });
 
     const dd = {
       header: PdfHeader({ findCompany }),
-      pageMargins: [40, 120, 40, 80],
-      pageSize: 'A4',
+      pageMargins: [15, 110, 20, 80],
+    pagesize: 'A4', 
       content: [
         {
           layout: {
@@ -447,48 +499,48 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
 
         {
           layout: {
-            defaultBorder: false,
-            hLineWidth: () => {
-              return 1;
-            },
-            vLineWidth: () => {
-              return 1;
-            },
-            hLineColor: (i) => {
-              if (i === 1 || i === 0) {
-                return '#bfdde8';
-              }
-              return '#eaeaea';
-            },
-            vLineColor: () => {
-              return '#eaeaea';
-            },
-            hLineStyle: () => {
-              // if (i === 0 || i === node.table.body.length) {
-              return null;
-              //}
-            },
-            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
-            paddingLeft: () => {
-              return 10;
-            },
-            paddingRight: () => {
-              return 10;
-            },
-            paddingTop: () => {
-              return 2;
-            },
-            paddingBottom: () => {
-              return 2;
-            },
-            fillColor: () => {
-              return '#fff';
-            },
+            defaultBorder: true,
+            // hLineWidth: () => {
+            //   return 1;
+            // },
+            // vLineWidth: () => {
+            //   return 1;
+            // },
+            // hLineColor: (i) => {
+            //   if (i === 1 || i === 0) {
+            //     return '#bfdde8';
+            //   }
+            //   return '#eaeaea';
+            // },
+            // vLineColor: () => {
+            //   return '#eaeaea';
+            // },
+            // hLineStyle: () => {
+            //   // if (i === 0 || i === node.table.body.length) {
+            //   return null;
+            //   //}
+            // },
+            // // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
+            // paddingLeft: () => {
+            //   return 10;
+            // },
+            // paddingRight: () => {
+            //   return 10;
+            // },
+            // paddingTop: () => {
+            //   return 2;  
+            // },
+            // paddingBottom: () => {
+            //   return 2;
+            // },
+            // fillColor: () => {
+            //   return '#fff';
+            // },
           },
           table: {
             headerRows: 1,
-            widths: [50, 105, 45, 60, 60,70],
-
+            widths: [30, 60, 130, 30, 20, 40, 45, 45, 30, 45],
+            defaultBorder: false,
             body: lineItemBody,
           },
         },
@@ -511,7 +563,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
                   : '0'
               }`,
               alignment: 'right',
-              margin: [0, 0, 10, 0],
+              margin: [0, 0, 15, 0],
               style: 'textSize',
             },
             '\n',
@@ -528,8 +580,9 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
             {
               text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
               style: 'bold',
-              fontSize: 11,
+              fontSize: 8,
               margin: [40, 0, 0, 0],
+              alignment: 'center'
             },
           ],
         },
@@ -537,13 +590,13 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
         '\n',
 
         {
-          text: `Remarks: `,
-          fontSize: 11,
-          decoration: 'underline',
+          text: `External Notes: `,
+          fontSize: 8,
+          // decoration: 'underline',
           margin: [0, 5, 0, 0],
-          style: ['notesText', 'textSize'],
+          style: ['notesText', 'textSize', 'bold'],
         },
-        ...conditionsContent, // Add each condition as a separate paragraph
+        quote.external_notes, // Add each condition as a separate paragraph
 
         '\n\n\n',
         '\n\n\n\n',
@@ -578,9 +631,9 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
         '\n\n',
 
         {
-          text: `JOB Scope By KHC : `,
-          fontSize: 10,
-          decoration: 'underline',
+          text: `PYRAMID ENGINEERING PRIVATE LTD `,
+          fontSize: 8,
+          // decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
         },
@@ -603,7 +656,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           alignment: 'right',
         },
         textSize: {
-          fontSize: 10,
+          fontSize: 8,
         },
         notesTitle: {
           bold: true,
@@ -613,30 +666,30 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           border: [false, true, false, true],
           fillColor: '#eaf2f5',
           margin: [0, 5, 0, 5],
-          fontSize: 10,
+          fontSize: 8,
           bold: 'true',
         },
         tableBody: {
-          border: [false, false, false, true],
+          border: [true, true, true, true],
           margin: [0, 5, 0, 5],
           alignment: 'left',
-          fontSize: 10.5,
+          fontSize: 8,
         },
         tableBody1: {
-          border: [false, false, false, true],
+          border: [true, true, true, true],
           margin: [0, 5, 0, 5],
           alignment: 'center',
-          fontSize: 10,
+          fontSize: 8,
         },
         tableBody2: {
-          border: [false, false, false, true],
+          border: [true, true, true, true],
           margin: [0, 5, 35, 5],
           alignment: 'right',
-          fontSize: 10,
+          fontSize:8,
         },
       },
       defaultStyle: {
-        columnGap: 20,
+        columnGap: 10,
       },
     };
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -652,4 +705,4 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   );
 };
 
-export default PdfQuoteFormat3;
+export default PdfQuoteFormat4;

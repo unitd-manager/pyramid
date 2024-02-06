@@ -12,6 +12,7 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import * as $ from 'jquery';
 import random from 'random';
 import api from '../../constants/api';
@@ -74,6 +75,10 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
         amount: '',
         title: '',
         description: '',
+        asset_no:'',
+        no_of_days:'',
+        from_date:'',
+        to_date:'',
       },
     ]);
   };
@@ -174,10 +179,14 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                       <thead>
                         <tr>
                           <th scope="col">Title <span className="required"> *</span>{' '}</th>
+                          <th scope="col">Asset No </th>
                           <th scope="col">Description </th>
                           <th scope="col">Unit</th>
                           <th scope="col">Qty <span className="required"> *</span>{' '}</th>
                           <th scope="col">Unit Price <span className="required"> *</span>{' '}</th>
+                          <th scope="col">From Date </th>
+                          <th scope="col">To Date </th>
+                          <th scope="col">No of days </th>
                           <th scope="col">Amount</th>
                           <th scope="col">Remarks</th>
                           <th scope="col"></th>
@@ -190,6 +199,9 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                               <tr key={item.id}>
                                 <td data-label="Title">
                                   <Input Value={item.title} type="text" name="title" style={{ width: '100%' }} />
+                                </td>
+                                <td data-label="Asset No">
+                                  <Input Value={item.asset_no} type="text" name="asset_no" style={{ width: '100%' }} />
                                 </td>
                                 <td data-label="Description">
                                   <Input Value={item.description} type="text" name="description" style={{ width: '100%' }} />
@@ -210,6 +222,15 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                                     name="unit_price"
                                     style={{ width: '70%' }}
                                   />
+                                </td>
+                                <td data-label="From Date">
+                                  <Input Value={item && moment(item.from_date).format('DD-MM-YYYY')} type="date" name="from_date"  style={{ width: '100%' }}/>
+                                </td>
+                                <td data-label="To Date">
+                                  <Input Value={item && moment(item.to_date).format('DD-MM-YYYY')} type="date" name="to_date"  style={{ width: '100%' }}/>
+                                </td>
+                                <td data-label="No of Days">
+                                  <Input Value={item.no_of_days} type="text" name="no_of_days"  style={{ width: '70%' }}/>
                                 </td>
                                 <td data-label="Amount">
                                   <Input Value={item.amount} type="text" name="amount" disabled style={{ width: '70%' }}/>
