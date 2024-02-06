@@ -4,7 +4,7 @@ import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import * as numberToWords from 'number-to-words';
 import PropTypes from 'prop-types';
-import * as Icon from 'react-feather';
+//import * as Icon from 'react-feather';
 import moment from 'moment';
 // import message from '../Message';
 import api from '../../constants/api';
@@ -622,7 +622,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   return (
     <>
       <span onClick={GetPdf}>
-        <Icon.Printer />
+         3
       </span>
     </>
   );
