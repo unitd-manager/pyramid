@@ -201,7 +201,7 @@ export default function LoanMoreDetails({
                           />
                         </FormGroup>
                         <FormGroup>
-                          <Label>Amount</Label>
+                          <Label>Amount<span className='required'>*</span> </Label>
                           <Input
                             type="number"
                             name="loan_repayment_amount_per_month"
