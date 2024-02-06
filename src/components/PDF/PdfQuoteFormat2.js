@@ -10,8 +10,8 @@ import moment from 'moment';
 import api from '../../constants/api';
 import PdfHeader from './PdfHeader';
 
-const PdfQuoteFormat3 = ({ id, quoteId }) => {
-  PdfQuoteFormat3.propTypes = {
+const PdfQuoteFormat2 = ({ id, quoteId }) => {
+  PdfQuoteFormat2.propTypes = {
     id: PropTypes.any,
     quoteId: PropTypes.any,
   };
@@ -65,7 +65,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   };
   const getQuoteById = () => {
     api
-      .post('/tender/getQuoteLineItemsById', { quote_id: quoteId })
+      .post('/tender/getQuoteAndLineItems', { quote_id: quoteId })
       .then((res) => {
         setLineItem(res.data.data);
         console.log('quote1', res.data.data);
@@ -97,24 +97,6 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
 
     // Other logic you have here...
   }, [quote.quote_condition]);
-  const [parsedQuoteCondition1, setParsedQuoteCondition1] = useState('');
-  React.useEffect(() => {
-    const parseHTMLContent = (htmlContent) => {
-      if (htmlContent) {
-        // Replace all occurrences of &nbsp; with an empty string
-        const plainText = htmlContent.replace(/&nbsp;/g, '');
-
-        // Remove HTML tags using a regular expression
-        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
-
-        setParsedQuoteCondition1(plainTextWithoutTags);
-      }
-    };
-    // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
-    parseHTMLContent(quote.job_scope);
-
-    // Other logic you have here...
-  }, [quote.job_scope]);
 
   //The quote_condition content and format it as bullet points
   const formatQuoteConditions = (conditionsText) => {
@@ -136,27 +118,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   // / Format the conditions content for PDF
   const conditionsContent = conditions.map((condition) => ({
     text: `${condition}`,
-    fontSize: 8,
-    margin: [15, 5, 0, 0],
-    style: ['notesText', 'textSize'],
-    lineHeight: 1.2,
-  }));
-
-  const formatQuoteConditions1 = (conditionsText) => {
-    const formattedConditions = conditionsText.split(':-').map((condition, index) => {
-      const trimmedCondition = condition.trim();
-      return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
-    });
-    return formattedConditions;
-  };
-
-  // Format the conditions content for PDF
-  const conditions1 = formatQuoteConditions1(parsedQuoteCondition1);
-
-  // / Format the conditions content for PDF
-  const conditionsContent1 = conditions1.map((condition) => ({
-    text: `${condition}`,
-    fontSize: 9,
+    fontSize: 10,
     margin: [15, 5, 0, 0],
     style: ['notesText', 'textSize'],
     lineHeight: 1.2,
@@ -167,9 +129,95 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
     getQuoteById();
     getCompany();
   }, []);
-  
 
   const GetPdf = () => {
+    const lineItemTable = [
+      [
+        {
+          text: '',
+          style: 'tableHead',
+        },
+        {
+          text: '(Monday ~ Friday) Day Shift 0800hr ~ 1700hr Night Shift 2000hr~0500hr @ per Hour',
+          style: 'tableHead',
+          alignment: 'center',
+        },
+        {
+          text: '(Monday ~ Friday) Day Shift 1700hr ~ 2200hr Night Shift 0500hr~0800hr @ per Hour',
+          style: 'tableHead',
+          alignment: 'center',
+        },
+        {
+          text: '(Saturday) Day Shift 0800hr ~ 2200hr Night Shift 2000hr ~ 0500hr @ per Hour',
+          style: 'tableHead',
+          alignment: 'center',
+        },
+        {
+          text: 'Sunday, Public Holiday & Any other day after 2200 hrs@ per Hour',
+          style: 'tableHead',
+          alignment: 'center',
+        },
+
+        {
+          text: 'Meal Chargeable For Work After 1900hr/ 2300hr/0500hr',
+          style: 'tableHead',
+          alignment: 'center',
+        },
+        {
+          text: 'Shift Allowance',
+          style: 'tableHead',
+          alignment: 'center',
+        },
+      ],
+    ];
+
+    lineItem.forEach((element) => {
+      lineItemTable.push([
+        {
+          text: ``,
+          style: 'tableBody',
+          border: [false, false, false, true],
+        },
+        {
+          text: `${element.monday_to_friday_normal_timing}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+          alignment: 'center',
+        },
+        {
+          text: `${element.monday_to_friday_ot_timing}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+          alignment: 'center',
+        },
+        {
+          text: `${element.saturday_normal_timing}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+          alignment: 'center',
+        },
+        
+        {
+          text: `${element.sunday_and_publicholiday_ot_timing}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+          alignment: 'center',
+        },
+        {
+          text: `${element.meal_charges}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+          alignment: 'center',
+        },
+        {
+          text: `${element.shift_allowance}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+          alignment: 'center',
+        },
+      ]);
+    });
+
     const lineItemBody = [
       [
         // {
@@ -183,11 +231,6 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
         },
         {
           text: 'Description',
-          style: 'tableHead',
-          alignment: 'center',
-        },
-        {
-          text: 'Unit',
           style: 'tableHead',
           alignment: 'center',
         },
@@ -228,12 +271,6 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           style: 'tableBody',
           alignment: 'center',
         },
-        {
-            text: `${element.unit}`,
-            border: [false, false, false, true],
-            style: 'tableBody',
-            alignment: 'center',
-          },
         {
           text: `${element.quantity}`,
           border: [false, false, false, true],
@@ -456,12 +493,67 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           },
           table: {
             headerRows: 1,
-            widths: [50, 105, 45, 60, 60,70],
+            widths: [30,70, 70, 70, 70, 70,30],
+
+            body: lineItemTable,
+          },
+          
+          
+        },
+        '\n',
+        '\n',
+        '\n',
+        {
+          layout: {
+            defaultBorder: false,
+            hLineWidth: () => {
+              return 1;
+            },
+            vLineWidth: () => {
+              return 1;
+            },
+            hLineColor: (i) => {
+              if (i === 1 || i === 0) {
+                return '#bfdde8';
+              }
+              return '#eaeaea';
+            },
+            vLineColor: () => {
+              return '#eaeaea';
+            },
+            hLineStyle: () => {
+              // if (i === 0 || i === node.table.body.length) {
+              return null;
+              //}
+            },
+            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
+            paddingLeft: () => {
+              return 10;
+            },
+            paddingRight: () => {
+              return 10;
+            },
+            paddingTop: () => {
+              return 2;
+            },
+            paddingBottom: () => {
+              return 2;
+            },
+            fillColor: () => {
+              return '#fff';
+            },
+          },
+          
+          
+          table: {
+            headerRows: 1,
+            widths: [50, 105, 85, 80, 90],
 
             body: lineItemBody,
           },
         },
         '\n',
+
         {
           stack: [
             {
@@ -485,7 +577,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
             },
             '\n',
             {
-              text: `Total Excluding of GST $ :     ${calculateTotal().toLocaleString('en-IN', {
+              text: `Total $ :     ${calculateTotal().toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
               })}`,
               alignment: 'right',
@@ -506,61 +598,52 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
         '\n',
 
         {
-            text: `Remarks: `,
-            fontSize: 11,
-            decoration: 'underline',
-            margin: [0, 5, 0, 0],
-            style: ['notesText', 'textSize'],
-          },
-        {
-          text: ` `,
-          fontSize: 6,
-          decoration: 'underline',
-          margin: [0, 0, 0, 0],
-          //style: ['notesText', 'textSize'],
-        },
-        ...conditionsContent, // Add each condition as a separate paragraph
-
-        '\n\n\n',
-        '\n\n\n\n',
-        {
-          text: 'ACKNOWLEDGE ACCEPTANCE BY',
-          style: 'textSize',
-          bold: true,
-          margin: [10, -50, 0, 0],
-          alignment: 'right',
-        },
-        {
-          columns: [
-            {
-              canvas: [{ type: 'line', x1: 155, y1: 0, x2: 0, y2: 0, lineWidth: 1 }],
-              margin: [0, 20, 0, 0],
-              alignment: 'right',
-            },
-          ],
-        },
-
-        {
-          columns: [
-            {
-              text: 'Sign with Company Stamp and fax by return',
-              style: 'textSize',
-
-              margin: [0, 10, 0, 0],
-              alignment: 'right',
-            },
-          ],
-        },
-        '\n\n',
-
-        {
-          text: `JOB Scope By KHC : `,
-          fontSize: 10,
+          text: `REMARKS : `,
+          fontSize: 11,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
         },
-        ...conditionsContent1, // Add each condition as a separate paragraph
+        ...conditionsContent, // Add each condition as a separate paragraph
+        '\n',
+        {
+          text: `INVOICES & PAYMENT `,
+          fontSize: 11,
+          decoration: 'underline',
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+        ...conditionsContent, // Add each condition as a separate paragraph
+        '\n',
+        {
+          text: `NOTICE OF TERMINATION `,
+          fontSize: 11,
+          decoration: 'underline',
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+        ...conditionsContent, // Add each condition as a separate paragraph
+        '\n',
+        {
+          text: `TAXES `,
+          fontSize: 11,
+          decoration: 'underline',
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+        ...conditionsContent, // Add each condition as a separate paragraph
+
+        '\n\n\n',
+        '\n',
+
+        {
+          width: '100%',
+          alignment: 'center',
+          text: 'Thank you very much for your business',
+          bold: true,
+          margin: [0, 10, 0, 10],
+          fontSize: 12,
+        },
       ],
       margin: [0, 50, 50, 50],
 
@@ -589,7 +672,7 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
           border: [false, true, false, true],
           fillColor: '#eaf2f5',
           margin: [0, 5, 0, 5],
-          fontSize: 10,
+          fontSize: 8,
           bold: 'true',
         },
         tableBody: {
@@ -628,4 +711,4 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
   );
 };
 
-export default PdfQuoteFormat3;
+export default PdfQuoteFormat2;
