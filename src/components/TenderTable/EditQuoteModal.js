@@ -308,83 +308,40 @@ const EditQuoteModal = ({
                     />
                   </FormGroup>
                 </Col>
-                {/* <Col md="4">
-                  <FormGroup>
-                    <Label>Job Scope</Label>
-                    <Input
-                      type="text"
-                      name="job_scope"
-                      defaultValue={quoteData && quoteData.job_scope}
-                      onChange={handleData}
-                    />
-                  </FormGroup>
-                </Col> */}
                 <Col md="4">
                   <FormGroup>
-                    <Label>Monday-Friday Normal Hr</Label>
+                    <Label>Invoices & Payment</Label>
                     <Input
-                      type="text"
-                      name="monday_to_friday_normal_timing"
-                      defaultValue={quoteData && quoteData.monday_to_friday_normal_timing}
+                      type="textarea"
+                      name="invoices_payment_terms"
+                      defaultValue={quoteData && quoteData.invoices_payment_terms}
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Monday-Friday OT Hr</Label>
+                    <Label>Noice of Termination</Label>
                     <Input
                       type="text"
-                      name="monday_to_friday_ot_timing"
-                      defaultValue={quoteData && quoteData.monday_to_friday_ot_timing}
+                      name="notice_of_termination"
+                      defaultValue={quoteData && quoteData.notice_of_termination}
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Saturday</Label>
+                    <Label>Taxes</Label>
                     <Input
-                      type="text"
-                      name="saturday_normal_timing"
-                      defaultValue={quoteData && quoteData.saturday_normal_timing}
+                      type="textarea"
+                      name="taxes"
+                      defaultValue={quoteData && quoteData.taxes}
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
-                <Col md="4">
-                  <FormGroup>
-                    <Label>Sunday & Public Holiday</Label>
-                    <Input
-                      type="text"
-                      name="sunday_and_publicholiday_ot_timing"
-                      defaultValue={quoteData && quoteData.sunday_and_publicholiday_ot_timing}
-                      onChange={handleData}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md="4">
-                  <FormGroup>
-                    <Label>Meal Chargeable</Label>
-                    <Input
-                      type="text"
-                      name="meal_charges"
-                      defaultValue={quoteData && quoteData.meal_charges}
-                      onChange={handleData}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md="4">
-                  <FormGroup>
-                    <Label>Shift Allowance</Label>
-                    <Input
-                      type="text"
-                      name="shift_allowance"
-                      defaultValue={quoteData && quoteData.shift_allowance}
-                      onChange={handleData}
-                    />
-                  </FormGroup>
-                </Col>
+                
               </Row>
               <Row>
                 <Label>JOB SCOPE</Label>

@@ -9,6 +9,7 @@ import {
   ModalBody,
   ModalHeader,
   Button,
+  CardTitle
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import * as Icon from 'react-feather';
@@ -25,6 +26,8 @@ import PdfQuote from '../PDF/PdfQuote';
 import PdfQuoteFormat2 from '../PDF/PdfQuoteFormat2';
 import PdfQuoteFormat3 from '../PDF/PdfQuoteFormat3';
 import PdfQuoteFormat4 from '../PDF/PdfQuoteFormat4';
+import AddRateItemModal from './AddRateItemModal';
+import EditRateItemModal from './EditRateItemModal';
 
 export default function TenderQuotation({
   tenderId,
@@ -32,7 +35,11 @@ export default function TenderQuotation({
   lineItem,
   quotationsModal,
   setquotationsModal,
+  rateModal,
+  setRateModal,
+  rateItem,
   getLineItem,
+  getRateItem,
   setAddLineItemModal,
   setEditQuoteModal,
   viewLineModal,
@@ -61,6 +68,8 @@ export default function TenderQuotation({
     addLineItemModal: PropTypes.object,
     quotationsModal: PropTypes.object,
     setquotationsModal: PropTypes.object,
+    rateModal: PropTypes.object,
+    setRateModal: PropTypes.object,
     quote: PropTypes.object,
     project: PropTypes.array,
     id: PropTypes.any,
@@ -69,12 +78,16 @@ export default function TenderQuotation({
     generateCode: PropTypes.object,
     generateCodes: PropTypes.object,
     getQuote: PropTypes.any,
+    rateItem: PropTypes.object,
+    getRateItem: PropTypes.any,
   };
 
-  const [quoteDatas, setQuoteData] = useState();
+  const [quoteDatas, setQuoteData] = useState([]);
   const [quoteLine, setQuoteLine] = useState();
   const [editLineModelItem, setEditLineModelItem] = useState(null);
   const [editLineModal, setEditLineModal] = useState(false);
+  const [editRateModelItem, setEditRateModelItem] = useState(null);
+  const [editRateModal, setEditRateModal] = useState(false);
 
   console.log('quoteDatas', quoteDatas);
   console.log('quote', quote);
@@ -104,13 +117,52 @@ export default function TenderQuotation({
       }
     });
   };
+  
+
+  const deleteRateRecord = (deleteRateID) => {
+    console.log('Delete Rate:', deleteRateID);
+    Swal.fire({
+      title: `Are you sure?`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api.post('/tender/deleteRateItem', { sub_con_rate_id: deleteRateID }).then(() => {
+          Swal.fire('Deleted!', 'Your Rate Items has been deleted.', 'success');
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);
+        });
+      }
+    });
+  };
 
   useEffect(() => {}, [tenderId]);
+
+  
   const handleEditSuccess = () => {
     // Handle the refresh of the View Line Item Modal
     getLineItem(quote.quote_id);
+    
     setViewLineModal(true);
   };
+
+  // const handleEditRate = () => {
+  //   // Handle the refresh of the View Line Item Modal
+  //   getRateItem(quote.quote_id);
+    
+  // };
+
+
+  useEffect(() => {
+    getRateItem(quote.quote_id);
+  },[quote.quote_id]);
+
+  console.log('rateItem:', rateItem);
 
   return (
     <div>
@@ -132,6 +184,7 @@ export default function TenderQuotation({
           </Col>
         )}
         {Object.keys(quote).length !== 0 && (
+          <>
           <Col md="2" className="mb-4 d-flex justify-content-between">
             <Button
               color="primary"
@@ -143,7 +196,22 @@ export default function TenderQuotation({
               View Quote Log
             </Button>
           </Col>
-        )}
+          
+        
+        <Col md="2" className="mb-4 d-flex justify-content-between">
+            <Button
+              color="primary"
+              className="shadow-none"
+              onClick={() => {
+                setQuoteLine(quote.quote_id);
+                setRateModal(true);
+              }}
+            >
+              Add Subcon Rate
+            </Button>
+          </Col>
+          </>
+          )}
         {QuoteProject === undefined && quote.quote_status === 'Awarded' && (
           <Col md="2" className="mb-4 d-flex justify-content-between">
             <Button
@@ -186,6 +254,15 @@ export default function TenderQuotation({
         {' '}
       </EditLineItemModal>
 
+
+      {rateModal && (
+        <AddRateItemModal
+          projectInfo={tenderId}
+          rateModal={rateModal}
+          setRateModal={setRateModal}
+          quoteLine={quoteLine}
+        ></AddRateItemModal>
+      )}
       {/* Call View Quote Log Modal */}
        {quotationsModal && (
         <ViewQuoteLogModal
@@ -372,6 +449,12 @@ export default function TenderQuotation({
                   <Col md="4">
                     <Label className='pointer'>
                       <PdfQuote quoteId={quote.quote_id} id={id} ></PdfQuote>
+                      {/* <PdfQuoteFormat2 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat2> */}
+                      {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                    </Label>
+                  </Col>
+                  <Col md="4">
+                    <Label className='pointer'>
                       <PdfQuoteFormat2 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat2>
                       {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
                     </Label>
@@ -382,18 +465,18 @@ export default function TenderQuotation({
                       {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
                     </Label>
                   </Col>
-                  <Col md="4">
+                  {/* <Col md="4">
                     <Label className='pointer'>
                       <PdfQuoteFormat4 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat4>
-                      {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                      <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote>
                     </Label>
-                  </Col>
-                  <Col md="4">
+                  </Col> */}
+                  {/* <Col md="4">
                     <Label className='pointer'>
                       <PdfQuoteFormat3 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat3>
-                      {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                      <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote>
                     </Label>
-                  </Col>
+                  </Col> */}
                   <Col md="4">
                     <Label className='pointer'>
                       <PdfQuoteFormat4 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat4>
@@ -418,7 +501,72 @@ export default function TenderQuotation({
                   )}
                 </Row>
               </FormGroup>
+              
             </Col>
+
+            <CardTitle tag="h4" className="border-bottom bg-secondary p-2 mb-0 text-white">
+        {' '}
+        Subcontract Rate{' '}
+      </CardTitle>
+            <FormGroup>
+            {console.log('rateItem:', rateItem)}
+
+                    <table className="lineitem border border-secondary rounded">
+                      <thead>
+                      <tr>
+                          <th scope="col">Designation</th>
+                          <th scope="col" >Mon-Fri Normal</th>
+                          <th scope="col">Mon-Fri OT</th>
+                          <th scope="col">Mon-Sat Normal</th>
+                          <th scope="col">Public Holiday</th>
+                          <th scope="col">Meal Chargeable</th>
+                          <th scope="col">Shift Allowance</th>
+                          <th scope="col">Updated By</th>
+                          <th scope="col">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        
+                        {rateItem &&
+                          rateItem.map((e) => {
+                            return (
+                              <tr>
+                                <td data-label="Designation">{e.designation}</td>
+                                <td data-label="Mon-Fri Normal">{e.mon_to_fri_normal_hr}</td>
+                                <td data-label="Mon-Fri OT">{e.mon_to_fri_ot_hr}</td>
+                                <td data-label="Mon-Sat Normal">{e.mon_to_sat_normal_hr}</td>
+                                <td data-label="Public Holiday">{e.sunday_public_holiday}</td>
+                                <td data-label="Meal Chargeable">{e.meal_chargeable}</td>
+                                <td data-label="Shift Allowance">{e.night_shift_allowance}</td>
+                                <td data-label="Updated By">{e.created_by} {e.creation_date}</td>
+                                {quote && QuoteProject === undefined && (
+                                  <td data-label="Actions">
+                                    <span
+                                      className="addline pointer"
+                                      onClick={() => {
+                                        setEditRateModelItem(e);
+                                        setEditRateModal(true);
+                                      }}
+                                    >
+                                      <Icon.Edit2 />                                      
+                                    </span>
+                                    <span
+                                      className="addline pointer"
+                                      onClick={() => {
+                                        console.log('Clicked Element ID:', e.sub_con_rate_id); 
+                                        deleteRateRecord(e.sub_con_rate_id);
+                                      }}
+                                    >
+                                      <Icon.Trash2 />
+                                    </span>
+                                  </td>
+                                )}
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </FormGroup>
           </Row>
         </Form>
       )}
@@ -440,6 +588,14 @@ export default function TenderQuotation({
           quoteLine={quoteLine}
         ></AddLineItemModal>
       )}
+      <EditRateItemModal
+        editRateModal={editRateModal}
+        setEditRateModal={setEditRateModal}
+        FetchRateItemData={editRateModelItem}
+        rateItem={rateItem}
+      >
+        {' '}
+      </EditRateItemModal>
     </div>
   );
 }

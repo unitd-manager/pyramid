@@ -4,7 +4,7 @@ import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import * as numberToWords from 'number-to-words';
 import PropTypes from 'prop-types';
-import * as Icon from 'react-feather';
+//import * as Icon from 'react-feather';
 import moment from 'moment';
 // import message from '../Message';
 import api from '../../constants/api';
@@ -21,6 +21,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   const [hfdata, setHeaderFooterData] = React.useState();
   const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
   const [gTotal, setGtotal] = React.useState(0);
+  const [rateItem, setRateItem] = useState([]);
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
       setHeaderFooterData(res.data.data);
@@ -65,7 +66,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   };
   const getQuoteById = () => {
     api
-      .post('/tender/getQuoteAndLineItems', { quote_id: quoteId })
+      .post('/tender/getQuoteLineItemsById', { quote_id: quoteId })
       .then((res) => {
         setLineItem(res.data.data);
         console.log('quote1', res.data.data);
@@ -79,6 +80,20 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         //message('Invoice Data Not Found', 'info');
       });
   };
+
+  const getRateItemsById = () => {
+    api
+      .post('/tender/getRateItemsById', { quote_id: quoteId })
+      .then((res) => {
+        setRateItem(res.data.data);
+        console.log('quote1', res.data.data);
+        
+      })
+      .catch(() => {
+        //message('Invoice Data Not Found', 'info');
+      });
+  };
+
 
   React.useEffect(() => {
     const parseHTMLContent = (htmlContent) => {
@@ -118,7 +133,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   // / Format the conditions content for PDF
   const conditionsContent = conditions.map((condition) => ({
     text: `${condition}`,
-    fontSize: 10,
+    fontSize: 8,
     margin: [15, 5, 0, 0],
     style: ['notesText', 'textSize'],
     lineHeight: 1.2,
@@ -128,6 +143,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
     getQuote();
     getQuoteById();
     getCompany();
+    getRateItemsById();
   }, []);
 
   const GetPdf = () => {
@@ -171,46 +187,46 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
       ],
     ];
 
-    lineItem.forEach((element) => {
+    rateItem.forEach((element) => {
       lineItemTable.push([
         {
-          text: ``,
+          text: `${element.designation}`,
           style: 'tableBody',
           border: [false, false, false, true],
         },
         {
-          text: `${element.monday_to_friday_normal_timing}`,
-          border: [false, false, false, true],
-          style: 'tableBody',
-          alignment: 'center',
-        },
-        {
-          text: `${element.monday_to_friday_ot_timing}`,
+          text: `${element.mon_to_fri_normal_hr}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
         },
         {
-          text: `${element.saturday_normal_timing}`,
+          text: `${element.mon_to_fri_ot_hr}`,
+          border: [false, false, false, true],
+          style: 'tableBody',
+          alignment: 'center',
+        },
+        {
+          text: `${element.mon_to_sat_normal_hr}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
         },
         
         {
-          text: `${element.sunday_and_publicholiday_ot_timing}`,
+          text: `${element.sunday_public_holiday}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
         },
         {
-          text: `${element.meal_charges}`,
+          text: `${element.meal_chargeable}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
         },
         {
-          text: `${element.shift_allowance}`,
+          text: `${element.night_shift_allowance}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
@@ -476,10 +492,10 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
             },
             // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
             paddingLeft: () => {
-              return 10;
+              return 6;
             },
             paddingRight: () => {
-              return 10;
+              return 8;
             },
             paddingTop: () => {
               return 2;
@@ -493,7 +509,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
           },
           table: {
             headerRows: 1,
-            widths: [30,70, 70, 70, 70, 70,30],
+            widths: [50,70, 65, 65, 55, 55,50],
 
             body: lineItemTable,
           },
@@ -599,6 +615,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
 
         {
           text: `REMARKS : `,
+          bold: true,
           fontSize: 11,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
@@ -606,32 +623,59 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         },
         ...conditionsContent, // Add each condition as a separate paragraph
         '\n',
-        {
-          text: `INVOICES & PAYMENT `,
+        
+        [{
+          text: `INVOICES & PAYMENT :`,
           fontSize: 11,
+          bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
+
         },
-        ...conditionsContent, // Add each condition as a separate paragraph
+        {
+          text: `${quote.invoices_payment_terms ? quote.invoices_payment_terms : ''}`,
+          fontSize: 9,
+          margin: [5, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+      ],
+      '\n',
+      [{
+        text: `NOTICE OF TERMINATION  :`,
+        fontSize: 11,
+        bold: true,
+        decoration: 'underline',
+        margin: [0, 5, 0, 0],
+        style: ['notesText', 'textSize'],
+
+      },
+      {
+        text: `${quote.notice_of_termination ? quote.notice_of_termination : ''}`,
+        fontSize: 9,
+        margin: [5, 5, 0, 0],
+        style: ['notesText', 'textSize'],
+      },
+    ],
+      
         '\n',
-        {
-          text: `NOTICE OF TERMINATION `,
+        [{
+          text: `TAXES :`,
           fontSize: 11,
+          bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
+  
         },
-        ...conditionsContent, // Add each condition as a separate paragraph
-        '\n',
         {
-          text: `TAXES `,
-          fontSize: 11,
-          decoration: 'underline',
-          margin: [0, 5, 0, 0],
+          text: `${quote.taxes ? quote.taxes : ''}`,
+          fontSize: 9,
+          margin: [5, 5, 0, 0],
           style: ['notesText', 'textSize'],
         },
-        ...conditionsContent, // Add each condition as a separate paragraph
+      ],
+        
 
         '\n\n\n',
         '\n',
@@ -639,7 +683,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         {
           width: '100%',
           alignment: 'center',
-          text: 'Thank you very much for your business',
+          text: 'Thank You For your support and commitment.',
           bold: true,
           margin: [0, 10, 0, 10],
           fontSize: 12,
@@ -671,7 +715,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         tableHead: {
           border: [false, true, false, true],
           fillColor: '#eaf2f5',
-          margin: [0, 5, 0, 5],
+          margin: [0, 0, 0, 5],
           fontSize: 8,
           bold: 'true',
         },
@@ -705,7 +749,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   return (
     <>
       <span onClick={GetPdf}>
-        <Icon.Printer />
+         2
       </span>
     </>
   );
