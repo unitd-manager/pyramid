@@ -589,14 +589,21 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
         '\n\n',
         '\n',
 
-        {
+        [{
           text: `External Notes: `,
           fontSize: 8,
           // decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize', 'bold'],
         },
-        quote.external_notes, // Add each condition as a separate paragraph
+        // quote.external_notes, // Add each condition as a separate paragraph
+        {
+          text: quote.external_notes ? quote.external_notes : '',
+          fontSize: 7,
+          margin: [5, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+      ],
 
         '\n\n\n',
         '\n\n\n\n',

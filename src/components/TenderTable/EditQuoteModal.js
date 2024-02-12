@@ -310,6 +310,17 @@ const EditQuoteModal = ({
                 </Col>
                 <Col md="4">
                   <FormGroup>
+                    <Label>External Notes</Label>
+                    <Input
+                      type="textarea"
+                      name="external_notes"
+                      defaultValue={quoteData && quoteData.external_notes}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
                     <Label>Invoices & Payment</Label>
                     <Input
                       type="textarea"

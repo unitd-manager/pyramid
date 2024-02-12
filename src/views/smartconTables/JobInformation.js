@@ -171,7 +171,7 @@ const JobInformation = () => {
           title="Job Information List"
           Button={
             <Link to="/JobInformationDetails">
-              <Button color="primary" className="shadow-none">
+              <Button color="primary" className="shadow-none add">
                 Add New
               </Button>
             </Link>

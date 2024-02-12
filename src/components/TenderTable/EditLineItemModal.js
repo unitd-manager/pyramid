@@ -95,7 +95,7 @@ const {id}=useParams();
   return (
     <>
       <Modal isOpen={editLineModal}>
-        <ModalHeader>Line Item2s</ModalHeader>
+        <ModalHeader>Line Item</ModalHeader>
         <ModalBody>
           <FormGroup>
             <Row>
