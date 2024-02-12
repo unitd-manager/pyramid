@@ -68,19 +68,19 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
       });
   };
 
-  const editPurchasePartialStatus = (supplierId, Status) => {
-    api
-      .post('/supplier/editPartialPurchaseStatus', {
-        purchase_order_id: supplierId,
-        payment_status: Status,
-      })
-      .then(() => {
-        message('data inserted successfully.');
-      })
-      .catch(() => {
-        message('Network connection error.');
-      });
-  };
+  // const editPurchasePartialStatus = (supplierId, Status) => {
+  //   api
+  //     .post('/supplier/editPartialPurchaseStatus', {
+  //       purchase_order_id: supplierId,
+  //       status: Status,
+  //     })
+  //     .then(() => {
+  //       message('data inserted successfully.');
+  //     })
+  //     .catch(() => {
+  //       message('Network connection error.');
+  //     });
+  // };
   
 
   //Logic for deducting receipt amount
@@ -115,7 +115,7 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
         })
       } else {
         selectedSupplier[j].paid = true;
-        editPurchasePartialStatus(selectedSupplier[j].purchase_order_id, 'Partially Paid');
+        editPurchaseStatus(selectedSupplier[j].purchase_order_id, 'Partially Paid');
         insertReceiptHistory({
           creation_date: moment().format(),
           modification_date: moment().format(),
@@ -146,19 +146,42 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
   //Insert Receipt
   const insertReceipt = () => {
     createSupplier.supplier_id = id
+console.log('selectedSupplier',selectedSupplier)
+let amount=0;
+selectedSupplier.forEach((el)=>{
+  amount +=parseFloat(el.remainingAmount);
+})
 
+console.log('remamount',amount)
+console.log('createsupamount',createSupplier.amount)
+  if((selectedSupplier.length>0)){
     if (createSupplier.amount &&
-      createSupplier.mode_of_payment && (selectedSupplier.length>0)) {
+      createSupplier.mode_of_payment) {
+        if(parseFloat(createSupplier.amount) <= parseFloat(amount)){
       api
       .post('/supplier/insert-SupplierReceipt', createSupplier)
       .then((res) => {
         message('data inserted successfully.');
         
         finalCalculation(res.data.data.insertId);
+        setTimeout(() => {
+          //console.log('Data saved successfully.');
+          // Reload the page after saving data
+          setEditPurchaseOrderLinked(false);
+          window.location.reload();
+        }, 2000);
       })
       .catch(() => {
       });
+    }else{
+      message('Your amount Exceeds the limit.','warning');
+    }}
+    else{
+      message('Please fill the required Fields.','warning');
+    }}else{
+      message('Please select Purchase order to pay.','warning');
     }
+  
   };
   let invoices = [];
   const removeObjectWithId = (arr, poCode) => {
@@ -310,12 +333,8 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
             color="primary"
             onClick={() => {
               insertReceipt();
-              setEditPurchaseOrderLinked(false);
-              setTimeout(() => {
-                console.log('Data saved successfully.');
-                // Reload the page after saving data
-                window.location.reload();
-              }, 2000);
+              
+              
             }}
           >
             {' '}

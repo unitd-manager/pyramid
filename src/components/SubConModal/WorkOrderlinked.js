@@ -109,7 +109,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
         setSubConWork(res.data.data[0].sub_con_work_order_id);
       })
       .catch(() => {
-        message('Cannot get Invoice Data', 'error');
+        // message('Cannot get Invoice Data', 'error');
       });
   };
   
@@ -187,9 +187,19 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
   //Insert Receipt
   const insertReceipt = () => {
     createSubCon.sub_con_id = id;
+    console.log('selectedSubcon',selectedSubCon)
+    let amount=0;
+    selectedSubCon.forEach((el)=>{
+      amount +=parseFloat(el.remainingAmount);
+    })
+    
+    console.log('remamount',amount)
+    console.log('createsupamount',createSubCon.amount)
     createSubCon.sub_con_work_order_id = subConWork;
-    if (createSubCon.amount) {
-      if (totalAmount >= createSubCon.amount && selectedSubCon.length > 0) {
+    if((selectedSubCon.length>0)){
+    if (createSubCon.amount &&
+      createSubCon.mode_of_payment) {
+        if(parseFloat(createSubCon.amount) <= parseFloat(amount)) {
         api
           .post('/subcon/insertsub_con_payments', createSubCon)
           .then((res) => {
@@ -202,7 +212,12 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
             //   // Reload the page after saving data
             //   window.location.reload();
             // }, 2000);
-         
+            setTimeout(() => {
+              //console.log('Data saved successfully.');
+              // Reload the page after saving data
+              setEditWorkOrderLinked(false);
+              window.location.reload();
+            }, 2000);
           })
           .catch(() => {
             // setTimeout(() => {
@@ -215,11 +230,16 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
             //   window.location.reload();
             // }, 2000);
           });
-      } else {
-        message('Enter the amount less than total amount.');
+      } else{
+        message('Your amount Exceeds the limit.','warning');
+      }}
+      else{
+        message('Please fill the required Fields.','warning');
+      }}else{
+        message('Please select Work order to pay.','warning');
       }
-    }
-  };
+    
+    };
   let invoices = [];
   const removeObjectWithId = (arr, subConWorkerCode) => {
     const objWithIdIndex = arr.findIndex((obj) => obj.sub_con_worker_code === subConWorkerCode);
@@ -310,7 +330,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
                       <Row>
                         <Col md="8">
                           <FormGroup>
-                            <Label>Amount</Label>
+                            <Label>{' '} Amount <span className="required">*</span>{' '}</Label>
                             <Input
                               type="numbers"
                               onChange={handleInputreceipt}
@@ -322,7 +342,11 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
                         </Col>
                         <Col md="8">
                           <FormGroup>
-                            <Label> Mode Of Payment </Label>
+                            <Label>
+                            {' '}
+                             Mode Of Payment <span className="required">*</span>
+                             {' '} 
+                             </Label>
                             <Input
                               type="select"
                               name="mode_of_payment"
@@ -364,7 +388,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
             color="primary"
             onClick={() => {
               insertReceipt();
-              setEditWorkOrderLinked(false);
+              
             }}
           >
             {' '}

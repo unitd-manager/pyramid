@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -9,7 +9,7 @@ import * as numberToWords from 'number-to-words';
 import api from '../../constants/api';
 import message from '../Message';
 import PdfFooter from './PdfFooter';
-//import PdfHeader2 from './PdfHeader2';
+import PdfHeader from './PdfHeader';
 //import PdfHeader2 from './PdfHeader2';
 
 const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
@@ -42,7 +42,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
     const filteredResult = hfdata.find((e) => e.key_text === key);
     return filteredResult.value;
   };
-  
+ 
 
   // Gettind data from Job By Id
   const getInvoiceById = () => {
@@ -72,21 +72,31 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
     // Other logic you have here...
 
     // Update this part of your code to handle HTML content stored in the quote_condition field
+    // const parseHTMLContent = (htmlContent) => {
+    //   if (htmlContent) {
+    //     // Remove HTML tags using a regular expression
+    //     const plainText = htmlContent.replace(/<[^>]*>?/gm, '');
+    //     setParsedQuoteCondition(plainText);
+    //   }
+    // };
     const parseHTMLContent = (htmlContent) => {
       if (htmlContent) {
+        // Replace all occurrences of &nbsp; with an empty string
+        const plainText = htmlContent.replace(/&nbsp;/g, '');
+    
         // Remove HTML tags using a regular expression
-        const plainText = htmlContent.replace(/<[^>]*>?/gm, '');
-        setParsedQuoteCondition(plainText);
+        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+    
+        setParsedQuoteCondition(plainTextWithoutTags);
       }
     };
-
     // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
     parseHTMLContent(createInvoice.payment_terms);
 
     // Other logic you have here...
   }, [createInvoice.payment_terms]);
-  
- //The quote_condition content and format it as bullet points
+
+  //The quote_condition content and format it as bullet points
   const formatQuoteConditions = (conditionsText) => {
     const formattedConditions = conditionsText.split(':-').map((condition, index) => {
       const trimmedCondition = condition.trim();
@@ -97,12 +107,20 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
 
   // Format the conditions content for PDF
   const conditions = formatQuoteConditions(parsedQuoteCondition);
-  const conditionsContent = conditions.map((condition) => ({
-    text: `${condition}`,
-    fontSize: 10,
-    margin: [15, 5, 0, 0],
-    style: ['notesText', 'textSize'],
-  }));
+  // const conditionsContent = conditions.map((condition) => ({
+  //   text: `${condition}`,
+  //   fontSize: 10,
+  //   margin: [15, 5, 0, 0],
+  //   style: ['notesText', 'textSize'],
+  // }));
+  // / Format the conditions content for PDF
+const conditionsContent = conditions.map((condition) => ({
+  text: `${condition}`,
+  fontSize: 10,
+  margin: [15, 5, 0, 0],
+  style: ['notesText', 'textSize'],
+  lineHeight: 1.2,
+}));
   //console.log('2', gstTotal);
   const getInvoiceItemById = () => {
     api
@@ -188,40 +206,43 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
           text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
-          style: 'tableBody1',
+          style: 'tableBody1',  
+          alignment: 'right',
         },
         {
           text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
           style: 'tableBody1',
+          alignment: 'right',
         },
       ]);
     });
 
     const dd = {
       pageSize: 'A4',
-
-      pageMargins: [40, 40, 30, 0],
+      header: PdfHeader({ findCompany }),
+       pageMargins: [40, 120, 40, 10],
+      //pageMargins: [40, 40, 30, 0],
       footer: PdfFooter,
 
 
       content: [
-        {
-          columns: [
-            {
-              image: `${findCompany("cp.companyLogo")}`,
-              style: 'logo', width: 80, alignment: 'left', margin: [0, -20, 0, 0]
-            },
+        // {
+        //   columns: [
+        //     {
+        //       image: `${findCompany("cp.companyLogo")}`,
+        //       style: 'logo', width: 80, alignment: 'left', margin: [0, -20, 0, 0]
+        //     },
 
-           // { text: `${findCompany("cp.companyName")}`, alignment: 'center', bold: true, fontSize: 17, color: 'Blue', margin: [0, -20, 80, 0] },
-          ],
-        },
+        //     // { text: `${findCompany("cp.companyName")}`, alignment: 'center', bold: true, fontSize: 17, color: 'Blue', margin: [0, -20, 80, 0] },
+        //   ],
+        // },
 
 
-'\n\n',
-{ text: `${findCompany("cp.companyName")}`, alignment: 'center', bold: true, fontSize: 14, color: 'Blue', margin: [0, -50, 0, 0] },
-'\n\n\n',
+        // '\n\n',
+        // { text: `${findCompany("cp.companyName")}`, alignment: 'center', bold: true, fontSize: 14, color: 'Blue', margin: [0, -70, 0, 0] },
+        '\n',
         {
           layout: {
             defaultBorder: false,
@@ -421,7 +442,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
             {
               text: `${createInvoice.title ? createInvoice.title : ''
                 }`,
-                alignment: 'center',
+              alignment: 'center',
               style: ['notesText', 'textSize'],
             },
             {
@@ -433,7 +454,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
           ],
         },
 
-        '\n','\n',
+        '\n', '\n',
         {
           layout: {
             defaultBorder: false,
@@ -473,7 +494,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
           },
           table: {
             headerRows: 1,
-            widths: [20, 160, 40, 50, 60, 70],
+            widths: [20, 160, 38, 40, 65, 70],
 
             body: productItems,
           },
@@ -486,115 +507,115 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
                 minimumFractionDigits: 2,
               })}`,
               alignment: 'right',
-              margin: [0, 0, 28, 0],
+              margin: [0, 0, 5, 0],
               style: 'textSize',
             },
             '\n',
             {
-              text: `GST ${createInvoice.gst_percentage? createInvoice.gst_percentage : ''}% :      ${createInvoice.gst_value.toLocaleString('en-IN', {
+              text: `GST ${createInvoice.gst_percentage ? createInvoice.gst_percentage : ''}% :      ${createInvoice.gst_value.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
               })}`,
               alignment: 'right',
-              margin: [0, 0, 28, 0],
+              margin: [0, 0, 5, 0],
               style: 'textSize',
             },
             '\n',
             {
               text: `GRAND TOTAL ($) : ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
               alignment: 'right',
-          margin: [0, 0, 28, 0],
-          style: 'textSize',
+              margin: [0, 0, 5, 0],
+              style: 'textSize',
             },
             '\n\n\n',
             {
               text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
-              bold:'true',
-              fontSize:'11',
+              bold: 'true',
+              fontSize: '11',
               margin: [40, 0, 0, 0],
             },
-          
+
           ],
         },
         '\n\n',
-        
-    
+
+
         {
-      text: `Terms and Conditions: `,
-      fontSize: 11,
-      decoration: 'underline',
-      margin: [0, 5, 0, 0],
-      style: ['notesText', 'textSize'],
-    },
-    ...conditionsContent, // Add each condition as a separate paragraph
+          text: `Terms and Conditions: `,
+          fontSize: 11,
+          decoration: 'underline',
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+        ...conditionsContent, // Add each condition as a separate paragraph
 
 
-    '\n\n',
-  ],
-  margin: [0, 50, 50, 50],
+        '\n\n',
+      ],
+      margin: [0, 50, 50, 50],
 
-  styles: {
-    logo: {
-      margin: [-20, 20, 0, 0],
-    },
-    address: {
-      margin: [-10, 20, 0, 0],
-    },
-    invoice: {
-      margin: [0, 30, 0, 10],
-      alignment: 'right',
-    },
-    invoiceAdd: {
-      alignment: 'right',
-    },
-    textSize: {
-      fontSize: 10,
-    },
-    notesTitle: {
-      bold: true,
-      margin: [0, 50, 0, 3],
-    },
-    tableHead: {
-      border: [false, true, false, true],
-      fillColor: '#eaf2f5',
-      margin: [0, 5, 0, 5],
-      fontSize: 10,
-      alignment:'center',
-      bold: 'true',
-    },
-    tableBody: {
-      border: [false, false, false, true],
-      margin: [0, 5, 0, 5],
-      alignment: 'center',
-      fontSize: 10,
-    },
-    tableBody1: {
-      border: [false, false, false, true],
-      margin: [0, 5, 0, 5],
-      alignment: 'center',
-      fontSize: 10,
-    },
-    tableBody2: {
-      border: [false, false, false, true],
-      margin: [0, 5, 35, 5],
-      alignment: 'right',
-      fontSize: 10,
-    },
-  },
-  defaultStyle: {
-    columnGap: 20,
-  },
-};
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
-pdfMake.createPdf(dd, null, null, pdfFonts.pdfMake.vfs).open();
-};
+      styles: {
+        logo: {
+          margin: [-20, 20, 0, 0],
+        },
+        address: {
+          margin: [-10, 20, 0, 0],
+        },
+        invoice: {
+          margin: [0, 30, 0, 10],
+          alignment: 'right',
+        },
+        invoiceAdd: {
+          alignment: 'right',
+        },
+        textSize: {
+          fontSize: 10,
+        },
+        notesTitle: {
+          bold: true,
+          margin: [0, 50, 0, 3],
+        },
+        tableHead: {
+          border: [false, true, false, true],
+          fillColor: '#eaf2f5',
+          margin: [0, 5, 0, 5],
+          fontSize: 10,
+          alignment: 'center',
+          bold: 'true',
+        },
+        tableBody: {
+          border: [false, false, false, true],
+          margin: [0, 5, 0, 5],
+          alignment: 'center',
+          fontSize: 10,
+        },
+        tableBody1: {
+          border: [false, false, false, true],
+          margin: [0, 5, 0, 5],
+          alignment: 'center',
+          fontSize: 10,
+        },
+        tableBody2: {
+          border: [false, false, false, true],
+          margin: [0, 5, 35, 5],
+          alignment: 'right',
+          fontSize: 10,
+        },
+      },
+      defaultStyle: {
+        columnGap: 20,
+      },
+    };
+    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    pdfMake.createPdf(dd, null, null, pdfFonts.pdfMake.vfs).open();
+  };
 
-return (
-<>
-  <Button type="button" className="btn btn-dark mr-2" onClick={GetPdf}>
-    Print Invoice
-  </Button>
-</>
-);
+  return (
+    <>
+      <Button type="button" className="btn btn-dark mr-2" onClick={GetPdf}>
+        Print Invoice
+      </Button>
+    </>
+  );
 };
 
 export default PdfCreateInvoice;

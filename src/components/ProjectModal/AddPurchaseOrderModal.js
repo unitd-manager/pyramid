@@ -245,7 +245,9 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
       .then(() => {
         //setAddPurchaseOrderModal(false);
         message('Product Added!', 'success');
-        //window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       })
       .catch(() => {
         message('Unable to add Product!', 'error');
@@ -254,7 +256,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
   };
   
 
-  const getAllValues = () => {
+  const getAllValues = (code) => {
     const result = [];
     const oldArray = addMoreItem;
     $('.lineitem tbody tr').each(() => {
@@ -268,13 +270,14 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
       result.push(allValues);
     });
     purchaseDetails.project_id = projectId;
-    if (purchaseDetails.supplier_id !== '' && purchaseDetails.po_date !== '' && purchaseDetails.po_code !=='') {
+    if (purchaseDetails.supplier_id !== '' && purchaseDetails.purchase_order_date !== '' ) {
       
         if (purchaseDetails.gst === '1') {
           purchaseDetails.gst_percentage = gstPercentageValue;
         } else {
           purchaseDetails.gst_percentage = null; // Set gst_percentage to null when gst is 0
         }
+        purchaseDetails.po_code=code;
       api.post('/purchaseorder/insertPurchaseOrder', purchaseDetails).then((res) => {
       //message('Purchase Order Added!', 'success');
       
@@ -316,6 +319,16 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     //setAddPurchaseOrderModal(false);
   };
 
+    const generateCodes = () => {
+    api
+      .post('/tender/getCodeValue', { type: 'purchaseOrder' })
+      .then((res) => {
+        getAllValues(res.data.data);
+      })
+      .catch(() => {
+        getAllValues('');
+      });
+  };
 
   function updateState(index, property, e) {
     const copyDeliverOrderProducts = [...addMoreItem];
@@ -485,15 +498,15 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                       <Label>Po_Date <span className="required"> *</span></Label>
                       <Input
                         type="date"
-                        name="po_date"
+                        name="purchase_order_date"
                         value={moment(
-                          purchaseDetails && purchaseDetails.po_date,
+                          purchaseDetails && purchaseDetails.purchase_order_date,
                         ).format('YYYY-MM-DD')}
                         onChange={handleInputs}
                       />
                     </FormGroup>
                   </Col>
-                  <Col md="2">
+                  {/* <Col md="2">
                     <FormGroup>
                       <Label>Po_No <span className="required"> *</span></Label>
                       <Input
@@ -503,10 +516,10 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
                         onChange={handleInputs}
                       />
                     </FormGroup>
-                  </Col>
+                  </Col> */}
                   <Col md="3">
                     <FormGroup>
-                      <Label>VAT</Label>
+                      <Label>GST</Label>
                       <br></br>
                       <Label>Yes</Label>
                       &nbsp;
@@ -665,7 +678,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
             onClick={() => {
              
               // insertlineItem(res.data.data.insertId);
-              getAllValues();
+              generateCodes();
                getProduct();
                
              

@@ -12,17 +12,19 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import api from '../../constants/api';
 import message from '../Message';
 
 
-const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData, getLineItem }) => {
+const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData, onEditSuccess }) => {
   EditLineItemModal.propTypes = {
     editLineModal: PropTypes.bool,
     setEditLineModal: PropTypes.func,
     FetchLineItemData: PropTypes.object,
-    getLineItem: PropTypes.array,
+    onEditSuccess: PropTypes.func,
+   
   };
 const {id}=useParams();
   const [lineItemData, setLineItemData] = useState(null);
@@ -44,33 +46,41 @@ const {id}=useParams();
 
     setTotalAmount(parseFloat(Qty) * parseFloat(UnitPrice));
   };
+  const getLineItem = () => {
+    api.post('/tender/getQuoteLineItemsById', { quote_id: quoteData.quote_id }).then(() => {
+      console.log('222222222:', quoteData.quote_id);
 
+    })
+    .catch((error) => {
+      console.error('Error fetching line items:', error);
+      message('LineItem Data not found', 'info');
+    });
+  };
   const UpdateData = () => {
     lineItemData.quote_id=id;
     //lineItemData.amount=totalAmount;
     lineItemData.amount = parseFloat(lineItemData.quantity) * parseFloat(lineItemData.unit_price) 
     api
       .post('/tender/edit-TabQuoteLine', lineItemData)
-      .then((res) => {
+      .then(() => {
         api.post('/tender/insertLog', quoteData)
         .then(() => {
           message('insert log Udated Successfully.', 'success');
-          getLineItem();
+         
         })
         api
         .post('/tender/insertLogLine', lineItemData)
         .then((result) => {
           console.log('edit Line Item', result.data.data);
           message('Edit Line Item Udated Successfully.', 'success');
-          getLineItem();
+         
         })
         .catch(() => {
           message('Unable to edit quote. please fill all fields', 'error');
         });
-        console.log('edit Line Item', res.data.data);
-        message('Edit Line Item Udated Successfully.', 'success');
         getLineItem();
-        // window.location.reload()
+        onEditSuccess(); // Call the callback function
+      
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');
@@ -78,14 +88,14 @@ const {id}=useParams();
   };
 
   React.useEffect(() => {
-    getQuote()
+    getQuote();
     setLineItemData(FetchLineItemData);
   }, [FetchLineItemData]);
 
   return (
     <>
       <Modal isOpen={editLineModal}>
-        <ModalHeader>Line Items</ModalHeader>
+        <ModalHeader>Line Item</ModalHeader>
         <ModalBody>
           <FormGroup>
             <Row>
@@ -95,6 +105,19 @@ const {id}=useParams();
                   type="text"
                   name="title"
                   defaultValue={lineItemData && lineItemData.title}
+                  onChange={handleData}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">Asset No</Label>
+              <Col sm="10">
+                <Input
+                  type="textarea"
+                  name="asset_no"
+                  defaultValue={lineItemData && lineItemData.asset_no}
                   onChange={handleData}
                 />
               </Col>
@@ -153,6 +176,45 @@ const {id}=useParams();
                   onChange={(e)=>{handleData(e);
                     handleCalc(lineItemData.quantity,e.target.value,lineItemData.amount)
                   }}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">From date</Label>
+              <Col sm="10">
+                <Input
+                  type="date"
+                  name="from_date"
+                  defaultValue={lineItemData && moment(lineItemData.from_date).format('DD-MM-YYYY')}
+                  onChange={handleData}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">To Date</Label>
+              <Col sm="10">
+                <Input
+                  type="date"
+                  name="to_date"
+                  defaultValue={lineItemData && moment(lineItemData.to_date).format('DD-MM-YYYY')}
+                  onChange={handleData}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">No of days</Label>
+              <Col sm="10">
+                <Input
+                  type="text"
+                  name="no_of_days"
+                  defaultValue={lineItemData && lineItemData.no_of_days}
+                  onChange={handleData}
                 />
               </Col>
             </Row>

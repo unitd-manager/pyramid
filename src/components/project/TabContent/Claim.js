@@ -84,21 +84,34 @@ const Claim = ({
     console.log('or11111111111111dr',claimData1?.claimAmount)
 
   //insert project claim
-  const insertProjectClaim = () => {
+  const insertProjectClaim = (code) => {
     const newclaim = {};
     newclaim.claim_date = new Date();
+    newclaim.claim_no = code;
     newclaim.project_id = projectId;
     newclaim.status = 'In Progress';
     newclaim.amount = 0.0;
     newclaim.project_title = projectDetail.title;
     api.post('/claim/insertProjectClaim', newclaim).then(() => {
       message('Claim added successfully', 'success');
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 300);
     });
   };
-
+  const generateCodes = () => {
+    api
+      .post('/tender/getCodeValue', { type: 'claim' })
+      .then((res) => {
+        insertProjectClaim(res.data.data);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 900);
+      })
+      .catch(() => {
+        insertProjectClaim('');
+      });
+  };
   useEffect(() => {
     getProjectClaimById();
     getClaimById();
@@ -123,7 +136,7 @@ const Claim = ({
               className="shadow-none"
               onClick={(e) => {
                 if (window.confirm('Are you sure you want to add a claim? ')) {
-                  insertProjectClaim();
+                  generateCodes();
                 } else {
                   e.preventDefault();
                 }

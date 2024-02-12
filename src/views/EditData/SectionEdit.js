@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Row,
   Col,
@@ -15,6 +15,7 @@ import {
 } from 'reactstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import Swal from 'sweetalert2';
 import * as Icon from 'react-feather';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import ComponentCard from '../../components/ComponentCard';
@@ -23,6 +24,7 @@ import AttachmentModalV2 from '../../components/Tender/AttachmentModalV2';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 //import SectionButton from '../../components/SectionTable/SectionButton';
 import creationdatetime from '../../constants/creationdatetime';
@@ -42,6 +44,7 @@ const SectionEdit = () => {
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
   //  toggle Expense
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -79,6 +82,7 @@ const SectionEdit = () => {
   const editSectionData = () => {
     if (section.section_title !== '') {
       section.modification_date = creationdatetime;
+      section.modified_by = loggedInuser.first_name;
       api
         .post('/section/editSection', section)
         .then(() => {
@@ -94,15 +98,37 @@ const SectionEdit = () => {
   };
   // delete section
   const DeleteSection = () => {
-    api
-      .post('/section/deleteSection', { section_id: id })
-      .then(() => {
-        message('Record editted successfully', 'success');
-      })
-      .catch(() => {
-        message('Unable to edit record.', 'error');
-      });
+    Swal.fire({
+      title: `Are you sure? ${id}`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('/section/deleteSection', { section_id: id })
+          .then(() => {
+            Swal.fire('Deleted!', 'Your Section has been deleted.', 'success');
+            window.location.reload();
+          });
+      }
+    });
   };
+
+
+  // const DeleteSection = () => {
+  //   api
+  //     .post('/section/deleteSection', { section_id: id })
+  //     .then(() => {
+  //       message('Record editted successfully', 'success');
+  //     })
+  //     .catch(() => {
+  //       message('Unable to edit record.', 'error');
+  //     });
+  // };
   //Api call for getting valuelist dropdown
   const getValuelist = () => {
     api
@@ -157,7 +183,7 @@ const SectionEdit = () => {
                   />
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Section Type</Label>
                   <Input
@@ -178,7 +204,7 @@ const SectionEdit = () => {
                   </Input>
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <Label>Button Position</Label>
                 <Input
                   type="select"
@@ -209,7 +235,7 @@ const SectionEdit = () => {
                   <option value="Admin">Admin</option>
                 </Input>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Routes</Label>
                   <Input
@@ -220,7 +246,7 @@ const SectionEdit = () => {
                   />
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Number Of Rows</Label>
                   <Input

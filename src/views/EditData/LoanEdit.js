@@ -33,11 +33,10 @@ const LoanEdit = () => {
   const [attachmentData, setDataForAttachment] = useState({
     modelType: '',
   });
-
+  const { loggedInuser } = useContext(AppContext);
   //Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
-  const { loggedInuser } = useContext(AppContext);
 
   const addpaymentToggle = () => {
     setAddPaymentModal(!addpaymentModal);
@@ -62,12 +61,11 @@ const LoanEdit = () => {
   //All functions/Methods
 
   //Method for getting data by LoanId and Employee Id
-  const getPreviousEarlierLoan = (empId)=> {
+  const getPreviousEarlierLoan = (empId) => {
     api
       .post('/loan/TabPreviousEarlierLoanById', { employee_id: empId })
       .then((res) => {
         setLoan(res.data.data);
-        console.log('loans',res.data.data)
       })
 
       .catch(() => {
@@ -111,8 +109,8 @@ const LoanEdit = () => {
       loanDetails.amount !== '' &&
       loanDetails.month_amount !== ''
     ) {
-      loanDetails.modification_date = creationdatetime;
       loanDetails.modified_by = loggedInuser.first_name;
+      loanDetails.modification_date = creationdatetime;
       api
         .post('/loan/edit-Loan', loanDetails)
         .then(() => {
@@ -123,6 +121,9 @@ const LoanEdit = () => {
 
           message('Record edited successfully', 'success');
           getLoanById();
+          setTimeout(() => {
+            window.location.reload();
+          }, 700);
         })
         .catch(() => {
           message('Unable to edit record.', 'error');
@@ -152,6 +153,7 @@ const LoanEdit = () => {
         .then(() => {
           // Handle the API call success
           console.log('Loan closing date updated successfully.');
+          
         })
         .catch((error) => {
           // Handle the API call error
@@ -159,6 +161,21 @@ const LoanEdit = () => {
         });
     }
   }, [loanDetails.amount_payable, loanDetails.loan_closing_date, loanDetails.status]);
+
+  //for deleting the data
+  // const deleteLoanData = () => {
+  //   api
+  //     .post('/loan/deleteLoan', { loan_id: id })
+  //     .then(() => {
+  //       message('Record deteled successfully', 'success');
+  //       setTimeout(() => {
+  //         window.location.reload();
+  //       }, 700);
+  //     })
+  //     .catch(() => {
+  //       message('Unable to delete record.', 'error');
+  //     });
+  // };
 
   const deleteLoanData = () => {
     Swal.fire({
@@ -174,24 +191,12 @@ const LoanEdit = () => {
         api
           .post('/loan/deleteLoan', { loan_id: id })
           .then(() => {
-            Swal.fire('Deleted!', 'Your Leave has been deleted.', 'success');
+            Swal.fire('Deleted!', 'Your loan has been deleted.', 'success');
             window.location.reload();
           });
       }
     });
   };
-
-  // //for deleting the data
-  // const deleteLoanData = () => {
-  //   api
-  //     .post('/loan/deleteLoan', { loan_id: id })
-  //     .then(() => {
-  //       message('Record deteled successfully', 'success');
-  //     })
-  //     .catch(() => {
-  //       message('Unable to delete record.', 'error');
-  //     });
-  // };
 
   //getting payment data By Loan Id
   const getPaymentById = () => {
@@ -232,6 +237,10 @@ const LoanEdit = () => {
   };
 
   const insertPayment = () => {
+    if (!newpaymentData.loan_repayment_amount_per_month) {
+      message('Please fill in the Amount value.', 'warning');
+      return; // Exit the function if amount is not filled
+    }
     newpaymentData.generated_date = moment();
     const newLoanId = newpaymentData;
     newLoanId.loan_id = id;
@@ -261,6 +270,9 @@ const LoanEdit = () => {
               })
               .then(() => {
                 console.log('Loan status updated to Closed.');
+                setTimeout(() => {
+                  window.location.reload();
+                }, 700);
               })
               .catch((error) => {
                 console.error('Failed to update loan status:', error);
@@ -292,7 +304,7 @@ const LoanEdit = () => {
   useEffect(() => {
     getLoanById();
     getPaymentById();
-    
+    getPreviousEarlierLoan();
   }, [id]);
 
   const columns1 = [

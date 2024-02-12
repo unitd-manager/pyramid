@@ -82,7 +82,11 @@ const ProductUpdate = () => {
     api
       .post('/product/getProduct', { product_id: id })
       .then((res) => {
-        setProductDetails(res.data.data[0]);
+        const resObj = res.data.data[0];
+        if (!resObj.product_type) {
+          resObj.product_type = 'Purchasing and Selling';
+        }
+        setProductDetails(resObj);
         convertHtmlToDraft(res.data.data[0].description);
       })
       .catch(() => {});
@@ -230,9 +234,10 @@ const ProductUpdate = () => {
                     value={productDetails && productDetails.product_type}
                     name="product_type"
                   >
-                    <option defaultValue="selected"> Please Select </option>
-                    <option value="materials">Materials</option>
-                    <option value="tools">Tools</option>
+                    <option> Please Select </option>
+                    <option defaultValue="Purchasing and Selling">Purchasing and Selling</option>
+                    <option value="Materials">Materials</option>
+                    <option value="Tools">Tools</option>
                   </Input>
                 </FormGroup>
               </Col>

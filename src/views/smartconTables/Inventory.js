@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import * as Icon from 'react-feather';
 import { Input, Button, Row, Col } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'datatables.net-dt/js/dataTables.dataTables';
 import 'datatables.net-dt/css/jquery.dataTables.min.css';
 import $ from 'jquery';
+import readXlsxFile from 'read-excel-file';
 import 'datatables.net-buttons/js/buttons.colVis';
 import 'datatables.net-buttons/js/buttons.flash';
 import 'datatables.net-buttons/js/buttons.html5';
 import 'datatables.net-buttons/js/buttons.print';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import message from '../../components/Message';
 import { columns } from '../../data/Tender/InventoryData';
 import ViewAdjustStockHistoryModal from '../../components/Inventory/ViewAdjustStockHistoryModal';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import CommonTable from '../../components/CommonTable';
+import creationdatetime from '../../constants/creationdatetime';
 
 function Inventory() {
   //statevariables
@@ -41,6 +44,7 @@ function Inventory() {
   });
   //navigate
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
   // Get All inventories
   const getAllinventories = () => {
     setLoading(false);
@@ -61,6 +65,7 @@ function Inventory() {
       inventory_id: element.inventory_id,
       stock: e.target.value,
     });
+    
   
     const adjustedStockValue = parseFloat(e.target.value);
     const currentStockValue = parseFloat(element.stock) || 0; // If element.stock is null, set it to 0
@@ -76,9 +81,77 @@ function Inventory() {
       current_stock: currentStockValue,
     });
   };
-  
+   // TRIGGER TO IMPORT EXCEL SHEET
+   const importExcel = () => {
+    $('#import_excel').trigger('click');
+  }
+
+  // UPLOAD FILE ON THER SERVER
+  const uploadOnServer = (arr) => {
+      api.post('/inventory/import/excel', {data: JSON.stringify(arr)})
+      .then(() => {
+        message('File uploaded successfully', 'success');
+        $('#upload_file').val(null);
+      })
+      .catch((err) => {
+        message('Failed to upload.', 'error');
+        console.log(err.stack);
+        console.log('err.response', err.response)
+        console.log('err.request', err.request)
+        console.log('err.config', err.config)
+      });
+  }
+
+  // PROCESSING AND FORMATTING THE DATA
+  const processData = (rows) => {
+    const arr = [];
+    rows.shift();
+
+    for ( let x = 0; x < rows.length; x++ ) {
+      arr.push(
+        {
+          ProductCode: rows[x][0],
+          ProductName: rows[x][1],
+          Description: rows[x][2],
+          Price: rows[x][3],
+          Unit: rows[x][4],
+          Category: rows[x][5],
+          Stock: rows[x][6]
+         
+        }
+      )
+    }
+
+    uploadOnServer(arr);
+  }
+
+  // IMPORTING EXCEL FILE
+  const importExcelFile = (e) => {
+    console.log(e.target.id)
+    const reader = new FileReader();
+    reader.onload = () => {
+      console.log(reader.readyState)
+      if (reader.readyState === 2) {
+        readXlsxFile(e.target.files[0])
+          .then((rows) => {
+            processData(rows);
+            message('Uploading File On The Server', 'info');
+          })
+          .finally(() => {
+            $('#upload_file').val(null);
+          }).catch(
+            err => console.log(err)
+          );
+      }
+    };
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
   //adjust stock
   const adjuststock = () => {
+    adjuststockDetails.creation_date = creationdatetime;
+    adjuststockDetails.created_by = loggedInuser.first_name;
     api
       .post('/inventory/insertadjust_stock_log', adjuststockDetails)
       .then(() => {
@@ -92,6 +165,8 @@ function Inventory() {
   };
   //update stock
   const updateStockinInventory = () => {
+    inventoryStock.modification_date = creationdatetime;
+    inventoryStock.modified_by = loggedInuser.first_name;
     api
       .post('/inventory/updateInventoryStock', inventoryStock)
       .then(() => {
@@ -139,11 +214,13 @@ function Inventory() {
             <>
               <Row>
                 <Col md="6">
-                  <Link to="">
-                    <Button color="primary" className="shadow-none mr-2">
-                      Import
-                    </Button>
-                  </Link>
+                
+                  <Button color="primary" className="shadow-none mr-2" onClick={() => importExcel()}>
+                Import
+              </Button>
+              <input type='file' style={{display: 'none'}} id="import_excel" onChange={importExcelFile} />
+          
+                  
                 </Col>
                 <Col md="6">
                   <a
@@ -168,10 +245,10 @@ function Inventory() {
           </thead>
           <tbody>
             {inventories &&
-              inventories.map((element) => {
+              inventories.map((element,i) => {
                 return (
                   <tr key={element.inventory_id}>
-                    <td>{element.inventory_id}</td>
+                    <td>{i+1}</td>
                     <td>
                       <Link to={`/inventoryEdit/${element.inventory_id}`}>
                         <Icon.Edit2 />
@@ -225,11 +302,11 @@ function Inventory() {
                         <Link to="">view</Link>
                       </span>
                     </td>
-                    <ViewAdjustStockHistoryModal
+                   {adjustStockHistoryModal&& modalId === element.inventory_id && <ViewAdjustStockHistoryModal
                       adjustStockHistoryModal={adjustStockHistoryModal}
                       setAdjustStockHistoryModal={setAdjustStockHistoryModal}
                       inventoryId={modalId}
-                    />
+                    />}
                     <td>{element.minimum_order_level}</td>
                   </tr>
                 );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,11 +13,12 @@ import '../form-editor/editor.scss';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import creationdatetime from '../../constants/creationdatetime';
 import ComponentCard from '../../components/ComponentCard';
-import ComponentCardV2 from '../../components/ComponentCardV2';
 import message from '../../components/Message';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import WorkOrderLinked from '../../components/SubConModal/WorkOrderlinked';
 import SubConTable from '../../components/SubConModal/SubConTable';
+import ApiButton from '../../components/ApiButton';
 
 const SubConEdit = () => {
   //all state variables
@@ -30,6 +31,10 @@ const SubConEdit = () => {
   //navigation and params
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
+  const backToList=() => {
+    navigate('/Subcon');
+  }
   // Get SubCon By Id
   const getsubCon = () => {
     api
@@ -47,9 +52,9 @@ const SubConEdit = () => {
   };
   //Logic for edit data in db
   const editSubConData = () => {
-    if (subCon.company_name !== ''){
+    if (subCon.company_name !== ''&& subCon.address_flat){
       subCon.modification_date = creationdatetime;
-
+      subCon.modified_by = loggedInuser.first_name;
       api
         .post('/subcon/edit-Subcon', subCon)
         .then(() => {
@@ -123,9 +128,17 @@ const SubConEdit = () => {
     <>
       <BreadCrumbs heading={subCon && subCon.company_name} />
 
-      <Form>
-        <FormGroup>
-          <ComponentCardV2>
+      <ApiButton
+              editData={editSubConData}
+              navigate={navigate}
+              applyChanges={editSubConData}
+              backToList={backToList}
+              module="Sub Con"
+            ></ApiButton>
+
+         <Form>
+        
+          {/* <ComponentCardV2>
             <Row>
               <Col>
                 <Button
@@ -162,11 +175,11 @@ const SubConEdit = () => {
                 </Button>
               </Col>
             </Row>
-          </ComponentCardV2>
+          </ComponentCardV2> */} 
           
           <ComponentCard title="SubCon Details" creationModificationDate={subCon}>
             <Row>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>
                     Name <span className="required"> *</span>
@@ -179,7 +192,7 @@ const SubConEdit = () => {
                   />
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Email</Label>
                   <Input
@@ -190,7 +203,7 @@ const SubConEdit = () => {
                   />
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Fax</Label>
                   <Input
@@ -201,9 +214,9 @@ const SubConEdit = () => {
                   />
                 </FormGroup>
               </Col>
-            </Row>
-            <Row>
-              <Col md="4">
+            
+            
+              <Col md="3">
                 <FormGroup>
                   <Label>Mobile</Label>
                   <Input
@@ -214,7 +227,9 @@ const SubConEdit = () => {
                   />
                 </FormGroup>
               </Col>
-              <Col md="4">
+              </Row>
+              <Row>
+              <Col md="3">
                 <FormGroup>
                   <Label>Status</Label>
                   <Input
@@ -239,11 +254,10 @@ const SubConEdit = () => {
               </Col>
             </Row>
           </ComponentCard>
-        </FormGroup>
         <FormGroup>
           <ComponentCard title="Address">
             <Row>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>
                     Address 1 <span className="required"> *</span>
@@ -256,7 +270,7 @@ const SubConEdit = () => {
                   />
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Address 2</Label>
                   <Input
@@ -267,9 +281,7 @@ const SubConEdit = () => {
                   />
                 </FormGroup>
               </Col>
-            </Row>
-            <Row>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Country</Label>
                   <Input
@@ -288,7 +300,7 @@ const SubConEdit = () => {
                   </Input>
                 </FormGroup>
               </Col>
-              <Col md="4">
+              <Col md="3">
                 <FormGroup>
                   <Label>Postal Code</Label>
                   <Input

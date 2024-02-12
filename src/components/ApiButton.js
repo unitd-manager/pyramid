@@ -86,9 +86,7 @@ const ApiButton = ({ editData, navigate, backToList, module,deleteData }) => {
                 renderAuthFailed={<p></p>}
               >
                 <Button color="danger" onClick={() => {deleteData();
-                 setTimeout(()=>{
-                  backToList();
-                },1000)
+                
                 }}>
                   Delete
                 </Button>

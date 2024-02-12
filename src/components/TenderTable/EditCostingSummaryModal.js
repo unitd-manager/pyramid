@@ -21,19 +21,19 @@ import api from '../../constants/api';
 const EditCostingSummaryModal = ({
   editCostingSummaryModel,
   setEditCostingSummaryModel,
-  costingsummary,
+  costingsummaries,
 }) => {
   EditCostingSummaryModal.propTypes = {
     editCostingSummaryModel: PropTypes.bool,
     setEditCostingSummaryModel: PropTypes.func,
-    costingsummary: PropTypes.object,
+    costingsummaries: PropTypes.object,
   };
 
   const [editCostingSummaryData, seteditCostingSummaryData] = useState(0);
   const { id } = useParams();
   const [totalLabour, setTotalLabour] = useState();
   const [totalCost, setTotalCost] = useState();
-  const [totalProfit, setTotalProfit] = useState(costingsummary?.profit || 0);
+  const [totalProfit, setTotalProfit] = useState(costingsummaries?.profit || 0);
 
   //edit Tab Costing Summary Form
 
@@ -78,7 +78,7 @@ const EditCostingSummaryModal = ({
   const handleCalcTotal = (totalMaterialPrice, transportCharges, salesmanCommission, financeCharges, officeOverheads, otherCharges) => {
     setTotalCost(
       parseFloat(totalMaterialPrice) + parseFloat(transportCharges) + parseFloat(salesmanCommission) 
-      +parseFloat(financeCharges) + parseFloat(officeOverheads) + parseFloat(otherCharges) + parseFloat(totalLabour ?? costingsummary.total_labour_charges)
+      +parseFloat(financeCharges) + parseFloat(officeOverheads) + parseFloat(otherCharges) + parseFloat(totalLabour ?? costingsummaries.total_labour_charges)
     );
   };
 
@@ -97,29 +97,31 @@ const EditCostingSummaryModal = ({
   useEffect(() => {
     // Calculate profit whenever relevant data changes
     const calculateProfit = () => {
-      const profitPercentage = editCostingSummaryData.profit_percentage || costingsummary.profit_percentage || 0;
-      setTotalProfit((profitPercentage / 100) * (totalCost || costingsummary.total_cost || 0) );
+      const profitPercentage = editCostingSummaryData.profit_percentage || costingsummaries.profit_percentage || 0;
+      setTotalProfit((profitPercentage / 100) * (totalCost || costingsummaries.total_cost || 0) );
     };
 
     calculateProfit();
-  }, [totalCost, totalLabour, editCostingSummaryData?.profit_percentage, costingsummary?.profit_percentage]);
+  }, [totalCost, totalLabour, editCostingSummaryData?.profit_percentage, costingsummaries?.profit_percentage]);
 
 
   const EditCostingSummary = () => {
     editCostingSummaryData.opportunity_id = id;
-    editCostingSummaryData.total_labour_charges = totalLabour || costingsummary.total_labour_charges;
-    editCostingSummaryData.total_cost = totalCost || costingsummary.total_cost;
-    editCostingSummaryData.profit =  totalProfit || costingsummary.total_labour_charges
+    editCostingSummaryData.total_labour_charges = totalLabour || costingsummaries.total_labour_charges;
+    editCostingSummaryData.total_cost = totalCost || costingsummaries.total_cost;
+    editCostingSummaryData.profit =  totalProfit || costingsummaries.total_labour_charges
 
     api.post('/tender/edit-TabCostingSummaryForm', editCostingSummaryData).then(() => {
       setEditCostingSummaryModel(false);
-      window.location.reload();
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 300);
     });
   };
 
   React.useEffect(() => {
-    seteditCostingSummaryData(costingsummary);
-  }, [costingsummary]);
+    seteditCostingSummaryData(costingsummaries);
+  }, [costingsummaries]);
 
   return (
     <>
@@ -156,7 +158,7 @@ const EditCostingSummaryModal = ({
                               editCostingSummaryData.labour_rates_per_day,
                             );
                           }}
-                          defaultValue={costingsummary && costingsummary.no_of_worker_used}
+                          defaultValue={costingsummaries && costingsummaries.no_of_worker_used}
                           name="no_of_worker_used"
                         />
                       </FormGroup>
@@ -175,7 +177,7 @@ const EditCostingSummaryModal = ({
                               editCostingSummaryData.labour_rates_per_day,
                             );
                           }}
-                          defaultValue={costingsummary && costingsummary.no_of_days_worked}
+                          defaultValue={costingsummaries && costingsummaries.no_of_days_worked}
                           name="no_of_days_worked"
                         />
                       </FormGroup>
@@ -194,7 +196,7 @@ const EditCostingSummaryModal = ({
                               e.target.value,
                             );
                           }}
-                          defaultValue={costingsummary && costingsummary.labour_rates_per_day}
+                          defaultValue={costingsummaries && costingsummaries.labour_rates_per_day}
                           name="labour_rates_per_day"
                         />
                       </FormGroup>
@@ -206,7 +208,7 @@ const EditCostingSummaryModal = ({
                       <Input
                         type="number"
                         disabled
-                        value={totalLabour || costingsummary.total_labour_charges}
+                        value={totalLabour || costingsummaries && costingsummaries.total_labour_charges}
                         name="total_labour_charges"
                       />
                     </FormGroup>
@@ -237,7 +239,7 @@ const EditCostingSummaryModal = ({
                               editCostingSummaryData.other_charges,
                           )
                         }}
-                        defaultValue={costingsummary && costingsummary.total_material_price}
+                        defaultValue={costingsummaries && costingsummaries.total_material_price}
                         name="total_material_price"
                       />
                     </FormGroup>
@@ -259,7 +261,7 @@ const EditCostingSummaryModal = ({
                             editCostingSummaryData.other_charges,
                           )
                         }}
-                        defaultValue={costingsummary && costingsummary.transport_charges}
+                        defaultValue={costingsummaries && costingsummaries.transport_charges}
                         name="transport_charges"
                       />
                     </FormGroup>
@@ -281,7 +283,7 @@ const EditCostingSummaryModal = ({
                             editCostingSummaryData.other_charges,
                           )
                         }}
-                        defaultValue={costingsummary && costingsummary.salesman_commission}
+                        defaultValue={costingsummaries && costingsummaries.salesman_commission}
                         name="salesman_commission"
                       />
                     </FormGroup>
@@ -303,7 +305,7 @@ const EditCostingSummaryModal = ({
                             editCostingSummaryData.other_charges,
                           )
                         }}
-                        defaultValue={costingsummary && costingsummary.finance_charges}
+                        defaultValue={costingsummaries && costingsummaries.finance_charges}
                         name="finance_charges"
                       />
                     </FormGroup>
@@ -325,7 +327,7 @@ const EditCostingSummaryModal = ({
                             editCostingSummaryData.other_charges,
                           )
                         }}
-                        defaultValue={costingsummary && costingsummary.office_overheads}
+                        defaultValue={costingsummaries && costingsummaries.office_overheads}
                         name="office_overheads"
                       />
                     </FormGroup>
@@ -347,7 +349,7 @@ const EditCostingSummaryModal = ({
                             e.target.value, 
                           )
                         }}
-                        defaultValue={costingsummary && costingsummary.other_charges}
+                        defaultValue={costingsummaries && costingsummaries.other_charges}
                         name="other_charges"
                       />
                     </FormGroup>
@@ -362,7 +364,7 @@ const EditCostingSummaryModal = ({
                         type="number"
                         name="total_cost"
                         disabled
-                        value={totalCost || costingsummary && costingsummary.total_cost }
+                        value={totalCost || costingsummaries && costingsummaries.total_cost }
                       />
                     </FormGroup>
                   </Col>
@@ -382,7 +384,7 @@ const EditCostingSummaryModal = ({
             editCostingSummaryData.other_charges,
           );
         }}
-        defaultValue={costingsummary && costingsummary.profit_percentage}
+        defaultValue={costingsummaries && costingsummaries.profit_percentage}
         name="profit_percentage"
       />
                       </FormGroup>
@@ -394,7 +396,7 @@ const EditCostingSummaryModal = ({
                         <Input
                           type="number"
                           disabled
-                          value={ totalProfit || costingsummary.profit}
+                          value={ totalProfit || costingsummaries && costingsummaries.profit}
                           name="profit"
                         />
                       </FormGroup>

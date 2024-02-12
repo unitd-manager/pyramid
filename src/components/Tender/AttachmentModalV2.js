@@ -58,9 +58,9 @@ const AttachmentModalV2 = ({
         })
         .then(() => {
           message('Files Uploaded Successfully', 'success');
-          // setTimeout(() => {
-          //               window.location.reload()
-          //           }, 400);
+          setTimeout(() => {
+                        window.location.reload()
+                    }, 400);
           setUploaded(null)
           setHandleValue()
           setFile([])
@@ -73,7 +73,7 @@ const AttachmentModalV2 = ({
           setHandleValue()
           setFile([])
           setAttachmentModal(false);
-          message('Unable to upload File', 'error');
+         // message('Unable to upload File', 'error');
           setUpdate(!update)
         });
     } else {

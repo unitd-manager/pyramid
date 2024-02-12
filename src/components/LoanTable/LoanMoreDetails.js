@@ -24,7 +24,7 @@ import ComponentCard from '../ComponentCard';
 import PreviousEarlierLoan from './PreviousEarlierLoan';
 import AttachmentModalV2 from '../Tender/AttachmentModalV2';
 import ViewFileComponentV2 from '../ProjectModal/ViewFileComponentV2';
-import Tab from '../project/Tab';
+import Tab from '../ProjectTabs/Tab';
 
 export default function LoanMoreDetails({
   activeTab,
@@ -201,7 +201,7 @@ export default function LoanMoreDetails({
                           />
                         </FormGroup>
                         <FormGroup>
-                          <Label>Amount</Label>
+                          <Label>Amount<span className='required'>*</span> </Label>
                           <Input
                             type="number"
                             name="loan_repayment_amount_per_month"

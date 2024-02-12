@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
@@ -9,6 +9,7 @@ import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import message from '../../components/Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../form-editor/editor.scss';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import AccountsMainEdit from '../../components/AccountTable/AccountsMainEdit';
 import AddNote from '../../components/Tender/AddNote';
@@ -32,6 +33,7 @@ const AccountsEdit = () => {
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loggedInuser } = useContext(AppContext);
   // Button
   // const applyChanges = () => {};
   const backToList = () => {
@@ -57,8 +59,11 @@ const AccountsEdit = () => {
   
     
   let calculatedGstAmount = 0;
-  if (radioVal === '1') {
+  if (radioVal == '1') {
     calculatedGstAmount = parseFloat(totalAmountF) * (gstPercentageValue / 100);
+  }else{
+    calculatedGstAmount = 0;
+
   }
 
   setGstAmount(calculatedGstAmount);
@@ -89,7 +94,7 @@ const AccountsEdit = () => {
 
 const editAccountsData = () => {
   // Check if the description is not empty
-  if (AccountsDetails.invoice_code !== '') {
+  if (AccountsDetails.invoice_code !== '' && AccountsDetails.date) {
     // Check if the description already exists in the database
     api.post('/accounts/checkInvoiceCode', { invoice_code: AccountsDetails.invoice_code,expense_id: id })
       .then((response) => {
@@ -103,6 +108,7 @@ const editAccountsData = () => {
          
             AccountsDetails.total_amount = totalAmount;
             AccountsDetails.modification_date = creationdatetime;
+            AccountsDetails.modified_by = loggedInuser.first_name;
             AccountsDetails.gst_amount = gstAmount;
             api.post('/accounts/editAccounts', AccountsDetails)
               .then(() => {
@@ -133,10 +139,10 @@ const editAccountsData = () => {
     api
       .post('/accounts/deleteExpense', { expense_id: id })
       .then(() => {
-        message('Record editted successfully', 'success');
+        message('Record deleted successfully', 'success');
       })
       .catch(() => {
-        message('Unable to edit record.', 'error');
+        message('Unable to delete record.', 'error');
       });
   };
   useEffect(() => {

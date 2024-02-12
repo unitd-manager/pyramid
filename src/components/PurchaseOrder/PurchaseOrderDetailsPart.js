@@ -88,9 +88,13 @@ function PurchaseOrderDetailsPart({ purchaseDetails, handleInputs, supplier }) {
                   <Input
                     type="select"
                     onChange={handleInputs}
-                    value={purchaseDetails && purchaseDetails.prirority}
+                    name='priority'
+                    value={purchaseDetails && purchaseDetails.priority}
                   >
                     <option defaultValue="selected">Please Select</option>
+                    <option value="priority 1">priority 1</option>
+                    <option value="priority 2">priority 2</option>
+                    <option value="priority 3">priority 3</option>
                   </Input>
                 </FormGroup>
               </Col>

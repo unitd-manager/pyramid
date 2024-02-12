@@ -25,6 +25,7 @@ const OpportunityEdit = () => {
   const [costingsummary, setCostingSummary] = useState([]);
   const [quote, setQuote] = useState({});
   const [lineItem, setLineItem] = useState([]);
+  const [rateItem, setRateItem] = useState([]);
   const [tenderDetails, setTenderDetails] = useState();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const { loggedInuser } = useContext(AppContext);
@@ -44,6 +45,7 @@ const OpportunityEdit = () => {
   const [addCostingSummaryModel, setAddCostingSummaryModel] = useState(false);
   const [costingcostingDetails, setCostingChargesDetails] = useState();
   const [quotationsModal, setquotationsModal] = useState(false);
+  const [rateModal, setRateModal] = useState(false);
   const [viewLineModal, setViewLineModal] = useState(false);
   const [addContactModal, setAddContactModal] = useState(false);
   const [addCompanyModal, setAddCompanyModal] = useState(false);
@@ -81,8 +83,16 @@ const OpportunityEdit = () => {
 
   // Get Costing Summary Data
   const getCostingbySummary = () => {
-    api.post('/tender/getCostingSummaryById', { opportunity_id: id }).then((res) => {
-      setCostingSummary(res.data.data[0]);
+    api.post('/tender/getTabCostingSummaryById', { opportunity_id: id }).then((res) => {
+      setCostingSummary(res.data.data);
+      //seteditCostingSummaryData(res.data.data)
+    });
+  };
+  const [costingsummaries, setCostingSummaries] = useState([]);
+
+  const getCostingbySummaries = () => {
+    api.post('/tender/getTabCostingSummaryById', { opportunity_id: id }).then((res) => {
+      setCostingSummaries(res.data.data[0]);
       //seteditCostingSummaryData(res.data.data)
     });
   };
@@ -253,6 +263,27 @@ const OpportunityEdit = () => {
   const getLineItem = (quotationId) => {
     api.post('/tender/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
       setLineItem(res.data.data);
+      console.log('Error fetching line items111111:', quotationId);
+
+    })
+    .catch((error) => {
+      console.error('Error fetching line items:', error);
+      message('LineItem Data not found', 'info');
+    });
+  };
+
+
+  
+  const getRateItem = (quotationId) => {
+    api.post('/tender/getRateItemsById', { quote_id: quotationId }).then((res) => {
+      setRateItem(res.data.data);
+      console.log('rate', res.data.data)
+      console.log('Error fetching line items111111:', quotationId);
+
+    })
+    .catch((error) => {
+      console.error('Error fetching line items:', error);
+      message('LineItem Data not found', 'info');
     });
   };
 
@@ -273,7 +304,9 @@ const OpportunityEdit = () => {
     newQuoteId.quote_code = code;
     api.post('/tender/insertquote', newQuoteId).then(() => {
       message('Quote inserted successfully.', 'success');
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
     });
   };
   //QUOTE GENERATED CODE
@@ -302,6 +335,15 @@ const OpportunityEdit = () => {
 
       const projectId = response.data.data.insertId;
 
+      const newDataWithId = costingsummaries;
+      newDataWithId.project_id = projectId;
+      api.post('/project/insertCostingSummary', newDataWithId).then(() => {
+  
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 300);
+      });
+
       const updateQuoteData = {
         project_id: projectId,
         quote_id: quote.quote_id,
@@ -310,6 +352,9 @@ const OpportunityEdit = () => {
   
       api.post('/project/updateQuote', updateQuoteData).then(() => {
         message('Project Converted Successfully', 'success');
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       });
     });
   };
@@ -331,7 +376,7 @@ const OpportunityEdit = () => {
         insertProject(res.data.data);
         setTimeout(() => {
           window.location.reload();
-        }, 400);
+        }, 1000);
       })
       .catch(() => {
         insertProject('');
@@ -370,6 +415,7 @@ const OpportunityEdit = () => {
     getProject();
     getAllCountries();
     getCostingSummaryChargesById();
+    getCostingbySummaries();
   }, [id]);
 
   return (
@@ -414,8 +460,8 @@ const OpportunityEdit = () => {
         <EditCostingSummaryModal
           editCostingSummaryModel={editCostingSummaryModel}
           setEditCostingSummaryModel={setEditCostingSummaryModel}
-          costingsummary={costingsummary}
-          setCostingSummary={setCostingSummary}
+          costingsummaries={costingsummaries}
+          setCostingSummaries={setCostingSummaries}
         />
         {addCostingSummaryModel && (
           <AddCostingSummaryModal
@@ -438,8 +484,11 @@ const OpportunityEdit = () => {
               project={project}
               quotationsModal={quotationsModal}
               setquotationsModal={setquotationsModal}
+              rateModal={rateModal}
+              setRateModal={setRateModal}
               viewLineToggle={viewLineToggle}
               getLineItem={getLineItem}
+              getRateItem={getRateItem}
               getLine={getLine}
               quotes={quotes}
               editQuoteModal={editQuoteModal}
@@ -447,6 +496,9 @@ const OpportunityEdit = () => {
               setEditQuoteModal={setEditQuoteModal}
               addLineItemModal={addLineItemModal}
               lineItem={lineItem}
+              setLineItem={setLineItem}
+              rateItem={rateItem}
+              setRateItem={setRateItem}
               viewLineModal={viewLineModal}
               setViewLineModal={setViewLineModal}
               id={id}
@@ -496,7 +548,7 @@ const OpportunityEdit = () => {
                   </Col>
                   <Col md="3">
                     <FormGroup>
-                      <Label>Total Cost : {costingsummary && costingsummary.total_cost}</Label>{' '}
+                      <Label>Total Cost : {costingsummaries && costingsummaries.total_cost}</Label>{' '}
                     </FormGroup>
                   </Col>
                   {/* <Col md="3">
@@ -509,7 +561,7 @@ const OpportunityEdit = () => {
                   <Col md="3">
                     <FormGroup>
                       <Label>
-                        Profit Margin : {costingsummary && costingsummary.profit_percentage} %
+                        Profit Margin : {costingsummaries && costingsummaries.profit_percentage} %
                       </Label>{' '}
                     </FormGroup>
                   </Col>
@@ -520,14 +572,14 @@ const OpportunityEdit = () => {
                     <FormGroup>
                       <Label>Total Material</Label>
                       <br />
-                      <span>{costingsummary && costingsummary.total_material_price}</span>
+                      <span>{costingsummaries && costingsummaries.total_material_price}</span>
                     </FormGroup>
                   </Col>
                   <Col md="3">
                     <FormGroup>
                       <Label>Transport Charges</Label>
                       <br />
-                      <span>{costingsummary && costingsummary.transport_charges}</span>
+                      <span>{costingsummaries && costingsummaries.transport_charges}</span>
                       <span>
                         {costingcostingDetails && costingcostingDetails.transport_charges}
                       </span>
@@ -537,7 +589,7 @@ const OpportunityEdit = () => {
                     <FormGroup>
                       <Label>Total  Charges</Label>
                       <br />
-                      <span>{costingsummary && costingsummary.total_labour_charges}</span>
+                      <span>{costingsummaries && costingsummaries.total_labour_charges}</span>
                     </FormGroup>
                   </Col>
 
@@ -545,7 +597,7 @@ const OpportunityEdit = () => {
                     <FormGroup>
                       <Label>Salesman Commission</Label>
                       <br />
-                      <span>{costingsummary && costingsummary.salesman_commission}</span>
+                      <span>{costingsummaries && costingsummaries.salesman_commission}</span>
                       <span>
                         {costingcostingDetails && costingcostingDetails.salesman_commission}
                       </span>
@@ -558,7 +610,7 @@ const OpportunityEdit = () => {
                     <FormGroup>
                       <Label> Finance Charges </Label>
                       <br />
-                      <span>{costingsummary && costingsummary.finance_charges}</span>
+                      <span>{costingsummaries && costingsummaries.finance_charges}</span>
                       <span>{costingcostingDetails && costingcostingDetails.finance_charges}</span>
                     </FormGroup>
                   </Col>
@@ -566,7 +618,7 @@ const OpportunityEdit = () => {
                     <FormGroup>
                       <Label>Office Overheads</Label>
                       <br />
-                      <span>{costingsummary && costingsummary.office_overheads}</span>
+                      <span>{costingsummaries && costingsummaries.office_overheads}</span>
                       <span>{costingcostingDetails && costingcostingDetails.office_overheads}</span>
                     </FormGroup>
                   </Col>
@@ -574,7 +626,7 @@ const OpportunityEdit = () => {
                     <FormGroup>
                       <Label>Other Charges</Label>
                       <br />
-                      <span>{costingsummary && costingsummary.other_charges}</span>
+                      <span>{costingsummaries && costingsummaries.other_charges}</span>
                       <span>{costingcostingDetails && costingcostingDetails.other_charges}</span>
                     </FormGroup>
                   </Col>
@@ -583,7 +635,7 @@ const OpportunityEdit = () => {
                     <FormGroup>
                       <Label> TOTAL COST </Label>
                       <br />
-                      <span>{costingsummary && costingsummary.total_cost}</span>
+                      <span>{costingsummaries && costingsummaries.total_cost}</span>
 
                       {/* <span>{costingcostingDetails && costingcostingDetails.total_cost}</span> */}
                       {/* <span>

@@ -108,17 +108,17 @@ const ExpenseHead = () => {
           </thead>
           <tbody>
             {accounts &&
-              accounts.map((element) => {
+              accounts.map((element,i) => {
                 return (
                   <tr key={element.expense_group_id}>
-                    <td>{element.expense_group_id}</td>
+                   <td>{i + 1}</td>
                     <td>
                       <Link to={`/ExpenseHeadEdit/${element.expense_group_id}`}>
                         <Icon.Edit2 />
                       </Link>
                     </td>
                     <td>{element.title}</td>
-                    <td>{element.modification_date}</td>
+                    <td>{element.modified_by}  {element.modification_date}</td>
                   </tr>
                 );
               })}

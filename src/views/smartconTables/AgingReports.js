@@ -15,10 +15,11 @@ import CommonTable from '../../components/CommonTable';
 const AgingReports = () => {
   //All state variable
   const [report, setReport] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   //Get data from Reports table
   const getAgingReports = () => {
+    
     api
       .post('/reports/getAgingReports')
       .then((res) => {
@@ -28,22 +29,20 @@ const AgingReports = () => {
           pageLength: 20,
           processing: true,
           dom: 'Bfrtip',
-          buttons: [
-            {
-              extend: 'print',
-              text: 'Print',
-              className: 'shadow-none btn btn-primary',
-            },
-          ],
+          buttons: [ {
+            extend: 'print',
+            text: "Print",
+            className:"shadow-none btn btn-primary",
+        }],
         });
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
+        setLoading(false)
+      }).catch(()=>{
+        setLoading(false)
       });
-  };
-
+    };
+  
   useEffect(() => {
+    
     getAgingReports();
   }, []);
   //structure of Training list view
@@ -54,7 +53,7 @@ const AgingReports = () => {
       wrap: true,
       width: '4%',
     },
-
+   
     {
       name: 'Company Name',
       selector: 'company_name',
@@ -63,54 +62,59 @@ const AgingReports = () => {
       width: '4%',
     },
     {
-      name: '15-30 days',
+      name: '31-60 days',
       selector: 'firstdays',
       grow: 0,
       wrap: true,
       width: '4%',
     },
     {
-      name: '30-45days',
+      name: '61-90 days',
       selector: 'seconddays',
       grow: 0,
       wrap: true,
       width: '4%',
     },
     {
-      name: '45-60days',
+      name: 'Above 90 days',
       selector: 'thirddays',
       grow: 0,
       wrap: true,
       width: '4%',
     },
+
   ];
   return (
     <>
-      <BreadCrumbs />
-      <ToastContainer></ToastContainer>
-      <CommonTable loading={loading} title="Aging Report">
-        <thead>
-          <tr>
-            {columns.map((cell) => {
-              return <td key={cell.name}>{cell.name}</td>;
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {report &&
-            report.map((element, index) => {
-              return (
-                <tr key={element.invoice_id}>
-                  <td>{index + 1}</td>
-                  <td>{element.company_name}</td>
-                  <td>{element.status === 'Paid' ? 0 : element.firstdays}</td>
-                  <td>{element.status === 'Paid' ? 0 : element.seconddays}</td>
-                  <td>{element.status === 'Paid' ? 0 : element.thirddays}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </CommonTable>
+        <BreadCrumbs />
+        <ToastContainer></ToastContainer>
+        <CommonTable
+              loading={loading}
+
+          title="Aging Report">
+  
+          <thead>
+            <tr>
+              {columns.map((cell) => {
+                return <td key={cell.name}>{cell.name}</td>;
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {report &&
+              report.map((element, index) => {
+                return (
+                  <tr key={element.invoice_id}>
+                    <td>{index + 1}</td>
+                    <td>{element.cust_company_name}</td>
+                    <td>{element.firstdays}</td>
+                    <td>{element.seconddays}</td>
+                    <td>{element.thirddays}</td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </CommonTable>
     </>
   );
 };

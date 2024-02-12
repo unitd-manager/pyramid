@@ -21,7 +21,13 @@ import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import api from '../../constants/api';
 import message from '../Message';
 
-const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineItem, getQuoteFun }) => {
+const EditQuoteModal = ({
+  editQuoteModal,
+  setEditQuoteModal,
+  quoteDatas,
+  lineItem,
+  getQuoteFun,
+}) => {
   EditQuoteModal.propTypes = {
     editQuoteModal: PropTypes.bool,
     setEditQuoteModal: PropTypes.func,
@@ -47,6 +53,59 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
       setQuoteData(res.data.data[0]);
     });
   };
+  const fetchTermsAndConditions = () => {
+    api
+      .get('/setting/getSettingsForTerms')
+      .then((res) => {
+        const settings = res.data.data;
+        if (settings && settings.length > 0) {
+          const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
+          console.log('1', res.data.data);
+          // Update the quote condition in quoteData
+          setQuoteData({ ...quoteData, quote_condition: fetchedTermsAndCondition });
+          // Convert fetched terms and conditions to EditorState
+          const contentBlock = htmlToDraft(fetchedTermsAndCondition);
+          if (contentBlock) {
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            const editorState = EditorState.createWithContent(contentState);
+            setConditions(editorState);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching terms and conditions:', error);
+      });
+  };
+
+  const fetchTermsAndConditions1= () => {
+    api
+      .get('/setting/getSettingsForJobScope')
+      .then((res) => {
+        const settings = res.data.data;
+        if (settings && settings.length > 0) {
+          const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
+          console.log('1', res.data.data);
+          // Update the quote condition in quoteData
+          setQuoteData({ ...quoteData, job_scope: fetchedTermsAndCondition });
+          // Convert fetched terms and conditions to EditorState
+          const contentBlock = htmlToDraft(fetchedTermsAndCondition);
+          if (contentBlock) {
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            const editorState = EditorState.createWithContent(contentState);
+            setConditions(editorState);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching terms and conditions:', error);
+      });
+  };
+  // Call fetchTermsAndConditions within useEffect or when required
+  useEffect(() => {
+    fetchTermsAndConditions();
+    fetchTermsAndConditions1();
+    // Other useEffect logic
+  }, []);
 
   const insertquote = () => {
     api.post('/tender/insertLog', quoteData).then((res) => {
@@ -55,7 +114,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
         element.quote_log_id = res.data.data.insertId;
         api.post('/tender/insertLogLine', element).then(() => {
           getQuoteFun();
-          // window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         });
       });
     });
@@ -66,7 +127,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
       .then(() => {
         message('Quote Edited Successfully.', 'success');
         getQuoteFun();
-        // window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');
@@ -89,9 +152,9 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
   };
 
   const convertHtmlToDraft = (existingQuoteformal) => {
-    if (existingQuoteformal && existingQuoteformal.intro_drawing_quote) {
+    if (existingQuoteformal && existingQuoteformal.job_scope) {
       const contentBlock = htmlToDraft(
-        existingQuoteformal && existingQuoteformal.intro_drawing_quote,
+        existingQuoteformal && existingQuoteformal.job_scope,
       );
       if (contentBlock) {
         const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
@@ -162,7 +225,7 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     <Input
                       type="text"
                       name="discount"
-                      defaultValue={quoteData && quoteData.discount}
+                      defaultValue={(quoteData && quoteData.discount) || 0}
                       onChange={handleData}
                     />
                   </FormGroup>
@@ -171,11 +234,11 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
               <Row>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Project Location</Label>
+                    <Label>Validity</Label>
                     <Input
                       type="text"
-                      name="project_location"
-                      defaultValue={quoteData && quoteData.project_location}
+                      name="validity"
+                      defaultValue={quoteData && quoteData.validity}
                       onChange={handleData}
                     />
                   </FormGroup>
@@ -245,16 +308,61 @@ const EditQuoteModal = ({ editQuoteModal, setEditQuoteModal, quoteDatas, lineIte
                     />
                   </FormGroup>
                 </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>External Notes</Label>
+                    <Input
+                      type="textarea"
+                      name="external_notes"
+                      defaultValue={quoteData && quoteData.external_notes}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Invoices & Payment</Label>
+                    <Input
+                      type="textarea"
+                      name="invoices_payment_terms"
+                      defaultValue={quoteData && quoteData.invoices_payment_terms}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Noice of Termination</Label>
+                    <Input
+                      type="text"
+                      name="notice_of_termination"
+                      defaultValue={quoteData && quoteData.notice_of_termination}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Taxes</Label>
+                    <Input
+                      type="textarea"
+                      name="taxes"
+                      defaultValue={quoteData && quoteData.taxes}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                
               </Row>
               <Row>
-                <Label>Intro Line Items</Label>
+                <Label>JOB SCOPE</Label>
               </Row>
               <Editor
                 editorState={lineItems}
                 wrapperClassName="demo-wrapper mb-0"
                 editorClassName="demo-editor border mb-4 edi-height"
                 onEditorStateChange={(e) => {
-                  handleDataEditor(e, 'intro_drawing_quote');
+                  handleDataEditor(e, 'job_scope');
                   setLineItem(e);
                 }}
               />

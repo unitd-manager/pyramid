@@ -279,7 +279,7 @@ const PdfProjectQuoteLog = ({id,logId}) => {
        '\n\n',
       
         {
-          text: `TOTAL EXCLUDING VAT : ${gTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })} `,
+          text: `TOTAL EXCLUDING GST : ${gTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })} `,
           alignment: 'right',
           margin: [0, 0, 41, 0],
           bold: true,

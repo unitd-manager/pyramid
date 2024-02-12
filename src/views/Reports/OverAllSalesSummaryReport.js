@@ -17,15 +17,15 @@ import ExportReport from '../../components/Report/ExportReport';
 
 const OverAllReport = () => {
   //All state variable
+  // const [totalinvoiceAmount, setInvoiceAmount] = useState();
+  // const [totalgsts, setGst] = useState();
+  // const [totaltotals, setTotal] = useState();
   const [salesReport, setSalesReport] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [company, setCompany] = useState();
   const [userSearchData, setUserSearchData] = useState('');
-  const [totalinvoiceAmount, setInvoiceAmount] = useState();
-  const [totalgsts, setGst] = useState();
-  const [totaltotals, setTotal] = useState();
 
   //Get data from Training table
   const getProject = () => {
@@ -34,6 +34,17 @@ const OverAllReport = () => {
       .then((res) => {
         setSalesReport(res.data.data);
         setUserSearchData(res.data.data);
+        // let invoiceAmount = 0;
+        // let gst = 0;
+        // let total = 0;
+        // res.data.data.forEach((el) => {
+        //   invoiceAmount += el.invoiceAmount;
+        //   gst += el.gst;
+        //   total += el.total;
+        // });
+        // setInvoiceAmount(invoiceAmount.toFixed(2));  
+        // setGst(gst.toFixed(2));  
+        // setTotal(total.toFixed(2));  
       })
       .catch(() => {
         message('Over all sales Data Not Found', 'info');
@@ -50,27 +61,14 @@ const OverAllReport = () => {
     const newData = salesReport
       .filter((y) => y.company_name === (companyName === '' ? y.company_name : companyName))
       .filter((x) =>
-        endDate || startDate
+        endDate && startDate
           ? x.invoice_date <= (endDate === '' ? x.invoice_date : endDate) &&
             x.invoice_date >= (startDate === '' ? x.invoice_date : startDate)
           : startDate
           ? x.invoice_date === (startDate === '' ? x.invoice_date : startDate)
-          : x.invoice_date === (endDate === '' ? x.invoice_date : endDate)
+          : x.invoice_date === (endDate === '' ? x.invoice_date : endDate),
       );
-
     setUserSearchData(newData);
-
-    let invoiceAmount = 0;
-    let gst = 0;
-    let total = 0;
-    newData.forEach((el) => {
-      invoiceAmount += el.invoiceAmount;
-      gst += el.gst;
-      total += el.total
-    });
-    setInvoiceAmount(invoiceAmount.toFixed(2));  
-    setGst(gst.toFixed(2));  
-    setTotal(total.toFixed(2));   
   };
 
   useEffect(() => {
@@ -120,7 +118,7 @@ const OverAllReport = () => {
     },
     {
       name: 'Total',
-      selector: 'total',
+      selector: 'gst',
     },
     {
       name: 'Received',
@@ -215,17 +213,6 @@ const OverAllReport = () => {
         <CardBody>
           <Table>
             <thead>
-            <tr>
-              <td><b>Total:</b></td>
-              <td></td>
-              <td></td>
-              <td></td>
-               <td><b>{totalinvoiceAmount}</b></td>
-               <td><b>{totalgsts}</b></td>
-               <td><b>{totaltotals}</b></td>
-               <td></td>
-               <td></td>
-              </tr>
               <tr>
                 {columns.map((cell) => {
                   return <td key={cell.name}>{cell.name}</td>;
@@ -238,11 +225,11 @@ const OverAllReport = () => {
                   return (
                     <tr key={element.invoice_id}>
                       <td>{index + 1}</td>
-                      <td>{moment(element.invoice_date).format('YYYY-MM-DD')}</td>
+                      <td>{element.invoice_date ? moment(element.invoice_date).format('DD-MM-YYYY') : ''}</td>
                       <td>{element.invoice_code}</td>
                       <td>{element.company_name}</td>
                       <td>{element.invoiceAmount}</td>
-                      <td>{element.gst}</td>
+                      <td>{element.gst_value}</td>
                       <td>{element.total}</td>
                       <td>{element.received}</td>
                       <td>{element.balance}</td>
@@ -250,6 +237,17 @@ const OverAllReport = () => {
                   );
                 })}
             </tbody>
+            {/* <tr>
+              <td><b>Total:</b></td>
+              <td></td>
+              <td></td>
+              <td></td>
+               <td><b>{totalinvoiceAmount}</b></td>
+               <td><b>{totalgsts}</b></td>
+               <td><b>{totaltotals}</b></td>
+               <td></td>
+               <td></td>
+              </tr> */}
           </Table>
           <ReactPaginate
             previousLabel="Previous"

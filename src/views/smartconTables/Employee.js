@@ -57,29 +57,27 @@ const Cards = () => {
     for ( let x = 0; x < rows.length; x++ ) {
       arr.push(
         {
-          Name: rows[x][0],
-          Salutation: rows[x][1],
-          Gender: rows[x][2],
-          NricNo: rows[x][3],
-          FinNo: rows[x][4],
-          WpNo: rows[x][5],
-          BasicPay: rows[x][6],
-          HourlyCharge: rows[x][7],
-          FinExpiry: rows[x][8],
-          WpExpiry: rows[x][9],
-          Dob: rows[x][10],
-          Nationality: rows[x][11],
-          Race: rows[x][12],
-          YearofPR: rows[x][13],
-          Occupation: rows[x][14],
-          HandphoneNo: rows[x][15],
-          PassportNo: rows[x][16],
-          PassportExpiry: rows[x][17],
-          PassType: rows[x][18],
-          EmploymentStartDate: rows[x][19],
-          DutiesAndResponsibilities: rows[x][20],
-          Detailsofworkinghours: rows[x][21],
-          Noofworkingdays: rows[x][22]
+          Record_No: rows[x][0],
+          WorkPermit: rows[x][1],
+          NRIC_FIN: rows[x][2],
+          WorkPermitValidFromDate: rows[x][3],
+          WorkPermitExpiryDate: rows[x][4],
+          WelderID: rows[x][5],
+          Name: rows[x][6],
+          DOB: rows[x][7],
+          Gender: rows[x][8],
+          Race: rows[x][9],
+          Nationality: rows[x][10],
+          Citizenship: rows[x][11],
+          SkillSet: rows[x][12],
+          Occupation: rows[x][13],
+          Education: rows[x][14],
+          SOCCertNum: rows[x][15],
+          SOCRegisDate: rows[x][16],
+          CommenceDate: rows[x][17],
+          Sponsor: rows[x][18],
+          SubContractor: rows[x][19],
+          Remarks: rows[x][20]
         }
       )
     }
@@ -97,7 +95,7 @@ const Cards = () => {
         readXlsxFile(e.target.files[0])
           .then((rows) => {
             processData(rows);
-            message('Uploading File On The Server', 'info');
+           // message('Uploading File On The Server', 'info');
           })
           .finally(() => {
             $('#upload_file').val(null);
@@ -144,7 +142,7 @@ const Cards = () => {
             </Col>
                 <Col md="4">
                   <a
-                    href="http://43.228.126.245/smartco-api/storage/excelsheets/Employee.xlsx"
+                    href="http://43.228.126.245/pyramidapi/storage/excelsheets/Employee.xlsx"
                     download
                   >
                     <Button color="primary" className="shadow-none">

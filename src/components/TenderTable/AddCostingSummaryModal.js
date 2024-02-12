@@ -44,6 +44,7 @@ const AddCostingSummaryModal = ({
       id: random.int(1, 99),
       unit: '',
       no_of_days_worked: '',
+      no_of_worker_used:'',
       labour_rates_per_day: '',
       transport_charges: '',
       other_charges: '',

@@ -57,6 +57,7 @@ export default function TenderMoreDetails({
     useEffect(() => {
     getContact(tenderDetails?.company_id);
   }, [tenderDetails?.company_id]);
+  
 
   console.log("tenderDetails",tenderDetails)
 
@@ -165,6 +166,7 @@ export default function TenderMoreDetails({
                     value={tenderDetails?.contact_id}
                     name="contact_id"
                   >
+                    <option value="selected">Please Select</option>
                     {contact &&
                       contact.map((e) => {
                         return (
@@ -277,14 +279,14 @@ export default function TenderMoreDetails({
                     name="status"
                   >
                     <option value="">Please Select</option>
-                    <option value="In Progress">In Progress</option>
+                    <option selected="selected" value="In Progress">In Progress</option>
                     <option value="Waiting for Approval">Waiting for Approval</option>
                     <option value="Submitted">Submitted</option>
                     <option value="Follow-up">Follow-up</option>
                     <option value="Awarded">Awarded</option>
                     <option value="Not Awarded">Not Awarded</option>
                     <option value="Cancelled">Cancelled</option>
-                    <option selected="selected" value="Converted to Project">
+                    <option  value="Converted to Project">
                       Converted to Project
                     </option>
                   </Input>
@@ -308,9 +310,9 @@ export default function TenderMoreDetails({
                   <Label>Email</Label>
                   <Input
                     type="text"
-                    value={tenderDetails && tenderDetails.email}
+                    value={tenderDetails && tenderDetails.opp_email}
                     onChange={handleInputs}
-                    name="email"
+                    name="opp_email"
                   />
                 </FormGroup>
               </Col>

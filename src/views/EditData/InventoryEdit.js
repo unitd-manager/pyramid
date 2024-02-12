@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Row, Col, Form } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,6 +9,7 @@ import 'datatables.net-buttons/js/buttons.flash';
 import 'datatables.net-buttons/js/buttons.html5';
 import 'datatables.net-buttons/js/buttons.print';
 import { useParams } from 'react-router-dom';
+import AppContext from '../../context/AppContext';
 import api from '../../constants/api';
 import message from '../../components/Message';
 import ComponentCard from '../../components/ComponentCard';
@@ -37,6 +38,21 @@ const Test = () => {
 
   //params and routing
   const { id } = useParams();
+  const { loggedInuser } = useContext(AppContext);
+
+  const [adjustStocks, setAdjustStocks] = useState([]);
+  const [changedStock, setChangedStock] = useState();
+  
+  const getAdjustStocklogsById = () => {
+    api
+      .post('/inventory/getAdjustStock', { inventory_id: id })
+      .then((res) => {
+        setAdjustStocks(res.data.data);
+      })
+      .catch(() => {
+        message('adjuststock logs Data Not Found', 'info');
+      });
+  };
 
   //handle input change
   const handleInputs = (e) => {
@@ -93,7 +109,7 @@ const Test = () => {
   //update Inventory
   const editinventoryData = () => {
     inventoryDetails.modification_date = creationdatetime;
-
+    inventoryDetails.modified_by = loggedInuser.first_name;
     api
       .post('/inventory/editinventoryMain', inventoryDetails)
       .then(() => {
@@ -111,9 +127,17 @@ const Test = () => {
     getInventoryData();
     getAllpurchaseOrdersLinked();
     getAllProjectsLinked();
+  getAdjustStocklogsById();
     getproductquantity( inventoryDetails && inventoryDetails.productId);
   }, [ inventoryDetails && inventoryDetails.productId]);
 
+  useEffect(() => {
+    let changes=0;
+    adjustStocks.forEach((el)=>{
+changes +=parseFloat(el.adjust_stock);
+    })
+    setChangedStock(changes)
+  }, [ adjustStocks]);
   return (
       <>
         <ToastContainer></ToastContainer>
@@ -126,21 +150,29 @@ const Test = () => {
           <Form>
             <ComponentCard title="Stock Details">
               <Row>
-                <Col xs="12" md="4">
+                <Col xs="12" md="3">
                   <Row>
                     <h5>Total Purchased quantity</h5>
                   </Row>
                   <span>{productQty && productQty.materials_purchased}</span>
                   <Row></Row>
                 </Col>
-                <Col xs="12" md="4">
+                <Col xs="12" md="3">
                   <Row>
                     <h5>Sold quantity</h5>
                   </Row>
                   <span>{productQty && productQty.materials_used}</span>
                   <Row></Row>
                 </Col>
-                <Col xs="12" md="4">
+                <Col xs="12" md="3">
+                  <Row>
+                    <h5>Adjusted quantity</h5>
+                  </Row>
+                  <span>{changedStock&&changedStock}</span>
+                  <Row></Row>
+                </Col>
+                
+                <Col xs="12" md="3">
                   <Row>
                     <h5>Remaining quantity</h5>
                   </Row>

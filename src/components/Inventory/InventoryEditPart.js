@@ -69,8 +69,8 @@ function InventoryEditPart({ inventoryDetails, handleInputs, editinventoryData }
             </ComponentCardV2>
 
             <ComponentCard
-              title="Product Details"
-              righttitle={
+              title="Product Details" creationModificationDate={inventoryDetails}>
+              {/* righttitle={
                 <Row>
                   <Col className="fs-10 small">
                     <small>Creation :</small>
@@ -89,8 +89,8 @@ function InventoryEditPart({ inventoryDetails, handleInputs, editinventoryData }
                     </small>
                   </Col>
                 </Row>
-              }
-            >
+              } */}
+            
               <Row>
                 <Col md="3">
                   <FormGroup>

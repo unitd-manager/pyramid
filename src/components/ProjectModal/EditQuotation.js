@@ -14,6 +14,10 @@ import {
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { id } from 'date-fns/locale';
+import { Editor } from 'react-draft-wysiwyg';
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
 //import creationdatetime from '../../constants/creationdatetime';
 import api from '../../constants/api';
 import message from '../Message';
@@ -25,6 +29,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
     editQuoteModal: PropTypes.bool,
     setEditQuoteModal: PropTypes.func,
     quoteData: PropTypes.object,
+    //setQuoteData:PropTypes.object,
     quoteId: PropTypes.any,
     projectInfo: PropTypes.object,
   };
@@ -54,7 +59,48 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
   const saveCurrentDetails = () => {
     setPreviousQuotationeditDetails({ ...quotationeditDetails });
   };
-  
+
+  const handleDataEditor = (e, type) => {
+    setQuotationeditDetails({ ...quotationeditDetails, [type]: draftToHtml(convertToRaw(e.getCurrentContent())) });
+  };
+  const [conditions, setConditions] = useState(EditorState.createEmpty()); // Initialize EditorState
+  const convertHtmlToDraftcondition = (existingQuoteformal) => {
+    if (existingQuoteformal && existingQuoteformal.quote_condition) {
+      const contentBlock = htmlToDraft(existingQuoteformal && existingQuoteformal.quote_condition);
+      if (contentBlock) {
+        const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+        const editorState = EditorState.createWithContent(contentState);
+        setConditions(editorState);
+      }
+    }
+  };
+  const fetchTermsAndConditions = () => {
+    api.get('/setting/getSettingsForTerms')
+      .then((res) => {
+        const settings = res.data.data;
+        if (settings && settings.length > 0) {
+          const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
+          console.log("2", res.data.data);
+          // Update the quote condition in quoteData
+          setQuotationeditDetails({ ...quoteData, quote_condition: fetchedTermsAndCondition });
+          // Convert fetched terms and conditions to EditorState
+          const contentBlock = htmlToDraft(fetchedTermsAndCondition);
+          if (contentBlock) {
+            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            const editorState = EditorState.createWithContent(contentState);
+            setConditions(editorState);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching terms and conditions:', error);
+      });
+  };
+  // Call fetchTermsAndConditions within useEffect or when required
+  useEffect(() => {
+    fetchTermsAndConditions();
+    // Other useEffect logic
+  }, []);
     //Logic for edit data in db
     const insertquote = () => {
       //   const quoteDatas = {
@@ -119,6 +165,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
 
   useEffect(() => {
     setQuotationeditDetails(quoteData);
+    convertHtmlToDraftcondition(quoteData);
     getLineItem();
   }, [quoteData]);
   return (
@@ -191,12 +238,12 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                   </Col> */}
                   <Col md="4">
                     <FormGroup>
-                      <Label>Project Location</Label>
+                      <Label>Validity</Label>
                       <Input
                         type="text"
-                        name="project_location"
+                        name="validity"
                         onChange={handleQuoteInputs}
-                        value={quotationeditDetails && quotationeditDetails.project_location}
+                        value={quotationeditDetails && quotationeditDetails.validity}
                       />
                     </FormGroup>
                   </Col>
@@ -255,6 +302,22 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                   </Col>
                 </Row>
                 <Row>
+                  <Label>Terms & Condition</Label>
+                </Row>
+                <Editor
+                  editorState={conditions}
+                  wrapperClassName="demo-wrapper mb-0"
+                  editorClassName="demo-editor border mb-4 edi-height"
+                  onEditorStateChange={(e) => {
+                    handleDataEditor(e, 'quote_condition');
+                    setConditions(e);
+                  }}
+                // Set initial content of the Editor to fetched terms and conditions
+                // initialContentState={quoteTermsAndCondition}
+                />
+
+{/*                
+                <Row>
                   <FormGroup>
                     <Label>Terms & Condition</Label>
                     <Input
@@ -264,7 +327,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                       value={quotationeditDetails && quotationeditDetails.invoices_payment_terms}
                     />
                   </FormGroup>
-                </Row>
+                </Row> */}
 
                 <Row>
                   <div className="pt-3 mt-3 d-flex align-items-center gap-2">

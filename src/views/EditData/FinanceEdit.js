@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { Button, Col, Row, TabContent, TabPane } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -23,6 +23,7 @@ import FinanceMainDetails from '../../components/FinanceTable/FinanceMainDetails
 import creationdatetime from '../../constants/creationdatetime';
 import Tab from '../../components/project/Tab';
 import ApiButton from '../../components/ApiButton';
+import AppContext from '../../context/AppContext';
 
 const FinanceEdit = () => {
   // All state variables
@@ -34,7 +35,7 @@ const FinanceEdit = () => {
   const [editReceiptModal, setEditReceiptModal] = useState(false);
   const [editReceiptDataModal, setReceiptDataModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-  const [financeDetails, setFinanceDetails] = useState();
+  const [financeDetails, setFinanceDetails] = useState(null);
   const [createInvoice, setCreateInvoice] = useState(null);
   const [cancelInvoice, setCancelInvoice] = useState(null);
   const [cancelReceipt, setCancelReceipt] = useState(null);
@@ -44,6 +45,7 @@ const FinanceEdit = () => {
   const [receiptsummary, setReceiptSummary] = useState(null);
   const [invoiceitemsummary, setInvoiceItemSummary] = useState(null);
   const [invoiceDatas, setInvoiceDatas] = useState({});
+  const { loggedInuser } = useContext(AppContext);
   // Navigation and Parameter Constants
   const { id } = useParams();
   const navigate = useNavigate();
@@ -69,6 +71,7 @@ const FinanceEdit = () => {
     setActiveTab(tab);
   };
 console.log('ids',id)
+console.log('ids1',financeDetails);
   // Method for getting Invoice By Order Id
   const getInvoiceById = () => {
     api
@@ -195,6 +198,7 @@ console.log('ids',id)
       .post('/Finance/getFinancesById', { order_id: id })
       .then((res) => {
         setFinanceDetails(res.data.data);
+        console.log("res",res.data.data);
       })
       .catch(() => {
         message('Fianance Data Not Found', 'info');
@@ -204,9 +208,11 @@ console.log('ids',id)
   //For editting Finace Record
   const editFinanceData = () => {
     financeDetails.modification_date = creationdatetime;
+    financeDetails.modified_by = loggedInuser.first_name;
     api
       .post('/Finance/editFinances', financeDetails)
       .then(() => {
+        getFinancesById();
         message('Record editted successfully', 'success');
       })
       .catch(() => {
@@ -305,7 +311,7 @@ console.log('ids',id)
             <InvoiceData
               editInvoiceData={editInvoiceData}
               setEditInvoiceData={setEditInvoiceData}
-              projectInfo={InvoiceData}
+              projectInfo={financeDetails}
               orderId={id}
             />
 
@@ -324,7 +330,7 @@ console.log('ids',id)
               setEditModal={setEditModal}
               editInvoiceModal={editInvoiceModal}
               setInvoiceDatas={setInvoiceDatas}
-        invoiceDatas={invoiceDatas}
+              invoiceDatas={invoiceDatas}
             />
             <ReceiptModal
               editReceiptModal={editReceiptModal}

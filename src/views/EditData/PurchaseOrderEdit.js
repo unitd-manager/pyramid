@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import * as Icon from 'react-feather';
 import { Row, Col, Button, TabContent, TabPane } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
@@ -28,6 +28,7 @@ import PdfPurchaseOrderPrice from '../../components/PDF/PdfPurchaseOrderPrice';
 import ComponentCardV2 from '../../components/ComponentCardV2';
 import Tab from '../../components/project/Tab';
 import ApiButton from '../../components/ApiButton';
+import AppContext from '../../context/AppContext';
 
 const PurchaseOrderEdit = () => {
   //All state variable
@@ -115,7 +116,7 @@ const PurchaseOrderEdit = () => {
 
   //Add to stocks
   const addQtytoStocks = () => {
-    if (selectedPoProducts) {
+    if (selectedPoProducts && selectedPoProducts.length > 0) { 
       selectedPoProducts.forEach((elem) => {
         if (elem.status !== 'Closed') {
           elem.status = 'Closed';
@@ -129,7 +130,7 @@ const PurchaseOrderEdit = () => {
               message('Quantity added successfully.', 'success');
                setTimeout(() => {
           window.location.reload();
-        }, 300);
+        }, 800);
             })
             .catch(() => {
               message('unable to add quantity.', 'danger');
@@ -139,13 +140,18 @@ const PurchaseOrderEdit = () => {
         }
       });
     } else {
-      alert('Please select atleast one product');
+      Swal.fire('Please select atleast one product!');
     }
   };
 
   //Delivery order
-  const deliverOrder = () => {
-    if (selectedPoDelivers) {
+
+
+const deliverOrder = () => {
+  if (selectedPoDelivers && selectedPoDelivers.length > 0) {
+    const confirmDelivery = window.confirm("Do you want to create a delivery order?");
+    
+    if (confirmDelivery) {
       api.post('/Purchaseorder/insertDeliveryOrder', { purchase_order_id: id }).then((res) => {
         selectedPoDelivers.forEach((elem) => {
           elem.delivery_order_id = res.data.data.insertId;
@@ -164,10 +170,14 @@ const PurchaseOrderEdit = () => {
             });
         });
       });
-    } else {
-      alert('Please select atleast one product');
     }
-  };
+  } else {
+    alert('Please select at least one product');
+  }
+};
+
+
+
   // get delivery orders
 
   const getDeliveryOrders = () => {
@@ -180,9 +190,10 @@ const PurchaseOrderEdit = () => {
         message('DeliveryOrder Data Not Found', 'info');
       });
   };
-
+  const { loggedInuser } = useContext(AppContext);
   //Update Setting
   const editPurchaseData = () => {
+    purchaseDetails.modified_by = loggedInuser.first_name;
     api
       .post('/purchaseorder/editTabPurchaseOrder', purchaseDetails)
       .then(() => {

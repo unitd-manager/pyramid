@@ -15,6 +15,7 @@
     "@material-ui/icons": "^4.11.3",
     "@mui/lab": "^5.0.0-alpha.120",
     "@mui/material": "^5.11.10",
+    "@mui/x-data-grid": "^6.19.1",
     "@permify/react-role": "^0.5.3",
     "@react-pdf/renderer": "^3.1.12",
     "@reduxjs/toolkit": "^1.6.2",
@@ -103,7 +104,7 @@
     "simplebar-react": "^2.3.6",
     "styled-components": "^5.3.5",
     "sweetalert2": "^11.4.24",
-    "uuid": "^9.0.0",
+    "uuid": "^9.0.1",
     "vazirmatn": "^33.0.3",
     "web-vitals": "^1.1.2",
     "yup": "^0.32.11"

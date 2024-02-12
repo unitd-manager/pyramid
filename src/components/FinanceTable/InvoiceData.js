@@ -54,7 +54,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
     paymentTerms: '',
     invoice_code: '',
     order_id: id,
-    invoice_due_date: '',
+    invoice_due_date: ''
   });
   const [addLineItem, setAddLineItem] = useState([
     {
@@ -175,9 +175,14 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
     createInvoice.invoice_amount = totalAmount + (gstPercentageValue / 100) * totalAmount;
     createInvoice.gst_value = (gstPercentageValue / 100) * totalAmount;
     createInvoice.gst_percentage = gstPercentageValue;
-    createInvoice.project_id = projectInfo;
+    // createInvoice.project_id = projectInfo;
     createInvoice.order_id = orderId;
     createInvoice.invoice_code = code;
+    // Add the project_id to the createInvoice object
+  createInvoice.project_id = projectInfo; // Assuming projectInfo is the project_id
+  // Access project_id from nested object (e.g., projectInfo.details.project_id)
+  createInvoice.project_id = projectInfo.project_id;
+
     const now = new Date();
     if (now.getMonth() === 11) {
       const current = new Date(now.getFullYear() + 1, 0, now.getDate());

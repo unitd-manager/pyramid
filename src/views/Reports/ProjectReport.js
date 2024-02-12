@@ -11,72 +11,38 @@ import ExportReport from '../../components/Report/ExportReport';
 
 const ProjectReport = () => {
   //All state variable
-  //const [projectReport, setProjectReport] = useState(null);
+  const [projectReport, setProjectReport] = useState(null);
   const [userSearchData, setUserSearchData] = useState('');
-  const currentDate = new Date();
-  const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 12, currentDate.getDate());
-  // Format dates as "yyyy-MM-dd"
-  const formattedCurrentDate = moment(currentDate).format('YYYY-MM-DD');
-  const formattedMonthDate = moment(monthDate).format('YYYY-MM-DD');
-
-  const [startDate, setStartDate] = useState(formattedMonthDate); 
-const [endDate, setEndDate] = useState(formattedCurrentDate);
-const defaultCategory = 'Project';
-const defaultStatus = 'wip';
-
-  const [companyName, setCompanyName] = useState(defaultCategory);
-  const [projectStatus, setProjectStatus] = useState(defaultStatus);
-  const handleStartDateChange = (e) => {
-    setStartDate(e.target.value);
-  };
-  
-  const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
-  };
-  const exportValue="ProjectReport"
-
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [projectStatus, setProjectStatus] = useState('');
+ 
   //Get data from Training table
-   //Get data from Training table
-   const getProject = () => {
+  const getProject = () => {
     api
-      .get('/reports/getProjectReport', {
-        params: {
-          startDate,
-          endDate,
-          companyName: defaultCategory, // Use defaultCategory here
-          projectStatus: defaultStatus, // Use defaultStatus here
-        },
-      })
+      .get('/reports/getProjectReport')
       .then((res) => {
-        //setProjectReport(res.data.data);
+        setProjectReport(res.data.data);
         setUserSearchData(res.data.data);
       })
       .catch(() => {
         message('Project Data Not Found', 'info');
       });
   };
-  
 
   const handleSearch = () => {
-    
-    api
-      .get('/reports/getProjectReport', {
-        params: {
-           startDate,
-           endDate,
-           companyName, // Use defaultCategory here
-           projectStatus, // Use defaultStatus here
-        },
-      })
-      .then((res) => {
-        setUserSearchData(res.data.data);
-      })
-      .catch(() => {
-        message('Project Data Not Found', 'info');
-      });
+    const newData = projectReport
+      .filter((y) => y.category === (companyName === '' ? y.category : companyName))
+      .filter((z) => z.status === (projectStatus === '' ? z.status : projectStatus))
+      .filter(
+        (x) => endDate && startDate  ? (x.actual_finish_date <= (endDate === '' ? x.actual_finish_date : endDate) &&
+        x.start_date >= (startDate === '' ? x.start_date : startDate) ): startDate ? x.start_date === (startDate === '' ? x.start_date : startDate) :
+        x.actual_finish_date === (endDate === '' ? x.actual_finish_date : endDate ) 
+      );
+    setUserSearchData(newData);
+
   };
-  
-  
   useEffect(() => {
     getProject();
   }, []);
@@ -164,14 +130,15 @@ const defaultStatus = 'wip';
                 <Input
                   type="date"
                   name="start_date"
-                  onChange={handleStartDateChange}
+                   onChange={(e) => setStartDate(e.target.value)}
                 />
               </FormGroup>
             </Col>
             <Col>
               <FormGroup>
                 <Label>End Date</Label>
-                <Input type="date" name="actual_finish_date" onChange={handleEndDateChange} />
+                <Input type="date" 
+                name="actual_finish_date" onChange={(e) => setEndDate(e.target.value)} />
               </FormGroup>
             </Col>
               <Col>
@@ -179,10 +146,11 @@ const defaultStatus = 'wip';
                 <Label>Select Category</Label>
                 <Input
                   type="select"
-                  name="category"
+                  name="project_type"
                   onChange={(e) => setCompanyName(e.target.value)}
                 >
-                  <option defaultValue="selected" value="Project">Project</option>
+                  <option value="">Select</option>
+                  <option value="Project">Project</option>
                   <option value="Tenancy Project">Tenancy Project</option>
                   <option value="Tenancy Work">Tenancy Work</option>
                   <option value="Maintenance">Maintenance</option>
@@ -194,8 +162,9 @@ const defaultStatus = 'wip';
               <Label>Status</Label>
                 <Input type="select"  name="status"
                   onChange={(e) => setProjectStatus(e.target.value)}>
-                <option defaultValue="selected" value="wip">
-                      wip
+                <option value="">Please Select</option>
+                    <option defaultValue="selected" value="WIP">
+                      WIP
                     </option>
                     <option value="Billable">Billable</option>
                     <option value="Billed">Billed</option>
@@ -236,7 +205,7 @@ const defaultStatus = 'wip';
         <CardBody>
           <Row>
             <Col>
-              <ExportReport columns={columns} data={userSearchData} exportValue={exportValue} /> 
+              <ExportReport columns={columns} data={userSearchData} /> 
             </Col>
           </Row>
         </CardBody>
@@ -259,8 +228,8 @@ const defaultStatus = 'wip';
                     <td>{element.project_code}</td>
                     <td>{element.Project_name}</td>
                     <td>{element.category}</td>
-                    <td>{moment(element.start_date).format('YYYY-MM-DD')}</td>
-                    <td>{moment(element.actual_finish_date).format('YYYY-MM-DD')}</td>
+                    <td>{element.start_date ? moment(element.start_date).format('DD-MM-YYYY') : ''}</td>
+                    <td>{element.estimated_finish_date ? moment(element.estimated_finish_date).format('DD-MM-YYYY') : ''}</td>
                     <td>{element.company_name}</td>
                     <td>{element.contact_name}</td>
                     <td>{element.status}</td>
