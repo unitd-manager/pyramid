@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 //import PropTypes from 'prop-types';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import * as numberToWords from 'number-to-words';
+//import * as numberToWords from 'number-to-words';
 import PropTypes from 'prop-types';
 //import * as Icon from 'react-feather';
 import moment from 'moment';
@@ -10,17 +10,17 @@ import moment from 'moment';
 import api from '../../constants/api';
 import PdfHeader from './PdfHeader';
 
-const PdfQuoteFormat2 = ({ id, quoteId }) => {
-  PdfQuoteFormat2.propTypes = {
+const PdfQuoteFormat5 = ({ id, quoteId }) => {
+  PdfQuoteFormat5.propTypes = {
     id: PropTypes.any,
     quoteId: PropTypes.any,
   };
   const [quote, setQuote] = React.useState([]);
   const [tenderDetails, setTenderDetails] = useState(null);
-  const [lineItem, setLineItem] = useState([]);
+  //const [lineItem, setLineItem] = useState([]);
   const [hfdata, setHeaderFooterData] = React.useState();
-  const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
-  const [gTotal, setGtotal] = React.useState(0);
+  // const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+  //const [gTotal, setGtotal] = React.useState(0);
   const [rateItem, setRateItem] = useState([]);
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
@@ -57,29 +57,29 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   //   // const total = grandTotal + gstValue;
   //   // return total;
   // };
-  const calculateTotal = () => {
-    const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
-    const discount = quote.discount || 0; // Get the discount from the quote or default to 0 if not provided
-    const total = grandTotal - discount; // Deduct the discount from the grand total
+  // const calculateTotal = () => {
+  //   const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
+  //   const discount = quote.discount || 0; // Get the discount from the quote or default to 0 if not provided
+  //   const total = grandTotal - discount; // Deduct the discount from the grand total
 
-    return total;
-  };
-  const getQuoteById = () => {
-    api
-      .post('/tender/getQuoteLineItemsById', { quote_id: quoteId })
-      .then((res) => {
-        setLineItem(res.data.data);
-        console.log('quote1', res.data.data);
-        let grandTotal = 0;
-        res.data.data.forEach((elem) => {
-          grandTotal += elem.amount;
-        });
-        setGtotal(grandTotal);
-      })
-      .catch(() => {
-        //message('Invoice Data Not Found', 'info');
-      });
-  };
+  //   return total;
+  // };
+  // const getQuoteById = () => {
+  //   api
+  //     .post('/tender/getQuoteLineItemsById', { quote_id: quoteId })
+  //     .then((res) => {
+  //       setLineItem(res.data.data);
+  //       console.log('quote1', res.data.data);
+  //       //let grandTotal = 0;
+  //       res.data.data.forEach((elem) => {
+  //         //grandTotal += elem.amount;
+  //       });
+  //      // setGtotal(grandTotal);
+  //     })
+  //     .catch(() => {
+  //       //message('Invoice Data Not Found', 'info');
+  //     });
+  // };
 
   const getRateItemsById = () => {
     api
@@ -99,12 +99,12 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
     const parseHTMLContent = (htmlContent) => {
       if (htmlContent) {
         // Replace all occurrences of &nbsp; with an empty string
-        const plainText = htmlContent.replace(/&nbsp;/g, '');
+        //const plainText = htmlContent.replace(/&nbsp;/g, '');
 
         // Remove HTML tags using a regular expression
-        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+       // const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
 
-        setParsedQuoteCondition(plainTextWithoutTags);
+        //setParsedQuoteCondition(plainTextWithoutTags);
       }
     };
     // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
@@ -114,16 +114,16 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   }, [quote.quote_condition]);
 
   //The quote_condition content and format it as bullet points
-  const formatQuoteConditions = (conditionsText) => {
-    const formattedConditions = conditionsText.split(':-').map((condition, index) => {
-      const trimmedCondition = condition.trim();
-      return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
-    });
-    return formattedConditions;
-  };
+  // const formatQuoteConditions = (conditionsText) => {
+  //   const formattedConditions = conditionsText.split(':-').map((condition, index) => {
+  //     const trimmedCondition = condition.trim();
+  //     return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
+  //   });
+  //   return formattedConditions;
+  // };
 
   // Format the conditions content for PDF
-  const conditions = formatQuoteConditions(parsedQuoteCondition);
+  // const conditions = formatQuoteConditions(parsedQuoteCondition);
   // const conditionsContent = conditions.map((condition) => ({
   //   text: `${condition}`,
   //   fontSize: 10,
@@ -131,17 +131,17 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   //   style: ['notesText', 'textSize'],
   // }));
   // / Format the conditions content for PDF
-  const conditionsContent = conditions.map((condition) => ({
-    text: `${condition}`,
-    fontSize: 8,
-    margin: [15, 5, 0, 0],
-    style: ['notesText', 'textSize'],
-    lineHeight: 1.2,
-  }));
+  // const conditionsContent = conditions.map((condition) => ({
+  //   text: `${condition}`,
+  //   fontSize: 8,
+  //   margin: [15, 5, 0, 0],
+  //   style: ['notesText', 'textSize'],
+  //   lineHeight: 1.2,
+  // }));
 
   React.useEffect(() => {
     getQuote();
-    getQuoteById();
+    //getQuoteById();
     getCompany();
     getRateItemsById();
   }, []);
@@ -154,22 +154,26 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
           style: 'tableHead',
         },
         {
-          text: '(Monday ~ Friday) Day Shift 0800hr ~ 1700hr Night Shift 2000hr~0500hr @ per Hour',
+          text: '',
+          style: 'tableHead',
+        },
+        {
+          text: '(Monday ~ Friday) 0800hr ~ 1700hr (Saturday) 0800hr ~ 1200hr @ per Hour',
           style: 'tableHead',
           alignment: 'center',
         },
         {
-          text: '(Monday ~ Friday) Day Shift 1700hr ~ 2200hr Night Shift 0500hr~0800hr @ per Hour',
+          text: '(Monday ~ Friday) 1700hr ~ 2200hr (Saturday) 1300hr ~ 2200hr @ per Hour',
           style: 'tableHead',
           alignment: 'center',
         },
         {
-          text: '(Saturday) Day Shift 0800hr ~ 2200hr Night Shift 2000hr ~ 0500hr @ per Hour',
+          text: '(Monday - Saturday) 0000hr ~ 0800hr @ per Hour',
           style: 'tableHead',
           alignment: 'center',
         },
         {
-          text: 'Sunday, Public Holiday & Any other day after 2200 hrs@ per Hour',
+          text: '(Sunday,Public Holiday) Whole Day @ per Hour',
           style: 'tableHead',
           alignment: 'center',
         },
@@ -179,11 +183,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
           style: 'tableHead',
           alignment: 'center',
         },
-        {
-          text: 'Shift Allowance',
-          style: 'tableHead',
-          alignment: 'center',
-        },
+        
       ],
     ];
 
@@ -191,6 +191,11 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
       lineItemTable.push([
         {
           text: `${element.designation}`,
+          style: 'tableBody',
+          border: [false, false, false, true],
+        },
+        {
+          text: ``,
           style: 'tableBody',
           border: [false, false, false, true],
         },
@@ -225,90 +230,11 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
           style: 'tableBody',
           alignment: 'center',
         },
-        {
-          text: `${element.night_shift_allowance}`,
-          border: [false, false, false, true],
-          style: 'tableBody',
-          alignment: 'center',
-        },
+        
       ]);
     });
 
-    const lineItemBody = [
-      [
-        // {
-        //   text: 'SN',
-        //   style: 'tableHead',
-        // },
-        {
-          text: 'Item',
-          style: 'tableHead',
-          alignment: 'center',
-        },
-        {
-          text: 'Description',
-          style: 'tableHead',
-          alignment: 'center',
-        },
-        {
-          text: 'Qty',
-          style: 'tableHead',
-          alignment: 'center',
-        },
-        {
-          text: 'Unit Price',
-          style: 'tableHead',
-          alignment: 'right',
-        },
-
-        {
-          text: 'Amount S$',
-          style: 'tableHead',
-          alignment: 'right',
-        },
-      ],
-    ];
-    lineItem.forEach((element) => {
-      lineItemBody.push([
-        // {
-        //   text: `${index + 1}`,
-        //   style: 'tableBody',
-        //   border: [false, false, false, true],
-        // },
-        {
-          text: `${element.title}`,
-          border: [false, false, false, true],
-          style: 'tableBody',
-          alignment: 'center',
-        },
-        {
-          text: `${element.description}`,
-          border: [false, false, false, true],
-          style: 'tableBody',
-          alignment: 'center',
-        },
-        {
-          text: `${element.quantity}`,
-          border: [false, false, false, true],
-          style: 'tableBody',
-          alignment: 'center',
-        },
-        {
-          text: `${element.unit_price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
-          border: [false, false, false, true],
-          style: 'tableBody',
-          alignment: 'right',
-        },
-
-        {
-          text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
-          border: [false, false, false, true],
-          fillColor: '#f5f5f5',
-          style: 'tableBody',
-          alignment: 'right',
-        },
-      ]);
-    });
+    
 
     const dd = {
       header: PdfHeader({ findCompany }),
@@ -519,113 +445,30 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         '\n',
         '\n',
         '\n',
-        {
-          layout: {
-            defaultBorder: false,
-            hLineWidth: () => {
-              return 1;
-            },
-            vLineWidth: () => {
-              return 1;
-            },
-            hLineColor: (i) => {
-              if (i === 1 || i === 0) {
-                return '#bfdde8';
-              }
-              return '#eaeaea';
-            },
-            vLineColor: () => {
-              return '#eaeaea';
-            },
-            hLineStyle: () => {
-              // if (i === 0 || i === node.table.body.length) {
-              return null;
-              //}
-            },
-            // vLineStyle: function () { return {dash: { length: 10, space: 4 }}; },
-            paddingLeft: () => {
-              return 10;
-            },
-            paddingRight: () => {
-              return 10;
-            },
-            paddingTop: () => {
-              return 2;
-            },
-            paddingBottom: () => {
-              return 2;
-            },
-            fillColor: () => {
-              return '#fff';
-            },
-          },
-          
-          
-          table: {
-            headerRows: 1,
-            widths: [50, 105, 85, 80, 90],
+        
 
-            body: lineItemBody,
-          },
-        },
-        '\n',
+        
 
-        {
-          stack: [
-            {
-              text: `SubTotal $ :     ${gTotal.toLocaleString('en-IN', {
-                minimumFractionDigits: 2,
-              })}`,
-              alignment: 'right',
-              margin: [0, 0, 10, 0],
-              style: 'textSize',
-            },
-            '\n',
-            {
-              text: `Discount  :       ${
-                quote.discount
-                  ? quote.discount.toLocaleString('en-IN', { minimumFractionDigits: 2 })
-                  : '0'
-              }`,
-              alignment: 'right',
-              margin: [0, 0, 10, 0],
-              style: 'textSize',
-            },
-            '\n',
-            {
-              text: `Total $ :     ${calculateTotal().toLocaleString('en-IN', {
-                minimumFractionDigits: 2,
-              })}`,
-              alignment: 'right',
-              margin: [0, 0, 10, 0],
-              style: 'textSize',
-            },
-            '\n\n\n',
-
-            {
-              text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
-              style: 'bold',
-              fontSize: 11,
-              margin: [40, 0, 0, 0],
-            },
-          ],
-        },
-        '\n\n',
-        '\n',
-
-        {
-          text: `REMARKS : `,
-          bold: true,
+        [{
+          text: `GENERAL`,
           fontSize: 11,
+          bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
+
         },
-        ...conditionsContent, // Add each condition as a separate paragraph
-        '\n',
+        {
+          text: `${quote.general ? quote.general : ''}`,
+          fontSize: 9,
+          margin: [5, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+      ],
+      '\n',
         
         [{
-          text: `INVOICES & PAYMENT :`,
+          text: `SCOPE OF WORKS`,
           fontSize: 11,
           bold: true,
           decoration: 'underline',
@@ -634,7 +477,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
 
         },
         {
-          text: `${quote.invoices_payment_terms ? quote.invoices_payment_terms : ''}`,
+          text: `${quote.scope_of_works ? quote.scope_of_works : ''}`,
           fontSize: 9,
           margin: [5, 5, 0, 0],
           style: ['notesText', 'textSize'],
@@ -642,7 +485,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
       ],
       '\n',
       [{
-        text: `NOTICE OF TERMINATION  :`,
+        text: `COMMENCEMENT AND COMPLETION DATES`,
         fontSize: 11,
         bold: true,
         decoration: 'underline',
@@ -651,7 +494,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
 
       },
       {
-        text: `${quote.notice_of_termination ? quote.notice_of_termination : ''}`,
+        text: `${quote.commencement_and_completion ? quote.commencement_and_completion : ''}`,
         fontSize: 9,
         margin: [5, 5, 0, 0],
         style: ['notesText', 'textSize'],
@@ -660,7 +503,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
       
         '\n',
         [{
-          text: `TAXES :`,
+          text: `SAFETY`,
           fontSize: 11,
           bold: true,
           decoration: 'underline',
@@ -669,13 +512,83 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   
         },
         {
-          text: `${quote.taxes ? quote.taxes : ''}`,
+          text: `${quote.safety ? quote.safety : ''}`,
           fontSize: 9,
           margin: [5, 5, 0, 0],
           style: ['notesText', 'textSize'],
         },
       ],
-        
+      '\n',
+      
+
+        [{
+          text: `INSURANCE`,
+          fontSize: 11,
+          bold: true,
+          decoration: 'underline',
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+  
+        },
+        {
+          text: `${quote.insurance ? quote.insurance : ''}`,
+          fontSize: 9,
+          margin: [5, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+      ],
+      '\n', 
+      [{
+        text: `INVOICES & PAYMENT :`,
+        fontSize: 11,
+        bold: true,
+        decoration: 'underline',
+        margin: [0, 5, 0, 0],
+        style: ['notesText', 'textSize'],
+
+      },
+      {
+        text: `${quote.invoices_payment_terms ? quote.invoices_payment_terms : ''}`,
+        fontSize: 9,
+        margin: [5, 5, 0, 0],
+        style: ['notesText', 'textSize'],
+      },
+    ],
+    '\n',
+    [{
+      text: `NOTICE OF TERMINATION  :`,
+      fontSize: 11,
+      bold: true,
+      decoration: 'underline',
+      margin: [0, 5, 0, 0],
+      style: ['notesText', 'textSize'],
+
+    },
+    {
+      text: `${quote.notice_of_termination ? quote.notice_of_termination : ''}`,
+      fontSize: 9,
+      margin: [5, 5, 0, 0],
+      style: ['notesText', 'textSize'],
+    },
+  ],
+    
+      '\n',
+      [{
+        text: `TAXES :`,
+        fontSize: 11,
+        bold: true,
+        decoration: 'underline',
+        margin: [0, 5, 0, 0],
+        style: ['notesText', 'textSize'],
+
+      },
+      {
+        text: `${quote.taxes ? quote.taxes : ''}`,
+        fontSize: 9,
+        margin: [5, 5, 0, 0],
+        style: ['notesText', 'textSize'],
+      },
+    ],
 
         '\n\n\n',
         '\n',
@@ -743,8 +656,10 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         style: ['invoiceAdd', 'textSize'],
 
       },
+
       ],
       margin: [0, 50, 50, 50],
+      
 
       styles: {
         logo: {
@@ -804,10 +719,10 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
   return (
     <>
       <span onClick={GetPdf}>
-         2
+         5
       </span>
     </>
   );
 };
 
-export default PdfQuoteFormat2;
+export default PdfQuoteFormat5;

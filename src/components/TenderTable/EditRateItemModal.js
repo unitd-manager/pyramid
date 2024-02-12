@@ -169,8 +169,8 @@ const EditRateItemModal = ({
                     <Label>Shift Allowance</Label>
                     <Input
                       type="text"
-                      name="shift_allowance"
-                      defaultValue={rateItemData && rateItemData.shift_allowance}
+                      name="night_shift_allowance"
+                      defaultValue={rateItemData && rateItemData.night_shift_allowance}
                       onChange={handleData}
                     >
                       
