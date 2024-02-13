@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -67,46 +67,46 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
   //   const total = grandTotal + gstValue;
   //   return total;
   // };
-  const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
-  React.useEffect(() => {
-    // Other logic you have here...
+  // const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+  // React.useEffect(() => {
+  //   // Other logic you have here...
 
-    // Update this part of your code to handle HTML content stored in the quote_condition field
-    // const parseHTMLContent = (htmlContent) => {
-    //   if (htmlContent) {
-    //     // Remove HTML tags using a regular expression
-    //     const plainText = htmlContent.replace(/<[^>]*>?/gm, '');
-    //     setParsedQuoteCondition(plainText);
-    //   }
-    // };
-    const parseHTMLContent = (htmlContent) => {
-      if (htmlContent) {
-        // Replace all occurrences of &nbsp; with an empty string
-        const plainText = htmlContent.replace(/&nbsp;/g, '');
+  //   // Update this part of your code to handle HTML content stored in the quote_condition field
+  //   // const parseHTMLContent = (htmlContent) => {
+  //   //   if (htmlContent) {
+  //   //     // Remove HTML tags using a regular expression
+  //   //     const plainText = htmlContent.replace(/<[^>]*>?/gm, '');
+  //   //     setParsedQuoteCondition(plainText);
+  //   //   }
+  //   // };
+  //   // const parseHTMLContent = (htmlContent) => {
+  //   //   if (htmlContent) {
+  //   //     // Replace all occurrences of &nbsp; with an empty string
+  //   //     const plainText = htmlContent.replace(/&nbsp;/g, '');
     
-        // Remove HTML tags using a regular expression
-        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+  //   //     // Remove HTML tags using a regular expression
+  //   //     const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
     
-        setParsedQuoteCondition(plainTextWithoutTags);
-      }
-    };
-    // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
-    parseHTMLContent(createInvoice.payment_terms);
+  //   //     setParsedQuoteCondition(plainTextWithoutTags);
+  //   //   }
+  //   // };
+  //   // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
+  //   // parseHTMLContent(createInvoice.payment_terms);
 
-    // Other logic you have here...
-  }, [createInvoice.payment_terms]);
+  //   // Other logic you have here...
+  // }, [createInvoice.payment_terms]);
 
   //The quote_condition content and format it as bullet points
-  const formatQuoteConditions = (conditionsText) => {
-    const formattedConditions = conditionsText.split(':-').map((condition, index) => {
-      const trimmedCondition = condition.trim();
-      return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
-    });
-    return formattedConditions;
-  };
+  // const formatQuoteConditions = (conditionsText) => {
+  //   const formattedConditions = conditionsText.split(':-').map((condition, index) => {
+  //     const trimmedCondition = condition.trim();
+  //     return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
+  //   });
+  //   return formattedConditions;
+  // };
 
   // Format the conditions content for PDF
-  const conditions = formatQuoteConditions(parsedQuoteCondition);
+  // const conditions = formatQuoteConditions(parsedQuoteCondition);
   // const conditionsContent = conditions.map((condition) => ({
   //   text: `${condition}`,
   //   fontSize: 10,
@@ -114,13 +114,13 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
   //   style: ['notesText', 'textSize'],
   // }));
   // / Format the conditions content for PDF
-const conditionsContent = conditions.map((condition) => ({
-  text: `${condition}`,
-  fontSize: 10,
-  margin: [15, 5, 0, 0],
-  style: ['notesText', 'textSize'],
-  lineHeight: 1.2,
-}));
+// const conditionsContent = conditions.map((condition) => ({
+//   text: `${condition}`,
+//   fontSize: 10,
+//   margin: [15, 5, 0, 0],
+//   style: ['notesText', 'textSize'],
+//   lineHeight: 1.2,
+// }));
   //console.log('2', gstTotal);
   const getInvoiceItemById = () => {
     api
@@ -506,7 +506,7 @@ const conditionsContent = conditions.map((condition) => ({
               text: `TOTAL $ : ${gTotal.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
               })}`,
-              alignment: 'right',
+              alignment: 'center',
               margin: [0, 0, 5, 0],
               style: 'textSize',
             },
@@ -539,19 +539,70 @@ const conditionsContent = conditions.map((condition) => ({
         '\n\n',
 
 
+        // {
+        //   text: `Terms and Conditions: `,
+        //   fontSize: 11,
+        //   decoration: 'underline',
+        //   margin: [0, 5, 0, 0],
+        //   style: ['notesText', 'textSize'],
+        // },
+        // ...conditionsContent, // Add each condition as a separate paragraph
         {
-          text: `Terms and Conditions: `,
-          fontSize: 11,
-          decoration: 'underline',
-          margin: [0, 5, 0, 0],
-          style: ['notesText', 'textSize'],
+          text: [
+            { text: 'For ', color: 'black' }, // "for" in black color
+            { text: findCompany("cp.companyName"), color: 'orange' } // company name in orange color
+          ],
+          alignment: 'right', 
+          bold: true, 
+          fontSize: 9, 
         },
-        ...conditionsContent, // Add each condition as a separate paragraph
-
-
-        '\n\n',
+        '\n',
+        {
+          text: `Make all checks payable to "${findCompany("cp.companyName")}"`,
+          alignment: 'left', 
+          bold: false, 
+          fontSize: 9, 
+        },
+        '\n',
+        {
+          text: `${findCompany("cp.bankAccountDetails")}`,
+          alignment: 'left', 
+          bold: false, 
+          fontSize: 9, 
+        },
+        '\n',
+        {
+          text: `For and Behalf of           : ${findCompany("cp.ForandBehalfOf")}`,
+          alignment: 'right', 
+          bold: false, 
+          fontSize: 9, 
+        },
+        '\n',
+        {
+          text: `Date : ${moment(
+            createInvoice.invoice_date ? createInvoice.invoice_date : '',
+          ).format('DD-MM-YYYY')}  `,
+          alignment: 'right', 
+          bold: false, 
+          fontSize: 9, 
+        },
+        '\n',
+        '\n',
+        {
+          text: `Thank you for your business `,
+          alignment: 'center', 
+          bold: true, 
+          fontSize: 7, 
+        },
+        '\n',
+        {
+          text: `Should you have any enquiries concerning this delivery note, please contact Tel : +65-62599046`,
+          alignment: 'center', 
+          bold: false, 
+          fontSize: 7, 
+        },
       ],
-      margin: [0, 50, 50, 50],
+      margin: [100, 2, 0, 0],
 
       styles: {
         logo: {

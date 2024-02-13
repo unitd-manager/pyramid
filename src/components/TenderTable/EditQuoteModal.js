@@ -352,7 +352,61 @@ const EditQuoteModal = ({
                     />
                   </FormGroup>
                 </Col>
-                
+                <Col md="4">
+                  <FormGroup>
+                    <Label>General</Label>
+                    <Input
+                      type="textarea"
+                      name="general"
+                      defaultValue={quoteData && quoteData.general}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Scope Of Works</Label>
+                    <Input
+                      type="text"
+                      name="scope_of_works"
+                      defaultValue={quoteData && quoteData.scope_of_works}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Commencement & Completion Date</Label>
+                    <Input
+                      type="text"
+                      name="commencement_and_completion"
+                      defaultValue={quoteData && quoteData.commencement_and_completion}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Safety</Label>
+                    <Input
+                      type="text"
+                      name="safety"
+                      defaultValue={quoteData && quoteData.safety}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Insurance</Label>
+                    <Input
+                      type="text"
+                      name="insurance"
+                      defaultValue={quoteData && quoteData.insurance}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
               </Row>
               <Row>
                 <Label>JOB SCOPE</Label>
