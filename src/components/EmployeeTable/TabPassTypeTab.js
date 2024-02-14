@@ -3,11 +3,12 @@ import { Row, Col, FormGroup, Label, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-function TabPassTypeTab({ tabPassTypeDetails, handlePassTypeInputs, isNricAlreadyInserted }) {
+function TabPassTypeTab({ tabPassTypeDetails, handlePassTypeInputs, isNricAlreadyInserted ,isFinAlreadyInserted}) {
   TabPassTypeTab.propTypes = {
     tabPassTypeDetails: PropTypes.object,
     handlePassTypeInputs: PropTypes.func,
     isNricAlreadyInserted: PropTypes.object,
+    isFinAlreadyInserted:PropTypes.object,
   };
 
   return (
@@ -72,6 +73,12 @@ function TabPassTypeTab({ tabPassTypeDetails, handlePassTypeInputs, isNricAlread
                 type="text"
                 onChange={handlePassTypeInputs}
               />
+               {(isFinAlreadyInserted && (
+                      <alert className="error-message">
+                        Fin No is already inserted. Please provide a different number.
+                      </alert>
+                    )) ||
+                      null}
             </FormGroup>
           </Col>
           <Col md="4">
