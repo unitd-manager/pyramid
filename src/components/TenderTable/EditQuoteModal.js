@@ -308,79 +308,101 @@ const EditQuoteModal = ({
                     />
                   </FormGroup>
                 </Col>
-                {/* <Col md="4">
-                  <FormGroup>
-                    <Label>Job Scope</Label>
-                    <Input
-                      type="text"
-                      name="job_scope"
-                      defaultValue={quoteData && quoteData.job_scope}
-                      onChange={handleData}
-                    />
-                  </FormGroup>
-                </Col> */}
                 <Col md="4">
                   <FormGroup>
-                    <Label>Monday-Friday Normal Hr</Label>
+                    <Label>External Notes</Label>
                     <Input
-                      type="text"
-                      name="monday_to_friday_normal_timing"
-                      defaultValue={quoteData && quoteData.monday_to_friday_normal_timing}
+                      type="textarea"
+                      name="external_notes"
+                      defaultValue={quoteData && quoteData.external_notes}
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Monday-Friday OT Hr</Label>
+                    <Label>Invoices & Payment</Label>
                     <Input
-                      type="text"
-                      name="monday_to_friday_ot_timing"
-                      defaultValue={quoteData && quoteData.monday_to_friday_ot_timing}
+                      type="textarea"
+                      name="invoices_payment_terms"
+                      defaultValue={quoteData && quoteData.invoices_payment_terms}
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Saturday</Label>
+                    <Label>Noice of Termination</Label>
                     <Input
                       type="text"
-                      name="saturday_normal_timing"
-                      defaultValue={quoteData && quoteData.saturday_normal_timing}
+                      name="notice_of_termination"
+                      defaultValue={quoteData && quoteData.notice_of_termination}
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Sunday & Public Holiday</Label>
+                    <Label>Taxes</Label>
                     <Input
-                      type="text"
-                      name="sunday_and_publicholiday_ot_timing"
-                      defaultValue={quoteData && quoteData.sunday_and_publicholiday_ot_timing}
+                      type="textarea"
+                      name="taxes"
+                      defaultValue={quoteData && quoteData.taxes}
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Meal Chargeable</Label>
+                    <Label>General</Label>
                     <Input
-                      type="text"
-                      name="meal_charges"
-                      defaultValue={quoteData && quoteData.meal_charges}
+                      type="textarea"
+                      name="general"
+                      defaultValue={quoteData && quoteData.general}
                       onChange={handleData}
                     />
                   </FormGroup>
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Shift Allowance</Label>
+                    <Label>Scope Of Works</Label>
                     <Input
                       type="text"
-                      name="shift_allowance"
-                      defaultValue={quoteData && quoteData.shift_allowance}
+                      name="scope_of_works"
+                      defaultValue={quoteData && quoteData.scope_of_works}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Commencement & Completion Date</Label>
+                    <Input
+                      type="text"
+                      name="commencement_and_completion"
+                      defaultValue={quoteData && quoteData.commencement_and_completion}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Safety</Label>
+                    <Input
+                      type="text"
+                      name="safety"
+                      defaultValue={quoteData && quoteData.safety}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Insurance</Label>
+                    <Input
+                      type="text"
+                      name="insurance"
+                      defaultValue={quoteData && quoteData.insurance}
                       onChange={handleData}
                     />
                   </FormGroup>

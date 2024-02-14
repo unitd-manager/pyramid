@@ -25,6 +25,7 @@ const OpportunityEdit = () => {
   const [costingsummary, setCostingSummary] = useState([]);
   const [quote, setQuote] = useState({});
   const [lineItem, setLineItem] = useState([]);
+  const [rateItem, setRateItem] = useState([]);
   const [tenderDetails, setTenderDetails] = useState();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const { loggedInuser } = useContext(AppContext);
@@ -44,6 +45,7 @@ const OpportunityEdit = () => {
   const [addCostingSummaryModel, setAddCostingSummaryModel] = useState(false);
   const [costingcostingDetails, setCostingChargesDetails] = useState();
   const [quotationsModal, setquotationsModal] = useState(false);
+  const [rateModal, setRateModal] = useState(false);
   const [viewLineModal, setViewLineModal] = useState(false);
   const [addContactModal, setAddContactModal] = useState(false);
   const [addCompanyModal, setAddCompanyModal] = useState(false);
@@ -270,6 +272,21 @@ const OpportunityEdit = () => {
     });
   };
 
+
+  
+  const getRateItem = (quotationId) => {
+    api.post('/tender/getRateItemsById', { quote_id: quotationId }).then((res) => {
+      setRateItem(res.data.data);
+      console.log('rate', res.data.data)
+      console.log('Error fetching line items111111:', quotationId);
+
+    })
+    .catch((error) => {
+      console.error('Error fetching line items:', error);
+      message('LineItem Data not found', 'info');
+    });
+  };
+
   // Get Line Item
   const getLine = (quoteId) => {
     api.post('/tender/getTabQuotelogsById', { quote_id: quoteId }).then((res) => {
@@ -467,8 +484,11 @@ const OpportunityEdit = () => {
               project={project}
               quotationsModal={quotationsModal}
               setquotationsModal={setquotationsModal}
+              rateModal={rateModal}
+              setRateModal={setRateModal}
               viewLineToggle={viewLineToggle}
               getLineItem={getLineItem}
+              getRateItem={getRateItem}
               getLine={getLine}
               quotes={quotes}
               editQuoteModal={editQuoteModal}
@@ -477,6 +497,8 @@ const OpportunityEdit = () => {
               addLineItemModal={addLineItemModal}
               lineItem={lineItem}
               setLineItem={setLineItem}
+              rateItem={rateItem}
+              setRateItem={setRateItem}
               viewLineModal={viewLineModal}
               setViewLineModal={setViewLineModal}
               id={id}
