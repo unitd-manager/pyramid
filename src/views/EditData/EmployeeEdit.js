@@ -351,6 +351,7 @@ const EmployeeEdit = () => {
   // };
   
   const [isNricAlreadyInserted, setIsNricAlreadyInserted] = useState(false);
+  const [isFinAlreadyInserted, setIsFinAlreadyInserted] = useState(false);
 
   const updateData = async () => {
     // Check if essential employee details are filled out
@@ -361,70 +362,173 @@ const EmployeeEdit = () => {
       employeeDetails.nationality !== '' &&
       employeeDetails.nationality !== 'Please Select'
     ) {
+      // Check if NRIC is not empty
+      if (
+        (tabPassTypeDetails.citizen === 'Citizen' || tabPassTypeDetails.citizen === 'PR') &&
+        tabPassTypeDetails.nric_no === ''
+      ) {
+        message('Please enter the NRIC number.', 'warning');
+        return; // Stop further execution
+      }
+  
+      // Check if Fin number is empty for specific citizenship types
+      if (['DP', 'EP', 'SP'].includes(tabPassTypeDetails.citizen) && tabPassTypeDetails.fin_no === '') {
+        message('Please enter the Fin number.', 'warning');
+        return; // Stop further execution
+      }
+  
       try {
-      
-        const response = await api.get('/employeemodule/CheckNricNo');
-        const existingNricNumbers = response.data.data.filter(nric => nric !== null);
+        // Additional validation for NRIC
+        if (
+          (tabPassTypeDetails.citizen === 'Citizen' || tabPassTypeDetails.citizen === 'PR') &&
+          tabPassTypeDetails.nric_no !== ''
+        ) {
+          const responseNric = await api.get('/employeemodule/CheckNricNo1');
+          const existingNricNumbers = responseNric.data.data.filter((nric) => nric !== null);
+          const isNricAlreadyExists = existingNricNumbers.some(
+            (nric) =>
+              nric.nric_no === tabPassTypeDetails.nric_no.toLowerCase() &&
+              nric.employee_id !== employeeDetails.employee_id
+          );
   
-        //const isNricAlreadyExists = existingNricNumbers.some(nric => nric.toLowerCase() === tabPassTypeDetails.nric_no.toLowerCase());
-        const isNricAlreadyExists = existingNricNumbers.some(
-          nric =>
-            nric.toLowerCase() === tabPassTypeDetails.nric_no.toLowerCase() &&
-            tabPassTypeDetails.employee_id === employeeDetails.employee_id
-        );
-  
-        if (isNricAlreadyExists) {
-          setIsNricAlreadyInserted(true);
-          message('NRIC is already inserted. Please provide a different number.', 'warning');
-        } else {
-          setIsNricAlreadyInserted(false);
-          await editEmployeeData();
-          await editTabPassTypeData();
-          await editEQData();
-          await editECData();
-          await editCIData();
-          message('Success', 'success');
+          if (isNricAlreadyExists) {
+            setIsNricAlreadyInserted(true);
+            message('NRIC is already inserted. Please provide a different number.', 'warning');
+            return; // Stop further execution
+          }
         }
-      
+  
+        // Additional validation for Fin
+        if (['DP', 'EP', 'SP'].includes(tabPassTypeDetails.citizen) && tabPassTypeDetails.fin_no !== '') {
+          const responseFin = await api.get('/employeemodule/CheckFinNo1');
+          const existingFinNumbers = responseFin.data.data.filter((fin) => fin !== null);
+          const isFinAlreadyExists = existingFinNumbers.some(
+            (fin) =>
+              fin.fin_no === tabPassTypeDetails.fin_no.toLowerCase() &&
+              fin.employee_id !== employeeDetails.employee_id
+          );
+  
+          if (isFinAlreadyExists) {
+            setIsFinAlreadyInserted(true);
+            message('Fin is already inserted. Please provide a different number.', 'warning');
+            return; // Stop further execution
+          }
+        }
+  
+        // If both NRIC and Fin validations pass, proceed with updating data
+        setIsNricAlreadyInserted(false);
+        setIsFinAlreadyInserted(false);
+        await editEmployeeData();
+        await editTabPassTypeData();
+        await editEQData();
+        await editECData();
+        await editCIData();
+        message('Success', 'success');
       } catch (error) {
-        console.error('Error fetching existing NRIC numbers:', error);
-        message('Unable to check for duplicate NRIC numbers. Please try again later.', 'error');
-      }
-    } else if (['DP', 'EP', 'SP'].includes(tabPassTypeDetails.citizen)) {
-      // Additional checks for specific citizenship types
-      if (tabPassTypeDetails.fin_no !== '') {
-        await editEmployeeData();
-        await editTabPassTypeData();
-        await editEQData();
-        await editECData();
-        await editCIData();
-      } else {
-        message('Please fill the fin no field', 'warning');
-      }
-    } else if (tabPassTypeDetails.citizen === 'WP') {
-      if (tabPassTypeDetails.fin_no !== '' && tabPassTypeDetails.work_permit !== '') {
-        await editEmployeeData();
-        await editTabPassTypeData();
-        await editEQData();
-        await editECData();
-        await editCIData();
-      } else {
-        message('Please fill the Fin no and Work permit No field', 'warning');
-      }
-    } else if (tabPassTypeDetails.citizen === 'PR') {
-      if (tabPassTypeDetails.nric_no !== '' && tabPassTypeDetails.spr_year !== '') {
-        await editEmployeeData();
-        await editTabPassTypeData();
-        await editEQData();
-        await editECData();
-        await editCIData();
-      } else {
-        message('Please fill the Nric No and Spryear field', 'warning');
+        console.error('Error fetching existing NRIC/FIN numbers:', error);
+        message('Unable to check for duplicate NRIC/FIN numbers. Please try again later.', 'error');
       }
     } else {
-      message('Please fill the PassType', 'warning');
+      message('Please fill the required fields', 'warning');
     }
   };
+  
+
+  // const updateData = async () => {
+  //   // Check if essential employee details are filled out
+  //   if (
+  //     employeeDetails.employee_name !== '' &&
+  //     employeeDetails.date_of_birth !== '' &&
+  //     employeeDetails.gender !== '' &&
+  //     employeeDetails.nationality !== '' &&
+  //     employeeDetails.nationality !== 'Please Select' 
+  //   ) 
+  //     {
+  //       // Check if NRIC is not empty
+  //       if ((tabPassTypeDetails.citizen === 'Citizen' || tabPassTypeDetails.citizen === 'PR') && tabPassTypeDetails.nric_no === '') {
+  //         message('Please enter the NRIC number.', 'warning');
+  //         return; // Stop further execution
+  //       }
+  //     try {    
+  //       const response = await api.get('/employeemodule/CheckNricNo1');
+  //       const existingNricNumbers = response.data.data.filter(nric => nric !== null);
+  //       //const isNricAlreadyExists = existingNricNumbers.some(nric => nric.toLowerCase() === tabPassTypeDetails.nric_no.toLowerCase());
+  //       const isNricAlreadyExists = existingNricNumbers.some(
+  //         (nric) =>
+  //           nric.nric_no === tabPassTypeDetails.nric_no.toLowerCase() &&
+  //           nric.employee_id !== employeeDetails.employee_id
+  //       );
+  
+  //       if (isNricAlreadyExists) {
+  //         setIsNricAlreadyInserted(true);
+  //         message('NRIC is already inserted. Please provide a different number.', 'warning');
+  //       } else {
+  //         setIsNricAlreadyInserted(false);
+  //         await editEmployeeData();
+  //         await editTabPassTypeData();
+  //         await editEQData();
+  //         await editECData();
+  //         await editCIData();
+  //         message('Success', 'success');
+  //       }
+      
+  //     } catch (error) {
+  //       console.error('Error fetching existing NRIC numbers:', error);
+  //       message('Unable to check for duplicate NRIC numbers. Please try again later.', 'error');
+  //     }
+  //   } else if ((tabPassTypeDetails.citizen === 'SP' ) && tabPassTypeDetails.fin_no === '') {
+  //     // Additional checks for specific citizenship types
+     
+  //       try {
+  //         const response = await api.get('/employeemodule/CheckFinNo1');
+  //         const existingFinNumbers = response.data.data.filter(fin => fin!== null);
+  //         //const isNricAlreadyExists = existingNricNumbers.some(nric => nric.toLowerCase() === tabPassTypeDetails.nric_no.toLowerCase());
+  //         const isFinAlreadyExists = existingFinNumbers.some(
+  //           (fin) =>
+  //             fin.fin_no === tabPassTypeDetails.fin_no.toLowerCase() &&
+  //             fin.employee_id !== employeeDetails.employee_id
+  //         );
+  //         if (isFinAlreadyExists) {
+  //           setIsFinAlreadyInserted(true);
+  //           message('Fin is already inserted. Please provide a different number.', 'warning');
+  //         } else {
+  //           setIsFinAlreadyInserted(false);
+  //           await editEmployeeData();
+  //           await editTabPassTypeData();
+  //           await editEQData();
+  //           await editECData();
+  //           await editCIData();
+  //           message('Success', 'success');
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching existing Fin numbers:', error);
+  //         message('Unable to check for duplicate Fin numbers. Please try again later.', 'error');
+  //       }
+    
+  //   } else if (tabPassTypeDetails.citizen === 'WP') {
+  //     if (tabPassTypeDetails.fin_no !== '' && tabPassTypeDetails.work_permit !== '') {
+  //       await editEmployeeData();
+  //       await editTabPassTypeData();
+  //       await editEQData();
+  //       await editECData();
+  //       await editCIData();
+  //     } else {
+  //       message('Please fill the Fin no and Work permit No field', 'warning');
+  //     }
+  //   } else if (tabPassTypeDetails.citizen === 'PR') {
+  //     if (tabPassTypeDetails.nric_no !== '' && tabPassTypeDetails.spr_year !== '') {
+  //       await editEmployeeData();
+  //       await editTabPassTypeData();
+  //       await editEQData();
+  //       await editECData();
+  //       await editCIData();
+  //     } else {
+  //       message('Please fill the Nric No and Spryear field', 'warning');
+  //     }
+  //   } else {
+  //     message('Please fill the PassType', 'warning');
+  //   }
+  // };
   
 
   //Attachments
@@ -520,6 +624,7 @@ const EmployeeEdit = () => {
                 tabPassTypeDetails={tabPassTypeDetails}
                 handlePassTypeInputs={handlePassTypeInputs}
                 isNricAlreadyInserted={isNricAlreadyInserted}
+                isFinAlreadyInserted={isFinAlreadyInserted}
               />
             </Row>
           </TabPane>
