@@ -309,23 +309,29 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
         },
         '\n\n\n\n\n',
         '\n\n\n\n\n',
+        {
+          text: 'PYRAMID ENGINEERING PRIVATE LTD',
+          alignment: 'left',
+          style: 'tableHead',
+        },
 
         {
           columns: [
+            
             {
               stack: [
                 {
-                  text: 'Name :',
+                  text: `Name : ${projectDetail.first_name ? projectDetail.first_name : ''}`,
                   alignment: 'left',
-                  bold: true,
+                  //bold: true,
                   fontSize: 10,
                   style: ['invoiceAdd', 'textSize'],
                 },
                 '\n',
                 {
-                  text: 'Designation :',
+                  text: `Designation :`,
                   alignment: 'left',
-                  bold: true,
+                  //bold: true,
                   fontSize: 10,
                   style: ['invoiceAdd', 'textSize'],
                 },
@@ -333,7 +339,7 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
                 {
                   text: `Signature:`,
                   fontSize: 10,
-                  bold: true,
+                  //bold: true,
                   style: ['textSize'],
                   margin: [0, 0, 0, 0],
                 },
@@ -341,15 +347,51 @@ const PdfDeliveryOrder = ({ deliverOrderId }) => {
                 {
                   text: `Date:`,
                   fontSize: 10,
-                  bold: true,
+                  //bold: true,
                   style: ['textSize'],
                   margin: [0, 0, 0, 0],
                 },
               ],
             },
-            
+            {
+              stack: [
+                {
+                  text: 'Name :',
+                  alignment: 'left',
+                  //bold: true,
+                  fontSize: 10,
+                  style: ['invoiceAdd', 'textSize'],
+                },
+                '\n',
+                {
+                  text: 'Designation :',
+                  alignment: 'left',
+                  //bold: true,
+                  fontSize: 10,
+                  style: ['invoiceAdd', 'textSize'],
+                },
+                '\n',
+                {
+                  text: `Signature:`,
+                  fontSize: 10,
+                  //bold: true,
+                  style: ['textSize'],
+                  margin: [0, 0, 0, 0],
+                },
+                '\n',
+                {
+                  text: `Date:`,
+                  fontSize: 10,
+                  //bold: true,
+                  style: ['textSize'],
+                  margin: [0, 0, 0, 0],
+                },
+              ],
+            },
           ],
         },
+
+        
         '\n\n\n\n\n',
       ],
       margin: [0, 50, 50, 50],

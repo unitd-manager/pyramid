@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';
 
 // Define the base URL(s) conditionally
 //let baseURL;
@@ -15,5 +15,4 @@ const api = axios.create({
   
 });
 
-
-export default api;
+export default api

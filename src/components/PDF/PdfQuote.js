@@ -456,8 +456,9 @@ const PdfQuote = ({ id, quoteId }) => {
         '\n',
 
         {
-          text: `Terms and Conditions: `,
+          text: `REMARKS: `,
           fontSize: 11,
+          bold:true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
@@ -475,7 +476,54 @@ const PdfQuote = ({ id, quoteId }) => {
           margin: [0, 10, 0, 10],
           fontSize: 12,
         },
+        '\n',
+        [{
+          text: `PYRAMID ENGINEERING PRIVATE LTD `,
+          fontSize: 8,
+          // decoration: 'underline',
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+        {
+          text: `Bala`,
+          fontSize: 7,
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+  
+        },
       ],
+      '\n',
+      {
+        text: 'ACKNOWLEDGE ACCEPTANCE BY',
+        style: 'textSize',
+        fontSize: 8,
+        bold: true,
+        margin: [10, -50, 0, 0],
+        alignment: 'right',
+      },
+      {
+        columns: [
+          {
+            canvas: [{ type: 'line', x1: 155, y1: 0, x2: 0, y2: 0, lineWidth: 1 }],
+            margin: [0, 20, 0, 0],
+            alignment: 'right',
+          },
+        ],
+      },
+
+      {
+        columns: [
+          {
+            text: 'Sign with Company Stamp and fax by return',
+            style: 'textSize',
+            fontSize: 8,
+            margin: [0, 10, 0, 0],
+            alignment: 'right',
+          },
+        ],
+      },
+      ],
+      
       margin: [0, 50, 50, 50],
 
       styles: {
