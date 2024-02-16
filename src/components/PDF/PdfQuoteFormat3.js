@@ -521,10 +521,26 @@ const PdfQuoteFormat3 = ({ id, quoteId }) => {
         },
         ...conditionsContent, // Add each condition as a separate paragraph
 
-        '\n\n\n',
-        '\n\n\n\n',
+        '\n',
+        [{
+          text: `PYRAMID ENGINEERING PRIVATE LTD `,
+          fontSize: 8,
+          // decoration: 'underline',
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+        {
+          text: `Bala`,
+          fontSize: 7,
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+  
+        },
+      ],
+      '\n\n',
         {
           text: 'ACKNOWLEDGE ACCEPTANCE BY',
+          fontSize: 8,
           style: 'textSize',
           bold: true,
           margin: [10, -50, 0, 0],
