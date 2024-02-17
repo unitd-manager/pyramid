@@ -61,6 +61,26 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
     const total = grandTotal + gstValue;
     return total;
   };
+  const getAmountInWords = () => {
+    const total = calculateTotal();
+    // Split total amount into dollars and cents
+    const dollars = Math.floor(total);
+    const cents = Math.round((total - dollars) * 100); // Convert cents to whole number
+  
+    // Convert dollars and cents to words separately
+    const dollarsInWords = numberToWords.toWords(dollars).toUpperCase();
+    const centsInWords = numberToWords.toWords(cents).toUpperCase();
+  
+    // Format the text accordingly
+    let amountInWords = `SGD ${dollarsInWords} CENTS `;
+    if (cents > 0) {
+      amountInWords += `${centsInWords}  ONLY`;
+    }
+  
+    return amountInWords;
+  };
+  
+
   // const calculateTotal = () => {
   //   const grandTotal = cancelInvoice.reduce((acc, element) => acc + element.total_cost, 0);
   //   const gstValue = createInvoice.gst_value || 0;
@@ -138,6 +158,8 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
         message('Invoice Data Not Found', 'info');
       });
   };
+
+
   React.useEffect(() => {
     getInvoiceItemById();
     getInvoiceById();
@@ -156,22 +178,22 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
           alignment: 'center',
         },
         {
-          text: 'Uom',
+          text: 'Unit',
           style: 'tableHead',
           alignment: 'center',
         },
         {
-          text: 'Qty',
+          text: 'Quantity',
           style: 'tableHead',
           alignment: 'center',
         },
         {
-          text: 'Unit Price',
+          text: 'Amount(per unit)',
           style: 'tableHead',
           alignment: 'right',
         },
         {
-          text: 'Total Amount',
+          text: 'Total',
           style: 'tableHead',
           alignment: 'right',
         },
@@ -224,7 +246,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
       header: PdfHeader({ findCompany }),
        pageMargins: [40, 120, 40, 10],
       //pageMargins: [40, 40, 30, 0],
-      footer: PdfFooter,
+      footer: PdfFooter({ findCompany }),
 
 
       content: [
@@ -337,11 +359,11 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
                   style: ['textSize'],
                   margin: [100, 2, 0, 0],
                 },
-                {
-                  text: `Our Ref            : ${createInvoice.project_reference ? createInvoice.project_reference : ''} `,
-                  style: ['textSize'],
-                  margin: [100, 2, 0, 0],
-                },
+                // {
+                //   text: `Our Ref            : ${createInvoice.project_reference ? createInvoice.project_reference : ''} `,
+                //   style: ['textSize'],
+                //   margin: [100, 2, 0, 0],
+                // },
                 {
                   text: `Revision           : ${createInvoice.revision ? createInvoice.revision : ''} `,
                   style: ['textSize'],
@@ -353,7 +375,9 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
                   margin: [100, 2, 0, 0],
                 },
                 {
-                  text: ` Job Code         : ${createInvoice.job_code ? createInvoice.job_code : ''} `,
+                  text: `PO Date           : ${moment(
+                    createInvoice.po_date ? createInvoice.po_date : '',
+                  ).format('DD-MM-YYYY')}  `,
                   style: ['textSize'],
                   margin: [100, 2, 0, 0],
                 },
@@ -366,14 +390,30 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
 
         {
           columns: [
-            {
-              text: `ATTN : ${createInvoice.attention ? createInvoice.attention : ''
-                }  `,
-              style: 'textSize',
-              margin: [30, 0, 0, 0],
-              bold: true,
-            },
-          ],
+          {
+            stack: [
+              {
+                text: `ATTN : ${createInvoice.attention ? createInvoice.attention : ''
+                  }  `,
+                style: 'textSize',
+                margin: [30, 0, 0, 0],
+                bold: true,
+              },
+              '\n',
+            ],
+          },
+          {
+            stack: [
+              {
+                text: ` Supply To       : ${createInvoice.supply_to ? createInvoice.supply_to : ''
+                  } `,
+                style: ['textSize'],
+                margin: [100, 2, 0, 0],
+              },
+              '\n',
+            ],
+          },
+        ],
         },
         '\n\n',
         {
@@ -446,7 +486,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
               style: ['notesText', 'textSize'],
             },
             {
-              text: `${createInvoice.invoice_terms ? createInvoice.invoice_terms : ''
+              text: `${createInvoice.payment_terms ? createInvoice.payment_terms : ''
                 } `,
               alignment: 'center',
               style: ['invoiceAdd', 'textSize'],
@@ -503,16 +543,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
         {
           stack: [
             {
-              text: `TOTAL $ : ${gTotal.toLocaleString('en-IN', {
-                minimumFractionDigits: 2,
-              })}`,
-              alignment: 'center',
-              margin: [0, 0, 5, 0],
-              style: 'textSize',
-            },
-            '\n',
-            {
-              text: `GST ${createInvoice.gst_percentage ? createInvoice.gst_percentage : ''}% :      ${createInvoice.gst_value.toLocaleString('en-IN', {
+              text: `TOTAL   : $ ${gTotal.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
               })}`,
               alignment: 'right',
@@ -521,19 +552,28 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
             },
             '\n',
             {
-              text: `GRAND TOTAL ($) : ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+              text: `GST ${createInvoice.gst_percentage ? createInvoice.gst_percentage : ''}% :     $ ${createInvoice.gst_value.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+              })}`,
+              alignment: 'right',
+              margin: [0, 0, 5, 0],
+              style: 'textSize',
+            },
+            '\n',
+            {
+              text: `TOTAL AMOUNT   : $ ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
               alignment: 'right',
               margin: [0, 0, 5, 0],
               style: 'textSize',
             },
             '\n\n\n',
             {
-              text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
-              bold: 'true',
-              fontSize: '11',
+              text: `(${getAmountInWords()})`, // Display total amount in words
+              bold: true,
+              fontSize: 11,
               margin: [40, 0, 0, 0],
+              alignment: 'center',
             },
-
           ],
         },
         '\n\n',
@@ -560,31 +600,51 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
         {
           text: `Make all checks payable to "${findCompany("cp.companyName")}"`,
           alignment: 'left', 
+          italics: true,
           bold: false, 
           fontSize: 9, 
         },
         '\n',
         {
-          text: `${findCompany("cp.bankAccountDetails")}`,
+          text: ` BANK & ACCOUNT DETAILS: ${findCompany("cp.bankAccountDetails")}`,
           alignment: 'left', 
           bold: false, 
           fontSize: 9, 
+          italics: true,
         },
         '\n',
         {
-          text: `For and Behalf of           : ${findCompany("cp.ForandBehalfOf")}`,
-          alignment: 'right', 
-          bold: false, 
-          fontSize: 9, 
-        },
-        '\n',
-        {
-          text: `Date : ${moment(
-            createInvoice.invoice_date ? createInvoice.invoice_date : '',
-          ).format('DD-MM-YYYY')}  `,
-          alignment: 'right', 
-          bold: false, 
-          fontSize: 9, 
+          columns: [
+          {
+            stack: [
+              {
+                text: ``,
+                style: 'textSize',
+                margin: [30, 0, 0, 0],
+               
+              },
+              '\n',
+            ],
+          },
+          {
+            stack: [
+              {
+                text: ` For and Behalf of : ${createInvoice.for_and_behalf_of ? createInvoice.for_and_behalf_of : ''
+              } `,
+                style: ['textSize'],
+                margin: [100, 2, 0, 0],
+              },
+              '\n',
+              {
+                text: ` Date                       : ${moment(
+                  createInvoice.invoice_date ? createInvoice.invoice_date : '',
+                ).format('DD-MM-YYYY')}  `,
+                style: ['textSize'],
+                margin: [100, 0, 0, 0],
+              },
+            ],
+          },
+        ],
         },
         '\n',
         '\n',

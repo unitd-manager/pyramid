@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { CardTitle, Row, Col, TabContent, TabPane, Button } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -19,6 +19,7 @@ import EditPoModal from '../../components/ProjectModal/EditPoModal';
 import EditPOLineItemsModal from '../../components/ProjectModal/EditPOLineItemsModal';
 import SubConWorkOrderPortal from '../../components/ProjectModal/SubConWorkOrderPortal';
 import MaterialsTransferred from '../../components/ProjectModal/MaterialsTransferred';
+import JobCompletionTab from '../../components/ProjectModal/JobCompletionTab';
 import FinanceTab from '../../components/ProjectModal/FinanceTab';
 import message from '../../components/Message';
 import api from '../../constants/api';
@@ -33,6 +34,9 @@ import MaterialPurchased from '../../components/project/TabContent/MaterialPurch
 import DeliveryOrder from '../../components/project/TabContent/DeliveryOrder';
 import Claim from '../../components/project/TabContent/Claim';
 import ProjectEditForm from '../../components/project/ProjectEditForm';
+import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
+
 
 const ProjectEdit = () => {
   const { id } = useParams();
@@ -41,6 +45,8 @@ const ProjectEdit = () => {
   const backToList = () => {
     navigate('/Project');
   }; 
+  const { loggedInuser } = useContext(AppContext);
+  const [joborder, setJobOrder] = useState();
   const [projectDetail, setProjectDetail] = useState();
   const [activeTab, setActiveTab] = useState('1');
   const [addDuctingCostModal, setAddDuctingCostModal] = useState(false);
@@ -111,7 +117,8 @@ const ProjectEdit = () => {
     {id:'7',name:'Subcon Work Order'},
     {id:'8',name:'Claim'},
     {id:'9',name:'Finance'},
-    {id:'10',name:'Attachment'}
+    {id:'10',name:'Job Completion'},
+    {id:'11',name:'Attachment'}
   ];
   const toggle = (tab) => {
     setActiveTab(tab);
@@ -145,9 +152,9 @@ const ProjectEdit = () => {
     if(projectDetail.category){
     api.post('/project/edit-Project', projectDetail).then(() => {
       message('Record editted successfully', 'success');
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 300);
     });
   }else{
     message('Please Enter Category', 'warning');
@@ -226,7 +233,53 @@ console.log('elem',elem)
       });
     }
   };
+  const InsertJobOrder = () => {
+    joborder.creation_date = creationdatetime;
+    joborder.created_by = loggedInuser.first_name;
+    if (joborder.location !== '') {
+      api
+        .post('/project/insertJobOrder', joborder)
+        .then((res) => {
+          const insertedDataId = res.data.data.insertId;
+          console.log(insertedDataId);
+          message('Job order inserted successfully.', 'success');
+          // setTimeout(() => {
+            
+          // }, 300);
+        })
+        .catch(() => {
+          message('Unable to edit record.', 'error');
+        });
+    } else {
+      message('Please fill all required fields', 'warning');
+    }
+  };
+  // const InsertJobOrder = () => {
+    
+  //     joborder.creation_date = creationdatetime
+  //     joborder.created_by = loggedInuser.first_name;
+  //     api
+  //       .post('/project/insertJobOrder', joborder)
+  //       .then(() => {
+  //         message('Opportunity inserted successfully.', 'success');
+  //         // setTimeout(() => {
+  //         // }, 300);
+  //       })
+  //       .catch(() => {
+  //         message('Network connection error.', 'error');
+  //       });
+  // };
 
+  // const generateJobCode = () => {
+  //   api
+  //     .post('/joborder/getCodeValue', { type: 'joborder' })
+  //     .then((res) => {
+  //       InsertJobOrder(res.data.data);
+  //     })
+  //     .catch(() => {
+  //       InsertJobOrder('');
+  //     });
+  // };
 
   const insertDeliveryHistoryOrder = (proId, deliveryOrderId) => {
     api
@@ -445,6 +498,7 @@ console.log('elem',elem)
       <BreadCrumbs />
       <ProjectButton
         UpdateData={UpdateData}
+        InsertJobOrder={InsertJobOrder}
         navigate={navigate}
         applyChanges={applyChanges}
         deleteData={deleteData}
@@ -618,8 +672,13 @@ console.log('elem',elem)
             <FinanceTab projectId={id} projectDetail={projectDetail}></FinanceTab>
           </TabPane>
 
+         {/* Start Tab Content 10*/} 
+          <TabPane tabId="10" eventkey="JobCompletion">
+            <JobCompletionTab projectId={id} joborder={joborder} setJobOrder={setJobOrder}></JobCompletionTab>
+          </TabPane>
+
           {/* Start Tab Content 10 */}
-          <TabPane tabId="10" eventkey="addEmployee">
+          <TabPane tabId="11" eventkey="addEmployee">
             <Row>
               <AddEmployee />
               <Col xs="12" md="3" className="mb-3">

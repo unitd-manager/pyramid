@@ -9,6 +9,17 @@ const CreateReceipt = ({ createInvoice, handleInserts }) => {
   };
   return (
     <>
+    <Col md="4">
+        <FormGroup>
+          <Label>Title</Label>
+          <Input
+            type="text"
+            onChange={handleInserts}
+            value={createInvoice && createInvoice.title}
+            name="title"
+          />
+        </FormGroup>
+      </Col>
       <Col md="4">
         <FormGroup>
           <Label>Discount</Label>
@@ -141,6 +152,52 @@ const CreateReceipt = ({ createInvoice, handleInserts }) => {
           />
         </FormGroup>
       </Col>
+      <Col md="4">
+        <FormGroup>
+          <Label>Payment Terms</Label>
+          <Input
+            type="text"
+            onChange={handleInserts}
+            value={createInvoice && createInvoice.payment_terms}
+            name="payment_terms"
+          />
+        </FormGroup>
+      </Col>
+      <Col md="4">
+        <FormGroup>
+          <Label>Supply To</Label>
+          <Input
+            type="text"
+            onChange={handleInserts}
+            value={createInvoice && createInvoice.supply_to}
+            name="supply_to"
+          />
+        </FormGroup>
+      </Col>
+      <Col md="4">
+        <FormGroup>
+          <Label>PO Date</Label>
+          <Input
+            type="date"
+            onChange={handleInserts}
+            value={createInvoice && createInvoice.po_date}
+            name="po_date"
+          />
+        </FormGroup>
+      </Col>
+      <Col md="4">
+        <FormGroup>
+          <Label> For and Behalf of </Label>
+          <Input
+            type="text"
+            onChange={handleInserts}
+            value={createInvoice && createInvoice.for_and_behalf_of}
+            name="for_and_behalf_of"
+          />
+        </FormGroup>
+      </Col>
+      
+      
     </>
   );
 };
