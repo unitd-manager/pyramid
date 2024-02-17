@@ -199,36 +199,158 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
           style: 'tableBody',
           border: [false, false, false, true],
         },
+        // {
+        //   text: `${element.mon_to_fri_normal_hr}`,
+        //   border: [false, false, false, true],
+        //   style: 'tableBody',
+        //   alignment: 'center',
+        // },
         {
-          text: `${element.mon_to_fri_normal_hr}`,
-          border: [false, false, false, true],
-          style: 'tableBody',
-          alignment: 'center',
+          stack: [
+            {
+              columns: [
+                {
+                  text: '$', // Add the "$" symbol
+                  alignment: 'left',
+                  fontSize: 8,
+                  width: 'auto',
+                  marginTop: 5,
+                  paddingTop: 5,
+
+                },
+                {
+        text: `${element.mon_to_fri_normal_hr}`,
+        border: [false, false, false, true],
+        style: 'tableBody',
+        alignment: 'center',
+      },
+              ],
+            },
+          ],
+          
         },
+        // {
+        //   text: `${element.mon_to_fri_ot_hr}`,
+        //   border: [false, false, false, true],
+        //   style: 'tableBody',
+        //   alignment: 'center',
+        // },
         {
+          stack: [
+            {
+              columns: [
+                {
+                  text: '$', // Add the "$" symbol
+                  alignment: 'left',
+                  fontSize: 8,
+                  width: 'auto',
+                  marginTop: 5,
+                  paddingTop: 5,
+
+                },
+                {
           text: `${element.mon_to_fri_ot_hr}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
         },
+              ],
+            },
+          ],
+          
+        },
+        // {
+        //   text: `${element.mon_to_sat_normal_hr}`,
+        //   border: [false, false, false, true],
+        //   style: 'tableBody',
+        //   alignment: 'center',
+        // },
         {
+          stack: [
+            {
+              columns: [
+                {
+                  text: '$', // Add the "$" symbol
+                  alignment: 'left',
+                  fontSize: 8,
+                  width: 'auto',
+                  marginTop: 5,
+                  paddingTop: 5,
+
+                },
+                {
           text: `${element.mon_to_sat_normal_hr}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
         },
         
+              ],
+            },
+          ],
+          
+        },
+        // {
+        //   text: `${element.sunday_public_holiday}`,
+        //   border: [false, false, false, true],
+        //   style: 'tableBody',
+        //   alignment: 'center',
+        // },
         {
+          stack: [
+            {
+              columns: [
+                {
+                  text: '$', // Add the "$" symbol
+                  alignment: 'left',
+                  fontSize: 8,
+                  width: 'auto',
+                  marginTop: 5,
+                  paddingTop: 5,
+
+                },
+                {
           text: `${element.sunday_public_holiday}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
         },
+        
+              ],
+            },
+          ],
+          
+        },
+        // {
+        //   text: `${element.meal_chargeable}`,
+        //   border: [false, false, false, true],
+        //   style: 'tableBody',
+        //   alignment: 'center',
+        // },
         {
+          stack: [
+            {
+              columns: [
+                {
+                  text: '$', // Add the "$" symbol
+                  alignment: 'left',
+                  fontSize: 8,
+                  width: 'auto',
+                  marginTop: 5,
+                  paddingTop: 5,
+
+                },
+                {
           text: `${element.meal_chargeable}`,
           border: [false, false, false, true],
           style: 'tableBody',
           alignment: 'center',
+        },
+        
+              ],
+            },
+          ],
+          
         },
         
       ]);
@@ -269,7 +391,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
               return 10;
             },
             paddingRight: () => {
-              return 10;
+              return 8;
             },
             paddingTop: () => {
               return 2;
@@ -392,7 +514,14 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
         // },
 
         '\n\n',
-
+        {
+          text: `(A) SUB-CONTRACT RATE - DAY SHIFT`,
+          style: ['notesText', 'textSize'],
+          fontSize: 8,
+          decoration: 'underline',
+          bold: 'true',
+        },
+        '\n',
         {
           layout: {
             defaultBorder: false,
@@ -435,7 +564,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
           },
           table: {
             headerRows: 1,
-            widths: [50,70, 65, 65, 55, 55,50],
+            widths: [50,70, 65, 65, 55, 50,55],
 
             body: lineItemTable,
           },
@@ -693,7 +822,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
           alignment: 'left',
-          fontSize: 10.5,
+          fontSize: 8.5,
         },
         tableBody1: {
           border: [false, false, false, true],
