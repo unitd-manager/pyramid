@@ -5,7 +5,7 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Button } from 'reactstrap';
 import moment from 'moment';
 import api from '../../constants/api';
-import PdfFooter from './PdfFooter';
+// import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
 
@@ -15,8 +15,10 @@ const PdfPurchaseOrder = () => {
   const [products, setProducts] = React.useState([]);
   const [purchaseDetails, setPurchaseDetails] = React.useState();
   const [gTotal, setGtotal] = React. useState(0);
-  const [gstTotal, setGsttotal] = React. useState(0);
-  const [Total, setTotal] = React. useState(0);
+  const [terms, setTerms] = React. useState();
+  // const [gstTotal, setGsttotal] = React. useState(0);
+  // const [Total, setTotal] = React. useState(0);
+console.log('terms',terms)
 
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
@@ -25,8 +27,16 @@ const PdfPurchaseOrder = () => {
     });
   }, []);
 
+  React.useEffect(() => {
+    api.get('/setting/getSettingsForTerms').then((res) => {
+      setTerms(res.data.data[0]);
+     
+    });
+  }, []);
+
   const findCompany = (key) => {
     const filteredResult = hfdata.find((e) => e.key_text === key);
+    console.log('filteredResult',filteredResult.value)
     return filteredResult.value;
   };
   // Gettind data from Job By Id
@@ -48,17 +58,17 @@ const PdfPurchaseOrder = () => {
         setProducts(res.data.data);
           //grand total
           let grandTotal = 0;
-          let grand = 0;
-         let gst = 0;
+        //   let grand = 0;
+        //  let gst = 0;
          res.data.data.forEach((elem) => {
            grandTotal += elem.total_price;
           //  grand += elem.actual_value;
          });
          setGtotal(grandTotal);
-         gst=grandTotal*0.07
-         setGsttotal(gst);
-         grand=grandTotal+gst
-         setTotal(grand);
+        //  gst=grandTotal*0.07
+        //  setGsttotal(gst);
+        //  grand=grandTotal+gst
+        //  setTotal(grand);
       })
       .catch(() => {
          
@@ -140,7 +150,7 @@ const PdfPurchaseOrder = () => {
       pageSize: 'A4',
       header: PdfHeader({ findCompany }),
       pageMargins: [40, 150, 40, 80],
-      footer: PdfFooter,
+      // footer: PdfFooter,
       content: [
         {
           layout: {
@@ -370,12 +380,12 @@ const PdfPurchaseOrder = () => {
             },
           
              {   stack:[
-    {text:`SubTotal $ : ${(gTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[130,0,0,0] },
+    {text:`Total Proviional Amount $ : ${(gTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[130,0,0,0] },
      '\n',
    
-     {text:`GST:    ${(gstTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[160,0,0,0]  },
-     '\n',
-      {text:`Total $ :  ${(Total.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[145,0,0,0] },
+    //  {text:`GST:    ${(gstTotal.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[160,0,0,0]  },
+    //  '\n',
+    //   {text:`Total $ :  ${(Total.toLocaleString('en-IN', {  minimumFractionDigits: 2 }))}`, style: [ 'textSize'], margin :[145,0,0,0] },
      
       ]},
       
@@ -383,12 +393,50 @@ const PdfPurchaseOrder = () => {
           ],
           
         },
-        '\n',
+        
     {
         columns: [
           {
-            width: '80%',
+          stack: [
+          {
+            
+            width: '40%',
             text: `Authorized By`,
+            alignment: 'right',
+            bold: true,
+            margin: [-10, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            
+            width: '40%',
+            text: `PYRAMID ENGINEERING PRIVATE LTD`,
+            alignment: 'right',
+            bold: true,
+            color:'brown',
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
+      },
+        ],
+      },
+      '\n',
+      '\n',
+      '\n',
+      {
+        columns: [
+          {
+            width: '80%',
+            text: `Name`,
+            alignment: 'right',
+            bold: true,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            width: '20%',
+            text: `Bala`,
             alignment: 'right',
             bold: true,
             margin: [0, 10, 0, 10],
@@ -396,16 +444,118 @@ const PdfPurchaseOrder = () => {
           },
         ],
       },
-      '\n',
-        {
+      {
+        columns: [
+          {
+            width: '80%',
+            text: `Date`,
+            alignment: 'right',
+            bold: true,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            width: '20%',
+            text: `12.03.24`,
+            alignment: 'right',
+            bold: true,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
+      },
+      {
           width: '100%',
           alignment: 'center',
-          text: 'PURCHASE ORDER CREATED',
+          text: 'PURCHASE ORDER ACKNOWLEDGEMENT',
           bold: true,
           margin: [10, 10, 0, 10],
           fontSize: 12,
         },
+       
+        {
+          columns: [
+            {
+              stack: [
+               {text:` Sign and Return within Three Days after receipt of This Order `,style: [ 'textSize'],margin:[20,0,0,0]  },
+                {text:` Name: ${(purchaseDetails.purchase_order_date)? moment(purchaseDetails.purchase_order_date).format('DD-MM-YYYY'):''} `,style: [ 'textSize'],margin:[20,0,0,0]  },
+                {text:` Signature:${purchaseDetails.supplier_reference_no?purchaseDetails.supplier_reference_no:''} `,style: [ 'textSize'],margin:[20,0,0,0]  },
+                {text:` Date : ${(purchaseDetails.yr_quote_date)? moment(purchaseDetails.yr_quote_date).format('DD-MM-YYYY'):''} `,style: [ 'textSize'],margin:[20,0,0,0]  },
+              
+              ],
+            },
+        
+          ],
+        },
+        
+        {
+          width: '100%',
+          alignment: 'center',
+          text: 'Company Stamp',
+          bold: true,
+          margin: [10, 10, 0, 10],
+          fontSize: 9,
+        },
+        
+        {
+          width: '100%',
+          alignment: 'center',
+          text: '10 BUROH STREET, WEST CONNECT BUILDING #07-34, SINGAPORE 627564 Tel: 62599046 UEN: 200821275M email: accounts@pyramid-groups.com',
+          bold: true,
+          margin: [10, 10, 0, 10],
+          fontSize: 6,
+        },
+
+        {
+          width: '100%',
+          alignment: 'center',
+          text: 'PURCHASE ORDER (Back Page)',
+          bold: true,
+          margin: [10, 10, 0, 10],
+          fontSize: 12,
+        },
+
+        {
+          width: '100%',
+          alignment: 'center',
+          text: 'Terms And Conditions',
+          bold: true,
+          margin: [10, 10, 0, 10],
+          fontSize: 12,
+        },
+
+        {
+          width: '100%',
+          alignment: 'left',
+          text: `${terms && terms.value ? terms.value : ''}`,
+          bold: true,
+          margin: [10, 10, 0, 10],
+          fontSize: 6,
+        },
+
+        {
+          width: '100%',
+          alignment: 'left',
+          text: 'Acknowledge By',
+          bold: true,
+          margin: [10, 10, 0, 10],
+          fontSize: 8,
+        },
+        '\n',
+        '\n',
+        '\n',
+        '\n',
+
+        {
+          width: '100%',
+          alignment: 'center',
+          text: '10 BUROH STREET, WEST CONNECT BUILDING #07-34, SINGAPORE 627564 Tel: 62599046 UEN: 200821275M email: accounts@pyramid-groups.com',
+          bold: true,
+          margin: [10, 10, 0, 10],
+          fontSize: 5,
+        },
       ],
+
       margin: [0, 50, 50, 50],
 
       styles: {
@@ -424,6 +574,9 @@ const PdfPurchaseOrder = () => {
         },
         textSize: {
           fontSize: 10,
+        },
+        textSize1: {
+          fontSize: 7,
         },
         notesTitle: {
           bold: true,
