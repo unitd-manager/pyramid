@@ -9,7 +9,7 @@ import 'datatables.net-buttons/js/buttons.colVis';
 import 'datatables.net-buttons/js/buttons.flash';
 import 'datatables.net-buttons/js/buttons.html5';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link ,useNavigate} from 'react-router-dom';
 import { Form, Table } from 'reactstrap';
 import ComponentCard from '../ComponentCard';
 import message from '../Message';
@@ -18,6 +18,7 @@ import api from '../../constants/api';
 const SubConHistory = () => {
   const [history, setHistory] = useState();
   const { id } = useParams();
+  const navigate = useNavigate()
 
   // Get  By Id
 
@@ -51,7 +52,7 @@ const SubConHistory = () => {
     },
   ];
 
-  const SubCon = (subConPaymentsId) => {
+  const SubCon = (PaymentsId) => {
     Swal.fire({
       title: `Are you sure? ${id}`,
       text: 'Do you like to cancel the receipt?',
@@ -62,9 +63,10 @@ const SubConHistory = () => {
       confirmButtonText: 'Yes!',
     }).then((result) => {
       if (result.isConfirmed) {
-        api.put('/subcon/updateSubConPaymentsAndWorkOrder', { sub_con_payments_id: subConPaymentsId,sub_con_work_order_id: id }).then(() => {
+        api.put('/subcon/updateSubConPaymentsAndWorkOrder', { sub_con_payments_history_id: PaymentsId,sub_con_work_order_id: id }).then(() => {
           Swal.fire('Cancelled!');
           getHistoryById();
+          navigate(-1);
         });
       }
     });
@@ -94,9 +96,9 @@ const SubConHistory = () => {
                           <td>{element.amount}</td>
                           <td>{element.mode_of_payment}</td>
                           <td>
-              {element.status !== 'Cancelled' ? (
+              {element.invoice_paid_status !== 'Cancelled' ? (
                 <Link to="">
-                <span onClick={() => SubCon(element.sub_con_payments_id, element.sub_con_work_order_id, element.sub_con_id)}>
+                <span onClick={() => SubCon(element.sub_con_payments_history_id, element.sub_con_work_order_id, element.sub_con_id)}>
                   <u>Cancel</u>
                   </span>
                   </Link>
