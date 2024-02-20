@@ -1,39 +1,66 @@
-import React from 'react';
-import { Row, Col, Form, FormGroup, Label, Input, Button, Modal, ModalFooter, ModalHeader, ModalBody } from 'reactstrap';
+import React, { useState } from 'react';
+import {
+  Row,
+  Col,
+  FormGroup,
+  Input,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Label,
+  Form,
+} from 'reactstrap';
 import PropTypes from 'prop-types';
+import api from '../../constants/api';
+import message from '../Message';
 
-
-
-
-const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , generateJobCode}) => {
-  JobCompletionTab.propTypes = {
-    joborder: PropTypes.any,
-    addnewjob:PropTypes.any,
-    setAddNewJob:PropTypes.any,
-    setJobOrder: PropTypes.any,
-    generateJobCode: PropTypes.any,
+const EditQuoteModal = ({
+  editjob,
+  setEditJob,
+  getJob,
+  job
+}) => {
+  EditQuoteModal.propTypes = {
+    editjob: PropTypes.bool,
+    setEditJob: PropTypes.func,
+    getJob: PropTypes.func,
+    job: PropTypes.any
   };
 
-  // Edit Project
+  const [jobeditdata, setJobEditData] = useState(job);
   
+
   const handleInputs = (e) => {
-    setJobOrder({ ...joborder, [e.target.name]: e.target.value });
+    setJobEditData({ ...jobeditdata, [e.target.name]: e.target.value });
   };
 
-
- 
-
+  const EditJob = () => {
+    api
+      .post('/project/editJoborder', jobeditdata)
+      .then(() => {
+        message('Job order Edited Successfully.', 'success');
+        getJob();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      })
+      .catch(() => {
+        message('Unable to edit job. please fill all fields', 'error');
+      });
+  };
 
   return (
     <>
-    <Modal size="xl" isOpen={addnewjob}>
+      {/*  Edit Quote Modal */}
+      <Modal size="lg" isOpen={editjob}>
         <ModalHeader>
-          Add New Job
+          Edit Job
           <Button
-            className="shadow-none"
             color="secondary"
             onClick={() => {
-              setAddNewJob(false);
+              setEditJob(false);
             }}
           >
             X
@@ -49,7 +76,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="text"
                     name="project_location"
-                    defaultValue={joborder && joborder.project_location}
+                    defaultValue={jobeditdata && jobeditdata.project_location}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -61,7 +88,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="text"
                     name="scope_of_work"
-                    defaultValue={joborder && joborder.scope_of_work}
+                    defaultValue={jobeditdata && jobeditdata.scope_of_work}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -73,7 +100,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="text"
                     name="po_number"
-                    defaultValue={joborder && joborder.po_number}
+                    defaultValue={jobeditdata && jobeditdata.po_number}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -84,7 +111,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="text"
                     name="quote_no"
-                    defaultValue={joborder && joborder.quote_no}
+                    defaultValue={jobeditdata && jobeditdata.quote_no}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -97,7 +124,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="date"
                     name="job_completion_date"
-                    defaultValue={joborder && joborder.job_completion_date}
+                    defaultValue={jobeditdata && jobeditdata.job_completion_date}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -108,7 +135,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="text"
                     name="name"
-                    defaultValue={joborder && joborder.name}
+                    defaultValue={jobeditdata && jobeditdata.name}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -119,7 +146,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="text"
                     name="designation"
-                    defaultValue={joborder && joborder.designation}
+                    defaultValue={jobeditdata && jobeditdata.designation}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -130,7 +157,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="date"
                     name="date"
-                    defaultValue={joborder && joborder.date}
+                    defaultValue={jobeditdata && jobeditdata.date}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -143,7 +170,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="text"
                     name="witness_by_name"
-                    defaultValue={joborder && joborder.witness_by_name}
+                    defaultValue={jobeditdata && jobeditdata.witness_by_name}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -154,7 +181,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="text"
                     name="witness_by_designation"
-                    defaultValue={joborder && joborder.witness_by_designation}
+                    defaultValue={jobeditdata && jobeditdata.witness_by_designation}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -165,7 +192,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   <Input
                     type="date"
                     name="witness_by_date"
-                    defaultValue={joborder && joborder.witness_by_date}
+                    defaultValue={jobeditdata && jobeditdata.witness_by_date}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -180,8 +207,8 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                       className="shadow-none"
                       color="primary"
                       onClick={() => {
-                        generateJobCode();
-                        setAddNewJob(false);
+                        EditJob();
+                        setEditJob(false);
                       }}
                     >
                       {' '}
@@ -191,7 +218,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                       className="shadow-none"
                       color="secondary"
                       onClick={() => {
-                        setAddNewJob(false);
+                        setEditJob(false);
                       }}
                     >
                       Cancel
@@ -199,9 +226,9 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                   </ModalFooter>
         </ModalBody>
       </Modal>
-        
+      {/* END Edit Quote Modal */}
     </>
   );
 };
 
-export default JobCompletionTab;
+export default EditQuoteModal;

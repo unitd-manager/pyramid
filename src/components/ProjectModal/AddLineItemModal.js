@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   // Card,
   Row,
@@ -17,16 +17,18 @@ import * as $ from 'jquery';
 import random from 'random';
 import api from '../../constants/api';
 import message from '../Message';
-import EditLineItemModal from './EditLineItemModal'
+import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
 
-const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, editLineModal, setEditLineModal}) => {
+
+const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) => {
   AddLineItemModal.propTypes = {
     addLineItemModal: PropTypes.bool,
     setAddLineItemModal: PropTypes.func,
-    editLineModal: PropTypes.bool,
-    setEditLineModal: PropTypes.func,
+    JobOrderId: PropTypes.any,
   };
   //All state Varible
+  const { loggedInuser } = useContext(AppContext);
   const [totalAmount, setTotalAmount] = useState(0);
   const [addLineItem, setAddLineItem] = useState([
     {
@@ -43,6 +45,9 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, editLineModal
   //Insert Invoice Item
   const addLineItemApi = (obj) => {
     if (obj.title !== '' && obj.unit_price !== '' && obj.quantity !== '') {
+      obj.creation_date = creationdatetime;
+      obj.created_by = loggedInuser.first_name;
+      obj.job_order_id=JobOrderId
       api
       .post('/joborder/insertJobOrderItems', obj)
       .then(() => {
@@ -255,12 +260,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, editLineModal
                       </tbody>
                     </table>
                   {/* </Card> */}
-                  <EditLineItemModal
-        editLineModal={editLineModal}
-        setEditLineModal={setEditLineModal}
-      >
-        {' '}
-      </EditLineItemModal>
+                 
                   <ModalFooter>
                     <Button
                       className="shadow-none"

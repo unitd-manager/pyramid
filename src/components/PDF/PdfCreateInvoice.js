@@ -486,7 +486,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
               style: ['notesText', 'textSize'],
             },
             {
-              text: `${createInvoice.payment_terms ? createInvoice.payment_terms : ''
+              text: `${findCompany("cp.Paymentterms")} : ''
                 } `,
               alignment: 'center',
               style: ['invoiceAdd', 'textSize'],

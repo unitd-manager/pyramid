@@ -3,10 +3,9 @@ import { Row, Col, Form, FormGroup, Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import ComponentCardV2 from '../ComponentCardV2';
 
-export default function ProjectButton({ UpdateData, InsertJobOrder, applyChanges, backToList, navigate }) {
+export default function ProjectButton({ UpdateData, applyChanges, backToList, navigate }) {
   ProjectButton.propTypes = {
     UpdateData: PropTypes.any,
-    InsertJobOrder: PropTypes.any,
     navigate: PropTypes.any,
     applyChanges: PropTypes.func,
     backToList: PropTypes.func,
@@ -22,7 +21,6 @@ export default function ProjectButton({ UpdateData, InsertJobOrder, applyChanges
                 color="primary"
                 onClick={() => {
                   UpdateData();
-                  InsertJobOrder();
                   navigate('/Project');
                 }}
               >
@@ -35,7 +33,6 @@ export default function ProjectButton({ UpdateData, InsertJobOrder, applyChanges
                 color="primary"
                 onClick={() => {
                   UpdateData();
-                  InsertJobOrder();
                   applyChanges();
                 }}
               >

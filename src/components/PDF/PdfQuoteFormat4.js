@@ -543,7 +543,7 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
           },
           table: {
             headerRows: 1,
-            widths: [30, 60, 120, 40, 40, 45, 45, 40, 50],
+            widths: [30, 60, 120, 40, 40, 45, 45, 40, 55],
             defaultBorder: false,
             body: lineItemBody,
           },
