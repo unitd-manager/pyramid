@@ -6,7 +6,7 @@ import * as Icon from 'react-feather';
 
 
 
-const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLineModal,jobLineItem, setEditLineModelItem, setEditJobLineModal}) => {
+const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLineModal,jobLineItem, setEditLineModelItem, setEditJobLineModal, JobOrderId}) => {
     ViewLineJobItemmodal.propTypes = {
     viewJobLineToggle: PropTypes.any,
     deleteJobItemRecord:PropTypes.any,
@@ -14,9 +14,10 @@ const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLi
     jobLineItem: PropTypes.any,
     setEditLineModelItem: PropTypes.any,
     setEditJobLineModal: PropTypes.any,
+    JobOrderId: PropTypes.any,
   };
 
- 
+  console.log('ViewJobOrderId:', JobOrderId);
 
 
   return (

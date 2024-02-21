@@ -50,6 +50,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
       .post('/invoice/getInvoiceByInvoiceId', { invoice_id: invoiceId })
       .then((res) => {
         setCreateInvoice(res.data.data);
+        console.log('CreateInvoice', res.data.data)
       })
       .catch(() => {
         message('Invoice Data Not Found', 'info');
@@ -486,7 +487,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
               style: ['notesText', 'textSize'],
             },
             {
-              text: `${findCompany("cp.Paymentterms")} : ''
+              text: `${createInvoice.payment_terms ? createInvoice.payment_terms : ''
                 } `,
               alignment: 'center',
               style: ['invoiceAdd', 'textSize'],

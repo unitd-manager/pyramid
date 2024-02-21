@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Row,
   Col,
@@ -13,44 +13,28 @@ import {
   Form,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import api from '../../constants/api';
-import message from '../Message';
+import moment from 'moment';
 
 const EditQuoteModal = ({
   editjob,
   setEditJob,
-  getJob,
-  job
+  job,
+  EditJobDetails,
+  handleInputs,
 }) => {
   EditQuoteModal.propTypes = {
     editjob: PropTypes.bool,
     setEditJob: PropTypes.func,
-    getJob: PropTypes.func,
-    job: PropTypes.any
+    job: PropTypes.any,
+    EditJobDetails: PropTypes.func,
+    handleInputs: PropTypes.func,
   };
 
-  const [jobeditdata, setJobEditData] = useState(job);
   
 
-  const handleInputs = (e) => {
-    setJobEditData({ ...jobeditdata, [e.target.name]: e.target.value });
-  };
+  
 
-  const EditJob = () => {
-    api
-      .post('/project/editJoborder', jobeditdata)
-      .then(() => {
-        message('Job order Edited Successfully.', 'success');
-        getJob();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      })
-      .catch(() => {
-        message('Unable to edit job. please fill all fields', 'error');
-      });
-  };
-
+ 
   return (
     <>
       {/*  Edit Quote Modal */}
@@ -76,7 +60,7 @@ const EditQuoteModal = ({
                   <Input
                     type="text"
                     name="project_location"
-                    defaultValue={jobeditdata && jobeditdata.project_location}
+                    defaultValue={job && job.project_location}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -88,7 +72,7 @@ const EditQuoteModal = ({
                   <Input
                     type="text"
                     name="scope_of_work"
-                    defaultValue={jobeditdata && jobeditdata.scope_of_work}
+                    defaultValue={job && job.scope_of_work}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -100,7 +84,7 @@ const EditQuoteModal = ({
                   <Input
                     type="text"
                     name="po_number"
-                    defaultValue={jobeditdata && jobeditdata.po_number}
+                    defaultValue={job && job.po_number}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -111,7 +95,7 @@ const EditQuoteModal = ({
                   <Input
                     type="text"
                     name="quote_no"
-                    defaultValue={jobeditdata && jobeditdata.quote_no}
+                    defaultValue={job && job.quote_no}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -124,7 +108,7 @@ const EditQuoteModal = ({
                   <Input
                     type="date"
                     name="job_completion_date"
-                    defaultValue={jobeditdata && jobeditdata.job_completion_date}
+                    defaultValue={moment(job && job.job_completion_date).format('YYYY-MM-DD')}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -135,7 +119,7 @@ const EditQuoteModal = ({
                   <Input
                     type="text"
                     name="name"
-                    defaultValue={jobeditdata && jobeditdata.name}
+                    defaultValue={job && job.name}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -146,7 +130,7 @@ const EditQuoteModal = ({
                   <Input
                     type="text"
                     name="designation"
-                    defaultValue={jobeditdata && jobeditdata.designation}
+                    defaultValue={job && job.designation}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -157,7 +141,7 @@ const EditQuoteModal = ({
                   <Input
                     type="date"
                     name="date"
-                    defaultValue={jobeditdata && jobeditdata.date}
+                    defaultValue={moment(job && job.date).format('YYYY-MM-DD')}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -170,7 +154,7 @@ const EditQuoteModal = ({
                   <Input
                     type="text"
                     name="witness_by_name"
-                    defaultValue={jobeditdata && jobeditdata.witness_by_name}
+                    defaultValue={job && job.witness_by_name}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -181,7 +165,7 @@ const EditQuoteModal = ({
                   <Input
                     type="text"
                     name="witness_by_designation"
-                    defaultValue={jobeditdata && jobeditdata.witness_by_designation}
+                    defaultValue={job && job.witness_by_designation}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -192,7 +176,7 @@ const EditQuoteModal = ({
                   <Input
                     type="date"
                     name="witness_by_date"
-                    defaultValue={jobeditdata && jobeditdata.witness_by_date}
+                    defaultValue={moment(job && job.witness_by_date).format('YYYY-MM-DD')}
                     onChange={handleInputs}
                   />
                 </FormGroup>
@@ -207,7 +191,7 @@ const EditQuoteModal = ({
                       className="shadow-none"
                       color="primary"
                       onClick={() => {
-                        EditJob();
+                        EditJobDetails();
                         setEditJob(false);
                       }}
                     >

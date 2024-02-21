@@ -5,20 +5,19 @@ import PropTypes from 'prop-types';
 
 
 
-const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , generateJobCode}) => {
+const JobCompletionTab = ({ joborder, addnewjob, setAddNewJob , generateJobCode, handleJobInputs, handleInsertData}) => {
   JobCompletionTab.propTypes = {
     joborder: PropTypes.any,
     addnewjob:PropTypes.any,
     setAddNewJob:PropTypes.any,
-    setJobOrder: PropTypes.any,
     generateJobCode: PropTypes.any,
+    handleInsertData: PropTypes.func,
+    handleJobInputs: PropTypes.any,
   };
 
   // Edit Project
   
-  const handleInputs = (e) => {
-    setJobOrder({ ...joborder, [e.target.name]: e.target.value });
-  };
+  
 
 
  
@@ -50,7 +49,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="text"
                     name="project_location"
                     defaultValue={joborder && joborder.project_location}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -62,7 +61,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="text"
                     name="scope_of_work"
                     defaultValue={joborder && joborder.scope_of_work}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -74,7 +73,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="text"
                     name="po_number"
                     defaultValue={joborder && joborder.po_number}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -85,7 +84,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="text"
                     name="quote_no"
                     defaultValue={joborder && joborder.quote_no}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -98,7 +97,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="date"
                     name="job_completion_date"
                     defaultValue={joborder && joborder.job_completion_date}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -109,7 +108,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="text"
                     name="name"
                     defaultValue={joborder && joborder.name}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -120,7 +119,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="text"
                     name="designation"
                     defaultValue={joborder && joborder.designation}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -131,7 +130,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="date"
                     name="date"
                     defaultValue={joborder && joborder.date}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -144,7 +143,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="text"
                     name="witness_by_name"
                     defaultValue={joborder && joborder.witness_by_name}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -155,7 +154,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="text"
                     name="witness_by_designation"
                     defaultValue={joborder && joborder.witness_by_designation}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -166,7 +165,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                     type="date"
                     name="witness_by_date"
                     defaultValue={joborder && joborder.witness_by_date}
-                    onChange={handleInputs}
+                    onChange={handleJobInputs}
                   />
                 </FormGroup>
               </Col>
@@ -181,7 +180,7 @@ const JobCompletionTab = ({ joborder, setJobOrder, addnewjob, setAddNewJob , gen
                       color="primary"
                       onClick={() => {
                         generateJobCode();
-                        setAddNewJob(false);
+                        handleInsertData();
                       }}
                     >
                       {' '}

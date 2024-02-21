@@ -11,17 +11,17 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import { Editor } from 'react-draft-wysiwyg';
-import { convertToRaw,EditorState,ContentState } from 'draft-js';
+// import { Editor } from 'react-draft-wysiwyg';
+// import { convertToRaw,EditorState,ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
-import draftToHtml from 'draftjs-to-html';
+// import draftToHtml from 'draftjs-to-html';
 import Select from 'react-select';
 import { useParams } from 'react-router-dom';
 import * as $ from 'jquery';
 import random from 'random';
 import api from '../../constants/api';
 import message from '../Message';
-import ComponentCard from '../ComponentCard';
+// import ComponentCard from '../ComponentCard';
 import InvoiceTable from './InvoiceTable';
 
 const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, orderId }) => {
@@ -35,7 +35,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
   const { id } = useParams();
   const [totalAmount, setTotalAmount] = useState(0);
   const [gstValue, setGstValue] = useState();
-  const [paymentTerms, setPaymentTerms] = useState('');
+  // const [paymentTerms, setPaymentTerms] = useState('');
   const gstPercentageValue = parseInt(gstValue?.value, 10) || 0; 
   const [createInvoice, setCreateInvoice] = useState({
     discount: '',
@@ -81,12 +81,12 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
   const handleInserts = (e) => {
     setCreateInvoice({ ...createInvoice, [e.target.name]: e.target.value });
   };
-  const handleDataEditor = (e, type) => {
-    setCreateInvoice({
-      ...createInvoice,
-      [type]: draftToHtml(convertToRaw(e.getCurrentContent())),
-    });
-  };
+  // const handleDataEditor = (e, type) => {
+  //   setCreateInvoice({
+  //     ...createInvoice,
+  //     [type]: draftToHtml(convertToRaw(e.getCurrentContent())),
+  //   });
+  // };
 
   //Insert Invoice Item
   const addLineItemApi = (obj) => {
@@ -111,9 +111,9 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
           setCreateInvoice({ ...createInvoice, payment_terms: fetchedTermsAndCondition });
           const contentBlock = htmlToDraft(fetchedTermsAndCondition);
           if (contentBlock) {
-            const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-            const editorState = EditorState.createWithContent(contentState);
-            setPaymentTerms(editorState);
+            // const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+            // const editorState = EditorState.createWithContent(contentState);
+            // setPaymentTerms(editorState);
           }
         }
       })
@@ -347,7 +347,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                   <Row>
                     <InvoiceTable createInvoice={createInvoice} handleInserts={handleInserts} />
                     {/* Description form */}
-                    <ComponentCard title="Description">
+                    {/* <ComponentCard title="Description">
                       <Editor
                         editorState={paymentTerms}
                         wrapperClassName="demo-wrapper mb-0"
@@ -357,7 +357,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                           setPaymentTerms(e);
                         }}
                       />
-                    </ComponentCard>
+                    </ComponentCard> */}
                   </Row>
                   {/* Invoice Item */}
                   <Row>

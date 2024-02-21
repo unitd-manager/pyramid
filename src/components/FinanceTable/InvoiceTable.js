@@ -154,17 +154,6 @@ const CreateReceipt = ({ createInvoice, handleInserts }) => {
       </Col>
       <Col md="4">
         <FormGroup>
-          <Label>Payment Terms</Label>
-          <Input
-            type="text"
-            onChange={handleInserts}
-            value={createInvoice && createInvoice.payment_terms}
-            name="payment_terms"
-          />
-        </FormGroup>
-      </Col>
-      <Col md="4">
-        <FormGroup>
           <Label>Supply To</Label>
           <Input
             type="text"
@@ -193,6 +182,17 @@ const CreateReceipt = ({ createInvoice, handleInserts }) => {
             onChange={handleInserts}
             value={createInvoice && createInvoice.for_and_behalf_of}
             name="for_and_behalf_of"
+          />
+        </FormGroup>
+      </Col>
+      <Col md="8">
+        <FormGroup>
+          <Label>Payment Terms</Label>
+          <Input
+            type="textarea"
+            onChange={handleInserts}
+            value={createInvoice && createInvoice.payment_terms}
+            name="payment_terms"
           />
         </FormGroup>
       </Col>

@@ -50,7 +50,7 @@ const ProjectEdit = () => {
     navigate('/Project');
   }; 
  
-  const [joborder, setJobOrder] = useState();
+  const [joborder, setJobOrder] = useState({});
   const [projectDetail, setProjectDetail] = useState();
   const [activeTab, setActiveTab] = useState('1');
   const [addDuctingCostModal, setAddDuctingCostModal] = useState(false);
@@ -78,9 +78,24 @@ const ProjectEdit = () => {
   const [jobLineItem, setJobLineItem] = useState([]);
   const [editJobLineModal, setEditJobLineModal] = useState(false);
   const [editLineModelItem, setEditLineModelItem] = useState(null);
-  const [editjob, setEditjob] = useState(false);
+  const [editjob, setEditJob] = useState(false);
   const [job, setJob] = useState({});
   const [JobOrderId, setJobOrderId] = useState(null);
+  const handleInputs = (e) => {
+    setJob({ ...job, [e.target.name]: e.target.value });
+  };
+
+  const [addNewJobVisible, setAddNewJobVisible] = useState(true);
+
+  const handleAddNewJob = () => {
+    setAddNewJob(true);
+  };
+  const handleInsertData = () => {
+    // Logic to insert data
+    // Once the data is inserted successfully, close the modal and hide the button
+    setAddNewJob(false);
+    setAddNewJobVisible(false);
+  };
   const viewJobLineToggle = () => {
     setViewJobLineModal(!viewjobLineModal);
   };
@@ -103,6 +118,9 @@ const ProjectEdit = () => {
         console.log(err);
       });
   }, [id]);
+  const handleJobInputs = (e) => {
+    setJobOrder({ ...joborder, [e.target.name]: e.target.value });
+  };
 
   const handleClientForms = (e) => {
     setWorkOrderForm({ ...workOrderForm, [e.target.name]: e.target.value });
@@ -353,6 +371,10 @@ console.log('elem',elem)
       }
     });
   };
+
+  
+
+
   const InsertJobOrder = (code) => {
     joborder.creation_date = creationdatetime;
     joborder.created_by = loggedInuser.first_name;
@@ -392,14 +414,33 @@ console.log('elem',elem)
       .post('/project/getJobLineItemsById', { job_order_id: JobId })
       .then((res) => {
         setJobLineItem(res.data.data);
-        console.log('joblineitems',res.data.data)
+        console.log('joblineitems', res.data.data);
         setViewJobLineModal(true);
       })
   };
   const getJob = () => {
     api.post('/project/getJobByProjectId', { project_id: id }).then((res) => {
-      setJob(res.data.data);
+      setJob(res.data.data[0]);
+      setJobOrder(res.data.data[0]);
     });
+  };
+
+  useEffect(() => {
+    getJob();
+  }, []);
+  const EditJobDetails = () => {
+    api
+      .post('/project/editJoborder', job)
+      .then(() => {
+        message('Job order Edited Successfully.', 'success');
+        getJob();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      })
+      .catch(() => {
+        message('Unable to edit job. please fill all fields', 'error');
+      });
   };
   const deleteJobItemRecord = (quoteItemsId) => {
     Swal.fire({
@@ -733,16 +774,22 @@ console.log('elem',elem)
          {/* Start Tab Content 10*/} 
           <TabPane tabId="10" eventkey="JobCompletion">
             <Row>
+            {(addNewJobVisible && (Object.keys(joborder).length === 0) )&& (  
           <Col md="3">
-        <Button color="primary" 
-        onClick={() => setAddNewJob(true)}>
+        <Button color="primary"
+         onClick={(e) => {       
+          handleJobInputs(e);
+          handleAddNewJob(e);
+        }} >
             Add New Job</Button>
       </Col>
+           )}
+   
       <Col md="3">
         <Button color="primary" 
          onClick={() => {
           getJob();
-          setEditjob(true)
+          setEditJob(true)
         }}>
              Edit Job</Button>
       </Col> 
@@ -757,7 +804,7 @@ console.log('elem',elem)
       <Col md="3">
         <Button color="primary" 
          onClick={() => {
-          getJobLineItem(JobOrderId);
+          getJobLineItem(job.job_order_id);
         }}>
             View Line Item</Button>
       </Col>
@@ -769,10 +816,12 @@ console.log('elem',elem)
                     </Label>
                   </Col>
                   </Row>
-            <JobCompletionTab addnewjob={addnewjob} setAddNewJob={setAddNewJob}  joborder={joborder} setJobOrder={setJobOrder} generateJobCode={generateJobCode}></JobCompletionTab>
+            <JobCompletionTab handleJobInputs={handleJobInputs} handleInsertData={handleInsertData} addnewjob={addnewjob} setAddNewJob={setAddNewJob}  joborder={joborder} setJobOrder={setJobOrder} generateJobCode={generateJobCode}></JobCompletionTab>
             <EditJobModal
           editjob={editjob}
-          setEditjob={setEditjob}
+          handleInputs={handleInputs}
+          EditJobDetails={EditJobDetails}
+          setEditJob={setEditJob}
           getJob={getJob}
           job={job}
         ></EditJobModal>
@@ -792,6 +841,7 @@ console.log('elem',elem)
         getJobLineItem={getJobLineItem}
         jobLineItem={jobLineItem}
         setEditJobLineModal={setEditJobLineModal}
+        JobOrderId={JobOrderId}
         ></ViewLineJobItemmodal>
          <EditLineItemModal
         editJobLineModal={editJobLineModal}

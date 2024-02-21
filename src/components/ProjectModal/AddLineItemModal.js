@@ -27,6 +27,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
     setAddLineItemModal: PropTypes.func,
     JobOrderId: PropTypes.any,
   };
+  console.log('JobOrderId:', JobOrderId);
   //All state Varible
   const { loggedInuser } = useContext(AppContext);
   const [totalAmount, setTotalAmount] = useState(0);

@@ -148,7 +148,6 @@ export default function TenderQuotation({
   const handleEditSuccess = () => {
     // Handle the refresh of the View Line Item Modal
     getLineItem(quote.quote_id);
-    
     setViewLineModal(true);
   };
 
