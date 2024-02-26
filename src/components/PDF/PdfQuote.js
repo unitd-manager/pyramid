@@ -457,7 +457,7 @@ const PdfQuote = ({ id, quoteId }) => {
 
         {
           text: `REMARKS: `,
-          fontSize: 11,
+          fontSize: 9,
           bold:true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
@@ -474,14 +474,14 @@ const PdfQuote = ({ id, quoteId }) => {
           text: 'Thank you very much for your business',
           bold: true,
           margin: [0, 10, 0, 10],
-          fontSize: 12,
+          fontSize: 8,
         },
         '\n',
         [{
           text: `PYRAMID ENGINEERING PRIVATE LTD `,
           fontSize: 8,
           // decoration: 'underline',
-          margin: [0, 5, 0, 0],
+          margin: [0, 50, 0, 0],
           style: ['notesText', 'textSize'],
         },
         {
@@ -498,7 +498,7 @@ const PdfQuote = ({ id, quoteId }) => {
         style: 'textSize',
         fontSize: 8,
         bold: true,
-        margin: [10, -50, 0, 0],
+        margin: [5, -50, 15, 15],
         alignment: 'right',
       },
       {
@@ -514,11 +514,11 @@ const PdfQuote = ({ id, quoteId }) => {
       {
         columns: [
           {
-            text: 'Sign with Company Stamp and fax by return',
+            text: ['Sign with Company Stamp and','\n', 'fax by return'],
             style: 'textSize',
             fontSize: 8,
-            margin: [0, 10, 0, 0],
-            alignment: 'right',
+            margin: [360, 10, 0, 0],
+            alignment: 'center',
           },
         ],
       },

@@ -780,7 +780,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
             {
               text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
               style: 'bold',
-              fontSize: 11,
+              fontSize: 9,
               margin: [40, 0, 0, 0],
             },
           ],
@@ -791,7 +791,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         {
           text: `REMARKS : `,
           bold: true,
-          fontSize: 11,
+          fontSize: 9,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
@@ -801,7 +801,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         
         [{
           text: `INVOICES & PAYMENT :`,
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
@@ -818,7 +818,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
       '\n',
       [{
         text: `NOTICE OF TERMINATION  :`,
-        fontSize: 11,
+        fontSize: 9,
         bold: true,
         decoration: 'underline',
         margin: [0, 5, 0, 0],
@@ -836,7 +836,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         '\n',
         [{
           text: `TAXES :`,
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
@@ -861,19 +861,30 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
           text: 'Thank You For your support and commitment.',
           bold: true,
           margin: [0, 10, 0, 10],
-          fontSize: 12,
+          fontSize: 8,
         },
         '\n\n\n',
         [{
-          text: `PYRAMID ENGINEERING PRIVATE LTD `,
+          text:[ 'PYRAMID ENGINEERING PRIVATE LTD'],
           fontSize: 8,
           // decoration: 'underline',
+          color:'red',
+          bold:true,
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
         },
         {
+          text: `BALA`,
+          color:'blue',
+          bold:true,
+          fontSize: 7,
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+  
+        },
+        {
           text: `We accept the above terms and conditions.
-          For and on behalf of :`,
+          For and on behalf of`,
           fontSize: 7,
           
           alignment:'right',
@@ -884,26 +895,42 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         {
           text: `${tenderDetails.company_name ? tenderDetails.company_name : ''}`,
           fontSize: 9,
+          color:'blue',
+          bold:true,
           margin: [0, 5, 0, 0],
           style: ['invoiceAdd', 'textSize'],
         },
       ],
       '\n\n',
       {
-        text: `Name :${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
-        fontSize: 7,
-        //alignment:'right',
-        
-        margin: [5, 0, 0, 0],
-        style: ['invoiceAdd', 'textSize'],
-
+        columns: [
+          {
+            width: '80%',
+            text: `Name:`,
+            alignment: 'right',
+            fontSize: 7,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            width: '20%',
+            text: `${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
+            alignment: 'right',
+            fontSize: 7,
+            color:'blue',
+            bold: true,
+            margin: [0, 10, 10, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
       },
+      
       '\n',
       {
-        text: `Position :`,
+        text: `Position :${tenderDetails.position ? tenderDetails.position : ''}`,
         fontSize: 7,
         //alignment:'right',
-        
+       
         margin: [5, 0, 0, 0],
         style: ['invoiceAdd', 'textSize'],
 
