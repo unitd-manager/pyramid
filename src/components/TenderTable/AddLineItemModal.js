@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  // Card,
+  Card,
   Row,
   Col,
   Form,
@@ -10,6 +10,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Table,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -141,7 +142,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
   };
   return (
     <>
-      <Modal size="xl" isOpen={addLineItemModal}>
+      <Modal size="xl" isOpen={addLineItemModal} >
         <ModalHeader>
           Add Quote Items
           <Button
@@ -154,7 +155,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
             X
           </Button>
         </ModalHeader>
-        <ModalBody>
+        <ModalBody>    
           <Row>
             <Col md="12">
               <Form>
@@ -175,7 +176,8 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                   </Row>
                   {/* Invoice Item */}
                   {/* <Card> */}
-                    <table className="lineitem">
+                  <Card className="shadow-none overflow-auto updateOTModalTableCard">
+                    <Table className="display">
                       <thead>
                         <tr>
                           <th scope="col">Title <span className="required"> *</span>{' '}</th>
@@ -198,45 +200,46 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                             return (
                               <tr key={item.id}>
                                 <td data-label="Title">
-                                  <Input Value={item.title} type="text" name="title" style={{ width: '100%' }} />
+                                  <Input Value={item.title} className="w-auto"  type="text" name="title"  />
                                 </td>
                                 <td data-label="Asset No">
-                                  <Input Value={item.asset_no} type="text" name="asset_no" style={{ width: '100%' }} />
+                                  <Input Value={item.asset_no} className="w-auto"  type="text" name="asset_no"  />
                                 </td>
                                 <td data-label="Description">
-                                  <Input Value={item.description} type="text" name="description" style={{ width: '100%' }} />
+                                  <Input Value={item.description} className="w-auto"  type="text" name="description"  />
                                 </td>
                                 <td data-label="Unit">
-                                  <Input Value={item.unit} type="text" name="unit" style={{ width: '70%' }}/>
+                                  <Input Value={item.unit} className="w-auto" type="text" name="unit" />
                                 </td>
                                 <td data-label="Qty">
-                                  <Input Value={item.quantity} type="number" name="quantity" style={{ width: '70%' }}/>
+                                  <Input Value={item.quantity} className="w-auto"  type="number" name="quantity" />
                                 </td>
                                 <td data-label="Unit Price">
                                   <Input
                                     Value={item.unit_price}
+                                    className="w-auto" 
                                     onBlur={() => {
                                       calculateTotal();
                                     }}
                                     type="number"
                                     name="unit_price"
-                                    style={{ width: '70%' }}
+                                    
                                   />
                                 </td>
                                 <td data-label="From Date">
-                                  <Input Value={item && moment(item.from_date).format('DD-MM-YYYY')} type="date" name="from_date"  style={{ width: '100%' }}/>
+                                  <Input Value={item && moment(item.from_date).format('DD-MM-YYYY')} className="w-auto"  type="date" name="from_date"  />
                                 </td>
                                 <td data-label="To Date">
-                                  <Input Value={item && moment(item.to_date).format('DD-MM-YYYY')} type="date" name="to_date"  style={{ width: '100%' }}/>
+                                  <Input Value={item && moment(item.to_date).format('DD-MM-YYYY')} className="w-auto"  type="date" name="to_date"  />
                                 </td>
                                 <td data-label="No of Days">
-                                  <Input Value={item.no_of_days} type="text" name="no_of_days"  style={{ width: '70%' }}/>
+                                  <Input Value={item.no_of_days} className="w-auto"  type="text" name="no_of_days"  />
                                 </td>
                                 <td data-label="Amount">
-                                  <Input Value={item.amount} type="text" name="amount" disabled style={{ width: '70%' }}/>
+                                  <Input Value={item.amount} className="w-auto"  type="text" name="amount" disabled />
                                 </td>
                                 <td data-label="Remarks">
-                                  <Input Value={item.remarks} type="text" name="remarks" style={{ width: '100%' }}/>
+                                  <Input Value={item.remarks} className="w-auto"  type="text" name="remarks" />
                                 </td>
                                 <td data-label="Action">
                                   
@@ -253,8 +256,8 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                             );
                           })}
                       </tbody>
-                    </table>
-                  {/* </Card> */}
+                    </Table>
+                  </Card>
                   <ModalFooter>
                     <Button
                       className="shadow-none"
