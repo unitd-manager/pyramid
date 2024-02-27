@@ -580,7 +580,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
 
         [{
           text: `GENERAL`,
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
@@ -598,7 +598,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
         
         [{
           text: `SCOPE OF WORKS`,
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
@@ -615,7 +615,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
       '\n',
       [{
         text: `COMMENCEMENT AND COMPLETION DATES`,
-        fontSize: 11,
+        fontSize: 9,
         bold: true,
         decoration: 'underline',
         margin: [0, 5, 0, 0],
@@ -633,7 +633,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
         '\n',
         [{
           text: `SAFETY`,
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
@@ -652,7 +652,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
 
         [{
           text: `INSURANCE`,
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
@@ -669,7 +669,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
       '\n', 
       [{
         text: `INVOICES & PAYMENT :`,
-        fontSize: 11,
+        fontSize: 9,
         bold: true,
         decoration: 'underline',
         margin: [0, 5, 0, 0],
@@ -686,7 +686,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
     '\n',
     [{
       text: `NOTICE OF TERMINATION  :`,
-      fontSize: 11,
+      fontSize: 9,
       bold: true,
       decoration: 'underline',
       margin: [0, 5, 0, 0],
@@ -704,7 +704,7 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
       '\n',
       [{
         text: `TAXES :`,
-        fontSize: 11,
+        fontSize: 9,
         bold: true,
         decoration: 'underline',
         margin: [0, 5, 0, 0],
@@ -728,19 +728,30 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
           text: 'Thank You For your support and commitment.',
           bold: true,
           margin: [0, 10, 0, 10],
-          fontSize: 12,
+          fontSize: 8,
         },
         '\n\n\n',
         [{
           text: `PYRAMID ENGINEERING PRIVATE LTD `,
           fontSize: 8,
+          color:'red',
+          bold:true,
           // decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
         },
         {
+          text: `BALA`,
+          color:'blue',
+          bold:true,
+          fontSize: 7,
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+  
+        },
+        {
           text: `We accept the above terms and conditions.
-          For and on behalf of :`,
+          For and on behalf of`,
           fontSize: 7,
           
           alignment:'right',
@@ -751,39 +762,80 @@ const PdfQuoteFormat5 = ({ id, quoteId }) => {
         {
           text: `${tenderDetails.company_name ? tenderDetails.company_name : ''}`,
           fontSize: 9,
+          color:'blue',
+          bold:true,
           margin: [0, 5, 0, 0],
           style: ['invoiceAdd', 'textSize'],
         },
       ],
       '\n\n',
       {
-        text: `Name :${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
-        fontSize: 7,
-        //alignment:'right',
-        
-        margin: [5, 0, 0, 0],
-        style: ['invoiceAdd', 'textSize'],
-
+        columns: [
+          {
+            width: '78%',
+            text: `Name:`,
+            alignment: 'right',
+            fontSize: 7,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            width: '22%',
+            text: `${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
+            alignment: 'right',
+            fontSize: 7,
+            color:'blue',
+            bold: true,
+            margin: [0, 10, 15, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
       },
-      '\n',
+      
       {
-        text: `Position :`,
-        fontSize: 7,
-        //alignment:'right',
-        
-        margin: [5, 0, 0, 0],
-        style: ['invoiceAdd', 'textSize'],
-
+        columns: [
+          {
+            width: '78%',
+            text: `Position:`,
+            alignment: 'right',
+            fontSize: 7,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            width: '22%',
+            text: `${tenderDetails.position ? tenderDetails.position : ''}`,
+            alignment: 'right',
+            fontSize: 7,
+            color:'blue',
+            bold: true,
+            margin: [0, 10, 60, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
       },
-      '\n',
+      
       {
-        text: `Date :`,
-        fontSize: 7,
-        //alignment:'right',
-        
-        margin: [5, 0, 0, 0],
-        style: ['invoiceAdd', 'textSize'],
-
+        columns: [
+          {
+            width: '78%',
+            text: `Date:`,
+            alignment: 'right',
+            fontSize: 7,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            width: '22%',
+            text: ``,
+            alignment: 'right',
+            fontSize: 7,
+            color:'blue',
+            bold: true,
+            margin: [0, 10, 10, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
       },
 
       ],

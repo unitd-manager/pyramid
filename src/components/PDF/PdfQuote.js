@@ -272,27 +272,27 @@ const PdfQuote = ({ id, quoteId }) => {
         {
           text: `Client:${tenderDetails.company_name ? tenderDetails.company_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
         '\n',
         {
           text: `Att : ${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
 
         '\n',
         {
           text: `Email:${tenderDetails.email ? tenderDetails.email : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
         '\n',
         {
           text: `Project: ${tenderDetails.title ? tenderDetails.title : ''}`,
           style: ['notesText', 'textSize'],
 
-          bold: 'true',
+          //bold: 'true',
         },
 
         {
@@ -498,14 +498,14 @@ const PdfQuote = ({ id, quoteId }) => {
         style: 'textSize',
         fontSize: 8,
         bold: true,
-        margin: [5, -50, 15, 15],
+        margin: [5, -50, 15, 0],
         alignment: 'right',
       },
       {
         columns: [
           {
             canvas: [{ type: 'line', x1: 155, y1: 0, x2: 0, y2: 0, lineWidth: 1 }],
-            margin: [0, 20, 0, 0],
+            margin: [0, 10, 0, 0],
             alignment: 'right',
           },
         ],
@@ -517,7 +517,7 @@ const PdfQuote = ({ id, quoteId }) => {
             text: ['Sign with Company Stamp and','\n', 'fax by return'],
             style: 'textSize',
             fontSize: 8,
-            margin: [360, 10, 0, 0],
+            margin: [360, 0, 0, 0],
             alignment: 'center',
           },
         ],

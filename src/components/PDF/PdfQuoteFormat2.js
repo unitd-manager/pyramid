@@ -535,27 +535,27 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         {
           text: `Client:${tenderDetails.company_name ? tenderDetails.company_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
         '\n',
         {
           text: `Att : ${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
 
         '\n',
         {
           text: `Email:${tenderDetails.email ? tenderDetails.email : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
         '\n',
         {
           text: `Project: ${tenderDetails.title ? tenderDetails.title : ''}`,
           style: ['notesText', 'textSize'],
 
-          bold: 'true',
+          //bold: 'true',
         },
 
         {
@@ -905,7 +905,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
       {
         columns: [
           {
-            width: '80%',
+            width: '78%',
             text: `Name:`,
             alignment: 'right',
             fontSize: 7,
@@ -913,8 +913,54 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
             style: ['invoiceAdd', 'textSize']
           },
           {
-            width: '20%',
+            width: '22%',
             text: `${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
+            alignment: 'right',
+            fontSize: 7,
+            color:'blue',
+            bold: true,
+            margin: [0, 10, 15, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
+      },
+      
+      {
+        columns: [
+          {
+            width: '78%',
+            text: `Position:`,
+            alignment: 'right',
+            fontSize: 7,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            width: '22%',
+            text: `${tenderDetails.position ? tenderDetails.position : ''}`,
+            alignment: 'right',
+            fontSize: 7,
+            color:'blue',
+            bold: true,
+            margin: [0, 10, 60, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+        ],
+      },
+      
+      {
+        columns: [
+          {
+            width: '78%',
+            text: `Date:`,
+            alignment: 'right',
+            fontSize: 7,
+            margin: [0, 10, 0, 10],
+            style: ['invoiceAdd', 'textSize']
+          },
+          {
+            width: '22%',
+            text: ``,
             alignment: 'right',
             fontSize: 7,
             color:'blue',
@@ -925,26 +971,7 @@ const PdfQuoteFormat2 = ({ id, quoteId }) => {
         ],
       },
       
-      '\n',
-      {
-        text: `Position :${tenderDetails.position ? tenderDetails.position : ''}`,
-        fontSize: 7,
-        //alignment:'right',
-       
-        margin: [5, 0, 0, 0],
-        style: ['invoiceAdd', 'textSize'],
-
-      },
-      '\n',
-      {
-        text: `Date :`,
-        fontSize: 7,
-        //alignment:'right',
-        
-        margin: [5, 0, 0, 0],
-        style: ['invoiceAdd', 'textSize'],
-
-      },
+      
       ],
       margin: [0, 50, 50, 50],
 
