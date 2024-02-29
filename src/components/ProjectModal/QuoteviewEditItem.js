@@ -17,9 +17,10 @@ import api from '../../constants/api';
 import message from '../Message';
 
 
-const QuoteViewEditItem = ({ quoteData, setQuoteData, FetchLineItemData,quoteId,QuotationViewLine }) => {
+const QuoteViewEditItem = ({ quoteData, setQuoteData, FetchLineItemData,quoteId,QuotationViewLine,getQuotations }) => {
   QuoteViewEditItem.propTypes = {
     quoteData: PropTypes.bool,
+    getQuotations:PropTypes.func,
     QuotationViewLine:PropTypes.func,
     setQuoteData: PropTypes.func,
     FetchLineItemData: PropTypes.object,
@@ -32,7 +33,7 @@ const {id}=useParams();
   const [totalAmount, setTotalAmount] = useState();
   const [quotation, setQuotation] = useState();
 
-  const getQuotations = () => {
+  const getQuotation = () => {
     api
       .post('/projecttabquote/getTabQuote', { quote_id: quoteId })
       .then((res) => {
@@ -45,7 +46,7 @@ const {id}=useParams();
     });
   };
   useEffect(() => {
-    getQuotations();
+    getQuotation();
     getLineItem();
   }, [quoteId]);
 
@@ -70,7 +71,7 @@ const {id}=useParams();
         api
           .post('/project/insertLogLine', element)
           .then(() => {
-            
+            getQuotations(); 
           })
           .catch((error) => {
             console.error('Error inserting log line:', error);

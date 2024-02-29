@@ -98,6 +98,7 @@ const EditMaterialused = ({ editMaterialsUsed, setEditMaterialsUsed, FetchMateri
                               editMaterialsUsedData?.product_type
                             }
                             onChange={handleEditMaterialsUsedInputs}
+                            disabled
                           />
                         </FormGroup>
                       </Col>
@@ -112,6 +113,7 @@ const EditMaterialused = ({ editMaterialsUsed, setEditMaterialsUsed, FetchMateri
                               editMaterialsUsedData?.qty_in_stock
                             }
                             onChange={handleEditMaterialsUsedInputs}
+                            disabled
                           />
                         </FormGroup>
                       </Col>

@@ -47,7 +47,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
       .post('/projecttabquote/insertQuoteItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
-       // window.location.reload();
+       window.location.reload();
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
@@ -159,7 +159,9 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                         Add Line Item
                       </Button>
                     </Col>
+                    <br/>
                   </Row>
+              
                   {/* Invoice Item */}
                   <Card>
                     <table className="lineitem">
@@ -181,20 +183,20 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                             return (
                               <tr key={item.id}>
                                 <td data-label="Title">
-                                  <Input Value={item.title} type="text" name="title" style={{ width: '100%' }} />
+                                  <Input Value={item.title} type="text" name="title" style={{ width: '90%' }} />
                                 </td>
                                 <td data-label="Description">
-                                  <Input Value={item.description} type="text" name="description" style={{ width: '100%' }} />
+                                  <Input Value={item.description} type="text" name="description" style={{ width: '90%' }} />
                                 </td>
                                 <td data-label="Unit">
-                                  <Input Value={item.unit} type="text" name="unit" style={{ width: '70%' }}/>
+                                  <Input Value={item.unit} type="text" name="unit" style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Qty">
                                   <Input Value={item.quantity} 
                                   
                                   onBlur={() => {
                                     calculateTotal();
-                                  }} type="number" name="quantity" style={{ width: '70%' }}/>
+                                  }} type="number" name="quantity" style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Unit Price">
                                   <Input
@@ -204,14 +206,14 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                                     }}
                                     type="number"
                                     name="unit_price"
-                                    style={{ width: '70%' }}
+                                    style={{ width: '90%' }}
                                   />
                                 </td>
                                 <td data-label="Amount">
-                                  <Input Value={item.amount} type="text" name="amount" disabled style={{ width: '70%' }}/>
+                                  <Input Value={item.amount} type="text" name="amount" disabled style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Remarks">
-                                  <Input Value={item.remarks} type="text" name="remarks" style={{ width: '100%' }}/>
+                                  <Input Value={item.remarks} type="text" name="remarks" style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Action">
                                   

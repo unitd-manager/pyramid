@@ -1,4 +1,4 @@
-// import axios from 'axios';
+ import axios from 'axios';
 
 // Define the base URL(s) conditionally
 //let baseURL;
@@ -8,7 +8,8 @@
 // } else {
 //   baseURL = 'http://localhost:3022';
 // }
-const baseURL = 'http://43.228.126.245:3022';
+//const baseURL = 'http://43.228.126.245:6002';
+const baseURL = 'http://localhost:6001';
 console.log('NODE_ENV:', process.env.NODE_ENV);
 const api = axios.create({
   baseURL, // Use the baseURL variable here

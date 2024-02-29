@@ -589,7 +589,8 @@ console.log('elem',elem)
               </CardTitle>
             </Row>
 
-            <SubConWorkOrderPortal projectId={id} subConWorkOrdeData={subConWorkOrdeData} />
+            <SubConWorkOrderPortal projectId={id} SubConWorkOrder={SubConWorkOrder}
+            subConWorkOrdeData={subConWorkOrdeData} />
             {/* <SubconWorkPaymentHistory projectId={id} /> */}
           </TabPane>
 

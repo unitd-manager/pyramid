@@ -23,8 +23,7 @@ import api from '../../constants/api';
 import message from '../Message';
 //import AppContext from '../../context/AppContext';
 
-
-const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,projectInfo }) => {
+const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId, quoteData, projectInfo }) => {
   EditQuotation.propTypes = {
     editQuoteModal: PropTypes.bool,
     setEditQuoteModal: PropTypes.func,
@@ -46,8 +45,6 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
     setQuotationeditDetails({ ...quotationeditDetails, [e.target.name]: e.target.value });
   };
 
-
-
   const getLineItem = () => {
     api.post('/project/getQuoteLineItemsById', { quote_id: quoteId }).then((res) => {
       setLineItem(res.data.data);
@@ -61,7 +58,10 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
   };
 
   const handleDataEditor = (e, type) => {
-    setQuotationeditDetails({ ...quotationeditDetails, [type]: draftToHtml(convertToRaw(e.getCurrentContent())) });
+    setQuotationeditDetails({
+      ...quotationeditDetails,
+      [type]: draftToHtml(convertToRaw(e.getCurrentContent())),
+    });
   };
   const [conditions, setConditions] = useState(EditorState.createEmpty()); // Initialize EditorState
   const convertHtmlToDraftcondition = (existingQuoteformal) => {
@@ -75,12 +75,13 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
     }
   };
   const fetchTermsAndConditions = () => {
-    api.get('/setting/getSettingsForTerms')
+    api
+      .get('/setting/getSettingsForTerms')
       .then((res) => {
         const settings = res.data.data;
         if (settings && settings.length > 0) {
           const fetchedTermsAndCondition = settings[0].value; // Assuming 'value' holds the terms and conditions
-          console.log("2", res.data.data);
+          console.log('2', res.data.data);
           // Update the quote condition in quoteData
           setQuotationeditDetails({ ...quoteData, quote_condition: fetchedTermsAndCondition });
           // Convert fetched terms and conditions to EditorState
@@ -101,38 +102,39 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
     fetchTermsAndConditions();
     // Other useEffect logic
   }, []);
-    //Logic for edit data in db
-    const insertquote = () => {
-      //   const quoteDatas = {
-      //   quote_date: previousquotationeditDetails.quote_date,
-      //   quote_status: previousquotationeditDetails.quote_status,
-      //   quote_code: previousquotationeditDetails.quote_code,
-      //   quote_id: id,
-      //   created_by: loggedInuser.first_name,
-      //   creation_date: creationdatetime,
-      // };
-     
-      quoteData.project_id = projectInfo;
-      api.post('/project/insertLog', quoteData).then((res) => {
-        message('quote inserted successfully.', 'success');
-        lineItem.forEach((element) => {
-          element.quote_log_id = res.data.data.insertId;
-          
-          api.post('/project/insertLogLine', element)
-  .then(() => {
-    // window.location.reload();
-  })
-  .catch((error) => {
-    console.error('Error inserting log line:', error);
-  });
-        });
+  //Logic for edit data in db
+  const insertquote = () => {
+    //   const quoteDatas = {
+    //   quote_date: previousquotationeditDetails.quote_date,
+    //   quote_status: previousquotationeditDetails.quote_status,
+    //   quote_code: previousquotationeditDetails.quote_code,
+    //   quote_id: id,
+    //   created_by: loggedInuser.first_name,
+    //   creation_date: creationdatetime,
+    // };
+
+    quoteData.project_id = projectInfo;
+    api.post('/project/insertLog', quoteData).then((res) => {
+      message('quote inserted successfully.', 'success');
+      lineItem.forEach((element) => {
+        element.quote_log_id = res.data.data.insertId;
+
+        api
+          .post('/project/insertLogLine', element)
+          .then(() => {
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.error('Error inserting log line:', error);
+          });
       });
-    };
+    });
+  };
 
-
-      //Insert order for finance module
+  //Insert order for finance module
   const editQuotations = () => {
-    const hasChanges = JSON.stringify(quotationeditDetails) !== JSON.stringify(previousquotationeditDetails);
+    const hasChanges =
+      JSON.stringify(quotationeditDetails) !== JSON.stringify(previousquotationeditDetails);
 
     api
       .post('/projecttabquote/editTabQuote', quotationeditDetails)
@@ -144,13 +146,11 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
         // Save the current details as previousquotationeditDetails
         saveCurrentDetails();
         message('quote editted successfully.', 'success');
-       
       })
       .catch(() => {
         message('Network connection error.');
       });
   };
-
 
   // const insertquote = () => {
   //   api
@@ -195,7 +195,6 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                     <FormGroup>
                       <Label>Quote Status</Label>
                       <Input
-                       
                         type="text"
                         name="quote_status"
                         onChange={handleQuoteInputs}
@@ -261,9 +260,11 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                   <Col md="4">
                     <FormGroup>
                       <Label>Mode of Payment</Label>
-                      <Input type="select" name="payment_method"
-                       value={quotationeditDetails && quotationeditDetails.payment_method}
-                       onChange={handleQuoteInputs}
+                      <Input
+                        type="select"
+                        name="payment_method"
+                        value={quotationeditDetails && quotationeditDetails.payment_method}
+                        onChange={handleQuoteInputs}
                       >
                         <option value="">Please Select</option>
                         <option value="15 days">15 days</option>
@@ -277,7 +278,6 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                   </Col>
                 </Row>
                 <Row>
-                 
                   <Col md="4">
                     <FormGroup>
                       <Label>Ref No</Label>
@@ -312,11 +312,11 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                     handleDataEditor(e, 'quote_condition');
                     setConditions(e);
                   }}
-                // Set initial content of the Editor to fetched terms and conditions
-                // initialContentState={quoteTermsAndCondition}
+                  // Set initial content of the Editor to fetched terms and conditions
+                  // initialContentState={quoteTermsAndCondition}
                 />
 
-{/*                
+                {/*                
                 <Row>
                   <FormGroup>
                     <Label>Terms & Condition</Label>
@@ -336,11 +336,10 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId , quoteData,
                       color="primary"
                       className="btn shadow-none mr-2"
                       onClick={() => {
-                        editQuotations();   
-                        setTimeout(()=>{
+                        editQuotations();
+                        setTimeout(() => {
                           setEditQuoteModal(false);
-                        },500)
-                                          
+                        }, 500);
                       }}
                     >
                       Save & Continue

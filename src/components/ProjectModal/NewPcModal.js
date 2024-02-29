@@ -62,7 +62,7 @@ const getClaimLineItems=()=>{
             .then(() => {
               message('Record edited successfully', 'success');
               setTimeout(() => {
-                // window.location.reload()
+                 window.location.reload()
               }, 300);
             })
             .catch(() => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
-  Card,
-  CardBody,
+  // Card,
+  //CardBody,
   Row,
   Col,
   Form,
@@ -13,7 +13,6 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import * as $ from 'jquery';
 import random from 'random';
 import api from '../../constants/api';
@@ -47,13 +46,13 @@ const InvoiceData = ({ workOrderLine, setWorkOrderLine, projectId, subCon }) => 
       .post('/projecttabsubconworkorder/insertWorkOrderLineIteam', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
+        window.location.reload();
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
       });
   };
 
- 
   //Add new line item
   const AddNewLineItem = () => {
     setAddLineItem([
@@ -143,123 +142,107 @@ const InvoiceData = ({ workOrderLine, setWorkOrderLine, projectId, subCon }) => 
         <ModalBody>
           <Row>
             <Col md="12">
-              <Card>
-                <CardBody>
-                  <Form>
-                    <Card>
-                      <Row>
-                        <Row>
-                          <Col md="3">
-                            <Button
-                              className="shadow-none"
-                              color="primary"
-                              type="button"
-                              onClick={() => {
-                                AddNewLineItem();
+              {/* <Card>
+                <CardBody> */}
+              <Form>
+                {/* <Card>
+                      <Row> */}
+                <Row>
+                  <Col md="3">
+                    <Button
+                      className="shadow-none"
+                      color="primary"
+                      type="button"
+                      onClick={() => {
+                        AddNewLineItem();
+                      }}
+                    >
+                      Add Line Item
+                    </Button>
+                  </Col>
+                </Row>
+                <br />
+                {/* Invoice Item */}
+
+                <table className="lineitem">
+                  <thead>
+                    <tr>
+                      <th scope="col">Description </th>
+                      <th scope="col">Qty</th>
+                      <th scope="col">Unit Price</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {addLineItem.map((item) => {
+                      return (
+                        <tr key={item.id}>
+                          <td data-label="Description">
+                            <Input defaultValue={item.description} type="text" name="description" />
+                          </td>
+
+                          <td data-label="Qty">
+                            <Input defaultValue={item.quantity} type="number" name="quantity" />
+                          </td>
+                          <td data-label="Unit Price">
+                            <Input
+                              defaultValue={item.unit_rate}
+                              onBlur={() => {
+                                calculateTotal();
                               }}
-                            >
-                              Add Line Item
-                            </Button>
-                          </Col>
-                        </Row>
+                              type="number"
+                              name="unit_rate"
+                            />
+                          </td>
+                          <td data-label="Amount">
+                            <Input Value={item.amount} type="text" name="amount" disabled />
+                          </td>
+                          <td data-label="Action">
+                            <div className="anchor">
+                              {' '}
+                              <Input type="hidden" name="id" defaultValue={item.id}></Input>
+                              <span
+                                onClick={() => {
+                                  ClearValue(item);
+                                }}
+                              >
+                                Clear
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
 
-                        {/* Invoice Item */}
-                        <Card>
-                          <table className="lineitem">
-                            <thead>
-                              <tr>
-                                <th scope="col">Description </th>
-                                <th scope="col">Qty</th>
-                                <th scope="col">Unit Price</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {addLineItem.map((item) => {
-                                return (
-                                  <tr key={item.id}>
-                                    <td data-label="Description">
-                                      <Input
-                                        defaultValue={item.description}
-                                        type="text"
-                                        name="description"
-                                      />
-                                    </td>
-
-                                    <td data-label="Qty">
-                                      <Input
-                                        defaultValue={item.quantity}
-                                        type="number"
-                                        name="quantity"
-                                      />
-                                    </td>
-                                    <td data-label="Unit Price">
-                                      <Input
-                                        defaultValue={item.unit_rate}
-                                        onBlur={() => {
-                                          calculateTotal();
-                                        }}
-                                        type="number"
-                                        name="unit_rate"
-                                      />
-                                    </td>
-                                    <td data-label="Amount">
-                                      <Input
-                                        Value={item.amount}
-                                        type="text"
-                                        name="amount"
-                                        disabled
-                                      />
-                                    </td>
-                                    <td data-label="Action">
-                                      <Link to="">
-                                        <Input
-                                          type="hidden"
-                                          name="id"
-                                          defaultValue={item.id}
-                                        ></Input>
-                                        <span
-                                          onClick={() => {
-                                            ClearValue(item);
-                                          }}
-                                        >
-                                          Clear
-                                        </span>
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </Card>
-                        <ModalFooter>
-                          <Button
-                            className="shadow-none"
-                            color="primary"
-                            onClick={() => {
-                              getAllValues();
-                            }}
-                          >
-                            {' '}
-                            Submit{' '}
-                          </Button>
-                          <Button
-                            className="shadow-none"
-                            color="secondary"
-                            onClick={() => {
-                              setWorkOrderLine(false);
-                            }}
-                          >
-                            Cancel
-                          </Button>
-                        </ModalFooter>
-                      </Row>
-                    </Card>
-                  </Form>
-                </CardBody>
-              </Card>
+                <ModalFooter>
+                  <Button
+                    className="shadow-none"
+                    color="primary"
+                    onClick={() => {
+                      getAllValues();
+                    }}
+                  >
+                    {' '}
+                    Submit{' '}
+                  </Button>
+                  <Button
+                    className="shadow-none"
+                    color="secondary"
+                    onClick={() => {
+                      setWorkOrderLine(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </ModalFooter>
+                {/* </Row>
+                    </Card> */}
+              </Form>
+              {/* </CardBody>
+              </Card> */}
             </Col>
           </Row>
         </ModalBody>

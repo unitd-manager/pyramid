@@ -13,24 +13,25 @@ import {
   ModalHeader,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import ComponentCard from '../ComponentCard';
 import message from '../Message';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../../views/form-editor/editor.scss';
 
 import api from '../../constants/api';
 
-const WorkOrderEditModal = ({ workLine, subWorkData, setSubWorkData}) => {
+const WorkOrderEditModal = ({ workLine, subWorkData, setSubWorkData,SubConWorkOrderLine,SubConWorkOrder }) => {
   WorkOrderEditModal.propTypes = {
     workLine: PropTypes.object,
     subWorkData: PropTypes.bool,
     setSubWorkData: PropTypes.func,
-        
-        // projectId: PropTypes.object
+    SubConWorkOrderLine:PropTypes.any,
+    SubConWorkOrder:PropTypes.any,
+
+    // projectId: PropTypes.object
   };
 
   const [contactinsert, setContactInsert] = useState(null);
-  
+
   const handleInputs = (e) => {
     setContactInsert({ ...contactinsert, [e.target.name]: e.target.value });
   };
@@ -42,6 +43,9 @@ const WorkOrderEditModal = ({ workLine, subWorkData, setSubWorkData}) => {
       .post('/projecttabsubconworkorder/editWorkOrder', contactinsert)
       .then(() => {
         message('Record editted successfully', 'success');
+        SubConWorkOrderLine();
+        SubConWorkOrder();
+        setSubWorkData(false);
         //  setTimeout(() => {
         //    window.location.reload()
         //  }, 300);
@@ -51,7 +55,7 @@ const WorkOrderEditModal = ({ workLine, subWorkData, setSubWorkData}) => {
         message('Unable to edit record.', 'error');
       });
   };
- console.log("subconitem",workLine)
+  console.log('subconitem', workLine);
   useEffect(() => {
     console.log('insert');
 
@@ -61,7 +65,7 @@ const WorkOrderEditModal = ({ workLine, subWorkData, setSubWorkData}) => {
 
   return (
     <>
-      <Modal size="lg" isOpen={subWorkData}>
+      <Modal isOpen={subWorkData}>
         <ModalHeader>
           Work Order Details
           <Button
@@ -75,47 +79,59 @@ const WorkOrderEditModal = ({ workLine, subWorkData, setSubWorkData}) => {
         </ModalHeader>
 
         <ModalBody>
-          <Row>
+          {/* <Row>
             <Col md="3" className="mb-4 d-flex justify-content-between"></Col>
-          </Row>
-          <Row>
-            <Col md="2">
-              <FormGroup>
-                <Label>Description </Label>
+          </Row> */}
+          {/* <Row>
+            <Col md="2"> */}
+          <FormGroup>
+            <Row>
+              <Label sm="3">Description </Label>
+              <Col sm="5">
                 <Input
                   type="text"
                   onChange={handleInputs}
                   value={contactinsert && contactinsert.description}
                   name="description"
                 />
-              </FormGroup>
-            </Col>
-            <Col md="2">
-              <FormGroup>
-                <Label>Quantity </Label>
+              </Col>
+            </Row>
+          </FormGroup>
+          {/* </Col> */}
+          {/* <Col md="2"> */}
+          <FormGroup>
+            <Row>
+              <Label sm="3">Quantity </Label>
+              <Col sm="5">
                 <Input
                   type="text"
                   onChange={handleInputs}
                   value={contactinsert && contactinsert.quantity}
                   name="quantity"
                 />
-              </FormGroup>
-            </Col>
+              </Col>
+            </Row>
+          </FormGroup>
+          {/* </Col>
 
-            <Col md="2">
-              <FormGroup>
-                <Label>unit Rate </Label>
+            <Col md="2"> */}
+          <FormGroup>
+            <Row>
+              <Label sm="3">unit Rate </Label>
+              <Col sm="5">
                 <Input
                   type="text"
                   onChange={handleInputs}
                   value={contactinsert && contactinsert.unit_rate}
                   name="unit_rate"
                 />
-              </FormGroup>
-            </Col>
+              </Col>
+            </Row>
+          </FormGroup>
+          {/* </Col>
 
            
-          </Row>
+          </Row> */}
         </ModalBody>
 
         <ModalFooter>
@@ -140,8 +156,6 @@ const WorkOrderEditModal = ({ workLine, subWorkData, setSubWorkData}) => {
             </div>
           </Row>
         </ModalFooter>
-
-        <ComponentCard></ComponentCard>
       </Modal>
     </>
   );
