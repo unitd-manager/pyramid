@@ -146,7 +146,7 @@ const CreateReceipt = ({ invoiceData, handleInputs }) => {
           />
         </FormGroup>
       </Col>
-      <Col md="8">
+      <Col md="6">
         <FormGroup>
           <Label>Invoice Terms</Label>
           <Input
@@ -154,6 +154,17 @@ const CreateReceipt = ({ invoiceData, handleInputs }) => {
             value={invoiceData && invoiceData.invoice_terms}
             onChange={handleInputs}
             name="invoice_terms"
+          />
+        </FormGroup>
+      </Col>
+      <Col md="6">
+        <FormGroup>
+          <Label>Payment Terms</Label>
+          <Input
+            type="textarea"
+            value={invoiceData && invoiceData.payment_terms}
+            onChange={handleInputs}
+            name="payment_terms"
           />
         </FormGroup>
       </Col>

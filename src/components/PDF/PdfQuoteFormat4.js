@@ -97,24 +97,24 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
 
   //   // Other logic you have here...
   // }, [quote.quote_condition]);
-  const [parsedQuoteCondition1, setParsedQuoteCondition1] = useState('');
-  React.useEffect(() => {
-    const parseHTMLContent = (htmlContent) => {
-      if (htmlContent) {
-        // Replace all occurrences of &nbsp; with an empty string
-        const plainText = htmlContent.replace(/&nbsp;/g, '');
+  // const [parsedQuoteCondition1, setParsedQuoteCondition1] = useState('');
+  // React.useEffect(() => {
+  //   const parseHTMLContent = (htmlContent) => {
+  //     if (htmlContent) {
+  //       // Replace all occurrences of &nbsp; with an empty string
+  //       const plainText = htmlContent.replace(/&nbsp;/g, '');
 
-        // Remove HTML tags using a regular expression
-        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+  //       // Remove HTML tags using a regular expression
+  //       const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
 
-        setParsedQuoteCondition1(plainTextWithoutTags);
-      }
-    };
-    // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
-    parseHTMLContent(quote.job_scope);
+  //       setParsedQuoteCondition1(plainTextWithoutTags);
+  //     }
+  //   };
+  //   // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
+  //   parseHTMLContent(quote.job_scope);
 
-    // Other logic you have here...
-  }, [quote.job_scope]);
+  //   // Other logic you have here...
+  // }, [quote.job_scope]);
 
   //The quote_condition content and format it as bullet points
   // const formatQuoteConditions = (conditionsText) => {
@@ -142,25 +142,25 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
   //   lineHeight: 1.2,
   // }));
 
-  const formatQuoteConditions1 = (conditionsText) => {
-    const formattedConditions = conditionsText.split(':-').map((condition, index) => {
-      const trimmedCondition = condition.trim();
-      return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
-    });
-    return formattedConditions;
-  };
+  // const formatQuoteConditions1 = (conditionsText) => {
+  //   const formattedConditions = conditionsText.split(':-').map((condition, index) => {
+  //     const trimmedCondition = condition.trim();
+  //     return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
+  //   });
+  //   return formattedConditions;
+  // };
 
   // Format the conditions content for PDF
-  const conditions1 = formatQuoteConditions1(parsedQuoteCondition1);
+  // const conditions1 = formatQuoteConditions1(parsedQuoteCondition1);
 
   // / Format the conditions content for PDF
-  const conditionsContent1 = conditions1.map((condition) => ({
-    text: `${condition}`,
-    fontSize: 10,
-    margin: [15, 5, 0, 0],
-    style: ['notesText', 'textSize'],
-    lineHeight: 1.2,
-  }));
+  // const conditionsContent1 = conditions1.map((condition) => ({
+  //   text: `${condition}`,
+  //   fontSize: 10,
+  //   margin: [15, 5, 0, 0],
+  //   style: ['notesText', 'textSize'],
+  //   lineHeight: 1.2,
+  // }));
 
   React.useEffect(() => {
     getQuote();
@@ -182,7 +182,7 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
           alignment: 'center',
         },
         {
-            text: 'Asset No.',
+            text: 'Asset No',
             style: 'tableHead',
             alignment: 'center',
           },
@@ -191,11 +191,11 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
           style: 'tableHead',
           alignment: 'center',
         },
-        {
-          text: 'Unit',
-          style: 'tableHead',
-          alignment: 'center',
-        },
+        // {
+        //   text: 'Unit',
+        //   style: 'tableHead',
+        //   alignment: 'center',
+        // },
         {
           text: 'Qty',
           style: 'tableHead',
@@ -222,13 +222,17 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
             alignment: 'center',
           },
         {
-          text: 'Amount S$',
+          text: 'Gross Price S$',
           style: 'tableHead',
           alignment: 'right',
         },
       ],
     ];
     lineItem.forEach((element) => {
+      const assetNo = element.asset_no || ''; // Set assetNo to an empty string if it's null or undefined
+      const fromDate = element.from_date || ''; // Set fromDate to an empty string if it's null or undefined
+      const toDate = element.to_date || ''; // Set toDate to an empty string if it's null or undefined   
+      const noOfDays = element.no_of_days || '';
       lineItemBody.push([
         // {
         //   text: `${index + 1}`,
@@ -242,7 +246,7 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
           alignment: 'center',
         },
         {
-            text: `${element.asset_no}`,
+            text: assetNo,
             border: [true, true, true, true],
             style: 'tableBody',
             alignment: 'left',
@@ -253,12 +257,12 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
           style: 'tableBody',
           alignment: 'left',
         },
-        {
-            text: `${element.unit}`,
-            border: [true, true, true, true],
-            style: 'tableBody',
-            alignment: 'center',
-          },
+        // {
+        //     text: `${element.unit}`,
+        //     border: [true, true, true, true],
+        //     style: 'tableBody',
+        //     alignment: 'center',
+        //   },
         {
           text: `${element.quantity}`,
           border: [true, true, true, true],
@@ -292,19 +296,19 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
         //   alignment: 'right',
         // },
           {
-            text: `${element.from_date}`,
+            text: fromDate,
             border: [true, true, true, true],
             style: 'tableBody',
             alignment: 'center',
           },
           {
-            text: `${element.to_date}`,
+            text:toDate ,
             border: [true, true, true, true],
             style: 'tableBody',
             alignment: 'center',
           },
           {
-            text: `${element.no_of_days}`,
+            text: noOfDays,
             border: [true, true, true, true],
             style: 'tableBody',
             alignment: 'center',
@@ -405,27 +409,27 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
         {
           text: `Client:${tenderDetails.company_name ? tenderDetails.company_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
         '\n',
         {
           text: `Att : ${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
 
         '\n',
         {
           text: `Email:${tenderDetails.email ? tenderDetails.email : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
         '\n',
         {
           text: `Project: ${tenderDetails.title ? tenderDetails.title : ''}`,
           style: ['notesText', 'textSize'],
 
-          bold: 'true',
+          //bold: 'true',
         },
 
         {
@@ -539,7 +543,7 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
           },
           table: {
             headerRows: 1,
-            widths: [30, 60, 130, 30, 20, 40, 45, 45, 30, 45],
+            widths: [30, 60, 120, 40, 40, 45, 45, 40, 55],
             defaultBorder: false,
             body: lineItemBody,
           },
@@ -644,7 +648,7 @@ const PdfQuoteFormat4 = ({ id, quoteId }) => {
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
         },
-        ...conditionsContent1, // Add each condition as a separate paragraph
+        // ...conditionsContent1, // Add each condition as a separate paragraph
       ],
       margin: [0, 50, 50, 50],
 

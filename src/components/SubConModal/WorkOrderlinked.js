@@ -33,7 +33,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
     amount: 0,
   });
   const [selectedSubCon, setselectedSubCon] = useState([]);
-  const [subConWork, setSubConWork] = useState([]);
+ // const [subConWork, setSubConWork] = useState([]);
 
   //getting data
   const handleInputreceipt = (e) => {
@@ -102,16 +102,16 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
       });
   };
 
-  const getSubConWork = () => {
-    api
-      .post('/subcon/getSubConWorkOrder', { sub_con_id: id })
-      .then((res) => {
-        setSubConWork(res.data.data[0].sub_con_work_order_id);
-      })
-      .catch(() => {
-        // message('Cannot get Invoice Data', 'error');
-      });
-  };
+  // const getSubConWork = () => {
+  //   api
+  //     .post('/subcon/getSubConWorkOrder', { sub_con_id: id })
+  //     .then((res) => {
+  //       setSubConWork(res.data.data[0].sub_con_work_order_id);
+  //     })
+  //     .catch(() => {
+  //       // message('Cannot get Invoice Data', 'error');
+  //     });
+  // };
   
 
   //Logic for deducting receipt amount
@@ -144,7 +144,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
           amount: selectedSubCon[j].remainingAmount,
         });
       } else {
-        selectedSubCon[j].paid = leftamount;
+        selectedSubCon[j].paid = true
         editSubconPartialStatus(selectedSubCon[j].sub_con_work_order_id, 'Partially Paid');
         insertPaymentHistory({
           creation_date: moment().format(),
@@ -171,19 +171,17 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
   //Getting receipt data by order id
   const getSubConReceipt = () => {
     api
-      .post('/subcon/getSubMakePayment', { sub_con_id: id, sub_con_work_order_id: id })
+      .post('/subcon/getSubMakePayment', { sub_con_id: id })
       .then((res) => {
         const datafromapi = res.data.data;
         datafromapi.forEach((element) => {
           element.remainingAmount = element.prev_inv_amount - element.prev_amount;
         });
-        const result = datafromapi.filter((el) => {
-          return el.prev_inv_amount !== el.prev_amount;
-        });
-        setSubConReceipt(result);
+       
+        setSubConReceipt(datafromapi);
       });
   };
-
+  
   //Insert Receipt
   const insertReceipt = () => {
     createSubCon.sub_con_id = id;
@@ -195,7 +193,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
     
     console.log('remamount',amount)
     console.log('createsupamount',createSubCon.amount)
-    createSubCon.sub_con_work_order_id = subConWork;
+    //createSubCon.sub_con_work_order_id = subConWork;
     if((selectedSubCon.length>0)){
     if (createSubCon.amount &&
       createSubCon.mode_of_payment) {
@@ -278,7 +276,6 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
   };
   useEffect(() => {
     getSubConReceipt();
-    getSubConWork();
   }, [id]);
   return (
     <>

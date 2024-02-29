@@ -272,27 +272,27 @@ const PdfQuote = ({ id, quoteId }) => {
         {
           text: `Client:${tenderDetails.company_name ? tenderDetails.company_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
         '\n',
         {
           text: `Att : ${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
 
         '\n',
         {
           text: `Email:${tenderDetails.email ? tenderDetails.email : ''}`,
           style: ['notesText', 'textSize'],
-          bold: 'true',
+          //bold: 'true',
         },
         '\n',
         {
           text: `Project: ${tenderDetails.title ? tenderDetails.title : ''}`,
           style: ['notesText', 'textSize'],
 
-          bold: 'true',
+          //bold: 'true',
         },
 
         {
@@ -456,8 +456,9 @@ const PdfQuote = ({ id, quoteId }) => {
         '\n',
 
         {
-          text: `Terms and Conditions: `,
-          fontSize: 11,
+          text: `REMARKS: `,
+          fontSize: 9,
+          bold:true,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
@@ -473,9 +474,56 @@ const PdfQuote = ({ id, quoteId }) => {
           text: 'Thank you very much for your business',
           bold: true,
           margin: [0, 10, 0, 10],
-          fontSize: 12,
+          fontSize: 8,
+        },
+        '\n',
+        [{
+          text: `PYRAMID ENGINEERING PRIVATE LTD `,
+          fontSize: 8,
+          // decoration: 'underline',
+          margin: [0, 50, 0, 0],
+          style: ['notesText', 'textSize'],
+        },
+        {
+          text: `Bala`,
+          fontSize: 7,
+          margin: [0, 5, 0, 0],
+          style: ['notesText', 'textSize'],
+  
         },
       ],
+      '\n',
+      {
+        text: 'ACKNOWLEDGE ACCEPTANCE BY',
+        style: 'textSize',
+        fontSize: 8,
+        bold: true,
+        margin: [5, -50, 15, 0],
+        alignment: 'right',
+      },
+      {
+        columns: [
+          {
+            canvas: [{ type: 'line', x1: 155, y1: 0, x2: 0, y2: 0, lineWidth: 1 }],
+            margin: [0, 10, 0, 0],
+            alignment: 'right',
+          },
+        ],
+      },
+
+      {
+        columns: [
+          {
+            text: ['Sign with Company Stamp and','\n', 'fax by return'],
+            style: 'textSize',
+            fontSize: 8,
+            margin: [360, 0, 0, 0],
+            alignment: 'center',
+          },
+        ],
+      },
+      ],
+      
       margin: [0, 50, 50, 50],
 
       styles: {

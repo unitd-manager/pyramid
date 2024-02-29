@@ -27,6 +27,12 @@ const EditQuoteModal = ({
   quoteDatas,
   lineItem,
   getQuoteFun,
+  //setSelectedQuoteFormat,
+  //handlePDFFormatChange,
+  //QuoteProject,
+  selectedFormat,
+  setSelectedFormat
+  
 }) => {
   EditQuoteModal.propTypes = {
     editQuoteModal: PropTypes.bool,
@@ -34,6 +40,11 @@ const EditQuoteModal = ({
     quoteDatas: PropTypes.object,
     lineItem: PropTypes.object,
     getQuoteFun: PropTypes.any,
+    //setSelectedQuoteFormat: PropTypes.any,
+    //handlePDFFormatChange:PropTypes.func,
+    //QuoteProject:PropTypes.func,
+    selectedFormat: PropTypes.any,
+    setSelectedFormat: PropTypes.any,
   };
 
   const { id } = useParams();
@@ -43,10 +54,26 @@ const EditQuoteModal = ({
   const [quoteData, setQuoteData] = useState(quoteDatas);
   const [conditions, setConditions] = useState('');
   const [lineItems, setLineItem] = useState('');
+ // const [selectedQuoteFormat, setSelectedQuoteFormat] = useState('')
+  
+
+
+  // const handleFormatChange = (e) => {
+  //   const selectedValue = e.target.value;
+  //   setSelectedFormat(selectedValue); // Always set selected format
+
+  //   // // Check if the selected format requires PDF format change
+  //   // // if (selectedValue === 'format2' || selectedValue === 'format3' || selectedValue === 'format4' || selectedValue === 'format5') {
+  //   //   handlePDFFormatChange(e); // Call handlePDFFormatChange
+  //   // // }
+  // };
+
 
   const handleData = (e) => {
     setQuoteData({ ...quoteData, [e.target.name]: e.target.value });
+    setSelectedFormat(e.target.value);
   };
+  
 
   const getQuote = () => {
     api.post('/tender/getQuoteById', { opportunity_id: id }).then((res) => {
@@ -188,6 +215,26 @@ const EditQuoteModal = ({
         <ModalBody>
           <Form>
             <FormGroup>
+              {/* Add dropdown for selecting format */}
+              <Label>Select Format:</Label>
+              <Input
+                type="select"
+                onChange={handleData}
+                value={quoteData && quoteData.quote_format}
+                //value={selectedFormat}
+                name="quote_format"
+              >
+                <option value="">Please Select</option>
+                 {/* <option value="format1">Format 1</option>  */}
+                <option value="format2">Format 2</option>
+                <option value="format3">Format 3</option>
+                <option value="format4">Format 4</option>
+                <option value="format5">Format 5</option>
+              </Input>
+            </FormGroup>
+            {/* Render basic fields */}
+            
+            <FormGroup>
               <Row>
                 <Col md="4">
                   <FormGroup>
@@ -256,7 +303,7 @@ const EditQuoteModal = ({
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Mode of Payment</Label>
+                    <Label>Terms of Payment</Label>
                     <Input
                       type="select"
                       name="payment_method"
@@ -308,17 +355,15 @@ const EditQuoteModal = ({
                     />
                   </FormGroup>
                 </Col>
-                <Col md="4">
-                  <FormGroup>
-                    <Label>External Notes</Label>
-                    <Input
-                      type="textarea"
-                      name="external_notes"
-                      defaultValue={quoteData && quoteData.external_notes}
-                      onChange={handleData}
-                    />
-                  </FormGroup>
-                </Col>
+
+                
+                
+            
+                
+                {/* Render additional fields based on selected format */}
+                {/* {selectedFormat === 'format2' && ( */}
+                {(selectedFormat === 'format2' || selectedFormat === 'format5') && (
+              <>
                 <Col md="4">
                   <FormGroup>
                     <Label>Invoices & Payment</Label>
@@ -332,7 +377,7 @@ const EditQuoteModal = ({
                 </Col>
                 <Col md="4">
                   <FormGroup>
-                    <Label>Noice of Termination</Label>
+                    <Label>Notice of Termination</Label>
                     <Input
                       type="text"
                       name="notice_of_termination"
@@ -352,7 +397,30 @@ const EditQuoteModal = ({
                     />
                   </FormGroup>
                 </Col>
-                <Col md="4">
+                </>
+                )}
+                
+
+{selectedFormat === 'format4' && (
+              <>
+              <Col md="4">
+                  <FormGroup>
+                    <Label>External Notes</Label>
+                    <Input
+                      type="textarea"
+                      name="external_notes"
+                      defaultValue={quoteData && quoteData.external_notes}
+                      onChange={handleData}
+                    />
+                  </FormGroup>
+                </Col>
+                </>
+                )}
+                
+
+                {selectedFormat === 'format5' && (
+              <>
+              <Col md="4">
                   <FormGroup>
                     <Label>General</Label>
                     <Input
@@ -363,6 +431,7 @@ const EditQuoteModal = ({
                     />
                   </FormGroup>
                 </Col>
+
                 <Col md="4">
                   <FormGroup>
                     <Label>Scope Of Works</Label>
@@ -407,19 +476,9 @@ const EditQuoteModal = ({
                     />
                   </FormGroup>
                 </Col>
+                </>
+                )}
               </Row>
-              <Row>
-                <Label>JOB SCOPE</Label>
-              </Row>
-              <Editor
-                editorState={lineItems}
-                wrapperClassName="demo-wrapper mb-0"
-                editorClassName="demo-editor border mb-4 edi-height"
-                onEditorStateChange={(e) => {
-                  handleDataEditor(e, 'job_scope');
-                  setLineItem(e);
-                }}
-              />
               <Row>
                 <Label>Terms & Condition</Label>
               </Row>
@@ -432,8 +491,23 @@ const EditQuoteModal = ({
                   setConditions(e);
                 }}
               />
-
+              {selectedFormat === 'format3' && (
+              <>
               <Row>
+                <Label>JOB SCOPE</Label>
+              </Row>
+              <Editor
+                editorState={lineItems}
+                wrapperClassName="demo-wrapper mb-0"
+                editorClassName="demo-editor border mb-4 edi-height"
+                onEditorStateChange={(e) => {
+                  handleDataEditor(e, 'job_scope');
+                  setLineItem(e);
+                }}
+              />
+              </>
+                )}
+                <Row>
                 <div className="pt-3 mt-3 d-flex align-items-center gap-2">
                   <Button
                     type="button"
@@ -443,7 +517,9 @@ const EditQuoteModal = ({
                       insertquote();
                       GetEditQuote();
                       // setQuoteData();
+                      //setSelectedQuoteFormat(selectedFormat);
                       setEditQuoteModal(false);
+                      
                       //insertquoteLogLine();
                     }}
                   >

@@ -11,11 +11,11 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import { Editor } from 'react-draft-wysiwyg';
+// import { Editor } from 'react-draft-wysiwyg';
 import { useParams } from 'react-router-dom';
-import draftToHtml from 'draftjs-to-html';
-import htmlToDraft from 'html-to-draftjs';
-import { EditorState, convertToRaw, ContentState } from 'draft-js';
+// import draftToHtml from 'draftjs-to-html';
+// import htmlToDraft from 'html-to-draftjs';
+// import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import Select from 'react-select';
 import api from '../../constants/api';
 import message from '../Message';
@@ -31,7 +31,7 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal, invoiceDatas 
   //All state variable
   //const [totalAmount, setTotalAmount] = useState(0);
   //const [paymentTerms, setPaymentTerms] = useState('');
-  const [conditions, setConditions] = useState('');
+  // const [conditions, setConditions] = useState('');
   const [invoiceData, setInvoiceData] = useState(invoiceDatas);
   const { id } = useParams();
   //Add Line Item
@@ -93,19 +93,19 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal, invoiceDatas 
     setAddLineItem(updatedItems);
   };
 
-  const handleDataEditor = (e, type) => {
-    setInvoiceData({ ...invoiceData, [type]: draftToHtml(convertToRaw(e.getCurrentContent())) });
-  };
-  const convertHtmlToDraftcondition = (existingQuoteformal) => {
-    if (existingQuoteformal && existingQuoteformal.payment_terms) {
-      const contentBlock = htmlToDraft(existingQuoteformal && existingQuoteformal.payment_terms);
-      if (contentBlock) {
-        const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-        const editorState = EditorState.createWithContent(contentState);
-        setConditions(editorState);
-      }
-    }
-  };
+  // const handleDataEditor = (e, type) => {
+  //   setInvoiceData({ ...invoiceData, [type]: draftToHtml(convertToRaw(e.getCurrentContent())) });
+  // };
+  // const convertHtmlToDraftcondition = (existingQuoteformal) => {
+  //   if (existingQuoteformal && existingQuoteformal.payment_terms) {
+  //     const contentBlock = htmlToDraft(existingQuoteformal && existingQuoteformal.payment_terms);
+  //     if (contentBlock) {
+  //       const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+  //       const editorState = EditorState.createWithContent(contentState);
+  //       setConditions(editorState);
+  //     }
+  //   }
+  // };
   //getting data from invoice id
   const getInvoice = () => {
     api
@@ -163,7 +163,7 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal, invoiceDatas 
     getLineItem();
     getInvoice();
     getUnit();
-    convertHtmlToDraftcondition(invoiceDatas);
+    // convertHtmlToDraftcondition(invoiceDatas);
     setInvoiceData(editInvoiceModal);
   }, [invoiceDatas, editInvoiceModal]);
   return (
@@ -185,7 +185,7 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal, invoiceDatas 
           <Form>
             <Row>
               <InvoiceModalTable invoiceData={invoiceData} handleInputs={handleInputs} />
-              <Col md='12'>
+              {/* <Col md='12'>
                 <Editor
                   editorState={conditions}
                   wrapperClassName="demo-wrapper mb-0"
@@ -195,7 +195,7 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal, invoiceDatas 
                     setConditions(e);
                   }}
                 />
-              </Col>
+              </Col> */}
             </Row>
             <Row>
               <Col>

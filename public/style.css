@@ -16,3 +16,6 @@ input[type="text"], select {
     color: red;
   }
   
+  .custom-modal-width {
+    width: 140%; /* Adjust the width as needed */
+  }

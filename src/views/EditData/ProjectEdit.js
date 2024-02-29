@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { CardTitle, Row, Col, TabContent, TabPane, Button } from 'reactstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import { CardTitle, Row, Col, TabContent, TabPane, Button, Label } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
@@ -19,6 +19,7 @@ import EditPoModal from '../../components/ProjectModal/EditPoModal';
 import EditPOLineItemsModal from '../../components/ProjectModal/EditPOLineItemsModal';
 import SubConWorkOrderPortal from '../../components/ProjectModal/SubConWorkOrderPortal';
 import MaterialsTransferred from '../../components/ProjectModal/MaterialsTransferred';
+import JobCompletionTab from '../../components/ProjectModal/JobCompletionTab';
 import FinanceTab from '../../components/ProjectModal/FinanceTab';
 import message from '../../components/Message';
 import api from '../../constants/api';
@@ -33,6 +34,13 @@ import MaterialPurchased from '../../components/project/TabContent/MaterialPurch
 import DeliveryOrder from '../../components/project/TabContent/DeliveryOrder';
 import Claim from '../../components/project/TabContent/Claim';
 import ProjectEditForm from '../../components/project/ProjectEditForm';
+import AddLineItemModal from '../../components/ProjectModal/AddLineItemModal';
+import PdfJobCompletionCertificate from '../../components/PDF/PdfJobCompletionCertificate';
+import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
+import EditLineItemModal from '../../components/ProjectModal/EditLineItemModal';
+import ViewLineJobItemmodal from '../../components/ProjectModal/ViewLineJobItemModal'
+import EditJobModal from '../../components/ProjectModal/EditjobModal'
 
 const ProjectEdit = () => {
   const { id } = useParams();
@@ -41,6 +49,8 @@ const ProjectEdit = () => {
   const backToList = () => {
     navigate('/Project');
   }; 
+ 
+  const [joborder, setJobOrder] = useState({});
   const [projectDetail, setProjectDetail] = useState();
   const [activeTab, setActiveTab] = useState('1');
   const [addDuctingCostModal, setAddDuctingCostModal] = useState(false);
@@ -60,7 +70,35 @@ const ProjectEdit = () => {
   const [testJsonData, setTestJsonData] = useState(null);
   const [quotationsModal, setquotationsModal] = useState(false);
   const [lineItem, setLineItem] = useState([]);
+  const [addnewjob, setAddNewJob] = useState(false);
+  const [addLineItemModal, setAddLineItemModal] = useState(false);
+  const [editLineModal, setEditLineModal] = useState(false);
+  const { loggedInuser } = useContext(AppContext);
+  const [viewjobLineModal, setViewJobLineModal] = useState(false);
+  const [jobLineItem, setJobLineItem] = useState([]);
+  const [editJobLineModal, setEditJobLineModal] = useState(false);
+  const [editLineModelItem, setEditLineModelItem] = useState(null);
+  const [editjob, setEditJob] = useState(false);
+  const [job, setJob] = useState({});
+  const [JobOrderId, setJobOrderId] = useState(null);
+  const handleInputs = (e) => {
+    setJob({ ...job, [e.target.name]: e.target.value });
+  };
 
+  const [addNewJobVisible, setAddNewJobVisible] = useState(true);
+
+  const handleAddNewJob = () => {
+    setAddNewJob(true);
+  };
+  const handleInsertData = () => {
+    // Logic to insert data
+    // Once the data is inserted successfully, close the modal and hide the button
+    setAddNewJob(false);
+    setAddNewJobVisible(false);
+  };
+  const viewJobLineToggle = () => {
+    setViewJobLineModal(!viewjobLineModal);
+  };
   const [workOrderForm, setWorkOrderForm] = useState({
     work_order_date: '',
     status: '',
@@ -80,6 +118,9 @@ const ProjectEdit = () => {
         console.log(err);
       });
   }, [id]);
+  const handleJobInputs = (e) => {
+    setJobOrder({ ...joborder, [e.target.name]: e.target.value });
+  };
 
   const handleClientForms = (e) => {
     setWorkOrderForm({ ...workOrderForm, [e.target.name]: e.target.value });
@@ -111,7 +152,8 @@ const ProjectEdit = () => {
     {id:'7',name:'Subcon Work Order'},
     {id:'8',name:'Claim'},
     {id:'9',name:'Finance'},
-    {id:'10',name:'Attachment'}
+    {id:'10',name:'Job Completion'},
+    {id:'11',name:'Attachment'}
   ];
   const toggle = (tab) => {
     setActiveTab(tab);
@@ -145,9 +187,9 @@ const ProjectEdit = () => {
     if(projectDetail.category){
     api.post('/project/edit-Project', projectDetail).then(() => {
       message('Record editted successfully', 'success');
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 300);
     });
   }else{
     message('Please Enter Category', 'warning');
@@ -226,7 +268,24 @@ console.log('elem',elem)
       });
     }
   };
+  
+  // const InsertJobOrder = () => {
+    
+  //     joborder.creation_date = creationdatetime
+  //     joborder.created_by = loggedInuser.first_name;
+  //     api
+  //       .post('/project/insertJobOrder', joborder)
+  //       .then(() => {
+  //         message('Opportunity inserted successfully.', 'success');
+  //         // setTimeout(() => {
+  //         // }, 300);
+  //       })
+  //       .catch(() => {
+  //         message('Network connection error.', 'error');
+  //       });
+  // };
 
+ 
 
   const insertDeliveryHistoryOrder = (proId, deliveryOrderId) => {
     api
@@ -313,6 +372,99 @@ console.log('elem',elem)
     });
   };
 
+  
+
+
+  const InsertJobOrder = (code) => {
+    joborder.creation_date = creationdatetime;
+    joborder.created_by = loggedInuser.first_name;
+    joborder.project_id = id;
+    joborder.job_order_code = code;
+    if (joborder.location !== '') {
+      api
+        .post('/project/insertJobOrder', joborder)
+        .then((res) => {
+          const insertedDataId = res.data.data.insertId;
+          console.log('JobOrderId',insertedDataId );
+          message('Job order inserted successfully.', 'success');
+          // setTimeout(() => {
+            
+          // }, 300);
+        })
+        .catch(() => {
+          message('Unable to edit record.', 'error');
+        });
+    } else {
+      message('Please fill all required fields', 'warning');
+    }
+  };
+
+  const generateJobCode = () => {
+    api
+      .post('/commonApi/getCodeValue', { type: 'jobordercode' })
+      .then((res) => {
+        InsertJobOrder(res.data.data);
+      })
+      .catch(() => {
+        InsertJobOrder('');
+      });
+  };
+  const getJobLineItem = (JobId) => {
+    api
+      .post('/project/getJobLineItemsById', { job_order_id: JobId })
+      .then((res) => {
+        setJobLineItem(res.data.data);
+        console.log('joblineitems', res.data.data);
+        setViewJobLineModal(true);
+      })
+  };
+  const getJob = () => {
+    api.post('/project/getJobByProjectId', { project_id: id }).then((res) => {
+      setJob(res.data.data[0]);
+      setJobOrder(res.data.data[0]);
+    });
+  };
+
+  useEffect(() => {
+    getJob();
+  }, []);
+  const EditJobDetails = () => {
+    api
+      .post('/project/editJoborder', job)
+      .then(() => {
+        message('Job order Edited Successfully.', 'success');
+        getJob();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      })
+      .catch(() => {
+        message('Unable to edit job. please fill all fields', 'error');
+      });
+  };
+  const deleteJobItemRecord = (quoteItemsId) => {
+    Swal.fire({
+      title: `Are you sure? `,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        api
+          .post('tender/deleteQuoteItems', { quote_items_id: quoteItemsId })
+          .then(() => {
+            Swal.fire('Deleted!', 'Quote has been deleted.', 'success');
+            setViewJobLineModal(false);
+          })
+          .catch(() => {
+            message('Unable to Delete line Item', 'info');
+          });
+      }
+    });
+  };
 
   const deleteData = () => {
     Swal.fire({
@@ -423,6 +575,7 @@ console.log('elem',elem)
    // getLineItem();
     //TabPurchaseOrderLineItemTable();
     getContactById();
+    getJob();
   }, [id]);
 
   useEffect(() => {
@@ -619,8 +772,89 @@ console.log('elem',elem)
             <FinanceTab projectId={id} projectDetail={projectDetail}></FinanceTab>
           </TabPane>
 
+         {/* Start Tab Content 10*/} 
+          <TabPane tabId="10" eventkey="JobCompletion">
+            <Row>
+            {(addNewJobVisible && (Object.keys(joborder).length === 0) )&& (  
+          <Col md="3">
+        <Button color="primary"
+         onClick={(e) => {       
+          handleJobInputs(e);
+          handleAddNewJob(e);
+        }} >
+            Add New Job</Button>
+      </Col>
+           )}
+   
+      <Col md="3">
+        <Button color="primary" 
+         onClick={() => {
+          getJob();
+          setEditJob(true)
+        }}>
+             Edit Job</Button>
+      </Col> 
+      <Col md="3">
+        <Button color="primary" 
+        onClick={() => {
+          setJobOrderId(job.job_order_id);
+          setAddLineItemModal(true);
+        }}>
+            Add Line Item</Button>
+      </Col>
+      <Col md="3">
+        <Button color="primary" 
+         onClick={() => {
+          getJobLineItem(job.job_order_id);
+        }}>
+            View Line Item</Button>
+      </Col>
+      <Col md="3">
+                    <Label className='pointer'>
+                      <PdfJobCompletionCertificate  id={id} 
+                      quoteId={id} ></PdfJobCompletionCertificate>
+                      {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                    </Label>
+                  </Col>
+                  </Row>
+            <JobCompletionTab handleJobInputs={handleJobInputs} handleInsertData={handleInsertData} addnewjob={addnewjob} setAddNewJob={setAddNewJob}  joborder={joborder} setJobOrder={setJobOrder} generateJobCode={generateJobCode}></JobCompletionTab>
+            <EditJobModal
+          editjob={editjob}
+          handleInputs={handleInputs}
+          EditJobDetails={EditJobDetails}
+          setEditJob={setEditJob}
+          getJob={getJob}
+          job={job}
+        ></EditJobModal>
+            <AddLineItemModal
+          addLineItemModal={addLineItemModal}
+          setAddLineItemModal={setAddLineItemModal}       
+          editLineModal={editLineModal}
+          setEditLineModal={setEditLineModal}
+          JobOrderId={JobOrderId}
+          setEditLineModelItem={setEditLineModelItem}
+        ></AddLineItemModal>
+        <ViewLineJobItemmodal
+        viewjobLineModal={viewjobLineModal}
+        setViewJobLineModal={setViewJobLineModal}
+        viewJobLineToggle={viewJobLineToggle}
+        deleteJobItemRecord={deleteJobItemRecord}
+        getJobLineItem={getJobLineItem}
+        jobLineItem={jobLineItem}
+        setEditJobLineModal={setEditJobLineModal}
+        JobOrderId={JobOrderId}
+        ></ViewLineJobItemmodal>
+         <EditLineItemModal
+        editJobLineModal={editJobLineModal}
+        setEditJobLineModal={setEditJobLineModal}
+        FetchLineItemData={editLineModelItem}
+      >
+        {' '}
+      </EditLineItemModal>
+          </TabPane>
+
           {/* Start Tab Content 10 */}
-          <TabPane tabId="10" eventkey="addEmployee">
+          <TabPane tabId="11" eventkey="addEmployee">
             <Row>
               <AddEmployee />
               <Col xs="12" md="3" className="mb-3">

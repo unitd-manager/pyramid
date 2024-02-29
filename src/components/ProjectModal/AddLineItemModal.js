@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
-  Card,
+  // Card,
   Row,
   Col,
   Form,
@@ -12,19 +12,24 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+// import moment from 'moment';
 import * as $ from 'jquery';
 import random from 'random';
 import api from '../../constants/api';
 import message from '../Message';
+import creationdatetime from '../../constants/creationdatetime';
+import AppContext from '../../context/AppContext';
 
-const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo }) => {
+
+const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) => {
   AddLineItemModal.propTypes = {
     addLineItemModal: PropTypes.bool,
     setAddLineItemModal: PropTypes.func,
-    projectInfo: PropTypes.any,
-   
+    JobOrderId: PropTypes.any,
   };
+  console.log('JobOrderId:', JobOrderId);
   //All state Varible
+  const { loggedInuser } = useContext(AppContext);
   const [totalAmount, setTotalAmount] = useState(0);
   const [addLineItem, setAddLineItem] = useState([
     {
@@ -38,20 +43,33 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
       description: '',
     },
   ]);
-  
   //Insert Invoice Item
   const addLineItemApi = (obj) => {
-   
-    obj.quote_id = projectInfo;
-    api
-      .post('/projecttabquote/insertQuoteItems', obj)
+    if (obj.title !== '' && obj.unit_price !== '' && obj.quantity !== '') {
+      obj.creation_date = creationdatetime;
+      obj.created_by = loggedInuser.first_name;
+      obj.job_order_id=JobOrderId
+      api
+      .post('/joborder/insertJobOrderItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
+<<<<<<< HEAD
        window.location.reload();
+=======
+        setAddLineItemModal(false);
+         setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+>>>>>>> 0bd9325e76724c67b55e39e697481f4e464a973b
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
       });
+    }
+    else {
+      message('Please fill all required fields', 'warning');
+    }
+  
   };
   //Add new line item
   const AddNewLineItem = () => {
@@ -82,7 +100,6 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
         });
       result.push(allValues);
     });
-    console.log('resultu',result)
     setTotalAmount(0);
     console.log(result);
     result.forEach((element) => {
@@ -90,6 +107,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
     });
     console.log(result);
   };
+  
   //Invoice Items Calculation
   const calculateTotal = () => {
     let totalValue = 0;
@@ -126,6 +144,26 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
       setTotalAmount(finalTotal);
     }
   };
+  // const deleteRecord = (deleteID) => {
+  //   Swal.fire({
+  //     title: `Are you sure?`,
+  //     text: "You won't be able to revert this!",
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3085d6',
+  //     cancelButtonColor: '#d33',
+  //     confirmButtonText: 'Yes, delete it!',
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       api.post('/project/deleteJobOrderItems', { job_order_item_id: deleteID }).then(() => {
+  //         Swal.fire('Deleted!', 'Your Line Items has been deleted.', 'success');
+  //         setTimeout(() => {
+  //           window.location.reload();
+  //         }, 300);
+  //       });
+  //     }
+  //   });
+  // };
   return (
     <>
       <Modal size="xl" isOpen={addLineItemModal}>
@@ -147,7 +185,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
               <Form>
                 <Row>
                   <Row>
-                    <Col md="3">
+                    <Col md="3" className="mb-4">
                       <Button
                         className="shadow-none"
                         color="primary"
@@ -163,18 +201,18 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                   </Row>
               
                   {/* Invoice Item */}
-                  <Card>
+                  {/* <Card> */}
                     <table className="lineitem">
                       <thead>
                         <tr>
-                          <th scope="col">Title </th>
+                          <th scope="col">Title <span className="required"> *</span>{' '}</th>
                           <th scope="col">Description </th>
-                          <th scope="col">Unit </th>
-                          <th scope="col">Qty</th>
-                          <th scope="col">Unit Price</th>
+                          <th scope="col">Unit</th>
+                          <th scope="col">Qty <span className="required"> *</span>{' '}</th>
+                          <th scope="col">Unit Price <span className="required"> *</span>{' '}</th>
                           <th scope="col">Amount</th>
                           <th scope="col">Remarks</th>
-                          <th scope="col"></th>
+                          <th scope="col">Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -185,6 +223,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                                 <td data-label="Title">
                                   <Input Value={item.title} type="text" name="title" style={{ width: '90%' }} />
                                 </td>
+                                
                                 <td data-label="Description">
                                   <Input Value={item.description} type="text" name="description" style={{ width: '90%' }} />
                                 </td>
@@ -192,11 +231,15 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                                   <Input Value={item.unit} type="text" name="unit" style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Qty">
+<<<<<<< HEAD
                                   <Input Value={item.quantity} 
                                   
                                   onBlur={() => {
                                     calculateTotal();
                                   }} type="number" name="quantity" style={{ width: '90%' }}/>
+=======
+                                  <Input Value={item.quantity} type="number" name="quantity" style={{ width: '70%' }}/>
+>>>>>>> 0bd9325e76724c67b55e39e697481f4e464a973b
                                 </td>
                                 <td data-label="Unit Price">
                                   <Input
@@ -231,18 +274,18 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectInfo })
                           })}
                       </tbody>
                     </table>
-                  </Card>
+                  {/* </Card> */}
+                 
                   <ModalFooter>
                     <Button
                       className="shadow-none"
                       color="primary"
                       onClick={() => {
                         getAllValues();
-                        setAddLineItemModal(false);
                       }}
                     >
                       {' '}
-                      Submit{' '}
+                      Save & Continue{' '}
                     </Button>
                     <Button
                       className="shadow-none"

@@ -89,6 +89,8 @@ export default function TenderQuotation({
   const [editLineModal, setEditLineModal] = useState(false);
   const [editRateModelItem, setEditRateModelItem] = useState(null);
   const [editRateModal, setEditRateModal] = useState(false);
+  //const [selectedQuoteFormat, setSelectedQuoteFormat] = useState('format1')
+  const [selectedFormat, setSelectedFormat] = useState('format1');
 
   console.log('quoteDatas', quoteDatas);
   console.log('quote', quote);
@@ -148,7 +150,6 @@ export default function TenderQuotation({
   const handleEditSuccess = () => {
     // Handle the refresh of the View Line Item Modal
     getLineItem(quote.quote_id);
-    
     setViewLineModal(true);
   };
 
@@ -158,6 +159,9 @@ export default function TenderQuotation({
     
   // };
 
+  // const handlePDFFormatChange = (event) => {
+  //   setSelectedQuoteFormat(event.target.value); // Update the selected format
+  // };
 
   useEffect(() => {
     getRateItem(quote.quote_id);
@@ -447,50 +451,79 @@ export default function TenderQuotation({
                       </Label>
                     </Col>
                   )}
+
+                  {/* {Object.keys(quote).length === 0 && quote.quote_format === 'format1' && (
+                  //{QuoteProject !== undefined && quote.quote_format === 'format1' && (
                   <Col md="4">
                     <Label className='pointer'>
-                      <PdfQuote quoteId={quote.quote_id} id={id} ></PdfQuote>
+                      <PdfQuote quoteId={quote.quote_id} id={id}  ></PdfQuote> */}
                       {/* <PdfQuoteFormat2 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat2> */}
                       {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
-                    </Label>
+                    {/* </Label>
                   </Col>
+                  )} */}
+                  {/* {Object.keys(quote).length !== 0 && quote.quote_format === 'format2' && (
+                  //{QuoteProject === undefined && quote.quote_format === 'format2' && (
+                  //{selectedFormat && QuoteProject === undefined && (
+                  <Col md="4">
+                    <Label className='pointer'> */}
+                      {/* <PdfQuoteFormat2 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat2> */}
+                      {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                    {/* </Label>
+                  </Col>
+                  )} */}
+                  {/* {Object.keys(quote).length !== 0 && quote.quote_format === 'format3' && (
+                  //{QuoteProject === undefined && quote.quote_format === 'format3' && (
                   <Col md="4">
                     <Label className='pointer'>
-                      <PdfQuoteFormat2 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat2>
+                      <PdfQuoteFormat3 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat3> */}
                       {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
-                    </Label>
+                    {/* </Label>
                   </Col>
+                  )} */}
+                  {/* {Object.keys(quote).length !== 0 && quote.quote_format === 'format4' && (
+                  //{QuoteProject === undefined && quote.quote_format === 'format4' && (
                   <Col md="4">
                     <Label className='pointer'>
-                      <PdfQuoteFormat3 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat3>
+                      <PdfQuoteFormat4 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat4> */}
                       {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
-                    </Label>
+                    {/* </Label>
                   </Col>
+                  )} */}
+                  
                   {/* <Col md="4">
                     <Label className='pointer'>
-                      <PdfQuoteFormat4 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat4>
-                      <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote>
-                    </Label>
+                      <PdfQuoteFormat3 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat3> */}
+                      {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                    {/* </Label>
                   </Col> */}
                   {/* <Col md="4">
                     <Label className='pointer'>
-                      <PdfQuoteFormat3 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat3>
-                      <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote>
-                    </Label>
+                      <PdfQuoteFormat4 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat4> */}
+                      {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                    {/* </Label>
                   </Col> */}
+                  {/* {Object.keys(quote).length !== 0 && quote.quote_format === 'format5' && (
+                  //{QuoteProject === undefined && quote.quote_format === 'format5' && (
                   <Col md="4">
                     <Label className='pointer'>
-                      <PdfQuoteFormat4 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat4>
+                      <PdfQuoteFormat5 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat5> */}
                       {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
-                    </Label>
+                    {/* </Label>
                   </Col>
-                  <Col md="4">
-                    <Label className='pointer'>
-                      <PdfQuoteFormat5 quoteId={quote.quote_id} id={id} ></PdfQuoteFormat5>
-                      {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
-                    </Label>
-                  </Col>
+)} */}
 
+{Object.keys(quote).length !== 0 && (
+<Col md="4">
+  <Label className='pointer'>
+    {selectedFormat === 'format1' && <PdfQuote quoteId={quote.quote_id} id={id} />}
+    {selectedFormat === 'format2' && <PdfQuoteFormat2 quoteId={quote.quote_id} id={id} />}
+    {selectedFormat === 'format3' && <PdfQuoteFormat3 quoteId={quote.quote_id} id={id} />}
+    {selectedFormat === 'format4' && <PdfQuoteFormat4 quoteId={quote.quote_id} id={id} />}
+    {selectedFormat === 'format5' && <PdfQuoteFormat5 quoteId={quote.quote_id} id={id} />}
+  </Label>
+</Col>
+)}
                   {project && QuoteProject === undefined && (
                     <Col md="4">
                       <Label>
@@ -585,6 +618,12 @@ export default function TenderQuotation({
           setEditQuoteModal={setEditQuoteModal}
           quoteDatas={quote}
           getQuoteFun={getQuote}
+          //setSelectedQuoteFormat={setSelectedQuoteFormat}
+          //handlePDFFormatChange={handlePDFFormatChange}
+          QuoteProject={QuoteProject}
+          selectedFormat={selectedFormat}
+          setSelectedFormat={setSelectedFormat}
+          
         ></EditQuoteModal>
       )}
       {addLineItemModal && (
