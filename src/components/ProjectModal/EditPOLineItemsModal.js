@@ -90,6 +90,9 @@ console.log('purchase',data[0]);
           });
       });
       message('Record editted successfully', 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
     })
     .catch(() => {
       message('Unable to edit record.', 'error');
