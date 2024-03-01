@@ -147,7 +147,7 @@ export default function QuotationMoreDetails({
                 <Col>
                   <FormGroup>
                     <Label>
-                      {element.quote_date ? moment(element.quote_date).format('YYYY-MM-DD') : ''}
+                      {element.quote_date ? moment(element.quote_date).format('DD-MM-YYYY') : ''}
                     </Label>
                   </FormGroup>
                 </Col>
@@ -255,6 +255,7 @@ export default function QuotationMoreDetails({
                 ></AddLineItemModal>
                   {quotationViewLineItem && (
                     <QuotationViewLineItem
+                    getQuotations={getQuotations}
                       quotationViewLineItem={quotationViewLineItem}
                       setQuotationViewLineItem={setQuotationViewLineItem}
                       quoteId={element.quote_id}

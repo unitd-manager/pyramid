@@ -53,6 +53,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
       .post('/joborder/insertJobOrderItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
+       //window.location.reload();
         setAddLineItemModal(false);
          setTimeout(() => {
             window.location.reload();
@@ -193,7 +194,9 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
                         Add Line Item
                       </Button>
                     </Col>
+                    <br/>
                   </Row>
+              
                   {/* Invoice Item */}
                   {/* <Card> */}
                     <table className="lineitem">
@@ -215,14 +218,14 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
                             return (
                               <tr key={item.id}>
                                 <td data-label="Title">
-                                  <Input Value={item.title} type="text" name="title" style={{ width: '100%' }} />
+                                  <Input Value={item.title} type="text" name="title" style={{ width: '90%' }} />
                                 </td>
                                 
                                 <td data-label="Description">
-                                  <Input Value={item.description} type="text" name="description" style={{ width: '100%' }} />
+                                  <Input Value={item.description} type="text" name="description" style={{ width: '90%' }} />
                                 </td>
                                 <td data-label="Unit">
-                                  <Input Value={item.unit} type="text" name="unit" style={{ width: '70%' }}/>
+                                  <Input Value={item.unit} type="text" name="unit" style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Qty">
                                   <Input Value={item.quantity} type="number" name="quantity" style={{ width: '70%' }}/>
@@ -235,14 +238,14 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
                                     }}
                                     type="number"
                                     name="unit_price"
-                                    style={{ width: '70%' }}
+                                    style={{ width: '90%' }}
                                   />
                                 </td>
                                 <td data-label="Amount">
-                                  <Input Value={item.amount} type="text" name="amount" disabled style={{ width: '70%' }}/>
+                                  <Input Value={item.amount} type="text" name="amount" disabled style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Remarks">
-                                  <Input Value={item.remarks} type="text" name="remarks" style={{ width: '100%' }}/>
+                                  <Input Value={item.remarks} type="text" name="remarks" style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Action">
                                   

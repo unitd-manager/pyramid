@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label, Row, Col } from 'reactstrap';
-import { Link } from 'react-router-dom';
 import * as Icon from 'react-feather';
 import PropTypes from 'prop-types';
 import api from '../../constants/api';
@@ -12,12 +11,14 @@ const QuotationViewLineItem = ({
   quote,
   quotationViewLineItem,
   setQuotationViewLineItem,
+  getQuotations
 }) => {
   QuotationViewLineItem.propTypes = {
     quotationViewLineItem: PropTypes.bool,
     setQuotationViewLineItem: PropTypes.func,
     projectId: PropTypes.any,
     quote: PropTypes.any,
+    getQuotations:PropTypes.any,
   };
 
   const [quotation, setQuotationViewLineItems] = useState();
@@ -37,7 +38,7 @@ const QuotationViewLineItem = ({
       });
   };
 
-  console.log('quotation',quotation)
+  console.log('quotation', quotation);
   const QuotationDeleteItem = (quoteItemsId) => {
     api
       .post('/projecttabquote/deleteQuoteItems', {
@@ -46,6 +47,7 @@ const QuotationViewLineItem = ({
       .then(() => {
         message('Record deteled successfully', 'success');
         QuotationViewLine();
+        getQuotations();
       })
       .catch(() => {
         message(' delete Line Data not found', 'info');
@@ -85,14 +87,14 @@ const QuotationViewLineItem = ({
                       <td>{e.unit}</td>
                       <td>{e.unit_price}</td>
                       <td>{e.amount} </td>
-                      
+
                       <td></td>
 
                       <td>
                         <Row>
                           <Col md="3">
                             <Label>
-                              <Link to="">
+                              <div color="primary" className="anchor">
                                 <span
                                   onClick={() => {
                                     setQuoteLine(e);
@@ -101,12 +103,12 @@ const QuotationViewLineItem = ({
                                 >
                                   <Icon.Edit />
                                 </span>
-                              </Link>
+                              </div>
                             </Label>
                           </Col>
                           <Col md="3">
                             <Label>
-                              <Link to="">
+                              <div color="primary" className="anchor">
                                 <span
                                   onClick={() => {
                                     setQuoteLine(e);
@@ -115,7 +117,7 @@ const QuotationViewLineItem = ({
                                 >
                                   <Icon.Delete />
                                 </span>{' '}
-                              </Link>
+                              </div>
                             </Label>
                           </Col>
                         </Row>
@@ -127,8 +129,9 @@ const QuotationViewLineItem = ({
           </table>
           {quoteData && (
             <QuoteviewEditItem
-            FetchLineItemData={quoteLine}
-            QuotationViewLine={QuotationViewLine}
+            getQuotations={getQuotations}
+              FetchLineItemData={quoteLine}
+              QuotationViewLine={QuotationViewLine}
               quoteData={quoteData}
               setQuoteData={setQuoteData}
               quoteId={quote}

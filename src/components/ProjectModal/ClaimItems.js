@@ -61,7 +61,7 @@ function ClaimItems({projectClaimId,projectId,checkId,POId,projectDetail,deliver
                 return(
                   <>
                     <tr>
-                      <td>{moment(res.date).format('DD-MM-YYYY')}</td>
+                      <td>{res.date ? moment(res.date).format('DD-MM-YYYY') : ''}</td>
                       <td>{res.claim_seq}</td>
                       <td>{res.claim_amount}</td>
                      <td>{res.status}</td>
@@ -94,7 +94,7 @@ function ClaimItems({projectClaimId,projectId,checkId,POId,projectDetail,deliver
             </tbody>
           </table>
           
-          {editPcItems && <EditPcItems editPcItems={editPcItems} setEditPcItems={setEditPcItems} pc={projectDetail} projectClaimId={projectClaimId} projectId={projectId} editClaim1={editClaim1} editClaim={editClaim}/>}
+          {editPcItems && <EditPcItems getClaimPaymentById={getClaimPaymentById} editPcItems={editPcItems} setEditPcItems={setEditPcItems} pc={projectDetail} projectClaimId={projectClaimId} projectId={projectId} editClaim1={editClaim1} editClaim={editClaim}/>}
           </FormGroup>
     </div>
   )

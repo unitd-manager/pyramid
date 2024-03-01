@@ -49,7 +49,7 @@ console.log('loginuser',loggedInuser)
         setProduct(res.data.data[0]);
       })
       .catch(() => {
-        message('unable to get products', 'error');
+        //message('unable to get products', 'error');
       });
   };
 
@@ -78,12 +78,13 @@ console.log('loginuser',loggedInuser)
                 .then(() => {
                   message('Quantity updated in inventory successfully.', 'success');
                   setTimeout(()=>{
-                    setReturnStockModal(false)
+                   window.location.reload();
                   },300)
-                })
+               
                 .catch(() => {
                   message('unable to update quantity in inventory.11', 'danger');
                 });
+              })
               message('Quantity added successfully.', 'success');
             })
             .catch(() => {
