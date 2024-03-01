@@ -53,14 +53,11 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
       .post('/joborder/insertJobOrderItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
-<<<<<<< HEAD
-       window.location.reload();
-=======
+       //window.location.reload();
         setAddLineItemModal(false);
          setTimeout(() => {
             window.location.reload();
           }, 1000);
->>>>>>> 0bd9325e76724c67b55e39e697481f4e464a973b
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
@@ -231,15 +228,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
                                   <Input Value={item.unit} type="text" name="unit" style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Qty">
-<<<<<<< HEAD
-                                  <Input Value={item.quantity} 
-                                  
-                                  onBlur={() => {
-                                    calculateTotal();
-                                  }} type="number" name="quantity" style={{ width: '90%' }}/>
-=======
                                   <Input Value={item.quantity} type="number" name="quantity" style={{ width: '70%' }}/>
->>>>>>> 0bd9325e76724c67b55e39e697481f4e464a973b
                                 </td>
                                 <td data-label="Unit Price">
                                   <Input
