@@ -374,8 +374,8 @@ const EditQuoteModal = ({
 
                 {/* Render additional fields based on selected format */}
 
-                {/* {(selectedFormat === 'format2' || selectedFormat === 'format5') && ( */}
-                {selectedFormat === 'format2' && (
+                {(selectedFormat && quoteData.quote_format === 'format2' || selectedFormat && quoteData.quote_format === 'format5') && (
+                
                   <>
                     <Col md="4">
                       <FormGroup>
@@ -413,7 +413,7 @@ const EditQuoteModal = ({
                   </>
                 )}
 
-                {selectedFormat === 'format4' && (
+                {selectedFormat && quoteData.quote_format === 'format4' && (
                   <>
                     <Col md="4">
                       <FormGroup>
@@ -429,7 +429,7 @@ const EditQuoteModal = ({
                   </>
                 )}
 
-                {selectedFormat === 'format5' && (
+                {selectedFormat && quoteData.quote_format === 'format5' && (
                   <>
                     <Col md="4">
                       <FormGroup>
