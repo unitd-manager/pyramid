@@ -69,8 +69,8 @@ const EditMaterialused = ({ editMaterialsUsed, setEditMaterialsUsed, FetchMateri
                           <Label>Date</Label>
                           <Input
                             type="date"
-                            name="date"
-                            defaultValue={moment( editMaterialsUsedData && editMaterialsUsedData.creation_date
+                            name="material_used_date"
+                            defaultValue={moment( editMaterialsUsedData && editMaterialsUsedData.material_used_date
                             ).format('YYYY-MM-DD')}
                             onChange={handleEditMaterialsUsedInputs}
                           />

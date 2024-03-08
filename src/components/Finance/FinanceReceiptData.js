@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Row,
   Col,
@@ -25,6 +25,7 @@ const FinanceReceiptData = ({ editCreateReceipt, setEditCreateReceipt, orderId }
     editCreateReceipt: PropTypes.bool,
     setEditCreateReceipt: PropTypes.func,
     orderId: PropTypes.any,
+    //canceledAmount:PropTypes.any,
   };
   //All const Variable
   const [invoiceReceipt, setInvoiceReceipt] = useState([]);
@@ -34,18 +35,18 @@ const FinanceReceiptData = ({ editCreateReceipt, setEditCreateReceipt, orderId }
   const [createReceipt, setCreateReceipt] = useState({
     amount: 0,
     order_id: id,
-    receipt_status: "Paid",
+    receipt_status: 'Paid',
     receipt_date: moment(),
     receipt_code: '',
   });
-    //get staff details
-const { loggedInuser } = useContext(AppContext);
+  //get staff details
+  const { loggedInuser } = useContext(AppContext);
   const [selectedInvoice, setSelectedInvoice] = useState([]);
   //Setting Data in createReceipt
   const handleInputreceipt = (e) => {
     if (e.target.name === 'amount') {
       // eslint-disable-next-line
-      setTotalAmount(parseInt(e.target.value))
+      setTotalAmount(parseInt(e.target.value));
     }
     setCreateReceipt({ ...createReceipt, [e.target.name]: e.target.value });
   };
@@ -61,14 +62,14 @@ const { loggedInuser } = useContext(AppContext);
     if (editCreateReceipt) {
       setTodayDate(); // Set the receipt date when the modal is opened
     }
-  }, [editCreateReceipt]); 
+  }, [editCreateReceipt]);
 
   const insertReceiptHistory = (createReceiptHistory) => {
     api
       .post('/finance/insertInvoiceReceiptHistory', createReceiptHistory)
       .then(() => {
         message('data inserted successfully.');
-        window.location.reload()
+        window.location.reload();
       })
       .catch(() => {
         message('Network connection error.');
@@ -104,7 +105,7 @@ const { loggedInuser } = useContext(AppContext);
 
   //Logic for deducting receipt amount
   const finalCalculation = (receipt) => {
-    let leftamount = totalAmount
+    let leftamount = totalAmount;
     // selectedInvoice.forEach(element => {
     //   if(element.prev_amount < leftamount){
     //     leftamount = parseFloat(leftamount) - element.prev_amount
@@ -115,9 +116,8 @@ const { loggedInuser } = useContext(AppContext);
     // Insert Receipt History
 
     for (let j = 0; j < selectedInvoice.length; j++) {
-
       if (selectedInvoice[j].remainingAmount <= leftamount) {
-        leftamount = parseFloat(leftamount) - selectedInvoice[j].remainingAmount
+        leftamount = parseFloat(leftamount) - selectedInvoice[j].remainingAmount;
         selectedInvoice[j].paid = true;
         editInvoiceStatus(selectedInvoice[j].invoice_id, 'Paid');
         insertReceiptHistory({
@@ -130,9 +130,8 @@ const { loggedInuser } = useContext(AppContext);
           created_by: '',
           modified_by: '',
           amount: selectedInvoice[j].remainingAmount,
-          site_id: '1'
-        })
-
+          site_id: '1',
+        });
       } else {
         selectedInvoice[j].partiallyPaid = true;
         editInvoicePartialStatus(selectedInvoice[j].invoice_id, 'Partial Payment');
@@ -147,39 +146,37 @@ const { loggedInuser } = useContext(AppContext);
           modified_by: '',
           amount: leftamount,
           site_id: '1',
-
-        })
+        });
       }
     }
   };
 
-  console.log('totalAmount', totalAmount)
+  console.log('totalAmount', totalAmount);
   //Insert Receipt
   const insertReceipt = async (code) => {
     createReceipt.receipt_code = code;
     createReceipt.creation_date = creationdatetime;
-  createReceipt.created_by = loggedInuser.first_name;
-     //createReceipt.receipt_date = moment()
-    if (createReceipt.mode_of_payment && (selectedInvoice.length > 0)) {
+    createReceipt.created_by = loggedInuser.first_name;
+    //createReceipt.receipt_date = moment()
+    if (createReceipt.mode_of_payment && selectedInvoice.length > 0) {
       if (totalAmount >= createReceipt.amount) {
         api
           .post('/finance/insertreceipt', createReceipt)
           .then((res) => {
             message('data inserted successfully.');
-            finalCalculation(res.data.data.insertId)
+            finalCalculation(res.data.data.insertId);
           })
           .catch(() => {
             message('Network connection error.');
-          }).finally(() => {
-            setSubmitting(false);// Reset the submitting state after the API call completes (success or error).
+          })
+          .finally(() => {
+            setSubmitting(false); // Reset the submitting state after the API call completes (success or error).
             //window.location.reload();
           });
-      }
-      else {
+      } else {
         message('Please fill all required fields', 'warning');
       }
-    }
-    else {
+    } else {
       message('Please fill mode of payment fields', 'warning');
       setSubmitting(false);
     }
@@ -231,16 +228,15 @@ const { loggedInuser } = useContext(AppContext);
       // setSelectedInvoice(arr);
       setSelectedInvoice([...selectedInvoice, invObj]);
     } else {
-      const indofele = selectedInvoice.indexOf(invObj)
+      const indofele = selectedInvoice.indexOf(invObj);
       // If the checkbox is unchecked, remove the employeeId from the selectedNames array
-      selectedInvoice.splice(indofele, 1)
+      selectedInvoice.splice(indofele, 1);
 
       setSelectedInvoice(selectedInvoice);
     }
-    console.log("select", selectedInvoice);
+    console.log('select', selectedInvoice);
   };
-   console.log('selectedInvoice', selectedInvoice)
-
+  console.log('selectedInvoice', selectedInvoice);
 
   // const insertInvoices = () => {
   //   invoices.forEach((obj) => {
@@ -251,59 +247,59 @@ const { loggedInuser } = useContext(AppContext);
   //Getting receipt data by order id
   const getinvoiceReceipt = () => {
     api.post('/invoice/getInvoiceReceiptById', { order_id: orderId }).then((res) => {
-      const datafromapi = res.data.data
-      datafromapi.forEach(element => {
-        element.remainingAmount = element.invoice_amount - element.prev_amount
+      const datafromapi = res.data.data;
+      datafromapi.forEach((element) => {
+        element.remainingAmount = element.invoice_amount - element.prev_amount;
       });
-      const result = datafromapi.filter(el => { return el.invoice_amount !== el.prev_amount });
+      const result = datafromapi.filter((el) => {
+        return el.invoice_amount !== el.prev_amount;
+      });
       setInvoiceReceipt(result);
     });
   };
   //Calculation for Invoice checkbox amount
-//  const result = [];
-const addAndDeductAmount = (checkboxVal, receiptObj) => {
-  const remainingAmount = receiptObj.invoice_amount - receiptObj.prev_amount;
-  const parsedTotalAmount = parseFloat(totalAmount);
-  const parsedCreateReceiptAmount = parseFloat(createReceipt.amount);
+  //  const result = [];
+  const addAndDeductAmount = (checkboxVal, receiptObj) => {
+    const remainingAmount = receiptObj.invoice_amount - receiptObj.prev_amount;
+    const parsedTotalAmount = parseFloat(totalAmount);
+    const parsedCreateReceiptAmount = parseFloat(createReceipt.amount);
 
-  if (checkboxVal.target.checked) {
-    const updatedTotalAmount = parsedTotalAmount + remainingAmount;
-    const updatedCreateReceiptAmount = parsedCreateReceiptAmount + remainingAmount;
+    if (checkboxVal.target.checked) {
+      const updatedTotalAmount = parsedTotalAmount + remainingAmount;
+      const updatedCreateReceiptAmount = parsedCreateReceiptAmount + remainingAmount;
 
-    if (!Number.isNaN(updatedTotalAmount) && !Number.isNaN(updatedCreateReceiptAmount)) {
-      setTotalAmount(updatedTotalAmount);
-      setCreateReceipt((prevReceipt) => ({
-        ...prevReceipt,
-        amount: updatedCreateReceiptAmount.toString(),
-      }));
+      if (!Number.isNaN(updatedTotalAmount) && !Number.isNaN(updatedCreateReceiptAmount)) {
+        setTotalAmount(updatedTotalAmount);
+        setCreateReceipt((prevReceipt) => ({
+          ...prevReceipt,
+          amount: updatedCreateReceiptAmount.toString(),
+        }));
+      } else {
+        setTotalAmount(0);
+        setCreateReceipt((prevReceipt) => ({
+          ...prevReceipt,
+          amount: '0',
+        }));
+      }
     } else {
-      setTotalAmount(0);
-      setCreateReceipt((prevReceipt) => ({
-        ...prevReceipt,
-        amount: '0',
-      }));
-    }
-  } else {
-    const updatedTotalAmount = parsedTotalAmount - remainingAmount;
-    const updatedCreateReceiptAmount = parsedCreateReceiptAmount - remainingAmount;
+      const updatedTotalAmount = parsedTotalAmount - remainingAmount;
+      const updatedCreateReceiptAmount = parsedCreateReceiptAmount - remainingAmount;
 
-    if (!Number.isNaN(updatedTotalAmount) && !Number.isNaN(updatedCreateReceiptAmount)) {
-      setTotalAmount(updatedTotalAmount >= 0 ? updatedTotalAmount : 0);
-      setCreateReceipt((prevReceipt) => ({
-        ...prevReceipt,
-        amount: updatedCreateReceiptAmount >= 0 ? updatedCreateReceiptAmount.toString() : '0',
-      }));
-    } else {
-      setTotalAmount(0);
-      setCreateReceipt((prevReceipt) => ({
-        ...prevReceipt,
-        amount: '0',
-      }));
+      if (!Number.isNaN(updatedTotalAmount) && !Number.isNaN(updatedCreateReceiptAmount)) {
+        setTotalAmount(updatedTotalAmount >= 0 ? updatedTotalAmount : 0);
+        setCreateReceipt((prevReceipt) => ({
+          ...prevReceipt,
+          amount: updatedCreateReceiptAmount >= 0 ? updatedCreateReceiptAmount.toString() : '0',
+        }));
+      } else {
+        setTotalAmount(0);
+        setCreateReceipt((prevReceipt) => ({
+          ...prevReceipt,
+          amount: '0',
+        }));
+      }
     }
-  }
-};
-
-  
+  };
 
   useEffect(() => {
     getinvoiceReceipt();
@@ -313,7 +309,8 @@ const addAndDeductAmount = (checkboxVal, receiptObj) => {
       <Modal size="md=6" isOpen={editCreateReceipt}>
         <ModalHeader>
           Create Receipt
-          <Button className='shadow-none'
+          <Button
+            className="shadow-none"
             color="secondary"
             onClick={() => {
               setEditCreateReceipt(false);
@@ -326,9 +323,9 @@ const addAndDeductAmount = (checkboxVal, receiptObj) => {
           <Row>
             <Col md="12">
               <Form>
-                {invoiceReceipt &&
-                  invoiceReceipt.map((singleInvoiceObj) => {
-                    return (
+                {invoiceReceipt && invoiceReceipt.length > 0 ? (
+                  <>
+                    {invoiceReceipt.map((singleInvoiceObj) => (
                       <Row key={singleInvoiceObj.invoice_id}>
                         <Col md="12">
                           <FormGroup check>
@@ -339,6 +336,7 @@ const addAndDeductAmount = (checkboxVal, receiptObj) => {
                               }}
                               name="invoice_code(prev_amount)"
                               type="checkbox"
+                              //checked={canceledAmount > 0}
                             />
                             <span>
                               {singleInvoiceObj.invoice_code}({singleInvoiceObj.invoice_amount})
@@ -347,140 +345,149 @@ const addAndDeductAmount = (checkboxVal, receiptObj) => {
                           </FormGroup>
                         </Col>
                       </Row>
-                    );
-                  })}
-                <br></br>
-                {invoiceReceipt && invoiceReceipt.length > 0 ?
-                  <Row>
-                    <Col md="12">
-                      <FormGroup>
-                        <Label>Amount</Label>
-                        <Input
-                          type="text"
-                          onChange={handleInputreceipt}
-                          value={createReceipt && createReceipt.amount}
-                          defaultValue={totalAmount.toString()}
-                          name="amount"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md="12">
-                      <FormGroup>
-                        <Label>Date</Label>
-                        <Input
-                          type="date"
-                          onChange={handleInputreceipt}
-                          //value={createReceipt && moment(createReceipt.receipt_date).format('YYYY-MM-DD')}
-                          defaultValue={createReceipt && createReceipt.receipt_date}
-                          name="receipt_date"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md="12">
-                      <FormGroup>
-                        <Label>{' '}Mode Of Payment <span className="required">*</span>{' '}</Label>
-                        <Input type="select" name="mode_of_payment" onChange={handleInputreceipt}>
-                          <option value="" selected="selected">
-                            Please Select
-                          </option>
-                          <option value="cash">Cash</option>
-                          <option value="cheque">Cheque</option>
-                          <option value="giro">Giro</option>
-                        </Input>
-                      </FormGroup>
-                    </Col>
-                    {createReceipt && createReceipt.mode_of_payment === 'cheque' && (
+                    ))}
+
+                    <br />
+
+                    <Row>
                       <Col md="12">
                         <FormGroup>
-                          <Label>Check No</Label>
+                          <Label>Amount</Label>
                           <Input
-                            type="numbers"
+                            type="text"
                             onChange={handleInputreceipt}
-                            value={createReceipt && createReceipt.cheque_no}
-                            name="cheque_no"
+                            value={createReceipt && createReceipt.amount}
+                            defaultValue={totalAmount.toString()}
+                            name="amount"
                           />
                         </FormGroup>
                       </Col>
-                    )}
-                    {createReceipt && createReceipt.mode_of_payment === 'cheque' && (
                       <Col md="12">
                         <FormGroup>
-                          <Label>Check date</Label>
+                          <Label>Date</Label>
                           <Input
                             type="date"
                             onChange={handleInputreceipt}
-                            value={createReceipt && createReceipt.cheque_date}
-                            name="cheque_date"
+                            defaultValue={createReceipt && createReceipt.receipt_date}
+                            name="receipt_date"
                           />
                         </FormGroup>
                       </Col>
-                    )}
-                    {createReceipt && createReceipt.mode_of_payment === 'cheque' && (
                       <Col md="12">
                         <FormGroup>
-                          <Label>Bank</Label>
+                          <Label>
+                            Mode Of Payment <span className="required">*</span>{' '}
+                          </Label>
+                          <Input type="select" name="mode_of_payment" onChange={handleInputreceipt}>
+                            <option value="" selected="selected">
+                              Please Select
+                            </option>
+                            <option value="cash">Cash</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="giro">Giro</option>
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      {createReceipt && createReceipt.mode_of_payment === 'cheque' && (
+                        <Col md="12">
+                          <FormGroup>
+                            <Label>Check No</Label>
+                            <Input
+                              type="number"
+                              onChange={handleInputreceipt}
+                              value={createReceipt && createReceipt.cheque_no}
+                              name="cheque_no"
+                            />
+                          </FormGroup>
+                        </Col>
+                      )}
+                      {createReceipt && createReceipt.mode_of_payment === 'cheque' && (
+                        <Col md="12">
+                          <FormGroup>
+                            <Label>Check date</Label>
+                            <Input
+                              type="date"
+                              onChange={handleInputreceipt}
+                              value={createReceipt && createReceipt.cheque_date}
+                              name="cheque_date"
+                            />
+                          </FormGroup>
+                        </Col>
+                      )}
+                      {createReceipt && createReceipt.mode_of_payment === 'cheque' && (
+                        <Col md="12">
+                          <FormGroup>
+                            <Label>Bank</Label>
+                            <Input
+                              type="text"
+                              onChange={handleInputreceipt}
+                              value={createReceipt && createReceipt.bank_name}
+                              name="bank_name"
+                            />
+                          </FormGroup>
+                        </Col>
+                      )}
+                      <Col md="12">
+                        <FormGroup>
+                          <Label>Notes</Label>
                           <Input
-                            type="numbers"
+                            type="text"
                             onChange={handleInputreceipt}
-                            value={createReceipt && createReceipt.bank_name}
-                            name="bank_name"
+                            defaultValue={createReceipt && createReceipt.remarks}
+                            name="remarks"
                           />
                         </FormGroup>
                       </Col>
-                    )}
-                    <Col md="12">
-                      <FormGroup>
-                        <Label>Notes</Label>
-                        <Input
-                          type="text"
-                          onChange={handleInputreceipt}
-                          defaultValue={createReceipt && createReceipt.remarks}
-                          name="remarks"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row> : <span>No Invoice</span>}
+                    </Row>
+                  </>
+                ) : (
+                  <span>No Invoice</span>
+                )}
               </Form>
             </Col>
           </Row>
         </ModalBody>
         <ModalFooter>
-          <Button className='shadow-none'
+          <Button
+            className="shadow-none"
             color="primary"
             onClick={() => {
               if (!submitting) {
                 setSubmitting(true);
-                //generateCode();
                 if (parseFloat(createReceipt.amount) > 0) {
-                  if (createReceipt.mode_of_payment && createReceipt.mode_of_payment !== 'Please Select') {
-                    const totalInvoiceAmount = selectedInvoice.reduce((total, invoice) => total + invoice.remainingAmount, 0);
+                  if (
+                    createReceipt.mode_of_payment &&
+                    createReceipt.mode_of_payment !== 'Please Select'
+                  ) {
+                    const totalInvoiceAmount = selectedInvoice.reduce(
+                      (total, invoice) => total + invoice.remainingAmount,
+                      0,
+                    );
                     if (parseFloat(createReceipt.amount) <= totalInvoiceAmount) {
-
                       generateCode();
                     } else {
-                      // Show an error message indicating that the amount should not exceed the invoice amount
-                      message('Amount should not be greater than the total invoice amount.', 'warning');
-                      setSubmitting(false); // Reset submitting state
+                      message(
+                        'Amount should not be greater than the total invoice amount.',
+                        'warning',
+                      );
+                      setSubmitting(false);
                     }
                   } else {
-                    // Set the amount validation error message
                     alert('Please select a valid mode of payment');
-                    setSubmitting(false); // Reset submitting state
+                    setSubmitting(false);
                   }
                 } else {
-                  // Show an error message indicating that the amount should be greater than 0
-                  message('Pls select atleast one Invoice', 'warning');
-                  setSubmitting(false); // Reset submitting state
+                  message('Please select at least one Invoice', 'warning');
+                  setSubmitting(false);
                 }
-
               }
             }}
             disabled={submitting}
           >
-            {' '}
-            Submit{' '}
+            Submit
           </Button>
-          <Button className='shadow-none'
+          <Button
+            className="shadow-none"
             color="secondary"
             onClick={() => {
               setEditCreateReceipt(false);

@@ -180,9 +180,22 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed ,getTableData}
               message('unable to add quantity.', 'danger');
             });
           message('Product Added!', 'success');
-          setTimeout(() => {
-            // window.location.reload();
-          }, 300);
+         setTimeout(() => {
+          // Reset the modal values and fetch materials purchased data
+          setMoreItem([
+            {
+              id: random.int(0, 9999).toString(),
+              itemId: '',
+              title: '',
+              product_type: '',
+              qty_in_stock: '',
+              uom: '',
+              qty: '',
+              description: '',
+            },
+          ]);
+          TabMaterialsPurchased();
+        }, 300);
         })
         .catch(() => {
           message('Unable to add Product!', 'error');
@@ -201,6 +214,7 @@ const AddMaterialsUsed = ({ addMaterialsUsed, setAddMaterialsUsed ,getTableData}
 
   useEffect(() => {
     TabMaterialsPurchased();
+    setAddMaterialsUsed(false);
   }, []);
 
   const onchangeItem = (str, itemId) => {

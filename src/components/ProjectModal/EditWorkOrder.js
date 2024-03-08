@@ -186,8 +186,8 @@ const EditWorkOrder = ({workData,editWorkOrderModal, setEditWorkOrderModal}) => 
                                 <FormGroup>
                                     <Label>Terms & Condition</Label>
                                     <Input  type="textarea" onChange={handleInputs}
-                                      value={workinsert && workinsert.terms_condition} 
-                                     name="terms_condition"/>
+                                      value={workinsert && workinsert.conditions} 
+                                     name="conditions"/>
                                 </FormGroup>
                             </Col>
 

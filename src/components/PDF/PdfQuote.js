@@ -4,7 +4,7 @@ import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import * as numberToWords from 'number-to-words';
 import PropTypes from 'prop-types';
-//import * as Icon from 'react-feather';
+import * as Icon from 'react-feather';
 import moment from 'moment';
 // import message from '../Message';
 import api from '../../constants/api';
@@ -20,6 +20,7 @@ const PdfQuote = ({ id, quoteId }) => {
   const [lineItem, setLineItem] = useState([]);
   const [hfdata, setHeaderFooterData] = React.useState();
   const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+  const [parsedQuoteCondition1, setParsedQuoteCondition1] = useState('');
   const [gTotal, setGtotal] = React.useState(0);
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
@@ -49,13 +50,7 @@ const PdfQuote = ({ id, quoteId }) => {
       console.log('quote', res.data.data[0]);
     });
   };
-  // const calculateTotal = () => {
-  //   const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
-  //   return grandTotal;
-  //   // const gstValue = quote.gst_value || 0;
-  //   // const total = grandTotal + gstValue;
-  //   // return total;
-  // };
+  
   const calculateTotal = () => {
     const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
     const discount = quote.discount || 0; // Get the discount from the quote or default to 0 if not provided
@@ -97,6 +92,24 @@ const PdfQuote = ({ id, quoteId }) => {
 
     // Other logic you have here...
   }, [quote.quote_condition]);
+
+  React.useEffect(() => {
+    const parseHTMLContent = (htmlContent) => {
+      if (htmlContent) {
+        // Replace all occurrences of &nbsp; with an empty string
+        const plainText = htmlContent.replace(/&nbsp;/g, '');
+
+        // Remove HTML tags using a regular expression
+        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+
+        setParsedQuoteCondition1(plainTextWithoutTags);
+      }
+    };
+    // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
+    parseHTMLContent(quote.bio_scope);
+
+    // Other logic you have here...
+  }, [quote.bio_scope]);
 
   //The quote_condition content and format it as bullet points
   const formatQuoteConditions = (conditionsText) => {
@@ -272,27 +285,27 @@ const PdfQuote = ({ id, quoteId }) => {
         {
           text: `Client:${tenderDetails.company_name ? tenderDetails.company_name : ''}`,
           style: ['notesText', 'textSize'],
-          //bold: 'true',
+          bold: 'true',
         },
         '\n',
         {
           text: `Att : ${tenderDetails.first_name ? tenderDetails.first_name : ''}`,
           style: ['notesText', 'textSize'],
-          //bold: 'true',
+          bold: 'true',
         },
 
         '\n',
         {
           text: `Email:${tenderDetails.email ? tenderDetails.email : ''}`,
           style: ['notesText', 'textSize'],
-          //bold: 'true',
+          bold: 'true',
         },
         '\n',
         {
           text: `Project: ${tenderDetails.title ? tenderDetails.title : ''}`,
           style: ['notesText', 'textSize'],
 
-          //bold: 'true',
+          bold: 'true',
         },
 
         {
@@ -456,9 +469,8 @@ const PdfQuote = ({ id, quoteId }) => {
         '\n',
 
         {
-          text: `REMARKS: `,
-          fontSize: 9,
-          bold:true,
+          text: `Terms and Conditions: `,
+          fontSize: 11,
           decoration: 'underline',
           margin: [0, 5, 0, 0],
           style: ['notesText', 'textSize'],
@@ -474,56 +486,9 @@ const PdfQuote = ({ id, quoteId }) => {
           text: 'Thank you very much for your business',
           bold: true,
           margin: [0, 10, 0, 10],
-          fontSize: 8,
-        },
-        '\n',
-        [{
-          text: `PYRAMID ENGINEERING PRIVATE LTD `,
-          fontSize: 8,
-          // decoration: 'underline',
-          margin: [0, 50, 0, 0],
-          style: ['notesText', 'textSize'],
-        },
-        {
-          text: `Bala`,
-          fontSize: 7,
-          margin: [0, 5, 0, 0],
-          style: ['notesText', 'textSize'],
-  
+          fontSize: 12,
         },
       ],
-      '\n',
-      {
-        text: 'ACKNOWLEDGE ACCEPTANCE BY',
-        style: 'textSize',
-        fontSize: 8,
-        bold: true,
-        margin: [5, -50, 15, 0],
-        alignment: 'right',
-      },
-      {
-        columns: [
-          {
-            canvas: [{ type: 'line', x1: 155, y1: 0, x2: 0, y2: 0, lineWidth: 1 }],
-            margin: [0, 10, 0, 0],
-            alignment: 'right',
-          },
-        ],
-      },
-
-      {
-        columns: [
-          {
-            text: ['Sign with Company Stamp and','\n', 'fax by return'],
-            style: 'textSize',
-            fontSize: 8,
-            margin: [360, 0, 0, 0],
-            alignment: 'center',
-          },
-        ],
-      },
-      ],
-      
       margin: [0, 50, 50, 50],
 
       styles: {
@@ -584,7 +549,7 @@ const PdfQuote = ({ id, quoteId }) => {
   return (
     <>
       <span onClick={GetPdf}>
-         1
+        <Icon.Printer />
       </span>
     </>
   );
