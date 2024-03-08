@@ -639,6 +639,7 @@ export default function TenderQuotation({
           QuoteProject={QuoteProject}
           selectedFormat={selectedFormat}
           setSelectedFormat={setSelectedFormat}
+          quote={quote}
         ></EditQuoteModal>
       )}
       {addLineItemModal && (
@@ -647,6 +648,8 @@ export default function TenderQuotation({
           addLineItemModal={addLineItemModal}
           setAddLineItemModal={setAddLineItemModal}
           quoteLine={quoteLine}
+          selectedFormat={selectedFormat}
+          quote={quote}
         ></AddLineItemModal>
       )}
       <EditRateItemModal

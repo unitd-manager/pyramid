@@ -19,12 +19,14 @@ import random from 'random';
 import api from '../../constants/api';
 import message from '../Message';
 
-const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, quoteLine }) => {
+const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, quoteLine,quote}) => {
   AddLineItemModal.propTypes = {
     addLineItemModal: PropTypes.bool,
     setAddLineItemModal: PropTypes.func,
     projectInfo: PropTypes.any,
     quoteLine: PropTypes.any,
+    //selectedFormat:PropTypes.any,
+    quote:PropTypes.any,
   };
   //All state Varible
   const [totalAmount, setTotalAmount] = useState(0);
@@ -180,16 +182,25 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                     <Table className="display">
                       <thead>
                         <tr>
+                        
                           <th scope="col">Title <span className="required"> *</span>{' '}</th>
-                          <th scope="col">Asset No </th>
                           <th scope="col">Description </th>
                           <th scope="col">Unit</th>
                           <th scope="col">Qty <span className="required"> *</span>{' '}</th>
                           <th scope="col">Unit Price <span className="required"> *</span>{' '}</th>
+                          <th scope="col">Amount</th>
+                          
+                          
+
+                          {quote.quote_format === 'format4' && (
+                            <>
+                          <th scope="col">Asset No </th>
                           <th scope="col">From Date </th>
                           <th scope="col">To Date </th>
                           <th scope="col">No of days </th>
-                          <th scope="col">Amount</th>
+                          </>
+                          )}
+                          
                           <th scope="col">Remarks</th>
                           <th scope="col"></th>
                         </tr>
@@ -199,12 +210,11 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                           addLineItem.map((item) => {
                             return (
                               <tr key={item.id}>
+                                
                                 <td data-label="Title">
                                   <Input Value={item.title} className="w-auto"  type="text" name="title"  />
                                 </td>
-                                <td data-label="Asset No">
-                                  <Input Value={item.asset_no} className="w-auto"  type="text" name="asset_no"  />
-                                </td>
+                                
                                 <td data-label="Description">
                                   <Input Value={item.description} className="w-auto"  type="text" name="description"  />
                                 </td>
@@ -226,6 +236,15 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                                     
                                   />
                                 </td>
+                                
+                                <td data-label="Amount">
+                                  <Input Value={item.amount} className="w-auto"  type="text" name="amount" disabled />
+                                </td>
+                                {quote.quote_format === "format4" && (
+                            <>
+                            <td data-label="Asset No">
+                                  <Input Value={item.asset_no} className="w-auto"  type="text" name="asset_no"  />
+                                </td>
                                 <td data-label="From Date">
                                   <Input Value={item && moment(item.from_date).format('DD-MM-YYYY')} className="w-auto"  type="date" name="from_date"  />
                                 </td>
@@ -235,9 +254,8 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo, 
                                 <td data-label="No of Days">
                                   <Input Value={item.no_of_days} className="w-auto"  type="text" name="no_of_days"  />
                                 </td>
-                                <td data-label="Amount">
-                                  <Input Value={item.amount} className="w-auto"  type="text" name="amount" disabled />
-                                </td>
+                                </>
+                                )}
                                 <td data-label="Remarks">
                                   <Input Value={item.remarks} className="w-auto"  type="text" name="remarks" />
                                 </td>
