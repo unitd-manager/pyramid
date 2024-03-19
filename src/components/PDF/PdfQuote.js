@@ -4,7 +4,7 @@ import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import * as numberToWords from 'number-to-words';
 import PropTypes from 'prop-types';
-import * as Icon from 'react-feather';
+//import * as Icon from 'react-feather';
 import moment from 'moment';
 // import message from '../Message';
 import api from '../../constants/api';
@@ -20,7 +20,7 @@ const PdfQuote = ({ id, quoteId }) => {
   const [lineItem, setLineItem] = useState([]);
   const [hfdata, setHeaderFooterData] = React.useState();
   const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
-  const [parsedQuoteCondition1, setParsedQuoteCondition1] = useState('');
+  //const [parsedQuoteCondition1, setParsedQuoteCondition1] = useState('');
   const [gTotal, setGtotal] = React.useState(0);
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
@@ -93,23 +93,23 @@ const PdfQuote = ({ id, quoteId }) => {
     // Other logic you have here...
   }, [quote.quote_condition]);
 
-  React.useEffect(() => {
-    const parseHTMLContent = (htmlContent) => {
-      if (htmlContent) {
-        // Replace all occurrences of &nbsp; with an empty string
-        const plainText = htmlContent.replace(/&nbsp;/g, '');
+  // React.useEffect(() => {
+  //   const parseHTMLContent = (htmlContent) => {
+  //     if (htmlContent) {
+  //       // Replace all occurrences of &nbsp; with an empty string
+  //       const plainText = htmlContent.replace(/&nbsp;/g, '');
 
-        // Remove HTML tags using a regular expression
-        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+  //       // Remove HTML tags using a regular expression
+  //       const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
 
-        setParsedQuoteCondition1(plainTextWithoutTags);
-      }
-    };
-    // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
-    parseHTMLContent(quote.bio_scope);
+  //       setParsedQuoteCondition1(plainTextWithoutTags);
+  //     }
+  //   };
+  //   // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
+  //   parseHTMLContent(quote.bio_scope);
 
-    // Other logic you have here...
-  }, [quote.bio_scope]);
+  //   // Other logic you have here...
+  // }, [quote.bio_scope]);
 
   //The quote_condition content and format it as bullet points
   const formatQuoteConditions = (conditionsText) => {
@@ -549,7 +549,7 @@ const PdfQuote = ({ id, quoteId }) => {
   return (
     <>
       <span onClick={GetPdf}>
-        <Icon.Printer />
+        1
       </span>
     </>
   );
