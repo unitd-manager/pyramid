@@ -115,59 +115,59 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
   
 
   //Logic for deducting receipt amount
-  const finalCalculation = (receipt) => {
-    let leftamount = totalAmount;
+  // const finalCalculation = (receipt) => {
+  //   let leftamount = totalAmount;
 
-    for (let j = 0; j < selectedSubCon.length; j++) {
-      if (selectedSubCon[j].remainingAmount <= leftamount) {
-        leftamount = parseFloat(leftamount) - selectedSubCon[j].remainingAmount;
-        selectedSubCon[j].paid = true;
-        editSubConStatus(selectedSubCon[j].sub_con_work_order_id, 'Paid');
+  //   for (let j = 0; j < selectedSubCon.length; j++) {
+  //     if (selectedSubCon[j].remainingAmount <= leftamount) {
+  //       leftamount = parseFloat(leftamount) - selectedSubCon[j].remainingAmount;
+  //       selectedSubCon[j].paid = true;
+  //       editSubConStatus(selectedSubCon[j].sub_con_work_order_id, 'Paid');
 
-        insertPaymentHistory({
-          creation_date: moment().format(),
-          modification_date: moment().format(),
-          work_order_date: '',
-          invoice_paid_status: 'Paid',
-          title: '',
-          installment_id: '',
-          receipt_type: '',
-          related_sub_con_work_order_id: '',
-          gst_amount: '',
-          sub_con_work_order_id: selectedSubCon[j].sub_con_work_order_id,
-          sub_con_payments_id: receipt,
-          published: '1',
-          flag: '1',
+  //       insertPaymentHistory({
+  //         creation_date: moment().format(),
+  //         modification_date: moment().format(),
+  //         work_order_date: '',
+  //         invoice_paid_status: 'Paid',
+  //         title: '',
+  //         installment_id: '',
+  //         receipt_type: '',
+  //         related_sub_con_work_order_id: '',
+  //         gst_amount: '',
+  //         sub_con_work_order_id: selectedSubCon[j].sub_con_work_order_id,
+  //         sub_con_payments_id: receipt,
+  //         published: '1',
+  //         flag: '1',
 
-          created_by: 'admin',
-          modified_by: 'admin',
-          amount: selectedSubCon[j].remainingAmount,
-        });
-      } else {
-        selectedSubCon[j].paid = true
-        editSubconPartialStatus(selectedSubCon[j].sub_con_work_order_id, 'Partially Paid');
-        insertPaymentHistory({
-          creation_date: moment().format(),
-          modification_date: moment().format(),
+  //         created_by: 'admin',
+  //         modified_by: 'admin',
+  //         amount: selectedSubCon[j].remainingAmount,
+  //       });
+  //     } else {
+  //       selectedSubCon[j].paid = true
+  //       editSubconPartialStatus(selectedSubCon[j].sub_con_work_order_id, 'Partially Paid');
+  //       insertPaymentHistory({
+  //         creation_date: moment().format(),
+  //         modification_date: moment().format(),
 
-          work_order_date: '',
-          invoice_paid_status: 'Partially paid',
-          title: '',
-          installment_id: '',
-          receipt_type: '',
-          related_sub_con_work_order_id: '',
-          gst_amount: '',
-          sub_con_work_order_id: selectedSubCon[j].sub_con_work_order_id,
-          sub_con_payments_id: receipt,
-          published: '1',
-          flag: '1',
-          created_by: 'admin',
-          modified_by: 'admin',
-          amount: leftamount,
-        });
-      }
-    }
-  };
+  //         work_order_date: '',
+  //         invoice_paid_status: 'Partially paid',
+  //         title: '',
+  //         installment_id: '',
+  //         receipt_type: '',
+  //         related_sub_con_work_order_id: '',
+  //         gst_amount: '',
+  //         sub_con_work_order_id: selectedSubCon[j].sub_con_work_order_id,
+  //         sub_con_payments_id: receipt,
+  //         published: '1',
+  //         flag: '1',
+  //         created_by: 'admin',
+  //         modified_by: 'admin',
+  //         amount: leftamount,
+  //       });
+  //     }
+  //   }
+  // };
   //Getting receipt data by order id
   const getSubConReceipt = () => {
     api
@@ -183,61 +183,70 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
   };
   
   //Insert Receipt
-  const insertReceipt = () => {
+  const insertReceipt = (receipt) => {
     createSubCon.sub_con_id = id;
-    console.log('selectedSubcon',selectedSubCon)
-    let amount=0;
-    selectedSubCon.forEach((el)=>{
-      amount +=parseFloat(el.remainingAmount);
-    })
-    
-    console.log('remamount',amount)
-    console.log('createsupamount',createSubCon.amount)
-    //createSubCon.sub_con_work_order_id = subConWork;
-    if((selectedSubCon.length>0)){
-    if (createSubCon.amount &&
-      createSubCon.mode_of_payment) {
-        if(parseFloat(createSubCon.amount) <= parseFloat(amount)) {
-        api
-          .post('/subcon/insertsub_con_payments', createSubCon)
-          .then((res) => {
-            message('data inserted successfully.');
-
-            finalCalculation(res.data.data.insertId);
-    
-            // setTimeout(() => {
-            //   console.log('Data saved successfully.');
-            //   // Reload the page after saving data
-            //   window.location.reload();
-            // }, 2000);
-            setTimeout(() => {
-              //console.log('Data saved successfully.');
-              // Reload the page after saving data
-              setEditWorkOrderLinked(false);
-              window.location.reload();
-            }, 2000);
-          })
-          .catch(() => {
-            // setTimeout(() => {
-            //   console.log('Data saved successfully.');
-            //   // Reload the page after saving data
-            //   window.location.reload();
-            // }, 2000);setTimeout(() => {
-            //   console.log('Data saved successfully.');
-            //   // Reload the page after saving data
-            //   window.location.reload();
-            // }, 2000);
-          });
-      } else{
-        message('Your amount Exceeds the limit.','warning');
-      }}
-      else{
-        message('Please fill the required Fields.','warning');
-      }}else{
-        message('Please select Work order to pay.','warning');
+    console.log('selectedSubcon', selectedSubCon);
+    const totalRemainingAmount = selectedSubCon.reduce((acc, curr) => acc + parseFloat(curr.remainingAmount), 0);
+  
+    if (selectedSubCon.length > 0) {
+      if (createSubCon.amount && createSubCon.mode_of_payment) {
+        if (parseFloat(createSubCon.amount) <= parseFloat(totalRemainingAmount)) {
+          let receiptAmount = parseFloat(createSubCon.amount);
+  
+          for (let i = 0; i < selectedSubCon.length; i++) {
+            const remainingAmount = parseFloat(selectedSubCon[i].remainingAmount);
+            const paymentAmount = Math.min(remainingAmount, receiptAmount);
+  
+            if (paymentAmount > 0) {
+              if (paymentAmount === remainingAmount) {
+                selectedSubCon[i].paid = true;
+                editSubConStatus(selectedSubCon[i].sub_con_work_order_id, 'Paid');
+              } else {
+                selectedSubCon[i].paid = true;
+                editSubconPartialStatus(selectedSubCon[i].sub_con_work_order_id, 'Partially Paid');
+              }
+  
+              insertPaymentHistory({
+                creation_date: moment().format(),
+                modification_date: moment().format(),
+                work_order_date: '',
+                invoice_paid_status: paymentAmount === remainingAmount ? 'Paid' : 'Partially Paid',
+                title: '',
+                installment_id: '',
+                receipt_type: '',
+                related_sub_con_work_order_id: '',
+                gst_amount: '',
+                sub_con_work_order_id: selectedSubCon[i].sub_con_work_order_id,
+                sub_con_payments_id: receipt,
+                published: '1',
+                flag: '1',
+                created_by: 'admin',
+                modified_by: 'admin',
+                amount: paymentAmount,
+              });
+  
+              receiptAmount -= paymentAmount;
+              if (receiptAmount === 0) break; // No need to iterate further if the receipt amount is fully distributed
+            }
+          }
+  
+          message('Data inserted successfully.');
+  
+          setTimeout(() => {
+            setEditWorkOrderLinked(false);
+            window.location.reload();
+          }, 2000);
+        } else {
+          message('Your amount exceeds the limit.', 'warning');
+        }
+      } else {
+        message('Please fill the required fields.', 'warning');
       }
-    
-    };
+    } else {
+      message('Please select work orders to pay.', 'warning');
+    }
+  };
+  
   let invoices = [];
   const removeObjectWithId = (arr, subConWorkerCode) => {
     const objWithIdIndex = arr.findIndex((obj) => obj.sub_con_worker_code === subConWorkerCode);

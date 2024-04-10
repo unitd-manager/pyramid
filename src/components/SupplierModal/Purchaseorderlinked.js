@@ -82,107 +82,99 @@ const PurchaseOrderLinked = ({ editPurchaseOrderLinked, setEditPurchaseOrderLink
   //     });
   // };
   
+//Logic for deducting receipt amount
+const finalCalculation = (receipt, amount) => {
+  let leftAmount = parseFloat(amount);
 
-  //Logic for deducting receipt amount
-  const finalCalculation = (receipt) => {
-    let leftamount = totalAmount;
-    
-    for (let j = 0; j < selectedSupplier.length; j++) {
-      
-      if (selectedSupplier[j].remainingAmount <= leftamount) {
-        leftamount = parseFloat(leftamount) - selectedSupplier[j].remainingAmount
-       selectedSupplier[j].paid = true;
-        editPurchaseStatus(selectedSupplier[j].purchase_order_id, 'Paid');
-       
-        insertReceiptHistory({
-          creation_date: moment().format(),
-          modification_date: moment().format(),
-          purchase_order_date: moment().format(),
-          invoice_paid_status: 'Paid',
-          title: '',
-          installment_id: '',
-          receipt_type: '',
-          related_purchase_order_id: '',
-          gst_amount: '',
-          purchase_order_id: selectedSupplier[j].purchase_order_id,
-          supplier_receipt_id: receipt,
-          published: '1',
-          flag: '1',
+  for (let j = 0; j < selectedSupplier.length; j++) {
+    const currentRemainingAmount = parseFloat(selectedSupplier[j].remainingAmount);
 
-          created_by: 'admin',
-          modified_by: 'admin',
-          amount: selectedSupplier[j].remainingAmount,
-        })
-      } else {
-        selectedSupplier[j].paid = true;
-        editPurchaseStatus(selectedSupplier[j].purchase_order_id, 'Partially Paid');
-        insertReceiptHistory({
-          creation_date: moment().format(),
-          modification_date: moment().format(),
+    if (currentRemainingAmount <= leftAmount) {
+      leftAmount -= currentRemainingAmount;
+      selectedSupplier[j].paid = true;
+      editPurchaseStatus(selectedSupplier[j].purchase_order_id, 'Paid');
 
-          purchase_order_date: moment().format(),
-          invoice_paid_status: 'Partially paid',
-          title: '',
-          installment_id: '',
-          receipt_type: '',
-          related_purchase_order_id: '',
-          gst_amount: '',
-          purchase_order_id: selectedSupplier[j].purchase_order_id,
-          supplier_receipt_id: receipt,
-          published: '1',
-          flag: '1',
-
-          created_by: 'admin',
-          modified_by: 'admin',
-          amount: leftamount,
-        });
-      }
-    
-    }
-
-   
-  };
-
-  //Insert Receipt
-  const insertReceipt = () => {
-    createSupplier.supplier_id = id
-console.log('selectedSupplier',selectedSupplier)
-let amount=0;
-selectedSupplier.forEach((el)=>{
-  amount +=parseFloat(el.remainingAmount);
-})
-
-console.log('remamount',amount)
-console.log('createsupamount',createSupplier.amount)
-  if((selectedSupplier.length>0)){
-    if (createSupplier.amount &&
-      createSupplier.mode_of_payment) {
-        if(parseFloat(createSupplier.amount) <= parseFloat(amount)){
-      api
-      .post('/supplier/insert-SupplierReceipt', createSupplier)
-      .then((res) => {
-        message('data inserted successfully.');
-        
-        finalCalculation(res.data.data.insertId);
-        setTimeout(() => {
-          //console.log('Data saved successfully.');
-          // Reload the page after saving data
-          setEditPurchaseOrderLinked(false);
-          window.location.reload();
-        }, 2000);
-      })
-      .catch(() => {
+      insertReceiptHistory({
+        creation_date: moment().format(),
+        modification_date: moment().format(),
+        purchase_order_date: moment().format(),
+        invoice_paid_status: 'Paid',
+        title: '',
+        installment_id: '',
+        receipt_type: '',
+        related_purchase_order_id: '',
+        gst_amount: '',
+        purchase_order_id: selectedSupplier[j].purchase_order_id,
+        supplier_receipt_id: receipt,
+        published: '1',
+        flag: '1',
+        created_by: 'admin',
+        modified_by: 'admin',
+        amount: currentRemainingAmount,
       });
-    }else{
-      message('Your amount Exceeds the limit.','warning');
-    }}
-    else{
-      message('Please fill the required Fields.','warning');
-    }}else{
-      message('Please select Purchase order to pay.','warning');
+    } else {
+      selectedSupplier[j].paid = true;
+      editPurchaseStatus(selectedSupplier[j].purchase_order_id, 'Partially Paid');
+      insertReceiptHistory({
+        creation_date: moment().format(),
+        modification_date: moment().format(),
+        purchase_order_date: moment().format(),
+        invoice_paid_status: 'Partially paid',
+        title: '',
+        installment_id: '',
+        receipt_type: '',
+        related_purchase_order_id: '',
+        gst_amount: '',
+        purchase_order_id: selectedSupplier[j].purchase_order_id,
+        supplier_receipt_id: receipt,
+        published: '1',
+        flag: '1',
+        created_by: 'admin',
+        modified_by: 'admin',
+        amount: leftAmount,
+      });
+
+      // No need to continue after the remaining amount has been deducted
+      break;
     }
-  
-  };
+  }
+};
+
+ //Insert Receipt
+const insertReceipt = () => {
+  createSupplier.supplier_id = id;
+  let totalSelectedAmount = 0;
+
+  // Calculate the total amount of selected invoices
+  selectedSupplier.forEach((el) => {
+    totalSelectedAmount += parseFloat(el.remainingAmount);
+  });
+
+  if (selectedSupplier.length > 0) {
+    if (createSupplier.amount && createSupplier.mode_of_payment) {
+      if (parseFloat(createSupplier.amount) <= parseFloat(totalSelectedAmount)) {
+        api.post('/supplier/insert-SupplierReceipt', createSupplier)
+          .then((res) => {
+            message('data inserted successfully.');
+            finalCalculation(res.data.data.insertId, createSupplier.amount);
+            setTimeout(() => {
+              setEditPurchaseOrderLinked(false);
+              window.location.reload();
+            }, 2000);
+          })
+          .catch(() => {});
+      } else {
+        message('Your amount exceeds the limit.', 'warning');
+      }
+    } else {
+      message('Please fill the required Fields.', 'warning');
+    }
+  } else {
+    message('Please select Purchase order to pay.', 'warning');
+  }
+};
+
+
   let invoices = [];
   const removeObjectWithId = (arr, poCode) => {
     const objWithIdIndex = arr.findIndex((obj) => obj.po_code === poCode);
