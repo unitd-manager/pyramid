@@ -78,7 +78,7 @@ const ViewLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo,
   const addLineItemApi = (obj) => {
     obj.opportunity_id = projectInfo;
     obj.quote_id = quoteLine;
-    if (obj.title !== '' && obj.unit_price !== '' && obj.quantity !== '') {
+    if (obj.title !== '' ) {
       api
         .post('/tender/insertQuoteItems', obj)
         .then(() => {
@@ -146,7 +146,7 @@ const ViewLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo,
         .each(function output() {
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
-          allValues.amount = allValues.quantity * allValues.unit_price;
+          //allValues.amount = allValues.quantity * allValues.unit_price;
         });
       result.push(allValues);
     });
@@ -274,11 +274,17 @@ const ViewLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo,
                                   {/* <Input Value={item.unit} type="text" name="unit" /> */}
                                 </td>
                                 <td data-label="Qty">
-                                  <Input Value={item.quantity} type="number" name="quantity" className="w-auto"/>
+                                  <Input 
+                                  //Value={item.quantity}
+                                  value={item.quantity !== '' ? item.quantity : ''}
+                                  type="number" name="quantity" className="w-auto"
+                                  
+                                  />
                                 </td>
                                 <td data-label="Unit Price">
                                   <Input
-                                    Value={item.unit_price}
+                                    //Value={item.unit_price}
+                                    value={item.unit_price !== '' ? item.unit_price : ''}
                                     onBlur={() => {
                                       calculateTotal();
                                     }}
@@ -288,7 +294,7 @@ const ViewLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo,
                                   />
                                 </td>
                                 <td data-label="Amount">
-                                  <Input Value={item.amount} type="text" name="amount" className="w-auto" disabled />
+                                  <Input Value={item.amount} type="text" name="amount" className="w-auto"  />
                                 </td>
                                 {quote.quote_format === 'format4' && (
                                   <>
