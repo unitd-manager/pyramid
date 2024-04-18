@@ -146,7 +146,7 @@ const ViewLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo,
         .each(function output() {
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
-          //allValues.amount = allValues.quantity * allValues.unit_price;
+          allValues.amount = allValues.quantity * allValues.unit_price;
         });
       result.push(allValues);
     });
@@ -171,7 +171,6 @@ const ViewLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo,
       setTotalAmount(finalTotal);
     }
   };
-
   React.useEffect(() => {
     getUnit();
   }, []);
@@ -274,27 +273,26 @@ const ViewLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo,
                                   {/* <Input Value={item.unit} type="text" name="unit" /> */}
                                 </td>
                                 <td data-label="Qty">
-                                  <Input 
-                                  //Value={item.quantity}
-                                  value={item.quantity !== '' ? item.quantity : ''}
-                                  type="number" name="quantity" className="w-auto"
-                                  
-                                  />
-                                </td>
-                                <td data-label="Unit Price">
-                                  <Input
-                                    //Value={item.unit_price}
-                                    value={item.unit_price !== '' ? item.unit_price : ''}
-                                    onBlur={() => {
-                                      calculateTotal();
-                                    }}
-                                    type="number"
-                                    name="unit_price"
+                                <Input 
+                                  Value={item.quantity !== '' ? item.quantity : 0} type="number" name="quantity"
                                     className="w-auto"
                                   />
                                 </td>
+                                <td data-label="Unit Price">
+                               
+                                <Input 
+                                  Value={item.unit_price !== '' ? item.unit_price : 0}
+                                  onBlur={() => {
+                                    calculateTotal();
+                                  }}
+                                  type="number"
+                                  name="unit_price"
+                                  className="w-auto"
+                                />
+
+                                </td>
                                 <td data-label="Amount">
-                                  <Input Value={item.amount} type="text" name="amount" className="w-auto"  />
+                                  <Input Value={item.amount} type="text" name="amount"  className="w-auto"  />
                                 </td>
                                 {quote.quote_format === 'format4' && (
                                   <>
