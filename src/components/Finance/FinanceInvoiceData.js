@@ -178,7 +178,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
         message('Invoice inserted successfully.', 'success');
         finalinsertapi(res.data.data.insertId, results);
         setTimeout(() => {
-          //window.location.reload();
+          window.location.reload();
         }, 300);
       })
       .catch(() => {

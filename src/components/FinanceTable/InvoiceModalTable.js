@@ -27,7 +27,8 @@ const CreateReceipt = ({ invoiceData, handleInputs }) => {
           <Label>Discount</Label>
           <Input
             type="text"
-            value={invoiceData && invoiceData.discount}
+            //value={invoiceData && invoiceData.discount}
+            value={(invoiceData && invoiceData.discount) || 0}
             onChange={handleInputs}
             name="discount"
           />

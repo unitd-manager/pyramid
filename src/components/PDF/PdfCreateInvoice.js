@@ -57,7 +57,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
       });
   };
   const calculateTotal = () => {
-    const grandTotal = cancelInvoice.reduce((acc, element) => acc + element.amount, 0);
+    const grandTotal = cancelInvoice.reduce((acc, element) => acc + element.total_cost, 0);
     const gstValue = createInvoice.gst_value || 0;
     const total = grandTotal + gstValue;
     return total;
@@ -150,7 +150,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
         setCancelInvoice(res.data.data);
         let grandTotal = 0;
         res.data.data.forEach((elem) => {
-          grandTotal += elem.amount;
+          grandTotal += elem.total_cost;
         });
 
         setGtotal(grandTotal);
@@ -233,7 +233,7 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
           alignment: 'right',
         },
         {
-          text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+          text: `${element.total_cost.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
           style: 'tableBody1',
