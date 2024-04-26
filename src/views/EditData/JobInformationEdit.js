@@ -181,11 +181,13 @@ const JobInformationEdit = () => {
       message('Please enter overtime rate ', 'warninng');
       return; // Exit the function without making the API request
     }
-    job.overtime_pay_rate = overTimeRate;
+    //job.overtime_pay_rate = overTimeRate;
     job.deduction4 = parseFloat(job.deduction4);
     if (job.act_join_date && job.working_days && job.basic_pay && job.join_date && job.govt_donation) {
-      job.modification_date = creationdatetime;
-      job.modified_by = loggedInuser.first_name;
+      
+        job.modified_by = loggedInuser.first_name;
+        job.modification_date = creationdatetime;
+        
       api
         .post('/jobinformation/edit-jobinformation', job)
         .then(() => {

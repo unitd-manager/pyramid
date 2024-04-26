@@ -18,6 +18,7 @@ import LoanDetailComp from '../../components/LoanTable/LoanDetailComp';
 import ApiButton from '../../components/ApiButton';
 import creationdatetime from '../../constants/creationdatetime';
 
+
 const LoanEdit = () => {
   //All state variables
   const [loan, setLoan] = useState(null);

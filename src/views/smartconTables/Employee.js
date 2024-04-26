@@ -134,7 +134,7 @@ const Cards = () => {
                 </Col>
                 <Col md="4">
             {/* <Link to=""> */}
-            <Button color="primary" className="shadow-none mr-2" onClick={() => importExcel()}>
+            <Button color="primary" className="shadow-none " onClick={() => importExcel()}>
                 Import
               </Button>
             {/* </Link> */}
@@ -145,7 +145,7 @@ const Cards = () => {
                     href="http://43.228.126.245/pyramidapi/storage/excelsheets/Employee.xlsx"
                     download
                   >
-                    <Button color="primary" className="shadow-none">
+                    <Button color="primary" className="shadow-none mr-3">
                       Sample
                     </Button>
                   </a>

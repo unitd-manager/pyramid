@@ -157,30 +157,29 @@ console.log('all countries',allCountries)
                 </Input>
               </FormGroup>
             </Col>
-            <Col md="3">
-              <FormGroup>
-                <Label>
-                {/* Nationality */}
-                  Nationality <span style={{ color: 'red' }}>*</span>
-                </Label>
-                <Input
-                  name="nationality"
-                  value={employeeDetails && employeeDetails.nationality}
-                  onChange={handleInputChange}
-                  type="select"
-                >
-                  <option value="">Please Select</option>
-                  {allCountries &&
-                    allCountries.map((ele) => {
-                      return (
-                        <option key={ele.country_code} value={parseFloat(ele.country_code)}>
-                          {ele.name}
-                        </option>
-                      );
-                    })}
-                </Input>
-              </FormGroup>
-            </Col>
+            <Col md="3"><FormGroup>
+  <Label>
+    Nationality <span style={{ color: 'red' }}>*</span>
+  </Label>
+  <Input
+    name="nationality"
+    value={employeeDetails && employeeDetails.nationality}
+    onChange={handleInputChange}
+    type="select"
+  >
+    <option value="">Please Select</option>
+    {allCountries &&
+      allCountries.map((ele) => {
+        return (
+          <option key={ele.country_code} value={ele.name}>
+            {ele.name}
+          </option>
+        );
+      })}
+  </Input>
+</FormGroup>
+
+              </Col>
             <Col md="3">
               <FormGroup>
                 <Label>Race</Label>

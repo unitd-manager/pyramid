@@ -31,7 +31,7 @@ const Leaves = () => {
           pageLength: 20,
           processing: true,
           dom: 'Bfrtip',
-          // buttons: [
+          // buttons: [ 
           //   {
           //     extend: 'print',
           //     text: 'Print',

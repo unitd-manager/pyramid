@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-feather';
-import moment from 'moment';
 import { Button } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'datatables.net-dt/js/dataTables.dataTables';
 import 'datatables.net-dt/css/jquery.dataTables.min.css';
 import $ from 'jquery';
-import 'datatables.net-buttons/js/buttons.colVis';
+import moment from 'moment';
+// import 'datatables.net-buttons/js/buttons.colVis';
 // import 'datatables.net-buttons/js/buttons.flash';
 // import 'datatables.net-buttons/js/buttons.html5';
-import 'datatables.net-buttons/js/buttons.print';
+// import 'datatables.net-buttons/js/buttons.print';
 import { Link } from 'react-router-dom';
 import api from '../../constants/api';
 import BreadCrumbs from '../../layouts/breadcrumbs/BreadCrumbs';
 import CommonTable from '../../components/CommonTable';
 
 const Loan = () => {
-  //state variale
+  //Const Variables
   const [loan, setLoan] = useState(null);
   const [loading, setLoading] = useState(false);
-  //getting loan data in db
+
+  // get Leave
   const getLoan = () => {
-    setLoading(true);
     api
       .get('/loan/getLoan')
       .then((res) => {
@@ -31,13 +31,13 @@ const Loan = () => {
           pageLength: 20,
           processing: true,
           dom: 'Bfrtip',
-          buttons: [
-            {
-              extend: 'print',
-              text: 'Print',
-              className: 'shadow-none btn btn-primary',
-            },
-          ],
+          // buttons: [ 
+          //   {
+          //     extend: 'print',
+          //     text: 'Print',
+          //     className: 'shadow-none btn btn-primary',
+          //   },
+          // ],
         });
         setLoading(false);
       })
@@ -49,12 +49,11 @@ const Loan = () => {
   useEffect(() => {
     getLoan();
   }, []);
-
-  //  stucture of loan list view
+  //  stucture of leave list view
   const columns = [
     {
-      name: '#',
-      selector: '',
+      name: 'id',
+      selector: 'loan_id',
       grow: 0,
       wrap: true,
       width: '4%',
@@ -68,6 +67,7 @@ const Loan = () => {
       button: true,
       sortable: false,
     },
+
     {
       name: 'Employee Name',
       selector: 'employee_name',
@@ -97,38 +97,37 @@ const Loan = () => {
     },
     {
       name: 'Total Amount Paid',
-      selector: 'total_repaid_amount',
+      selector: '	total_repaid_amount',
       sortable: true,
+      grow: 2,
       width: 'auto',
-      grow: 3,
     },
     {
       name: 'Amount Payable',
       selector: 'amount_payable',
       sortable: true,
-      width: 'auto',
-      grow: 3,
+      grow: 2,
+      wrap: true,
     },
     {
       name: 'Status',
       selector: 'status',
       sortable: true,
       width: 'auto',
-      grow: 3,
     },
+    
   ];
 
   return (
     <div className="MainDiv">
       <div className=" pt-xs-25">
         <BreadCrumbs />
-
         <CommonTable
           loading={loading}
           title="Loan List"
           Button={
             <Link to="/LoanDetails">
-              <Button color="primary" className="shadow-none">
+              <Button color="primary" className="shadow-none add-new">
                 Add New
               </Button>
             </Link>
@@ -143,22 +142,23 @@ const Loan = () => {
           </thead>
           <tbody>
             {loan &&
-              loan.map((element, index) => {
+              loan.map((element, i) => {
                 return (
                   <tr key={element.loan_id}>
-                    <td>{index + 1}</td>
+                    <td>{i + 1}</td>
                     <td>
-                      <Link to={`/LoanEdit/${element.loan_id}?tab=1`}>
+                      <Link to={`/LoanEdit/${element.loan_id}?tab=1`} className='editlink'>
                         <Icon.Edit2 />
                       </Link>
                     </td>
                     <td>{element.employee_name}</td>
-                    <td>{element.date ? moment(element.date).format('DD-MM-YYYY') : ''}</td>
+                    <td>{element.date ? moment(element.date).format('DD-MM-YYYY'):''} </td>
                     <td>{element.amount}</td>
                     <td>{element.month_amount}</td>
                     <td>{element.total_repaid_amount}</td>
                     <td>{element.amount_payable}</td>
                     <td>{element.status}</td>
+                    
                   </tr>
                 );
               })}
