@@ -10,10 +10,11 @@ import PdfProjectWorkOrder from '../PDF/PdfProjectWorkOrder';
 import WorkLineItemData from './WorkLineItemData';
 import SubconWorkPaymentHistory from './SubconWorkPaymentHistory';
 
-function SubConWorkOrderPortal({ projectId ,subConWorkOrdeData}) {
+function SubConWorkOrderPortal({ projectId ,subConWorkOrdeData,SubConWorkOrder}) {
   SubConWorkOrderPortal.propTypes = {
     projectId: PropTypes.string,
     subConWorkOrdeData:PropTypes.object,
+    SubConWorkOrder:PropTypes.object,
   };
 
   // const [subConWorkOrdeData, setSubConWorkOrdeData] = useState();
@@ -221,6 +222,7 @@ function SubConWorkOrderPortal({ projectId ,subConWorkOrdeData}) {
                   </FormGroup>
                   {workOrderViewLineItem && (
                     <WorkOrderViewLineItem
+                    SubConWorkOrder={SubConWorkOrder}
                       workOrderViewLineItem={workOrderViewLineItem}
                       setWorkOrderViewLineItem={setWorkOrderViewLineItem}
                       projectId={projectId}

@@ -54,7 +54,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
   //get line items
   const getProjects = (clientId) => {
     api
-      .post('/project/getprojectcompanyById', {company_id: clientId  })
+      .post('/project/getprojectcompanyById', { company_id: clientId })
       .then((res) => {
         setProject(res.data.data);
       })
@@ -64,7 +64,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
   };
   const getStock = () => {
     api
-      .post('/inventory/getstockById', {product_id:transferItem && transferItem.product_id  })
+      .post('/inventory/getstockById', { product_id: transferItem && transferItem.product_id })
       .then((res) => {
         setStock(res.data.data[0]);
       })
@@ -72,7 +72,7 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
         message('unable to get products', 'error');
       });
   };
-  console.log('loggedinuser',project)
+  console.log('loggedinuser', project);
   //Insert claim line items
   //Insert claim line items
   const insertTransferItems = (elem) => {
@@ -98,6 +98,52 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
       });
   };
 
+  // const insertOrEditClaimItems = () => {
+  //   const totalQuantity = addLineItem.reduce((total, item) => total + parseFloat(item.quantity), 0);
+
+  //   if (totalQuantity <= transferItem.qty) {
+  //     addLineItem.forEach((el) => {
+  //       const clientQuantity = parseFloat(el.quantity);
+
+  //        const proportion = clientQuantity / totalQuantity;
+  //        const transferredQuantity = proportion * transferItem.qty;
+
+  //       const clientElement = {
+  //         ...el,
+  //         quantity: transferredQuantity,
+  //       };
+
+  //       insertTransferItems(clientElement);
+  //     });
+  //   } else {
+  //     alert(`Please Enter the Quantity less than or equal to ${transferItem.qty}`);
+  //   }
+  // };
+
+  const insertOrEditClaimItems = () => {
+    // Calculate the total quantity of all line items
+    // const totalQuantity = addLineItem.reduce((total, item) => total + parseFloat(item.quantity), 0);
+    //   // Iterate over each line item and insert the quantity
+    //    // Check if the total quantity exceeds the available quantity
+    // if (totalQuantity <= transferItem.qty) {
+    // Iterate over each line item and insert/transf
+    addLineItem.forEach((el) => {
+      const clientQuantity = parseFloat(el.quantity);
+
+      const clientElement = {
+        ...el,
+        quantity: clientQuantity,
+      };
+
+      // Call the function to insert the item
+      insertTransferItems(clientElement);
+    });
+    // Move the 'else' block here
+    // }else {
+    //   alert(`Please Enter the Quantity less than or equal to ${transferItem.qty}`);
+    // }
+  };
+
   function updateState(index, property, e) {
     const updatedLineItems = [...addLineItem];
     const updatedObject = { ...updatedLineItems[index], [property]: e.target.value };
@@ -105,58 +151,84 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
     setAddLineItem(updatedLineItems);
   }
 
-  const insertOrEditClaimItems = () => {
-    let transQuantity = 0;
-    addLineItem.forEach((elem) => {
-      transQuantity += elem.quantity;
-    });
-    if (transQuantity <= transferItem.qty) {
-      addLineItem.forEach((el) => {
-        insertTransferItems(el);
-      });
-    } else {
-      alert(`Please Enter the Quantity less than ${transferItem.qty}`);
-    }
-  };
+  // const insertOrEditClaimItems = () => {
+  //   let transQuantity = 0;
+  //   addLineItem.forEach((elem) => {
+  //     transQuantity += elem.quantity;
+  //   });
+  //   if (transQuantity <= transferItem.qty) {
+  //     addLineItem.forEach((el) => {
+  //       insertTransferItems(el);
+  //     });
+  //   } else {
+  //     alert(`Please Enter the Quantity less than ${transferItem.qty}`);
+  //   }
+  // };
+  // const onchangeItems = (selectedProduct, itemId) => {
+  //   const elementIndex = addLineItem.findIndex((el) => el.id === itemId);
+  //   const updatedItems = [...addLineItem];
+    
+  //   if (elementIndex !== -1) {
+  //     updatedItems[elementIndex] = {
+  //       ...updatedItems[elementIndex],
+  //       company_id: selectedProduct.value.toString(),
+  //       company_name: selectedProduct.label,
+  //       selectedClientId: selectedProduct.value.toString(),
+  //     };
+      
+  //     // Update the projects only for the selected client
+  //     getProjects(selectedProduct.value);
+  //   }
+  
+  //   setAddLineItem(updatedItems);
+  // };
 
-  
-  
+  const [selectedClients, setSelectedClients] = useState({});
   const onchangeItems = (selectedProduct, itemId) => {
-    const updatedItems = addLineItem.map((item) => {
-      if (item.id === itemId) {
-        return {
-          ...item,
-          company_id: selectedProduct.value.toString(),
-          company_name: selectedProduct.label,
-          selectedClientId: selectedProduct.value.toString(),
-        };
-      }
-      return item;
-    });
-    setAddLineItem(updatedItems);
-  };
-  
-  
-  
+    const updatedSelectedClients = { ...selectedClients };
+    updatedSelectedClients[itemId] = selectedProduct.value;
 
+    setAddLineItem((prevLineItems) =>
+      prevLineItems.map((item) => {
+        if (item.id === itemId) {
+          return {
+            ...item,
+            company_id: selectedProduct.value.toString(),
+            company_name: selectedProduct.label,
+            selectedClientId: selectedProduct.value.toString(),
+          };
+        }
+        return item;
+      })
+    );
+
+    setSelectedClients(updatedSelectedClients);
+  };
   // ... (previous code)
-
   const loadOptions = (inputValue, callback) => {
-    api.get(`/clients/getClientsbyfilter`, { params: { keyword: inputValue } })
-      .then((res) => {
-        const items = res.data.data;
-        const options = items.map((item) => ({
-          value: item.company_id,
-          label: item.company_name,
-        }));
-        callback(options);
-      });
+    api.get(`/client/getClientsbyfilter`, { params: { keyword: inputValue } }).then((res) => {
+      const items = res.data.data;
+      const options = items.map((item) => ({
+        value: item.company_id,
+        label: item.company_name,
+      }));
+      callback(options);
+    });
   };
 
-  useEffect(() => {
-    getProjects();
+  useEffect((selectedOption) => {
+    getProjects(selectedOption);
     getStock();
   }, []);
+
+  // Clear row value
+  const ClearValue = (ind) => {
+    setAddLineItem((current) =>
+      current.filter((obj) => {
+        return obj.id !== ind.id;
+      }),
+    );
+  };
 
   return (
     <>
@@ -168,16 +240,16 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
               <Row>
                 <Col md="3">
                   <FormGroup>
-                  <Button
-                        className="shadow-none"
-                        color="primary"
-                        type="button"
-                        onClick={() => {
-                          AddNewLineItem();
-                        }}
-                      >
-                        Add More Item
-                      </Button>
+                    <Button
+                      className="shadow-none"
+                      color="primary"
+                      type="button"
+                      onClick={() => {
+                        AddNewLineItem();
+                      }}
+                    >
+                      Add More Item
+                    </Button>
                     {/* <Button onClick={() => AddNewLineItem}>Add More Items</Button> */}
                   </FormGroup>
                 </Col>
@@ -202,24 +274,15 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
                       addLineItem.map((item, index) => {
                         return (
                           <tr key={item.id}>
-                           <td data-label="title">
-                           <AsyncSelect
-  defaultValue={{
-    value: item.company_id,
-    label: item.company_name,
-  }}
-  onChange={(selectedOption) => {
-    onchangeItems(selectedOption, item.id); // Pass item.id as the itemId
-    getProjects(selectedOption.value); // Fetch projects based on selected client's ID
-  }}
-  loadOptions={loadOptions}
-/>
-
-          {/* Remove hidden inputs, update state instead */}
-          {/* <Input value={item.company_id} type="hidden" name="company_id" />
-          <Input value={item.company_name} type="hidden" name="company_name" /> */}
-        </td>
-                
+                            <td data-label="title">
+                            <AsyncSelect
+                            onChange={(selectedOption) => {
+                              onchangeItems(selectedOption, item.id); // Pass item.id as the itemId
+                              getProjects(selectedOption.value); // Fetch projects based on selected client's ID
+                            }}
+                            loadOptions={loadOptions}
+                          />
+                            </td>
 
                             <td data-label="Project Name">
                               <Input
@@ -243,6 +306,17 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
                                 name="quantity"
                                 onChange={(e) => updateState(index, 'quantity', e)}
                               />
+                            </td>
+                            <td data-label="Action">
+                              <Input type="hidden" name="id" Value={item.id}></Input>
+                              <span
+                                className="addline"
+                                onClick={() => {
+                                  ClearValue(item);
+                                }}
+                              >
+                                Clear
+                              </span>
                             </td>
                           </tr>
                         );

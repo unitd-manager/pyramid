@@ -147,10 +147,19 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
       });
     }
   };
+  console.log('amount',totalAmount)
   //Insert Invoice
   const insertInvoice = async (results, code,) => {
-    createInvoice.invoice_amount = totalAmount + (gstPercentageValue / 100) * totalAmount;
-    createInvoice.gst_value = (gstPercentageValue / 100) * totalAmount;
+     // Calculate total cost
+  let totalCost = 0;
+  results.forEach((result) => {
+    totalCost += parseFloat(result.total_cost);
+  });
+
+  // Assign total cost to invoice amount
+  createInvoice.invoice_amount = totalCost + (gstPercentageValue / 100) * totalCost;
+    //createInvoice.invoice_amount = totalAmount + (gstPercentageValue / 100) * totalAmount;
+    createInvoice.gst_value = (gstPercentageValue / 100) * totalCost;
     createInvoice.gst_percentage = gstPercentageValue;
     createInvoice.project_id = projectInfo;
     createInvoice.order_id = orderId;
@@ -208,7 +217,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
   //Invoice item values
   const getAllValues = () => {
     const result = [];
-    let hasZeroTotalCost = false; 
+    //let hasZeroTotalCost = false; 
     $('.lineitem tbody tr').each(function input() {
       const allValues = {};
       $(this)
@@ -217,17 +226,21 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
         });
-        allValues.total_cost = allValues.qty * allValues.unit_price;
-        if (allValues.total_cost === 0) {
-          hasZeroTotalCost = true; // Set the flag if total_cost is 0
-        }
+        //allValues.total_cost = allValues.qty * allValues.unit_price;
+        // if (allValues.total_cost === 0) {
+        //   hasZeroTotalCost = true; // Set the flag if total_cost is 0
+        // }
       result.push(allValues);
     });
-    if (hasZeroTotalCost) {
-      message('Total cost cannot be 0.', 'error');
-      return; // Prevent further processing if total_cost is 0
-    }
+    // if (hasZeroTotalCost) {
+    //   message('Total cost cannot be 0.', 'error');
+    //   return; // Prevent further processing if total_cost is 0
+    // }
     setTotalAmount(0);
+    console.log(result);
+    result.forEach((element) => {
+      addLineItemApi(element);
+    });
     setAddLineItem([
       {
         id: random.int(1, 99),
@@ -242,6 +255,9 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
     ]);
     generateCode(result, 'invoicestype');
   };
+
+  
+
   const [unitdetails, setUnitDetails] = useState();
   // Fetch data from API
   const getUnit = () => {
@@ -270,6 +286,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
     setAddLineItem(updatedItems);
   };
   //Invoice Items Calculation
+  console.log('TotalAmount', totalAmount)
   const calculateTotal = () => {
     let totalValue = 0;
     const result = [];
@@ -289,6 +306,7 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
         totalValue += parseFloat(e.total_cost);
       }
     });
+       
     setAddLineItem(result);
     setTotalAmount(totalValue);
   };
@@ -433,11 +451,11 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                                   <Input defaultValue={item.unit} type="text" name="unit" />
                                 </td> */}
                                 <td data-label="Qty">
-                                  <Input defaultValue={item.qty} type="number" name="qty" />
+                                  <Input Value={item.qty !== '' ? item.qty : 0} type="number" name="qty" />
                                 </td>
                                 <td data-label="Unit Price">
                                   <Input
-                                    defaultValue={item.unit_price}
+                                    Value={item.unit_price !== '' ? item.unit_price : 0}
                                     onBlur={() => {
                                       calculateTotal();
                                     }}
@@ -447,10 +465,10 @@ const FinanceInvoiceData = ({ editInvoiceData, setEditInvoiceData, projectInfo, 
                                 </td>
                                 <td data-label="Total Price">
                                   <Input
-                                    defaultValue={item.total_cost}
+                                    Value={item.total_cost}
                                     type="text"
                                     name="total_cost"
-                                    disabled
+                                    
                                   />
                                 </td>
                                 <td data-label="Remarks">

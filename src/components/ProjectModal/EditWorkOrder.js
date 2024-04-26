@@ -44,7 +44,7 @@ const EditWorkOrder = ({workData,editWorkOrderModal, setEditWorkOrderModal}) => 
         .post('/projecttabsubconworkorder/editWorkOrderPortal', workinsert)
         .then(() => {
           message('Record editted successfully', 'success');
-        //   window.location.reload();
+           window.location.reload();
         })
         .catch(() => {
           message('Unable to edit record.', 'error');
@@ -186,8 +186,8 @@ const EditWorkOrder = ({workData,editWorkOrderModal, setEditWorkOrderModal}) => 
                                 <FormGroup>
                                     <Label>Terms & Condition</Label>
                                     <Input  type="textarea" onChange={handleInputs}
-                                      value={workinsert && workinsert.terms_condition} 
-                                     name="terms_condition"/>
+                                      value={workinsert && workinsert.conditions} 
+                                     name="conditions"/>
                                 </FormGroup>
                             </Col>
 

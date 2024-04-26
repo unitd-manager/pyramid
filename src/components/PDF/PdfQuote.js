@@ -20,6 +20,7 @@ const PdfQuote = ({ id, quoteId }) => {
   const [lineItem, setLineItem] = useState([]);
   const [hfdata, setHeaderFooterData] = React.useState();
   const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+  //const [parsedQuoteCondition1, setParsedQuoteCondition1] = useState('');
   const [gTotal, setGtotal] = React.useState(0);
   React.useEffect(() => {
     api.get('/setting/getSettingsForCompany').then((res) => {
@@ -49,13 +50,7 @@ const PdfQuote = ({ id, quoteId }) => {
       console.log('quote', res.data.data[0]);
     });
   };
-  // const calculateTotal = () => {
-  //   const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
-  //   return grandTotal;
-  //   // const gstValue = quote.gst_value || 0;
-  //   // const total = grandTotal + gstValue;
-  //   // return total;
-  // };
+  
   const calculateTotal = () => {
     const grandTotal = lineItem.reduce((acc, element) => acc + element.amount, 0);
     const discount = quote.discount || 0; // Get the discount from the quote or default to 0 if not provided
@@ -97,6 +92,24 @@ const PdfQuote = ({ id, quoteId }) => {
 
     // Other logic you have here...
   }, [quote.quote_condition]);
+
+  // React.useEffect(() => {
+  //   const parseHTMLContent = (htmlContent) => {
+  //     if (htmlContent) {
+  //       // Replace all occurrences of &nbsp; with an empty string
+  //       const plainText = htmlContent.replace(/&nbsp;/g, '');
+
+  //       // Remove HTML tags using a regular expression
+  //       const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+
+  //       setParsedQuoteCondition1(plainTextWithoutTags);
+  //     }
+  //   };
+  //   // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
+  //   parseHTMLContent(quote.bio_scope);
+
+  //   // Other logic you have here...
+  // }, [quote.bio_scope]);
 
   //The quote_condition content and format it as bullet points
   const formatQuoteConditions = (conditionsText) => {
@@ -536,7 +549,7 @@ const PdfQuote = ({ id, quoteId }) => {
   return (
     <>
       <span onClick={GetPdf}>
-         1
+        1
       </span>
     </>
   );

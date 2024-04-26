@@ -74,12 +74,18 @@ const PdfProjectQuote = ({ id, quoteId }) => {
   React.useEffect(() => {
     const parseHTMLContent = (htmlContent) => {
       if (htmlContent) {
-        // Replace all occurrences of &nbsp; with an empty string
-        const plainText = htmlContent.replace(/&nbsp;/g, '');
-
+        // Replace <br /> or <br> with a newline character (\n)
+        const plainTextWithNewlines = htmlContent.replace(/<br\s*\/?>/g, '\n');
+        
+        // Replace &amp; with an ampersand (&)
+        const plainTextWithAmpersand = plainTextWithNewlines.replace(/&amp;/g, '&');
+    
+        // Replace &nbsp; with a regular space
+        const plainText = plainTextWithAmpersand.replace(/&nbsp;/g, ' ');
+    
         // Remove HTML tags using a regular expression
         const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
-
+    
         setParsedQuoteCondition(plainTextWithoutTags);
       }
     };

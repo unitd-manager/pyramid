@@ -222,7 +222,7 @@ const PdfProjectQuoteLog = ({id,logId}) => {
           stack: [
             
             {text:`Project Reference : ${quotation?.project_reference?quotation?.project_reference:''} `,style: [ 'textSize'],  },
-            {text:`Project Location  : ${quotation?.project_location?quotation?.project_location:''} `,style: [ 'textSize'],  },
+            // {text:`Project Location  : ${quotation?.project_location?quotation?.project_location:''} `,style: [ 'textSize'],  },
           ],
         },'\n\n\n',
      

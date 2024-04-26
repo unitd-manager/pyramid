@@ -49,10 +49,10 @@ const SupplierHistory = () => {
       name: 'Cancel',
     },
   ];
-
+ 
   const Supplier = (subConPaymentsId,PaymentsId) => {
     Swal.fire({
-      title: `Are you sure? ${id}`,
+      title: `Are you sure? ${PaymentsId}`,
       text: 'Do you like to cancel the receipt?',
       icon: 'warning',
       showCancelButton: true,

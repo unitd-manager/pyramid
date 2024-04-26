@@ -12,7 +12,7 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+// import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import api from '../../constants/api';
 import message from '../Message';
@@ -95,7 +95,7 @@ const {id}=useParams();
   return (
     <>
       <Modal isOpen={editLineModal}>
-        <ModalHeader>Line Item2s</ModalHeader>
+        <ModalHeader>Line Item</ModalHeader>
         <ModalBody>
           <FormGroup>
             <Row>
@@ -187,7 +187,7 @@ const {id}=useParams();
                 <Input
                   type="date"
                   name="from_date"
-                  defaultValue={lineItemData && moment(lineItemData.from_date).format('DD-MM-YYYY')}
+                  defaultValue={lineItemData && lineItemData.from_date}
                   onChange={handleData}
                 />
               </Col>
@@ -200,7 +200,7 @@ const {id}=useParams();
                 <Input
                   type="date"
                   name="to_date"
-                  defaultValue={lineItemData && moment(lineItemData.to_date).format('DD-MM-YYYY')}
+                  defaultValue={lineItemData && lineItemData.to_date}
                   onChange={handleData}
                 />
               </Col>

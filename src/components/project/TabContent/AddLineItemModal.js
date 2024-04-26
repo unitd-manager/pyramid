@@ -48,6 +48,7 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectId,proj
   
   //Insert Invoice Item
   const addLineItemApi = (obj) => {
+    if (obj.title !== '' && obj.description !== '' && obj.amount !== '') {
    
     obj.project_id = projectId;
     obj.project_claim_id = projectClaimId;
@@ -55,11 +56,15 @@ const AddLineItemModal = ({addLineItemModal, setAddLineItemModal, projectId,proj
       .post('/claim/insertClaimLineItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
-       // window.location.reload();
+       window.location.reload();
       })
       .catch(() => {
         message('Cannot Add Line Items', 'error');
       });
+     } else {
+        message('Please fill all required fields', 'warning');
+      }
+    
   };
   //Add new line item
   const AddNewLineItem = () => {
@@ -155,7 +160,7 @@ const calculateTotal = () => {
     <>
       <Modal size="xl" isOpen={addLineItemModal}>
         <ModalHeader>
-          Add Quote Items
+          Add Pc Items
           <Button
             className="shadow-none"
             color="secondary"
@@ -230,7 +235,7 @@ const calculateTotal = () => {
                                   <Input Value={item.title} type="text" name="title" style={{ width: '100%' }} />
                                 </td>
                                 <td data-label="Description">
-                                  <Input Value={item.description} type="textarea" name="description"style={{ width: '100%' }} />
+                                  <Input Value={item.description} type="textArea" name="description"style={{ width: '100%' }} />
                                 </td>
                                
                                 <td data-label="Contract Amount">

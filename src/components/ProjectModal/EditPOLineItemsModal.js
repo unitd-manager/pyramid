@@ -39,7 +39,21 @@ console.log('purchase',data[0]);
   const handleInputs = (e) => {
     setPurchase({ ...purchase, [e.target.name]: e.target.value });
   };
+  const [productDetails, setProductDetails] = useState({
+    title: '',
+    product_code: '',
+    site_id: 0,
+    price:'',
+    qty_in_stock:'',
+    unit:'',
+    product_type:'',
 
+
+  });
+//setting data in ProductDetails
+const handleNewProductDetails = (e) => {
+  setProductDetails({ ...productDetails, [e.target.name]: e.target.value });
+};
   function updateState(index, property, e, ProductName) {
     const copyDeliverOrderProducts = [...items];
     if (ProductName) {
@@ -51,6 +65,21 @@ console.log('purchase',data[0]);
     }
     setItems(copyDeliverOrderProducts);
   }
+  const updateAmount = (index) => {
+    const item = items[index];
+    const amount = (parseFloat(item.qty) || 0) * (parseFloat(item.cost_price) || 0);
+    const updatedItems = [...items];
+    updatedItems[index] = { ...item, amount: amount.toFixed(2) };
+    setItems(updatedItems);
+  };
+
+  const updateAmount1 = (index) => {
+    const item = newItems[index];
+    const amount = (parseFloat(item.qty) || 0) * (parseFloat(item.cost_price) || 0);
+    const updatedItems = [...newItems];
+    updatedItems[index] = { ...item, amount: amount.toFixed(2) };
+    setNewItems(updatedItems);
+  };
 
   function updateNewItemState(index, property, e, ProductName) {
     const copyDeliverOrderProducts = [...newItems];
@@ -68,8 +97,12 @@ console.log('purchase',data[0]);
   const editPurchase = () => {
     
     api.post('/purchaseorder/editTabPurchaseOrder',purchase)
-    .then(() => {
+    .then((response) => {
+      
+      const insertedProductId = response.data.data.product_id;
       newItems.forEach((el) => {
+        el.purchase_order_id = purchase.purchase_order_id; // Assuming you have the purchase_order_id in your purchase object
+          el.product_id = insertedProductId;
         api
           .post('/purchaseorder/insertPoProduct', el)
           .then(() => {
@@ -90,6 +123,9 @@ console.log('purchase',data[0]);
           });
       });
       message('Record editted successfully', 'success');
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 300);
     })
     .catch(() => {
       message('Unable to edit record.', 'error');
@@ -150,9 +186,10 @@ console.log('purchase',data[0]);
       product_id: "",
       item_title: "",
       unit: "",
-      qty: "0",
+      qty: "",
       cost_price: "0",
       description: "",
+      amount:"0"
     };
     arr[index] = updatedObject;
     setArr(arr);
@@ -168,6 +205,51 @@ console.log('purchase',data[0]);
       setProductValue(finaldat);
     });
   };
+// Clear new product form
+const clearNewProductForm = () => {
+  setProductDetails({
+    title: '',
+    product_type: '',
+  });
+};
+    //Insert Product Data
+    const insertProductData = (ProductCode,ItemCode) => {
+      productDetails.product_code = ProductCode;
+      productDetails.item_code = ItemCode;
+      if (productDetails.title !== '' && productDetails.item_code !== ''  && productDetails.product_type !== '' ) {
+        api
+          .post('/product/insertProductss', productDetails)
+          .then(() => {
+            message('Product inserted successfully.', 'success');
+            getProduct();
+            clearNewProductForm('');
+            setAddNewProductModal(false);
+         
+          })
+          .catch(() => {
+            message('Unable to edit record.', 'error');
+          });
+      } else {
+        message('Please fill all required fields.', 'warning');
+      }
+    };
+    const generateCode = () => {
+      api
+        .post('/product/getCodeValue', { type: 'ProductCode' })
+        .then((res) => {
+          const ProductCode = res.data.data
+        api
+        .post('/product/getCodeValue', { type: 'ItemCode' })
+        .then((response) => {
+          const ItemCode = response.data.data
+          insertProductData(ProductCode, ItemCode);
+         
+        })
+        })
+        .catch(() => {
+          insertProductData('');
+        });
+    };
   useEffect(
     () => {
       getProduct();
@@ -270,7 +352,7 @@ console.log('purchase',data[0]);
                 <tr>
                   <th scope="col">Product Name</th>
                   <th scope="col">UoM</th>
-                  <th scope="col">Quantity</th>
+                  <th scope="col">qty</th>
                   <th scope="col">Unit Price</th>
                   <th scope="col">Amount</th>
                   <th scope="col">Remarks</th>
@@ -279,7 +361,7 @@ console.log('purchase',data[0]);
               </thead>
               <tbody>
                 {items.map((el, index) => {
-                  const amount = el.cost_price * el.qty;
+                  //const amount = el.cost_price * el.qty;
                   return (
                     <tr key={el.po_product_id}>
                       <td data-label="ProductName">
@@ -324,6 +406,7 @@ console.log('purchase',data[0]);
                           name="qty"
                           value={el.qty}
                           onChange={(e) => updateState(index, 'qty', e)}
+                          onBlur={(e) => updateAmount(index,e)}
                         />
                       </td>
                       <td data-label="Unit Price">
@@ -332,9 +415,18 @@ console.log('purchase',data[0]);
                           name="cost_price"
                           value={el.cost_price}
                           onChange={(e) => updateState(index, 'cost_price', e)}
+                          onBlur={(e) => updateAmount(index,e)}
                         />
                       </td>
-                      <td data-label="Total Price">{Number.isNaN(amount) ? 0 : amount}</td>
+                      <td data-label="Total Price">
+                      <Input
+                          type="text"
+                          name="amount"
+                          value={el.amount}
+                          // onChange={(e) => updateAmount(index, 'amount', e)}
+                        />
+                        </td>
+                      {/* <td data-label="Total Price">{Number.isNaN(amount) ? 0 : amount}</td> */}
                       <td data-label="Remarks">
                         <Input
                           type="textarea"
@@ -352,7 +444,7 @@ console.log('purchase',data[0]);
                   );
                 })}
                 {newItems?.map((elem, index) => {
-                  const amount = elem.cost_price * elem.qty;
+                  //const amount = elem.cost_price * elem.qty;
                   return (
                     <tr key={elem}>
                       <td data-label="ProductName">
@@ -391,12 +483,13 @@ console.log('purchase',data[0]);
                           onChange={(e) => updateNewItemState(index, 'unit', e)}
                         />
                       </td>
-                      <td data-label="Qty">
+                      <td data-label="qty">
                         <Input
                           type="text"
                           name="qty"
                           value={elem.qty}
                           onChange={(e) => updateNewItemState(index, 'qty', e)}
+                          onBlur={(e) => updateAmount1(index,e)}
                         />
                       </td>
                       <td data-label="Unit Price">
@@ -405,9 +498,18 @@ console.log('purchase',data[0]);
                           name="cost_price"
                           value={elem.cost_price}
                           onChange={(e) => updateNewItemState(index, 'cost_price', e)}
+                          onBlur={(e) => updateAmount1(index,e)}
                         />
                       </td>
-                      <td data-label="Total Price">{Number.isNaN(amount) ? 0 : amount}</td>
+                      <td data-label="Total Price">
+                      <Input
+                          type="text"
+                          name="amount"
+                          value={elem.amount}
+                          // onChange={(e) => updateAmount(index, 'amount', e)}
+                        />
+                        </td>
+                      {/* <td data-label="Total Price">{Number.isNaN(amount) ? 0 : amount}</td> */}
                       <td data-label="Remarks">
                         <Input
                           type="textarea"
@@ -454,7 +556,7 @@ console.log('purchase',data[0]);
       </Modal>
 
       {/* Add New Product Modal */}
-      <Modal size="lg" isOpen={addNewProductModal}>
+      {/* <Modal size="lg" isOpen={addNewProductModal}>
         <ModalHeader>Add New Materials / Tools</ModalHeader>
 
         <ModalBody>
@@ -499,6 +601,76 @@ console.log('purchase',data[0]);
             className="shadow-none"
             onClick={() => {
               setAddNewProductModal(false);
+            }}
+          >
+            Submit
+          </Button>
+          <Button
+            color="secondary"
+            className="shadow-none"
+            onClick={() => {
+              setAddNewProductModal(false);
+            }}
+          >
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal> */}
+       <Modal isOpen={addNewProductModal}>
+        <ModalHeader>Add New Materials / Tools</ModalHeader>
+
+        <ModalBody>
+          <FormGroup>
+            <Row>
+              <Col md="12" className="mb-4">
+                <Row>
+                  <FormGroup>
+                    <Row>
+                      <Label sm="3">
+                        Product Name <span className="required"> *</span>
+                      </Label>
+                      <Col sm="8">
+                        <Input
+                          type="text"
+                          name="title"
+                          onChange={handleNewProductDetails}
+                          value={productDetails.title}
+                        />
+                      </Col>
+                      <Label sm="3">
+                        Product Type <span className="required"> *</span>
+                      </Label>
+                      <Col sm="8">
+                        <Input
+                          type="select"
+                          name="product_type"
+                          onChange={handleNewProductDetails}
+                          value={productDetails.product_type}
+                        >
+                          <option value="">Please Select</option>
+                          <option value="Material">Materials</option>
+                          <option value="Tools">Tools</option>
+                            
+                        </Input>
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                </Row>
+              </Col>
+            </Row>
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="primary"
+            className="shadow-none"
+            onClick={() => {
+              //insertProductData();
+              generateCode();
+              
+              //getProduct();
+              //setAddNewProductModal(false);
+              
             }}
           >
             Submit

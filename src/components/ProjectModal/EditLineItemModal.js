@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Row,
   Col,
@@ -12,46 +12,32 @@ import {
   ModalFooter,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
+// import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import api from '../../constants/api';
 import message from '../Message';
 
 
-const QuoteViewEditItem = ({ quoteData, setQuoteData, FetchLineItemData,quoteId,QuotationViewLine,getQuotations }) => {
-  QuoteViewEditItem.propTypes = {
-    quoteData: PropTypes.bool,
-    getQuotations:PropTypes.func,
-    QuotationViewLine:PropTypes.func,
-    setQuoteData: PropTypes.func,
+const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData, onEditSuccess }) => {
+  EditLineItemModal.propTypes = {
+    editLineModal: PropTypes.bool,
+    setEditLineModal: PropTypes.func,
     FetchLineItemData: PropTypes.object,
-    quoteId: PropTypes.any,
+    onEditSuccess: PropTypes.func,
    
   };
 const {id}=useParams();
   const [lineItemData, setLineItemData] = useState(null);
-  const [lineItem, setLineItem] = useState();
   const [totalAmount, setTotalAmount] = useState();
-  const [quotation, setQuotation] = useState();
-
-  const getQuotation = () => {
-    api
-      .post('/projecttabquote/getTabQuote', { quote_id: quoteId })
-      .then((res) => {
-        setQuotation(res.data.data[0]);
-      })
-  };
-  const getLineItem = () => {
-    api.post('/project/getQuoteLineItemsById', { quote_id: quoteId }).then((res) => {
-      setLineItem(res.data.data);
-    });
-  };
-  useEffect(() => {
-    getQuotation();
-    getLineItem();
-  }, [quoteId]);
+  const [quoteData, setQuoteData] = useState();
 
   const handleData = (e) => {
     setLineItemData({ ...lineItemData, [e.target.name]: e.target.value });
+  };
+  const getQuote = () => {
+    api.post('/tender/getQuoteById', { opportunity_id: id }).then((res) => {
+      setQuoteData(res.data.data[0]);
+    });
   };
   const handleCalc = (Qty, UnitPrice, TotalPrice) => {
     if (!Qty) Qty = 0;
@@ -60,59 +46,56 @@ const {id}=useParams();
 
     setTotalAmount(parseFloat(Qty) * parseFloat(UnitPrice));
   };
+  const getLineItem = () => {
+    api.post('/tender/getQuoteLineItemsById', { quote_id: quoteData.quote_id }).then(() => {
+      console.log('222222222:', quoteData.quote_id);
 
-  const insertquote = () => {
-    api.post('/project/insertLog', quotation).then((res) => {
-      message('quote inserted successfully.', 'success');
-
-      lineItem.forEach((element) => {
-        element.quote_log_id = res.data.data.insertId;
-
-        api
-          .post('/project/insertLogLine', element)
-          .then(() => {
-            getQuotations(); 
-          })
-          .catch((error) => {
-            console.error('Error inserting log line:', error);
-          });
-      });
+    })
+    .catch((error) => {
+      console.error('Error fetching line items:', error);
+      message('LineItem Data not found', 'info');
     });
   };
-
   const UpdateData = () => {
     lineItemData.quote_id=id;
     //lineItemData.amount=totalAmount;
-    
     lineItemData.amount = parseFloat(lineItemData.quantity) * parseFloat(lineItemData.unit_price) 
-    const hasChanges = JSON.stringify(lineItemData) !== JSON.stringify(FetchLineItemData);
     api
       .post('/tender/edit-TabQuoteLine', lineItemData)
-      .then((res) => {
-        console.log('edit Line Item', res.data.data);
-        message('Edit Line Item Udated Successfully.', 'success');
-        if (hasChanges) {
-          insertquote();
-        }
-        QuotationViewLine();
+      .then(() => {
+        api.post('/tender/insertLog', quoteData)
+        .then(() => {
+          message('insert log Udated Successfully.', 'success');
+         
+        })
+        api
+        .post('/tender/insertLogLine', lineItemData)
+        .then((result) => {
+          console.log('edit Line Item', result.data.data);
+          message('Edit Line Item Udated Successfully.', 'success');
+         
+        })
+        .catch(() => {
+          message('Unable to edit quote. please fill all fields', 'error');
+        });
+        getLineItem();
+        onEditSuccess(); // Call the callback function
+      
       })
       .catch(() => {
         message('Unable to edit quote. please fill all fields', 'error');
       });
   };
 
-
- 
-
-
   React.useEffect(() => {
+    getQuote();
     setLineItemData(FetchLineItemData);
   }, [FetchLineItemData]);
 
   return (
     <>
-      <Modal isOpen={quoteData}>
-        <ModalHeader>Line Items</ModalHeader>
+      <Modal isOpen={editLineModal}>
+        <ModalHeader>Edit Line Item</ModalHeader>
         <ModalBody>
           <FormGroup>
             <Row>
@@ -142,22 +125,7 @@ const {id}=useParams();
           </FormGroup>
           <FormGroup>
             <Row>
-              <Label sm="2">Qty</Label>
-              <Col sm="10">
-                <Input
-                  type="text"
-                  name="quantity"
-                  defaultValue={lineItemData && lineItemData.quantity}
-                  onChange={(e)=>{handleData(e);
-                    handleCalc(e.target.value, lineItemData.unit_price,lineItemData.amount
-                      )}}
-                />
-              </Col>
-            </Row>
-          </FormGroup>
-          <FormGroup>
-            <Row>
-              <Label sm="2">UOM</Label>
+              <Label sm="2">Unit</Label>
               <Col sm="10">
                 <Input
                   type="textarea"
@@ -168,6 +136,24 @@ const {id}=useParams();
               </Col>
             </Row>
           </FormGroup>
+
+          <FormGroup>
+            <Row>
+              <Label sm="2">Qty</Label>
+              <Col sm="10">
+                <Input
+                  type="textarea"
+                  name="quantity"
+                  defaultValue={lineItemData && lineItemData.quantity}
+                  onChange={(e)=>{handleData(e);
+                    handleCalc(e.target.value, lineItemData.unit_price,lineItemData.amount
+                      )}}
+                 
+                />
+              </Col>
+            </Row>
+          </FormGroup>
+          
           <FormGroup>
             <Row>
               <Label sm="2">Unit Price</Label>
@@ -199,6 +185,19 @@ const {id}=useParams();
               </Col>
             </Row>
           </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm="2">Remarks</Label>
+              <Col sm="10">
+                <Input
+                  type="textarea"
+                  name="remarks"
+                  defaultValue={lineItemData && lineItemData.remarks}
+                  onChange={handleData}
+                />
+              </Col>
+            </Row>
+          </FormGroup>
         </ModalBody>
         <ModalFooter>
           <Button
@@ -207,7 +206,7 @@ const {id}=useParams();
             type="button"
             onClick={() => {
               UpdateData();
-              setQuoteData(false);
+              setEditLineModal(false);
             }}
           >
             Save & Continue
@@ -216,7 +215,7 @@ const {id}=useParams();
             color="secondary"
             className="shadow-none"
             onClick={() => {
-              setQuoteData(false);
+              setEditLineModal(false);
             }}
           >
             {' '}
@@ -228,4 +227,4 @@ const {id}=useParams();
   );
 };
 
-export default QuoteViewEditItem;
+export default EditLineItemModal;

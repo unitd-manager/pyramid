@@ -4,8 +4,11 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import * as numberToWords from 'number-to-words';
 import api from '../../constants/api';
 import message from '../Message';
+import PdfFooter from './PdfFooter';
+import PdfHeader from './PdfHeader';
 
 const PdfCreditNote = ({creditId}) => {
   PdfCreditNote.propTypes = {
@@ -13,6 +16,8 @@ const PdfCreditNote = ({creditId}) => {
   }
      const [note, setNote] = React.useState();
     const [notes, setNotes] = React.useState();
+    const [hfdata, setHeaderFooterData] = React.useState();
+    const [gTotal, setGtotal] = React.useState(0);
 
   const getCreditNote = () => {
     api
@@ -29,15 +34,37 @@ const PdfCreditNote = ({creditId}) => {
       .post('/finance/getCreditNoteById', { credit_note_id :creditId  })
       .then((res) => {
         setNote(res.data.data);
+        let grandTotal = 0;
+        res.data.data.forEach((elem) => {
+          grandTotal += elem.amount;
+        });
+
+        setGtotal(grandTotal);
       })
       .catch(() => {
         message('Finance Data Not Found', 'info');
       });
   };
-  React.useEffect(() => {
+  console.log('gTotal',gTotal)
+ React.useEffect(() => {
     getCreditNoteId();
     getCreditNote();
   }, []);
+
+  const grantTotal = (gTotal && notes && notes.gst_percentage) ? (gTotal * notes.gst_percentage) / 100 : 0;
+  console.log('grantTotal', grantTotal);
+  const totalAmount = parseFloat(grantTotal) + parseFloat(gTotal);
+  console.log('totalAmount', totalAmount);
+    React.useEffect(() => {
+    api.get('/setting/getSettingsForCompany').then((res) => {
+      setHeaderFooterData(res.data.data);
+    });
+  }, []);
+
+  const findCompany = (key) => {
+    const filteredResult = hfdata.find((e) => e.key_text === key);
+    return filteredResult.value;
+  };
 
   const GetPdf = () => {
     const productItems = [
@@ -47,11 +74,7 @@ const PdfCreditNote = ({creditId}) => {
           style: 'tableHead',
         },
         {
-          text: 'Credit Code',
-          style: 'tableHead',
-        },
-        {
-          text: 'Title',
+          text: 'Description',
           style: 'tableHead',
         },
         {
@@ -69,12 +92,7 @@ const PdfCreditNote = ({creditId}) => {
           border: [false, false, false, true],
         },
         {
-          text: `${element.credit_note_code? element.credit_note_code : ''}`,
-          border: [false, false, false, true],
-          style: 'tableBody',
-        },
-        {
-          text: `${element.item_title? element.item_title : ''}`,
+          text: `${element.description? element.description : ''}`,
           border: [false, false, false, true],
           style: 'tableBody',
         },
@@ -88,27 +106,81 @@ const PdfCreditNote = ({creditId}) => {
     });
     const dd = {
       pageSize: 'A4',     
+      header: PdfHeader({ findCompany }),
+      pageMargins: [40, 120, 40, 10],
+      //pageMargins: [40, 40, 30, 0],
+      footer: PdfFooter,
       content: [
         {columns: [
-            {
-              text: 'To \n ABC New company Pte,\n 1 Coleman Street #10-05,The Adelphi \nSingapore - 6259 9911',
-              style: 'textSize',
-              bold:true
-            },
-            {
-              text: `Date :${(notes.from_date)? moment(notes.from_date).format('DD-MM-YYYY'):''}`,
-              style: 'textSize',
-              margin:[110,0,0,0],
-              bold:true
+          {
+            stack: [
+              {
+                text: `To `,
+                style: ['textSize'],
+                margin: [30, 0, 0, 0],
+              },
+              {
+                text: ` \n${notes.cust_company_name ? notes.cust_company_name : ''}`,
+                color: 'blue',
+                style: ['textSize'],
+                margin: [30, 3, 0, 0],
+              },
+              {
+                text: ` ${notes.cust_address1 ? notes.cust_address1 : ''
+                  }\n ${notes.cust_address2 ? notes.cust_address2 : ''}\n${notes.cust_address_country ? notes.cust_address_country : ''
+                  } ${notes.cust_address_po_code ? notes.cust_address_po_code : ''
+                  }`,
+                style: ['textSize'],
+                margin: [30, 3, 0, 0],
+              },
+              '\n',
+            ],
+          },
+          {
+              stack: [
+                {
+                  text: ` CN No                 : ${notes.credit_note_code ? notes.credit_note_code : ''
+                    } `,
+                  style: ['textSize'],
+                  margin: [100, 2, 0, 0],
+                },
+                { 
+                  text: `Date                    : ${moment(
+                    notes.from_date ? notes.from_date : '',
+                  ).format('DD-MM-YYYY')}  `,
+                  style: ['textSize'],
+                  margin: [100, 2, 0, 0],
+                },
+                {
+                  text: ` Your Po               : ${notes.po_number ? notes.po_number : ''} `,
+                  style: ['textSize'],
+                  margin: [100, 2, 0, 0],
+                },
+                {
+                  text: `Our Invoice No   : ${notes.invoice_code ? notes.invoice_code : ''} `,
+                  style: ['textSize'],
+                  margin: [100, 2, 0, 0],
+                },
+                { 
+                  text: `Invoice Date       : ${moment(
+                    notes.invoice_date ? notes.invoice_date : '',
+                  ).format('DD-MM-YYYY')}  `,
+                  style: ['textSize'],
+                  margin: [100, 2, 0, 0],
+                },
+                '\n',
+              ],
             },
               ],},
               '\n',
               
            {columns: [
             {
-              text:` Dear Sir,\n Title :${notes.item_title ? notes.item_title : ''} ,\n Description: ${notes.description ? notes.description : ''}`,
+              text: `ATTN : ${notes.cust_first_name ? notes.cust_first_name : ''
+                }  `,
               style: 'textSize',
-              bold: true
+              margin: [30, 0, 0, 0],
+              bold: true,
             },
             
               ],},
@@ -157,7 +229,7 @@ const PdfCreditNote = ({creditId}) => {
               },
               table: {
                 headerRows: 1,
-                widths: ['25%','30%', '35%', '20%', '20%','20%', ],
+                widths: ['10%','65%', '25%' ],
                 
     
                   body: productItems,
@@ -167,24 +239,72 @@ const PdfCreditNote = ({creditId}) => {
             },
         '\n',
         '\n\n',
+        {
+          stack: [
+            {
+              text: `TOTAL $ : ${gTotal.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+              })}`,
+              alignment: 'right',
+              margin: [0, 0, 5, 0],
+              style: 'textSize',
+            },
+            '\n',
+            {
+              text: `GST ${notes.gst_percentage ? notes.gst_percentage : ''}% : ${grantTotal.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+              })}`,
+              alignment: 'right',
+              margin: [0, 0, 5, 0],
+              style: 'textSize',
+            },
+            '\n',
+            {
+              text: `GRAND TOTAL $ : ${totalAmount.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+              })}`,
+              alignment: 'right',
+              margin: [0, 0, 5, 0],
+              style: 'textSize',
+            },
+            '\n\n\n',
+            {
+              text: `TOTAL :  ${numberToWords.toWords(totalAmount).toUpperCase()}`, // Convert total to words in uppercase
+              bold: 'true',
+              fontSize: '11',
+              margin: [40, 0, 0, 0],
+            },
+            // '\n',
+            // {
+            //   text: `GRAND TOTAL ($) : ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+            //   alignment: 'right',
+            //   margin: [0, 0, 5, 0],
+            //   style: 'textSize',
+            // },
+            // '\n\n\n',
+            // {
+            //   text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
+            //   bold: 'true',
+            //   fontSize: '11',
+            //   margin: [40, 0, 0, 0],
+            // },
+
+          ],
+        },
          '\n\n',
-      {
-              text: 'Terms and conditions : ',
-              style: 'textSize',
-              bold: true
-          },
-      {
-              text: ' \n\n 1.The above rates are in Singapore Dollars. \n\n 2. Payment Terms 30 days from the date of Invoice \n\n  3.Payment should be made in favor of " CUBOSALE ENGINEERING PTE LTD " \n\n 4.Any discrepancies please write to us within 3 days from the date of invoice  \n\n\n 5. For Account transfer \n\n \n\n',
-              style: 'textSize',
-              // margin: [0, 5, 0, 10],
-            },
-      {
-              text: 'UNITED OVERSEAS BANK \n ACCT NAME: CUBOSALE ENGINEERING PTE LTD \n ACCT NO.:- 3923023427 \n Paynow By UEN : 201222688M   \n\n',
-              style: 'textSize',
-              bold: true
-            },
-             
-            
+         '\n\n',
+         '\n\n',
+         {
+          width: '100%',
+          alignment: 'center',
+          text: 'This is system generated document and does not need any signature',
+          bold: true,
+          margin: [0, 0, 0, 0],
+          fontSize: 8,
+        },
+      
+      '\n\n',
+      '\n\n',
       '\n\n',
       {
                 width: '100%',
@@ -193,6 +313,14 @@ const PdfCreditNote = ({creditId}) => {
                 bold: true,
                 margin: [0, 0, 0, 0],
                 fontSize: 12,
+              },
+              {
+                width: '100%',
+                alignment: 'center',
+                text: 'Should you have any further enquiries, please do not hesitate and contact us @ Tel : +65-62599046',
+                bold: true,
+                margin: [0, 0, 0, 0],
+                fontSize: 6,
               },
         
 ],

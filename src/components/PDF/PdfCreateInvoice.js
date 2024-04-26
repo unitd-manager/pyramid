@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -50,63 +50,84 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
       .post('/invoice/getInvoiceByInvoiceId', { invoice_id: invoiceId })
       .then((res) => {
         setCreateInvoice(res.data.data);
+        console.log('CreateInvoice', res.data.data)
       })
       .catch(() => {
         message('Invoice Data Not Found', 'info');
       });
   };
   const calculateTotal = () => {
-    const grandTotal = cancelInvoice.reduce((acc, element) => acc + element.amount, 0);
+    const grandTotal = cancelInvoice.reduce((acc, element) => acc + element.total_cost, 0);
     const gstValue = createInvoice.gst_value || 0;
     const total = grandTotal + gstValue;
     return total;
   };
+  const getAmountInWords = () => {
+    const total = calculateTotal();
+    // Split total amount into dollars and cents
+    const dollars = Math.floor(total);
+    const cents = Math.round((total - dollars) * 100); // Convert cents to whole number
+  
+    // Convert dollars and cents to words separately
+    const dollarsInWords = numberToWords.toWords(dollars).toUpperCase();
+    const centsInWords = numberToWords.toWords(cents).toUpperCase();
+  
+    // Format the text accordingly
+    let amountInWords = `SGD ${dollarsInWords} CENTS `;
+    if (cents > 0) {
+      amountInWords += `${centsInWords}  ONLY`;
+    }
+  
+    return amountInWords;
+  };
+  
+
   // const calculateTotal = () => {
   //   const grandTotal = cancelInvoice.reduce((acc, element) => acc + element.total_cost, 0);
   //   const gstValue = createInvoice.gst_value || 0;
   //   const total = grandTotal + gstValue;
   //   return total;
   // };
-  const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
-  React.useEffect(() => {
-    // Other logic you have here...
+  // const [parsedQuoteCondition, setParsedQuoteCondition] = useState('');
+  // React.useEffect(() => {
+  //   // Other logic you have here...
 
-    // Update this part of your code to handle HTML content stored in the quote_condition field
-    // const parseHTMLContent = (htmlContent) => {
-    //   if (htmlContent) {
-    //     // Remove HTML tags using a regular expression
-    //     const plainText = htmlContent.replace(/<[^>]*>?/gm, '');
-    //     setParsedQuoteCondition(plainText);
-    //   }
-    // };
-    const parseHTMLContent = (htmlContent) => {
-      if (htmlContent) {
-        // Replace all occurrences of &nbsp; with an empty string
-        const plainText = htmlContent.replace(/&nbsp;/g, '');
+  //   // Update this part of your code to handle HTML content stored in the quote_condition field
+  //   // const parseHTMLContent = (htmlContent) => {
+  //   //   if (htmlContent) {
+  //   //     // Remove HTML tags using a regular expression
+  //   //     const plainText = htmlContent.replace(/<[^>]*>?/gm, '');
+  //   //     setParsedQuoteCondition(plainText);
+  //   //   }
+  //   // };
+  //   // const parseHTMLContent = (htmlContent) => {
+  //   //   if (htmlContent) {
+  //   //     // Replace all occurrences of &nbsp; with an empty string
+  //   //     const plainText = htmlContent.replace(/&nbsp;/g, '');
     
-        // Remove HTML tags using a regular expression
-        const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+  //   //     // Remove HTML tags using a regular expression
+  //   //     const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
     
-        setParsedQuoteCondition(plainTextWithoutTags);
-      }
-    };
-    // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
-    parseHTMLContent(createInvoice.payment_terms);
+  //   //     setParsedQuoteCondition(plainTextWithoutTags);
+  //   //   }
+  //   // };
+  //   // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
+  //   // parseHTMLContent(createInvoice.payment_terms);
 
-    // Other logic you have here...
-  }, [createInvoice.payment_terms]);
+  //   // Other logic you have here...
+  // }, [createInvoice.payment_terms]);
 
   //The quote_condition content and format it as bullet points
-  const formatQuoteConditions = (conditionsText) => {
-    const formattedConditions = conditionsText.split(':-').map((condition, index) => {
-      const trimmedCondition = condition.trim();
-      return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
-    });
-    return formattedConditions;
-  };
+  // const formatQuoteConditions = (conditionsText) => {
+  //   const formattedConditions = conditionsText.split(':-').map((condition, index) => {
+  //     const trimmedCondition = condition.trim();
+  //     return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
+  //   });
+  //   return formattedConditions;
+  // };
 
   // Format the conditions content for PDF
-  const conditions = formatQuoteConditions(parsedQuoteCondition);
+  // const conditions = formatQuoteConditions(parsedQuoteCondition);
   // const conditionsContent = conditions.map((condition) => ({
   //   text: `${condition}`,
   //   fontSize: 10,
@@ -114,13 +135,13 @@ const PdfCreateInvoice = ({ invoiceId, projectDetail }) => {
   //   style: ['notesText', 'textSize'],
   // }));
   // / Format the conditions content for PDF
-const conditionsContent = conditions.map((condition) => ({
-  text: `${condition}`,
-  fontSize: 10,
-  margin: [15, 5, 0, 0],
-  style: ['notesText', 'textSize'],
-  lineHeight: 1.2,
-}));
+// const conditionsContent = conditions.map((condition) => ({
+//   text: `${condition}`,
+//   fontSize: 10,
+//   margin: [15, 5, 0, 0],
+//   style: ['notesText', 'textSize'],
+//   lineHeight: 1.2,
+// }));
   //console.log('2', gstTotal);
   const getInvoiceItemById = () => {
     api
@@ -129,7 +150,7 @@ const conditionsContent = conditions.map((condition) => ({
         setCancelInvoice(res.data.data);
         let grandTotal = 0;
         res.data.data.forEach((elem) => {
-          grandTotal += elem.amount;
+          grandTotal += elem.total_cost;
         });
 
         setGtotal(grandTotal);
@@ -138,6 +159,8 @@ const conditionsContent = conditions.map((condition) => ({
         message('Invoice Data Not Found', 'info');
       });
   };
+
+
   React.useEffect(() => {
     getInvoiceItemById();
     getInvoiceById();
@@ -156,22 +179,22 @@ const conditionsContent = conditions.map((condition) => ({
           alignment: 'center',
         },
         {
-          text: 'Uom',
+          text: 'Unit',
           style: 'tableHead',
           alignment: 'center',
         },
         {
-          text: 'Qty',
+          text: 'Quantity',
           style: 'tableHead',
           alignment: 'center',
         },
         {
-          text: 'Unit Price',
+          text: 'Amount(per unit)',
           style: 'tableHead',
           alignment: 'right',
         },
         {
-          text: 'Total Amount',
+          text: 'Total',
           style: 'tableHead',
           alignment: 'right',
         },
@@ -210,7 +233,7 @@ const conditionsContent = conditions.map((condition) => ({
           alignment: 'right',
         },
         {
-          text: `${element.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+          text: `${element.total_cost.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
           border: [false, false, false, true],
           margin: [0, 5, 0, 5],
           style: 'tableBody1',
@@ -224,7 +247,7 @@ const conditionsContent = conditions.map((condition) => ({
       header: PdfHeader({ findCompany }),
        pageMargins: [40, 120, 40, 10],
       //pageMargins: [40, 40, 30, 0],
-      footer: PdfFooter,
+      footer: PdfFooter({ findCompany }),
 
 
       content: [
@@ -337,11 +360,11 @@ const conditionsContent = conditions.map((condition) => ({
                   style: ['textSize'],
                   margin: [100, 2, 0, 0],
                 },
-                {
-                  text: `Our Ref            : ${createInvoice.project_reference ? createInvoice.project_reference : ''} `,
-                  style: ['textSize'],
-                  margin: [100, 2, 0, 0],
-                },
+                // {
+                //   text: `Our Ref            : ${createInvoice.project_reference ? createInvoice.project_reference : ''} `,
+                //   style: ['textSize'],
+                //   margin: [100, 2, 0, 0],
+                // },
                 {
                   text: `Revision           : ${createInvoice.revision ? createInvoice.revision : ''} `,
                   style: ['textSize'],
@@ -353,7 +376,9 @@ const conditionsContent = conditions.map((condition) => ({
                   margin: [100, 2, 0, 0],
                 },
                 {
-                  text: ` Job Code         : ${createInvoice.job_code ? createInvoice.job_code : ''} `,
+                  text: `PO Date           : ${moment(
+                    createInvoice.po_date ? createInvoice.po_date : '',
+                  ).format('DD-MM-YYYY')}  `,
                   style: ['textSize'],
                   margin: [100, 2, 0, 0],
                 },
@@ -366,14 +391,30 @@ const conditionsContent = conditions.map((condition) => ({
 
         {
           columns: [
-            {
-              text: `ATTN : ${createInvoice.attention ? createInvoice.attention : ''
-                }  `,
-              style: 'textSize',
-              margin: [30, 0, 0, 0],
-              bold: true,
-            },
-          ],
+          {
+            stack: [
+              {
+                text: `ATTN : ${createInvoice.attention ? createInvoice.attention : ''
+                  }  `,
+                style: 'textSize',
+                margin: [30, 0, 0, 0],
+                bold: true,
+              },
+              '\n',
+            ],
+          },
+          {
+            stack: [
+              {
+                text: ` Supply To       : ${createInvoice.supply_to ? createInvoice.supply_to : ''
+                  } `,
+                style: ['textSize'],
+                margin: [100, 2, 0, 0],
+              },
+              '\n',
+            ],
+          },
+        ],
         },
         '\n\n',
         {
@@ -446,7 +487,7 @@ const conditionsContent = conditions.map((condition) => ({
               style: ['notesText', 'textSize'],
             },
             {
-              text: `${createInvoice.invoice_terms ? createInvoice.invoice_terms : ''
+              text: `${createInvoice.payment_terms ? createInvoice.payment_terms : ''
                 } `,
               alignment: 'center',
               style: ['invoiceAdd', 'textSize'],
@@ -503,7 +544,7 @@ const conditionsContent = conditions.map((condition) => ({
         {
           stack: [
             {
-              text: `TOTAL $ : ${gTotal.toLocaleString('en-IN', {
+              text: `TOTAL   : $ ${gTotal.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
               })}`,
               alignment: 'right',
@@ -512,7 +553,7 @@ const conditionsContent = conditions.map((condition) => ({
             },
             '\n',
             {
-              text: `GST ${createInvoice.gst_percentage ? createInvoice.gst_percentage : ''}% :      ${createInvoice.gst_value.toLocaleString('en-IN', {
+              text: `GST ${createInvoice.gst_percentage ? createInvoice.gst_percentage : ''}% :     $ ${createInvoice.gst_value.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
               })}`,
               alignment: 'right',
@@ -521,37 +562,108 @@ const conditionsContent = conditions.map((condition) => ({
             },
             '\n',
             {
-              text: `GRAND TOTAL ($) : ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+              text: `TOTAL AMOUNT   : $ ${calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
               alignment: 'right',
               margin: [0, 0, 5, 0],
               style: 'textSize',
             },
             '\n\n\n',
             {
-              text: `TOTAL :  ${numberToWords.toWords(calculateTotal()).toUpperCase()}`, // Convert total to words in uppercase
-              bold: 'true',
-              fontSize: '11',
+              text: `(${getAmountInWords()})`, // Display total amount in words
+              bold: true,
+              fontSize: 11,
               margin: [40, 0, 0, 0],
+              alignment: 'center',
             },
-
           ],
         },
         '\n\n',
 
 
+        // {
+        //   text: `Terms and Conditions: `,
+        //   fontSize: 11,
+        //   decoration: 'underline',
+        //   margin: [0, 5, 0, 0],
+        //   style: ['notesText', 'textSize'],
+        // },
+        // ...conditionsContent, // Add each condition as a separate paragraph
         {
-          text: `Terms and Conditions: `,
-          fontSize: 11,
-          decoration: 'underline',
-          margin: [0, 5, 0, 0],
-          style: ['notesText', 'textSize'],
+          text: [
+            { text: 'For ', color: 'black' }, // "for" in black color
+            { text: findCompany("cp.companyName"), color: 'orange' } // company name in orange color
+          ],
+          alignment: 'right', 
+          bold: true, 
+          fontSize: 9, 
         },
-        ...conditionsContent, // Add each condition as a separate paragraph
-
-
-        '\n\n',
+        '\n',
+        {
+          text: `Make all checks payable to "${findCompany("cp.companyName")}"`,
+          alignment: 'left', 
+          italics: true,
+          bold: false, 
+          fontSize: 9, 
+        },
+        '\n',
+        {
+          text: ` BANK & ACCOUNT DETAILS: ${findCompany("cp.bankAccountDetails")}`,
+          alignment: 'left', 
+          bold: false, 
+          fontSize: 9, 
+          italics: true,
+        },
+        '\n',
+        {
+          columns: [
+          {
+            stack: [
+              {
+                text: ``,
+                style: 'textSize',
+                margin: [30, 0, 0, 0],
+               
+              },
+              '\n',
+            ],
+          },
+          {
+            stack: [
+              {
+                text: ` For and Behalf of : ${createInvoice.for_and_behalf_of ? createInvoice.for_and_behalf_of : ''
+              } `,
+                style: ['textSize'],
+                margin: [100, 2, 0, 0],
+              },
+              '\n',
+              {
+                text: ` Date                       : ${moment(
+                  createInvoice.invoice_date ? createInvoice.invoice_date : '',
+                ).format('DD-MM-YYYY')}  `,
+                style: ['textSize'],
+                margin: [100, 0, 0, 0],
+              },
+            ],
+          },
+        ],
+        },
+        '\n',
+        '\n',
+        {
+          text: `Thank you for your business `,
+          alignment: 'center', 
+          bold: true, 
+          fontSize: 7, 
+        },
+        '\n',
+        {
+          text: `Should you have any enquiries concerning this delivery note, please contact Tel : +65-62599046`,
+          alignment: 'center', 
+          bold: false, 
+          fontSize: 7, 
+        },
       ],
-      margin: [0, 50, 50, 50],
+      margin: [100, 2, 0, 0],
 
       styles: {
         logo: {

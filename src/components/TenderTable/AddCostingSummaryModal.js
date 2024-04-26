@@ -90,46 +90,48 @@ const AddCostingSummaryModal = ({
   };
 
   const calculateTotal = () => {
-    const result = [];
-    $('.lineitem tbody tr').each(function input() {
-      const allValues = {};
-      $(this)
-        .find('input')
-        .each(function output() {
-          const fieldName = $(this).attr('name');
-          allValues[fieldName] = $(this).val();
-          allValues.total_labour_charges =
-            allValues.no_of_worker_used *
-            allValues.no_of_days_worked *
-            allValues.labour_rates_per_day;
-        });
-      // Access the transport_charges and other_charges values
+    const result = addLineItem.map((item) => {
+      const allValues = { ...item };
+
+      const totalLabourCharges =
+        parseFloat(allValues.no_of_worker_used) *
+        parseFloat(allValues.no_of_days_worked) *
+        parseFloat(allValues.labour_rates_per_day);
+
       const transportCharges = parseFloat(allValues.transport_charges) || 0;
-      const totalLabourCharges = parseFloat(allValues.total_labour_charges) || 0;
       const salesmanCommission = parseFloat(allValues.salesman_commission) || 0;
       const financeCharges = parseFloat(allValues.finance_charges) || 0;
       const officeOverHeads = parseFloat(allValues.office_overheads) || 0;
       const otherCharges = parseFloat(allValues.other_charges) || 0;
-      const profitPercentage = parseFloat(allValues.profit_percentage) || 0;
       const totalMaterialPrice = parseFloat(allValues.total_material_price) || 0;
 
-      
-      // Calculate the total_cost by adding transport_charges and other_charges
+      allValues.total_labour_charges = totalLabourCharges.toFixed(2);
+
       allValues.total_cost =
         transportCharges +
         totalLabourCharges +
         salesmanCommission +
         financeCharges +
         officeOverHeads +
-        otherCharges+
+        otherCharges +
         totalMaterialPrice;
-        allValues.profit = (profitPercentage / 100) * allValues.total_cost;
-        console.log('After profit calculation:', allValues);
-              result.push(allValues);
+
+      allValues.profit =
+        (parseFloat(allValues.profit_percentage || 0) / 100) *
+        parseFloat(allValues.total_cost);
+
+      return allValues;
     });
-    
-    // Return the result array
+
     setAddLineItem(result);
+  };
+
+  const handleInputChange = (index, event) => {
+    const { name, value } = event.target;
+    const list = [...addLineItem];
+    list[index][name] = value;
+    setAddLineItem(list);
+    calculateTotal(); // Recalculate totals on every input change
   };
 
   
@@ -152,7 +154,7 @@ const AddCostingSummaryModal = ({
         <table className="lineitem">
           <tbody>
             {addLineItem &&
-              addLineItem.map((item) => {
+              addLineItem.map((item,index) => {
                 return (
                   <tr key={item.id}>
                     <ModalBody>
@@ -168,9 +170,7 @@ const AddCostingSummaryModal = ({
                                       Value={item.no_of_worker_used}
                                       type="number"
                                       name="no_of_worker_used"
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                     />
                                   </FormGroup>
                                 </Col>
@@ -181,9 +181,7 @@ const AddCostingSummaryModal = ({
                                       Value={item.no_of_days_worked}
                                       type="number"
                                       name="no_of_days_worked"
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                     />
                                   </FormGroup>
                                 </Col>
@@ -192,9 +190,7 @@ const AddCostingSummaryModal = ({
                                     <Label>Labour Rates Per Day</Label>
                                     <Input
                                       Value={item.labour_rates_per_day}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       type="number"
                                       name="labour_rates_per_day"
                                     />
@@ -224,9 +220,7 @@ const AddCostingSummaryModal = ({
                                     <Label>Total Material</Label>
                                     <Input
                                       Value={item.total_material_price}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       type="text"
                                       name="total_material_price"
                                      
@@ -239,9 +233,7 @@ const AddCostingSummaryModal = ({
                                     <Label>Transport Charges</Label>
                                     <Input
                                       Value={item.transport_charges}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       type="number"
                                       name="transport_charges"
                                     />
@@ -252,9 +244,7 @@ const AddCostingSummaryModal = ({
                                     <Label>Salesman Commission</Label>
                                     <Input
                                       Value={item.salesman_commission}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       type="number"
                                       name="salesman_commission"
                                     />
@@ -265,9 +255,7 @@ const AddCostingSummaryModal = ({
                                     <Label>Finance Charges</Label>
                                     <Input
                                       Value={item.finance_charges}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       type="number"
                                       name="finance_charges"
                                     />
@@ -278,9 +266,7 @@ const AddCostingSummaryModal = ({
                                     <Label>Office Overheads</Label>
                                     <Input
                                       Value={item.office_overheads}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       type="number"
                                       name="office_overheads"
                                     />
@@ -291,9 +277,7 @@ const AddCostingSummaryModal = ({
                                     <Label>Other Charges</Label>
                                     <Input
                                       Value={item.other_charges}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       type="number"
                                       name="other_charges"
                                     />
@@ -307,9 +291,7 @@ const AddCostingSummaryModal = ({
                                     <Label>Total Cost</Label>
                                     <Input
                                       Value={item.total_cost}
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       type="numbtexter"
                                       name="total_cost"
                                       disabled
@@ -323,9 +305,7 @@ const AddCostingSummaryModal = ({
                                       Value={item.profit_percentage}
                                       type="text"
                                       name="profit_percentage"
-                                      onBlur={() => {
-                                        calculateTotal();
-                                      }}
+                                      onChange={(e) => handleInputChange(index, e)}
                                       />
                                   </FormGroup>
                                 </Col>

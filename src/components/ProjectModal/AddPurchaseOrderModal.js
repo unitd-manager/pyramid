@@ -344,17 +344,31 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     setMoreItem(updatedItems);
   };
 
+  // const [newProductForm, setNewProductForm] = useState({
+  //   title: '',
+  //   product_type: '',
+  // });
+
+
+// Clear new product form
+const clearNewProductForm = () => {
+  setProductDetails({
+    title: '',
+    product_type: '',
+  });
+};
 
   //Insert Product Data
   const insertProductData = (ProductCode,ItemCode) => {
     productDetails.product_code = ProductCode;
     productDetails.item_code = ItemCode;
-    if (productDetails.title !== '' && productDetails.item_code !== '') {
+    if (productDetails.title !== '' && productDetails.item_code !== ''  && productDetails.product_type !== '' ) {
       api
         .post('/product/insertProductss', productDetails)
         .then(() => {
           message('Product inserted successfully.', 'success');
           getProduct();
+          clearNewProductForm('');
           setAddNewProductModal(false);
        
         })
@@ -375,6 +389,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
       .then((response) => {
         const ItemCode = response.data.data
         insertProductData(ProductCode, ItemCode);
+       
       })
       })
       .catch(() => {
@@ -751,6 +766,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
             onClick={() => {
               //insertProductData();
               generateCode();
+              
               //getProduct();
               //setAddNewProductModal(false);
               
