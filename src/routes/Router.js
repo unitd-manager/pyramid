@@ -115,6 +115,8 @@ const InvoiceTable = Loadable(lazy(() => import('../views/smartconTables/Invoice
 const TaskTable = Loadable(lazy(() => import('../views/smartconTables/Task')));
 const Attendance = Loadable(lazy(() => import('../views/smartconTables/Attendance')));
 const ProjectTable = Loadable(lazy(() => import('../views/smartconTables/Project')));
+const Quotation = Loadable(lazy(() => import('../views/smartconTables/Quotation')));
+
 const ClientTable = Loadable(lazy(() => import('../views/smartconTables/Client')));
 const BookingTable = Loadable(lazy(() => import('../views/smartconTables/Booking')));
 const TimesheetTable = Loadable(lazy(() => import('../views/smartconTables/Timesheet')));
@@ -431,8 +433,10 @@ const Routernew = () => {
           <Route path="/TenderDetails" name="tenderdata" element={<TenderDetailsTable />}></Route>
           <Route path="/OpportunityDetails" name="clienttdata" element={<OpportunityDetails />}></Route>
           <Route path="/ProductDetails" name="tenderdata" element={<ProductDetailsTable />}></Route>
+          <Route path="/Quotation" name="tenderdata" element={<Quotation />}></Route>
 
           <Route path="/Project" name="projectdata" element={<ProjectTable />}></Route>
+         
           <Route path="/Client" name="clienttdata" element={<ClientTable />}></Route>
           <Route path="/ClientDetails" name="clienttdata" element={<ClientDetailsTable />}></Route>
           <Route path="/Booking" name="clienttdata" element={<BookingTable />}></Route>
