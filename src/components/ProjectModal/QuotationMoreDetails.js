@@ -48,7 +48,7 @@ export default function QuotationMoreDetails({
 
   const getQuotations = () => {
     api
-      .post('/projecttabquote/getTabQuoteById', { project_id: id })
+      .post('/project/getTabQuoteById', { project_id: id })
       .then((res) => {
         console.log("getTabQuoteById",res.data.data)
         setQuotation(res.data.data);
