@@ -203,10 +203,10 @@ function TransferModal({ transferModal, setTransferModal, transferItem }) {
     );
 
     setSelectedClients(updatedSelectedClients);
-  };
+  }; 
   // ... (previous code)
   const loadOptions = (inputValue, callback) => {
-    api.get(`/client/getClientsbyfilter`, { params: { keyword: inputValue } }).then((res) => {
+    api.get(`/clients/getClientsbyfilter`, { params: { keyword: inputValue } }).then((res) => {
       const items = res.data.data;
       const options = items.map((item) => ({
         value: item.company_id,

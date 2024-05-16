@@ -19,7 +19,7 @@ import creationdatetime from '../../constants/creationdatetime';
 
 const Test = () => {
   //state variables
-  const [tabPurchaseOrdersLinked, setTabPurchaseOrdersLinked] = useState();
+  const [tabPurchaseOrdersLinked, setTabPurchaseOrdersLinked] = useState([]);
   const [projectsLinked, setProjectsLinked] = useState([]);
   const [productQty, setProductQty] = useState({});
   const [inventoryDetails, setInventoryDetails] = useState({
@@ -41,8 +41,8 @@ const Test = () => {
   const { loggedInuser } = useContext(AppContext);
 
   const [adjustStocks, setAdjustStocks] = useState([]);
-  const [changedStock, setChangedStock] = useState();
-  
+  const [changedStock, setChangedStock] = useState(0);
+
   const getAdjustStocklogsById = () => {
     api
       .post('/inventory/getAdjustStock', { inventory_id: id })
@@ -50,7 +50,7 @@ const Test = () => {
         setAdjustStocks(res.data.data);
       })
       .catch(() => {
-        message('adjuststock logs Data Not Found', 'info');
+        message('Adjuststock logs Data Not Found', 'info');
       });
   };
 
@@ -58,8 +58,9 @@ const Test = () => {
   const handleInputs = (e) => {
     setInventoryDetails({ ...inventoryDetails, [e.target.name]: e.target.value, inventory_id: id });
   };
-   //get inventoryby product id
-   const getInventoryData = () => {
+
+  //get inventory by product id
+  const getInventoryData = () => {
     api
       .post('/inventory/getinventoryById', { inventory_id: id })
       .then((res) => {
@@ -69,8 +70,9 @@ const Test = () => {
         message('Unable to get inventory data.', 'error');
       });
   };
-  //get data for purchaseorder table
-  const getAllpurchaseOrdersLinked = () => {
+
+  //get data for purchase order table
+  const getAllPurchaseOrdersLinked = () => {
     api
       .post('/inventory/gettabPurchaseOrderLinkedById', { product_id: inventoryDetails && inventoryDetails.productId })
       .then((res) => {
@@ -80,12 +82,11 @@ const Test = () => {
         message('Unable to get purchase order data.', 'error');
       });
   };
-  console.log("productId", tabPurchaseOrdersLinked)
 
   //get data for projects table
   const getAllProjectsLinked = () => {
     api
-      .post('/inventory/getTabProjectLinkedById', {product_id: inventoryDetails && inventoryDetails.productId })
+      .post('/inventory/getTabProjectLinkedById', { product_id: inventoryDetails && inventoryDetails.productId })
       .then((res) => {
         setProjectsLinked(res.data.data);
       })
@@ -94,26 +95,26 @@ const Test = () => {
       });
   };
 
-  //get product purchasedquantity and sold qty
-  const getproductquantity = () => {
+  //get product purchased quantity and sold qty
+  const getProductQuantity = () => {
     api
-      .post('/inventory/getProductQuantity', {product_id: inventoryDetails && inventoryDetails.productId })
+      .post('/inventory/getProductQuantity', { product_id: inventoryDetails && inventoryDetails.productId })
       .then((res) => {
         setProductQty(res.data.data[0]);
       })
       .catch(() => {
-        message('Unable to get productqty data.', 'error');
+        message('Unable to get product quantity data.', 'error');
       });
   };
- 
+
   //update Inventory
-  const editinventoryData = () => {
+  const editInventoryData = () => {
     inventoryDetails.modification_date = creationdatetime;
     inventoryDetails.modified_by = loggedInuser.first_name;
     api
       .post('/inventory/editinventoryMain', inventoryDetails)
       .then(() => {
-        message('Record editted successfully', 'success');
+        message('Record edited successfully', 'success');
         setTimeout(() => {
           window.location.reload();
         }, 300);
@@ -125,70 +126,65 @@ const Test = () => {
 
   useEffect(() => {
     getInventoryData();
-    getAllpurchaseOrdersLinked();
+    getAllPurchaseOrdersLinked();
     getAllProjectsLinked();
-  getAdjustStocklogsById();
-    getproductquantity( inventoryDetails && inventoryDetails.productId);
-  }, [ inventoryDetails && inventoryDetails.productId]);
+    getAdjustStocklogsById();
+    getProductQuantity();
+  }, [inventoryDetails.productId]);
 
   useEffect(() => {
-    let changes=0;
-    adjustStocks.forEach((el)=>{
-changes +=parseFloat(el.adjust_stock);
-    })
-    setChangedStock(changes)
-  }, [ adjustStocks]);
-  return (
-      <>
-        <ToastContainer></ToastContainer>
-        <InventoryEditPart
-          inventoryDetails={inventoryDetails}
-          handleInputs={handleInputs}
-          editinventoryData={editinventoryData}
-        />
-        <Row>
-          <Form>
-            <ComponentCard title="Stock Details">
-              <Row>
-                <Col xs="12" md="3">
-                  <Row>
-                    <h5>Total Purchased quantity</h5>
-                  </Row>
-                  <span>{productQty && productQty.materials_purchased}</span>
-                  <Row></Row>
-                </Col>
-                <Col xs="12" md="3">
-                  <Row>
-                    <h5>Sold quantity</h5>
-                  </Row>
-                  <span>{productQty && productQty.materials_used}</span>
-                  <Row></Row>
-                </Col>
-                <Col xs="12" md="3">
-                  <Row>
-                    <h5>Adjusted quantity</h5>
-                  </Row>
-                  <span>{changedStock&&changedStock}</span>
-                  <Row></Row>
-                </Col>
-                
-                <Col xs="12" md="3">
-                  <Row>
-                    <h5>Remaining quantity</h5>
-                  </Row>
-                  <span>{productQty && productQty.actual_stock}</span>
+    let changes = 0;
+    adjustStocks.forEach((el) => {
+      changes += parseFloat(el.adjust_stock) || 0;
+    });
+    setChangedStock(changes);
+  }, [adjustStocks]);
 
-                  <Row></Row>
-                </Col>
-              </Row>
-            </ComponentCard>
-          </Form>
-        </Row>
-        <InventoryEditTables
-          tabPurchaseOrdersLinked={tabPurchaseOrdersLinked}
-          projectsLinked={projectsLinked}
-        />
-      </>
+  return (
+    <>
+      <ToastContainer></ToastContainer>
+      <InventoryEditPart
+        inventoryDetails={inventoryDetails}
+        handleInputs={handleInputs}
+        editinventoryData={editInventoryData}
+      />
+      <Row>
+        <Form>
+          <ComponentCard title="Stock Details">
+            <Row>
+              <Col xs="12" md="3">
+                <Row>
+                  <h5>Total Purchased Quantity</h5>
+                </Row>
+                <span>{productQty && productQty.materials_purchased}</span>
+              </Col>
+              <Col xs="12" md="3">
+                <Row>
+                  <h5>Sold Quantity</h5>
+                </Row>
+                <span>{productQty && productQty.materials_used}</span>
+              </Col>
+              <Col xs="12" md="3">
+                <Row>
+                  <h5>Adjusted Quantity</h5>
+                </Row>
+                <span>{changedStock}</span>
+              </Col>
+              <Col xs="12" md="3">
+                <Row>
+                  <h5>Remaining Quantity</h5>
+                </Row>
+                <span>{productQty && productQty.actual_stock}</span>
+              </Col>
+            </Row>
+          </ComponentCard>
+        </Form>
+      </Row>
+      <InventoryEditTables
+        tabPurchaseOrdersLinked={tabPurchaseOrdersLinked}
+        projectsLinked={projectsLinked}
+      />
+    </>
   );
 };
 

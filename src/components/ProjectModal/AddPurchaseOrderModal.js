@@ -50,6 +50,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     gst: 0,
     po_code: '',
   });
+  console.log("111111111111",purchaseDetails.supplier_id)
   const [addNewProductModal, setAddNewProductModal] = useState(false);
   //const [ItemCode, setItemcode] = useState();
   const [getProductValue, setProductValue] = useState();
@@ -162,7 +163,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     payment: '0',
     project: '',
   });
-  console.log("percentage",gstPercentageValue);
+  console.log("percentage",gstPercentageValue,insertPurchaseOrderData);
   // const handleRadioGst = (radioVal,  gstValue1, ) => {
   //   /* eslint-disable */
    
@@ -234,7 +235,7 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
         qty_updated: Number(0).toFixed(2),
         qty: parseInt(itemObj.qty, 10),
         product_id: parseInt(itemObj.itemId, 10),
-        supplier_id: insertPurchaseOrderData.supplier_id,
+        supplier_id: purchaseDetails.supplier_id,
         gst: Number(itemObj.gst).toFixed(2),
         damage_qty: 0,
         brand: '',

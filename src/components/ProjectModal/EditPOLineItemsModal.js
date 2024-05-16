@@ -293,7 +293,7 @@ const clearNewProductForm = () => {
                     <Input
                       disabled
                       type="text"
-                      name="supplier"
+                      name="supplier_id"
                       value={purchase && purchase.company_name}
                     />
                   </Col>
