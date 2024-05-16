@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import moment from 'moment';
 import api from '../../constants/api';
-import PdfFooter from './PdfFooter';
+//import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
 
@@ -136,7 +136,7 @@ const PdfProjectWorkOrder = ({subConWorkOrderId,subConWorkOrdeData}) => {
       pageSize: 'A4',
       header: PdfHeader({ findCompany }),
       pageMargins: [40, 120, 40, 80],
-      footer: PdfFooter,
+      //footer: PdfFooter,
       content: [
     
         {

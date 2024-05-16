@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import moment from 'moment';
 import api from '../../constants/api';
-import PdfFooter from './PdfFooter';
+//.import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
 const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder}) => {
@@ -153,7 +153,7 @@ const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder
       pageSize: 'A4',
       header: PdfHeader({ findCompany }),
       pageMargins: [40, 150, 40, 80],
-      footer: PdfFooter,
+    //  footer: PdfFooter({ findCompany }),
       content: [
         {
           columns: [
@@ -535,7 +535,7 @@ const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder
   return (
     <>
       <span onClick={GetPdf}>
-        Print Pdf
+        Print Pdf1
       </span>
     </>
   );
