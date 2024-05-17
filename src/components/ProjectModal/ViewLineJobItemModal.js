@@ -1,28 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormGroup, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import PropTypes from 'prop-types';
 import * as Icon from 'react-feather';
+import EditLineItemModal from './EditLineItemModal';
 
 
 
 
-const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLineModal,jobLineItem, setEditLineModelItem, setEditJobLineModal, JobOrderId}) => {
+const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLineModal,jobLineItem, setEditJobLineModal,
+  editJobLineModal, FetchLineItemData, JobOrderId}) => {
     ViewLineJobItemmodal.propTypes = {
     viewJobLineToggle: PropTypes.any,
     deleteJobItemRecord:PropTypes.any,
     viewjobLineModal: PropTypes.any,
     jobLineItem: PropTypes.any,
-    setEditLineModelItem: PropTypes.any,
     setEditJobLineModal: PropTypes.any,
     JobOrderId: PropTypes.any,
+    editJobLineModal: PropTypes.bool,
+    FetchLineItemData: PropTypes.object,
   };
 
   console.log('ViewJobOrderId:', JobOrderId);
+  const [editLineModelItem, setEditLineModelItem] = useState();
 
 
   return (
     <><Modal size="xl" isOpen={viewjobLineModal} toggle={viewJobLineToggle.bind(null)}>
-    <ModalHeader toggle={viewJobLineToggle.bind(null)}>Line Items</ModalHeader>
+    <ModalHeader toggle={viewJobLineToggle.bind(null)}>Line ems</ModalHeader>
     <ModalBody>
       <FormGroup>
         <table className="lineitem border border-secondary rounded">
@@ -40,13 +44,14 @@ const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLi
           <tbody>
             {jobLineItem &&
               jobLineItem.map((e) => {
+                const amount = e.quantity * e.unit_price;
                 return (
                   <tr>
                     <td data-label="Title">{e.title}</td>
                     <td data-label="Description">{e.description}</td>
                     <td data-label="Qty">{e.quantity}</td>
                     <td data-label="Unit Price">{e.unit_price}</td>
-                    <td data-label="Amount">{e.amount}</td>
+                    <td data-label="Amount">{amount.toFixed(2)}</td>
                     <td data-label="Updated By">{e.created_by}</td>
                     <td data-label="Action">
                       <div className="anchor">
@@ -75,6 +80,13 @@ const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLi
           </tbody>
         </table>
       </FormGroup>
+      <EditLineItemModal
+        editJobLineModal={editJobLineModal}
+        setEditJobLineModal={setEditJobLineModal}
+        FetchLineItemData={FetchLineItemData}
+        editLineModelItem={editLineModelItem}
+      >
+      </EditLineItemModal>
     </ModalBody>
   </Modal>
         

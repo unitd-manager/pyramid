@@ -38,7 +38,6 @@ import AddLineItemModal from '../../components/ProjectModal/AddLineItemModal';
 import PdfJobCompletionCertificate from '../../components/PDF/PdfJobCompletionCertificate';
 import creationdatetime from '../../constants/creationdatetime';
 import AppContext from '../../context/AppContext';
-import EditLineItemModal from '../../components/ProjectModal/EditLineItemModal';
 import ViewLineJobItemmodal from '../../components/ProjectModal/ViewLineJobItemModal'
 import EditJobModal from '../../components/ProjectModal/EditjobModal'
 
@@ -401,7 +400,7 @@ console.log('elem',elem)
 
   const generateJobCode = () => {
     api
-      .post('/commonApi/getCodeValue', { type: 'jobordercode' })
+      .post('/project/getCodeValue', { type: 'jobordercode' })
       .then((res) => {
         InsertJobOrder(res.data.data);
       })
@@ -841,16 +840,12 @@ console.log('elem',elem)
         deleteJobItemRecord={deleteJobItemRecord}
         getJobLineItem={getJobLineItem}
         jobLineItem={jobLineItem}
-        setEditJobLineModal={setEditJobLineModal}
-        JobOrderId={JobOrderId}
-        ></ViewLineJobItemmodal>
-         <EditLineItemModal
         editJobLineModal={editJobLineModal}
         setEditJobLineModal={setEditJobLineModal}
         FetchLineItemData={editLineModelItem}
-      >
-        {' '}
-      </EditLineItemModal>
+                JobOrderId={JobOrderId}
+        ></ViewLineJobItemmodal>
+    
           </TabPane>
 
           {/* Start Tab Content 10 */}

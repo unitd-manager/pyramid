@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import { Button } from 'reactstrap';
 import api from '../../constants/api';
 import message from '../Message';
-import PdfFooter from './PdfFooter';
+//import PdfFooter from './PdfFooter';
 import PdfHeader from './PdfHeader';
 
 
@@ -130,7 +130,7 @@ const PdfPcSummary = ({editClaim1,projectClaimId,claimpay,claimline}) => {
       pageSize: 'A4',
       header: PdfHeader({ findCompany }),
       pageMargins: [40, 150, 40, 80],
-      footer: PdfFooter,
+     // footer: PdfFooter,
 
       content: [
         

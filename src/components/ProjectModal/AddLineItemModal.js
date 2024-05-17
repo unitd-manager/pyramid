@@ -50,7 +50,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
       obj.created_by = loggedInuser.first_name;
       obj.job_order_id=JobOrderId
       api
-      .post('/joborder/insertJobOrderItems', obj)
+      .post('/project/insertJobOrderItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
        //window.location.reload();
