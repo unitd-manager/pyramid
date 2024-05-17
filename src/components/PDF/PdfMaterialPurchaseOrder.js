@@ -535,7 +535,7 @@ const PdfMaterialPurchaseOrder = ({tabPurchaseOrderLineItemTable,purchasePoOrder
   return (
     <>
       <span onClick={GetPdf}>
-        Print Pdf1
+        Print Pdf
       </span>
     </>
   );

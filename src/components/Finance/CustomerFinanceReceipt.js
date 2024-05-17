@@ -85,7 +85,7 @@ export default function CustomerFinanceReceipt({
                             onClick={() => {
                               if (
                                 window.confirm(
-                                  'Are you sure you want to cancel?\n\nYou will lose any changes made',
+                                  'Are you sure yom want to cancel?\n\nYou will lose any changes made',
                                 )
                               ) {
                                 receiptCancel(element);
