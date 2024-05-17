@@ -23,7 +23,8 @@ import JobCompletionTab from '../../components/ProjectModal/JobCompletionTab';
 import FinanceTab from '../../components/ProjectModal/FinanceTab';
 import message from '../../components/Message';
 import api from '../../constants/api';
-import ProjectButton from '../../components/ProjectTable/ProjectButton';
+//import ProjectButton from '../../components/ProjectTable/ProjectButton';
+import ApiButton from '../../components/ApiButton';
 import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
 import AttachmentModalV2 from '../../components/Tender/AttachmentModalV2';
 import CostingSummary from '../../components/ProjectTabContent/CostingSummary';
@@ -45,7 +46,7 @@ import EditJobModal from '../../components/ProjectModal/EditjobModal'
 const ProjectEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const applyChanges = () => {};
+  //const applyChanges = () => {};
   const backToList = () => {
     navigate('/Project');
   }; 
@@ -466,26 +467,26 @@ console.log('elem',elem)
     });
   };
 
-  const deleteData = () => {
-    Swal.fire({
-      title: `Are you sure? $`,
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        api.post('/project/deleteProject', { project_id: id }).then(() => {
-          Swal.fire('Deleted!', 'Project has been deleted.', 'success');
-          setTimeout(() => {
-            window.location.reload();
-          }, 300);
-        });
-      }
-    });
-  };
+  // const deleteData = () => {
+  //   Swal.fire({
+  //     title: `Are you sure? $`,
+  //     text: "You won't be able to revert this!",
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3085d6',
+  //     cancelButtonColor: '#d33',
+  //     confirmButtonText: 'Yes, delete it!',
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       api.post('/project/deleteProject', { project_id: id }).then(() => {
+  //         Swal.fire('Deleted!', 'Project has been deleted.', 'success');
+  //         setTimeout(() => {
+  //           window.location.reload();
+  //         }, 300);
+  //       });
+  //     }
+  //   });
+  // };
 
   const getLineItem = (quotationId) => {
     api.post('/project/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
@@ -596,14 +597,20 @@ console.log('elem',elem)
   return (
     <>
       <BreadCrumbs />
-      <ProjectButton
+      {/* <ProjectButton
         UpdateData={UpdateData}
         navigate={navigate}
         applyChanges={applyChanges}
         deleteData={deleteData}
         backToList={backToList}
-      ></ProjectButton>
-
+      ></ProjectButton> */}
+     <ApiButton
+              editData={UpdateData}
+              navigate={navigate}
+              applyChanges={UpdateData}
+              backToList={backToList}
+              module="Project"
+            ></ApiButton>
       <ProjectEditForm projectDetail={projectDetail} setProjectDetail={setProjectDetail} />
 
       <ComponentCard title="More Details">
