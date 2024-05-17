@@ -38,6 +38,7 @@ import AddLineItemModal from '../../components/ProjectModal/AddLineItemModal';
 import PdfJobCompletionCertificate from '../../components/PDF/PdfJobCompletionCertificate';
 import creationdatetime from '../../constants/creationdatetime';
 import AppContext from '../../context/AppContext';
+import EditLineItemModal from '../../components/ProjectModal/EditLineItemModal';
 import ViewLineJobItemmodal from '../../components/ProjectModal/ViewLineJobItemModal'
 import EditJobModal from '../../components/ProjectModal/EditjobModal'
 
@@ -840,12 +841,16 @@ console.log('elem',elem)
         deleteJobItemRecord={deleteJobItemRecord}
         getJobLineItem={getJobLineItem}
         jobLineItem={jobLineItem}
+        setEditJobLineModal={setEditJobLineModal}
+        JobOrderId={JobOrderId}
+        ></ViewLineJobItemmodal>
+         <EditLineItemModal
         editJobLineModal={editJobLineModal}
         setEditJobLineModal={setEditJobLineModal}
         FetchLineItemData={editLineModelItem}
-                JobOrderId={JobOrderId}
-        ></ViewLineJobItemmodal>
-    
+      >
+        {' '}
+      </EditLineItemModal>
           </TabPane>
 
           {/* Start Tab Content 10 */}
