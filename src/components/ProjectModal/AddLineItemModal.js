@@ -21,13 +21,13 @@ import creationdatetime from '../../constants/creationdatetime';
 import AppContext from '../../context/AppContext';
 
 
-const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) => {
+const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo}) => {
   AddLineItemModal.propTypes = {
     addLineItemModal: PropTypes.bool,
     setAddLineItemModal: PropTypes.func,
-    JobOrderId: PropTypes.any,
+    projectInfo: PropTypes.any,
   };
-  console.log('JobOrderId:', JobOrderId);
+  console.log('projectInfo:', projectInfo);
   //All state Varible
   const { loggedInuser } = useContext(AppContext);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -48,9 +48,9 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) 
     if (obj.title !== '' && obj.unit_price !== '' && obj.quantity !== '') {
       obj.creation_date = creationdatetime;
       obj.created_by = loggedInuser.first_name;
-      obj.job_order_id=JobOrderId
+      obj.quote_id=projectInfo
       api
-      .post('/project/insertJobOrderItems', obj)
+      .post('/project/insertQuoteItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
        //window.location.reload();
