@@ -107,7 +107,9 @@ const OpportunityEdit = () => {
   // Get Quote By Id
   const getQuote = () => {
     api.post('/tender/getQuoteById', { opportunity_id: id }).then((res) => {
-      setQuote(res.data.data[0]);
+      if (res.data.data && res.data.data.length > 0) {
+        setQuote(res.data.data[0]);
+      }
     });
   };
 
@@ -508,6 +510,7 @@ const OpportunityEdit = () => {
               handleQuoteForms={handleQuoteForms}
               getQuote={getQuote}
             ></TenderQuotation>
+          
           </TabPane>
           <TabPane tabId="2">
             <Row>
