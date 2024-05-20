@@ -9,6 +9,10 @@ import ViewQuoteLogModal from './ViewQuoteLogModal';
 import EditQuotation from './EditQuotation';
 import AddLineItemModal from './AddLineItemModal';
 import PdfProjectQuote from '../PDF/PdfProjectQuote';
+import PdfQuoteFormat2 from '../PDF/PdfQuoteFormat2';
+import PdfQuoteFormat3 from '../PDF/PdfQuoteFormat3';
+import PdfQuoteFormat4 from '../PDF/PdfQuoteFormat4';
+import PdfQuoteFormat5 from '../PDF/PdfQuoteFormat5';
 import QuotationViewLineItem from './QuotationViewLineItems';
 
 export default function QuotationMoreDetails({
@@ -168,7 +172,7 @@ export default function QuotationMoreDetails({
                 </Col>
                 <Col>
                   <FormGroup>
-                    <Label>{element.totalamount - element.discount}</Label>
+                    <Label>{element.totalamount}</Label>
                   </FormGroup>
                 </Col>
 
@@ -209,9 +213,44 @@ export default function QuotationMoreDetails({
                         </Label>
                       </Col>
                       <Col md="3">
+                      { element.quote_format === 'format1' && (
+
                         <Label>
                         <PdfProjectQuote id={id} quoteId={element.quote_id}></PdfProjectQuote>
                         </Label>
+                           )}
+                            { element.quote_format === 'format2' && (
+                            
+                              <Label >
+                                <PdfQuoteFormat2 quoteId={element.quote_id} id={id}></PdfQuoteFormat2>
+                                {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                              </Label>
+                          
+                          )}
+                            { element.quote_format === 'format3' && (
+                            
+                            <Label >
+                              <PdfQuoteFormat3 quoteId={element.quote_id} id={id}></PdfQuoteFormat3>
+                              {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                            </Label>
+                        
+                        )}
+                          { element.quote_format === 'format4' && (
+                            
+                            <Label >
+                              <PdfQuoteFormat4 quoteId={element.quote_id} id={id}></PdfQuoteFormat4>
+                              {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                            </Label>
+                        
+                        )}
+                          { element.quote_format === 'format5' && (
+                            
+                            <Label >
+                              <PdfQuoteFormat5 quoteId={element.quote_id} id={id}></PdfQuoteFormat5>
+                              {/* <PdfQuote id={id} quoteId={quote.quote_id}></PdfQuote> */}
+                            </Label>
+                        
+                        )}
                       </Col>
                       <Col md="2">
                         <Label>
