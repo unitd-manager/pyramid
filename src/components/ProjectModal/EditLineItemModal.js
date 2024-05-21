@@ -18,11 +18,11 @@ import api from '../../constants/api';
 import message from '../Message';
 
 
-const EditLineItemModal = ({ editLineModal, setEditLineModal, FetchLineItemData, onEditSuccess }) => {
+const EditLineItemModal = ({ editJobLineModal, setEditJobLineModal, editLineModelItem, onEditSuccess }) => {
   EditLineItemModal.propTypes = {
-    editLineModal: PropTypes.bool,
-    setEditLineModal: PropTypes.func,
-    FetchLineItemData: PropTypes.object,
+    editJobLineModal: PropTypes.bool,
+    setEditJobLineModal: PropTypes.func,
+    editLineModelItem: PropTypes.object,
     onEditSuccess: PropTypes.func,
    
   };
@@ -35,7 +35,7 @@ const {id}=useParams();
     setLineItemData({ ...lineItemData, [e.target.name]: e.target.value });
   };
   const getQuote = () => {
-    api.post('/tender/getQuoteById', { opportunity_id: id }).then((res) => {
+    api.post('/project/getJobByProjectId', { project_id: id }).then((res) => {
       setQuoteData(res.data.data[0]);
     });
   };
@@ -47,8 +47,8 @@ const {id}=useParams();
     setTotalAmount(parseFloat(Qty) * parseFloat(UnitPrice));
   };
   const getLineItem = () => {
-    api.post('/tender/getQuoteLineItemsById', { quote_id: quoteData.quote_id }).then(() => {
-      console.log('222222222:', quoteData.quote_id);
+    api.post('/project/getJobLineItemsById', { job_order_id: quoteData.job_order_id }).then(() => {
+      console.log('222222222:', quoteData.job_order_id);
 
     })
     .catch((error) => {
@@ -57,27 +57,13 @@ const {id}=useParams();
     });
   };
   const UpdateData = () => {
-    lineItemData.quote_id=id;
+    lineItemData.job_order_id=quoteData.job_order_id;
     //lineItemData.amount=totalAmount;
-    lineItemData.amount = parseFloat(lineItemData.quantity) * parseFloat(lineItemData.unit_price) 
+    lineItemData.total_amount = parseFloat(lineItemData.quantity) * parseFloat(lineItemData.unit_price) 
     api
-      .post('/tender/edit-TabQuoteLine', lineItemData)
+      .post('/project/editJoborderItems', lineItemData)
       .then(() => {
-        api.post('/tender/insertLog', quoteData)
-        .then(() => {
-          message('insert log Udated Successfully.', 'success');
-         
-        })
-        api
-        .post('/tender/insertLogLine', lineItemData)
-        .then((result) => {
-          console.log('edit Line Item', result.data.data);
-          message('Edit Line Item Udated Successfully.', 'success');
-         
-        })
-        .catch(() => {
-          message('Unable to edit quote. please fill all fields', 'error');
-        });
+       
         getLineItem();
         onEditSuccess(); // Call the callback function
       
@@ -89,12 +75,12 @@ const {id}=useParams();
 
   React.useEffect(() => {
     getQuote();
-    setLineItemData(FetchLineItemData);
-  }, [FetchLineItemData]);
+    setLineItemData(editLineModelItem);
+  }, [editLineModelItem]);
 
   return (
     <>
-      <Modal isOpen={editLineModal}>
+      <Modal isOpen={editJobLineModal}>
         <ModalHeader>Edit Line Item</ModalHeader>
         <ModalBody>
           <FormGroup>
@@ -146,7 +132,7 @@ const {id}=useParams();
                   name="quantity"
                   defaultValue={lineItemData && lineItemData.quantity}
                   onChange={(e)=>{handleData(e);
-                    handleCalc(e.target.value, lineItemData.unit_price,lineItemData.amount
+                    handleCalc(e.target.value, lineItemData.unit_price,lineItemData.total_amount
                       )}}
                  
                 />
@@ -163,7 +149,7 @@ const {id}=useParams();
                   name="unit_price"
                   defaultValue={lineItemData && lineItemData.unit_price}
                   onChange={(e)=>{handleData(e);
-                    handleCalc(lineItemData.quantity,e.target.value,lineItemData.amount)
+                    handleCalc(lineItemData.quantity,e.target.value,lineItemData.total_amount)
                   }}
                 />
               </Col>
@@ -176,7 +162,7 @@ const {id}=useParams();
                 <Input
                   type="text"
                   name="amount"
-                  value={totalAmount || lineItemData && lineItemData.amount}
+                  value={totalAmount || lineItemData && lineItemData.total_amount}
                   onChange={(e)=>{handleData(e);
                     handleCalc(lineItemData.quantity,lineItemData.unit_price,e.target.value)
                   }}
@@ -206,7 +192,7 @@ const {id}=useParams();
             type="button"
             onClick={() => {
               UpdateData();
-              setEditLineModal(false);
+              setEditJobLineModal(false);
             }}
           >
             Save & Continue
@@ -215,7 +201,7 @@ const {id}=useParams();
             color="secondary"
             className="shadow-none"
             onClick={() => {
-              setEditLineModal(false);
+              setEditJobLineModal(false);
             }}
           >
             {' '}

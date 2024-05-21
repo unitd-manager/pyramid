@@ -35,7 +35,7 @@ import MaterialPurchased from '../../components/project/TabContent/MaterialPurch
 import DeliveryOrder from '../../components/project/TabContent/DeliveryOrder';
 import Claim from '../../components/project/TabContent/Claim';
 import ProjectEditForm from '../../components/project/ProjectEditForm';
-import AddLineItemModal from '../../components/ProjectModal/AddLineItemModal';
+import AddLineItemJobModal from '../../components/ProjectModal/AddLineItemJobModal';
 import PdfJobCompletionCertificate from '../../components/PDF/PdfJobCompletionCertificate';
 import creationdatetime from '../../constants/creationdatetime';
 import AppContext from '../../context/AppContext';
@@ -425,6 +425,7 @@ console.log('elem',elem)
       setJobOrder(res.data.data[0]);
     });
   };
+  console.log("qwqwww",job.job_order_id)
 
   useEffect(() => {
     getJob();
@@ -808,6 +809,7 @@ console.log('elem',elem)
           setAddLineItemModal(true);
         }}>
             Add Line Item</Button>
+            
       </Col>
       <Col md="3">
         <Button color="primary" 
@@ -833,14 +835,14 @@ console.log('elem',elem)
           getJob={getJob}
           job={job}
         ></EditJobModal>
-            <AddLineItemModal
+            <AddLineItemJobModal
           addLineItemModal={addLineItemModal}
           setAddLineItemModal={setAddLineItemModal}       
           editLineModal={editLineModal}
           setEditLineModal={setEditLineModal}
           JobOrderId={JobOrderId}
           setEditLineModelItem={setEditLineModelItem}
-        ></AddLineItemModal>
+        ></AddLineItemJobModal>
         <ViewLineJobItemmodal
         viewjobLineModal={viewjobLineModal}
         setViewJobLineModal={setViewJobLineModal}
@@ -848,13 +850,14 @@ console.log('elem',elem)
         deleteJobItemRecord={deleteJobItemRecord}
         getJobLineItem={getJobLineItem}
         jobLineItem={jobLineItem}
+        setEditLineModelItem={setEditLineModelItem}
         setEditJobLineModal={setEditJobLineModal}
         JobOrderId={JobOrderId}
         ></ViewLineJobItemmodal>
          <EditLineItemModal
         editJobLineModal={editJobLineModal}
         setEditJobLineModal={setEditJobLineModal}
-        FetchLineItemData={editLineModelItem}
+        editLineModelItem={editLineModelItem}
       >
         {' '}
       </EditLineItemModal>
