@@ -58,7 +58,19 @@ function ViewFileComponentV2({ moduleId, roomName,update,setUpdate }) {
   useEffect(() => {
     getFiles();
   }, []);
-
+  const getHostnameUrl = () => {
+    const { hostname } = window.location;
+    if (hostname === 'pyramid.unitdtechnologies.com') {
+      return 'https://pyramid.unitdtechnologies.com/storage/uploads/';
+    }
+    if (hostname === 'pyramidtest.unitdtechnologies.com') {
+      return 'http://43.228.126.245/pyramidTestapi/storage/uploads/';
+    }
+    if (hostname === 'localhost.com') {
+      return 'http://localhost.com/storage/uploads/';
+    }
+    return '';
+  };
   return (
     <>
       <table style={tableStyle}>
@@ -74,13 +86,13 @@ function ViewFileComponentV2({ moduleId, roomName,update,setUpdate }) {
               return (
                 <tr key={res.media_id}>
                   <td style={tableStyle}>
-                    <a
-                      href={`http://43.228.126.245/pyramidapi/storage/uploads/${res.name}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {res.name}
-                    </a>
+                  <a
+                    href={`${getHostnameUrl()}${res.name}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {res.name}
+                  </a>
                   </td>
                   <td style={tableStyle}>
                     <button
