@@ -133,7 +133,7 @@ const PdfDeliveryOrderPO = ({ deliveryOrderId }) => {
       pageSize: 'A4',
       header: PdfHeader({ findCompany }),
       pageMargins: [40, 120, 40, 80],
-      footer: PdfFooter,
+      footer: PdfFooter({ findCompany }),
 
       content: [
         {

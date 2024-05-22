@@ -206,7 +206,7 @@ const StaffEdit = () => {
         applyChanges={editStaffData}
         backToList={backToList}
         deleteData={deleteStaffData}
-        module="Staff"
+        module="User"
       ></ApiButton>
       {/* KeyStaffDetails */}
       {/* <BreadCrumbs heading={staffeditdetails && staffeditdetails.staff_id} /> */}

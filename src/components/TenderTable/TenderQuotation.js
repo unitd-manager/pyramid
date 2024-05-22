@@ -378,7 +378,7 @@ export default function TenderQuotation({
                       <thead>
                         <tr>
                           <th scope="col">Title </th>
-                          <th scope="col">Description </th>
+                          <th scope="col">Descrption </th>
                           <th scope="col">Qty </th>
                           <th scope="col">Unit Price </th>
                           <th scope="col">Amount</th>
@@ -453,7 +453,7 @@ export default function TenderQuotation({
                   {/* {Object.keys(quote.quote_format === 'format1').length === 0 && ( */}
                
                 <>
-                  {QuoteProject === undefined && quote.quote_format === 'format1' && (
+                  { quote.quote_format === 'format1' && (
                     <Col md="4">
                       <Label className="pointer">
                       {/* {selectedFormat === 'format1' && <PdfQuote quoteId={quote.quote_id} id={id}></PdfQuote>} */}
@@ -466,8 +466,8 @@ export default function TenderQuotation({
                   </>
                
                   {/* {Object.keys(quote.quote_format === 'format2').length !== 0 && ( */}
-                  {/* //{QuoteProject === undefined && quote.quote_format === 'format2' && ( */}
-                  {QuoteProject === undefined && quote.quote_format === 'format2' && (
+                  {/* //{ quote.quote_format === 'format2' && ( */}
+                  { quote.quote_format === 'format2' && (
                     <Col md="4">
                       <Label className="pointer">
                         <PdfQuoteFormat2 quoteId={quote.quote_id} id={id}></PdfQuoteFormat2>
@@ -476,7 +476,7 @@ export default function TenderQuotation({
                     </Col>
                   )}
                   {/* {Object.keys(quote.quote_format === 'format3').length !== 0 && ( */}
-                  {QuoteProject === undefined && quote.quote_format === 'format3' && (
+                  { quote.quote_format === 'format3' && (
                     <Col md="4">
                       <Label className="pointer">
                         <PdfQuoteFormat3 quoteId={quote.quote_id} id={id}></PdfQuoteFormat3>
@@ -485,7 +485,7 @@ export default function TenderQuotation({
                     </Col>
                   )}
                   {/* {Object.keys(quote.quote_format === 'format4').length !== 0 && ( */}
-                  {QuoteProject === undefined && quote.quote_format === 'format4' && (
+                  { quote.quote_format === 'format4' && (
                     <Col md="4">
                       <Label className="pointer">
                         <PdfQuoteFormat4 quoteId={quote.quote_id} id={id}></PdfQuoteFormat4>
@@ -507,7 +507,7 @@ export default function TenderQuotation({
                   {/* </Label>
                   </Col> */}
                   {/* {Object.keys(quote.quote_format === 'format5').length !== 0 && ( */}
-                  {QuoteProject === undefined && quote.quote_format === 'format5' && (
+                  { quote.quote_format === 'format5' && (
                     <Col md="4">
                       <Label className="pointer">
                         <PdfQuoteFormat5 quoteId={quote.quote_id} id={id}></PdfQuoteFormat5>

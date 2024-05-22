@@ -21,13 +21,13 @@ import creationdatetime from '../../constants/creationdatetime';
 import AppContext from '../../context/AppContext';
 
 
-const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo}) => {
+const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, JobOrderId}) => {
   AddLineItemModal.propTypes = {
     addLineItemModal: PropTypes.bool,
     setAddLineItemModal: PropTypes.func,
-    projectInfo: PropTypes.any,
+    JobOrderId: PropTypes.any,
   };
-  console.log('projectInfo:', projectInfo);
+  console.log('11JobOrderId:', JobOrderId);
   //All state Varible
   const { loggedInuser } = useContext(AppContext);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -37,7 +37,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo})
       unit: '',
       quantity: '',
       unit_price: '',
-      amount: '',
+      total_amount: '',
       remarks: '',
       title: '',
       description: '',
@@ -48,9 +48,9 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo})
     if (obj.title !== '' && obj.unit_price !== '' && obj.quantity !== '') {
       obj.creation_date = creationdatetime;
       obj.created_by = loggedInuser.first_name;
-      obj.quote_id=projectInfo
+      obj.job_order_id=JobOrderId
       api
-      .post('/project/insertQuoteItems', obj)
+      .post('/project/insertJobOrderItems', obj)
       .then(() => {
         message('Line Item Added Successfully', 'sucess');
        //window.location.reload();
@@ -78,7 +78,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo})
         quantity: '',
         unit_price: '',
         remarks: '',
-        amount: '',
+        total_amount: '',
         title: '',
         description: '',
       },
@@ -116,13 +116,13 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo})
         .each(function output() {
           const fieldName = $(this).attr('name');
           allValues[fieldName] = $(this).val();
-          allValues.amount = allValues.quantity * allValues.unit_price;
+          allValues.total_amount = allValues.quantity * allValues.unit_price;
         });
       result.push(allValues);
     });
     result.forEach((e) => {
-      if (e.amount) {
-        totalValue += parseFloat(e.amount);
+      if (e.total_amount) {
+        totalValue += parseFloat(e.total_amount);
       }
     });
     console.log(result);
@@ -136,8 +136,8 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo})
         return obj.id !== ind.id;
       }),
     );
-    if (ind.amount) {
-      const finalTotal = totalAmount - parseFloat(ind.amount);
+    if (ind.total_amount) {
+      const finalTotal = totalAmount - parseFloat(ind.total_amount);
       setTotalAmount(finalTotal);
     }
   };
@@ -165,7 +165,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo})
     <>
       <Modal size="xl" isOpen={addLineItemModal}>
         <ModalHeader>
-          Add Quote Items
+          Add Job Items
           <Button
             className="shadow-none"
             color="secondary"
@@ -242,7 +242,7 @@ const AddLineItemModal = ({ addLineItemModal, setAddLineItemModal, projectInfo})
                                   />
                                 </td>
                                 <td data-label="Amount">
-                                  <Input Value={item.amount} type="text" name="amount" disabled style={{ width: '90%' }}/>
+                                  <Input Value={item.total_amount} type="text" name="total_amount" disabled style={{ width: '90%' }}/>
                                 </td>
                                 <td data-label="Remarks">
                                   <Input Value={item.remarks} type="text" name="remarks" style={{ width: '90%' }}/>

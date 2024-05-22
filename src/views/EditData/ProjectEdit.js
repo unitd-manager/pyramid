@@ -23,7 +23,8 @@ import JobCompletionTab from '../../components/ProjectModal/JobCompletionTab';
 import FinanceTab from '../../components/ProjectModal/FinanceTab';
 import message from '../../components/Message';
 import api from '../../constants/api';
-import ProjectButton from '../../components/ProjectTable/ProjectButton';
+//import ProjectButton from '../../components/ProjectTable/ProjectButton';
+import ApiButton from '../../components/ApiButton';
 import ViewFileComponentV2 from '../../components/ProjectModal/ViewFileComponentV2';
 import AttachmentModalV2 from '../../components/Tender/AttachmentModalV2';
 import CostingSummary from '../../components/ProjectTabContent/CostingSummary';
@@ -34,7 +35,7 @@ import MaterialPurchased from '../../components/project/TabContent/MaterialPurch
 import DeliveryOrder from '../../components/project/TabContent/DeliveryOrder';
 import Claim from '../../components/project/TabContent/Claim';
 import ProjectEditForm from '../../components/project/ProjectEditForm';
-import AddLineItemModal from '../../components/ProjectModal/AddLineItemModal';
+import AddLineItemJobModal from '../../components/ProjectModal/AddLineItemJobModal';
 import PdfJobCompletionCertificate from '../../components/PDF/PdfJobCompletionCertificate';
 import creationdatetime from '../../constants/creationdatetime';
 import AppContext from '../../context/AppContext';
@@ -45,7 +46,7 @@ import EditJobModal from '../../components/ProjectModal/EditjobModal'
 const ProjectEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const applyChanges = () => {};
+  //const applyChanges = () => {};
   const backToList = () => {
     navigate('/Project');
   }; 
@@ -401,7 +402,7 @@ console.log('elem',elem)
 
   const generateJobCode = () => {
     api
-      .post('/commonApi/getCodeValue', { type: 'jobordercode' })
+      .post('/project/getCodeValue', { type: 'jobordercode' })
       .then((res) => {
         InsertJobOrder(res.data.data);
       })
@@ -424,6 +425,7 @@ console.log('elem',elem)
       setJobOrder(res.data.data[0]);
     });
   };
+  console.log("qwqwww",job.job_order_id)
 
   useEffect(() => {
     getJob();
@@ -466,26 +468,26 @@ console.log('elem',elem)
     });
   };
 
-  const deleteData = () => {
-    Swal.fire({
-      title: `Are you sure? $`,
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        api.post('/project/deleteProject', { project_id: id }).then(() => {
-          Swal.fire('Deleted!', 'Project has been deleted.', 'success');
-          setTimeout(() => {
-            window.location.reload();
-          }, 300);
-        });
-      }
-    });
-  };
+  // const deleteData = () => {
+  //   Swal.fire({
+  //     title: `Are you sure? $`,
+  //     text: "You won't be able to revert this!",
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3085d6',
+  //     cancelButtonColor: '#d33',
+  //     confirmButtonText: 'Yes, delete it!',
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       api.post('/project/deleteProject', { project_id: id }).then(() => {
+  //         Swal.fire('Deleted!', 'Project has been deleted.', 'success');
+  //         setTimeout(() => {
+  //           window.location.reload();
+  //         }, 300);
+  //       });
+  //     }
+  //   });
+  // };
 
   const getLineItem = (quotationId) => {
     api.post('/project/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
@@ -596,14 +598,20 @@ console.log('elem',elem)
   return (
     <>
       <BreadCrumbs />
-      <ProjectButton
+      {/* <ProjectButton
         UpdateData={UpdateData}
         navigate={navigate}
         applyChanges={applyChanges}
         deleteData={deleteData}
         backToList={backToList}
-      ></ProjectButton>
-
+      ></ProjectButton> */}
+     <ApiButton
+              editData={UpdateData}
+              navigate={navigate}
+              applyChanges={UpdateData}
+              backToList={backToList}
+              module="Project"
+            ></ApiButton>
       <ProjectEditForm projectDetail={projectDetail} setProjectDetail={setProjectDetail} />
 
       <ComponentCard title="More Details">
@@ -801,6 +809,7 @@ console.log('elem',elem)
           setAddLineItemModal(true);
         }}>
             Add Line Item</Button>
+            
       </Col>
       <Col md="3">
         <Button color="primary" 
@@ -826,14 +835,14 @@ console.log('elem',elem)
           getJob={getJob}
           job={job}
         ></EditJobModal>
-            <AddLineItemModal
+            <AddLineItemJobModal
           addLineItemModal={addLineItemModal}
           setAddLineItemModal={setAddLineItemModal}       
           editLineModal={editLineModal}
           setEditLineModal={setEditLineModal}
           JobOrderId={JobOrderId}
           setEditLineModelItem={setEditLineModelItem}
-        ></AddLineItemModal>
+        ></AddLineItemJobModal>
         <ViewLineJobItemmodal
         viewjobLineModal={viewjobLineModal}
         setViewJobLineModal={setViewJobLineModal}
@@ -841,13 +850,14 @@ console.log('elem',elem)
         deleteJobItemRecord={deleteJobItemRecord}
         getJobLineItem={getJobLineItem}
         jobLineItem={jobLineItem}
+        setEditLineModelItem={setEditLineModelItem}
         setEditJobLineModal={setEditJobLineModal}
         JobOrderId={JobOrderId}
         ></ViewLineJobItemmodal>
          <EditLineItemModal
         editJobLineModal={editJobLineModal}
         setEditJobLineModal={setEditJobLineModal}
-        FetchLineItemData={editLineModelItem}
+        editLineModelItem={editLineModelItem}
       >
         {' '}
       </EditLineItemModal>

@@ -50,7 +50,7 @@ const LeavesEdit = () => {
   // Start for tab refresh navigation #Renuka 1-06-23
   const tabs = [
     { id: '1', name: 'Attachment' },
-    { id: '2', name: 'Past Leave HIstory' },
+    { id: '2', name: 'Past Leave History' },
   ];
   const toggle = (tab) => {
     setActiveTab(tab);

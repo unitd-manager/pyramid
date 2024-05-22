@@ -79,14 +79,14 @@ export default function FinanceTab({ projectDetail }) {
       .then((res) => {
         setOrderId(res.data.data[0].order_id);
         console.log('order', res.data.data);
-        // api
-        //   .post('/invoice/getProjectReceiptById', { order_id: res.data.data[0].order_id })
-        //   .then((resp) => {
-        //     setReceipt(resp.data.data);
-        //   })
-        //   .catch(() => {
+        api
+          .post('/invoice/getProjectReceiptById', { order_id: res.data.data[0].order_id })
+          .then((resp) => {
+            setReceipt(resp.data.data);
+          })
+          .catch(() => {
 
-        //   });
+          });
       })
       .catch(() => {
 
@@ -125,16 +125,16 @@ export default function FinanceTab({ projectDetail }) {
 
   //     });
   // };
-  const getReceiptById = () => {
-    api
-    .post('/invoice/getProjectReceiptById1', { project_id: id })
-    .then((res) => {
-      setReceipt(res.data.data);
-    })
-    .catch(() => {
+  // const getReceiptById = () => {
+  //   api
+  //   .post('/invoice/getProjectReceiptById', { project_id: id })
+  //   .then((res) => {
+  //     setReceipt(res.data.data);
+  //   })
+  //   .catch(() => {
 
-    });
-  };
+  //   });
+  // };
  //receipt Cancel
   const receiptCancel = (obj) => {
     const updatedReceipts = receipt.map((receiptItem) =>
@@ -147,6 +147,9 @@ export default function FinanceTab({ projectDetail }) {
       .then(() => {
         getAmountById();
         message('Record editted successfully', 'success');
+        setTimeout(()=>{
+          window.location.reload();
+         },300)
       })
       .catch(() => {
         message('Unable to edit record.', 'error');
@@ -156,7 +159,7 @@ export default function FinanceTab({ projectDetail }) {
     getInvoiceCancel();
     getInvoiceById();
     //getReceiptCancel();
-    getReceiptById();
+   // getReceiptById();
     getOrdersById();
     getAmountById();
     getSupplierById();

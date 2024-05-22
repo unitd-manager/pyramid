@@ -14,6 +14,7 @@ import creationdatetime from '../../constants/creationdatetime';
 const LoanDetails = () => {
   //state variable
   const [employee, setEmployee] = useState();
+  
 
   //Navigation and Parameter Constants
   const { id } = useParams();
