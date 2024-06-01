@@ -251,8 +251,8 @@ const Payrollmanagement = () => {
           // Call // with empId
           const selectedEmployeeId = obj.employee_id;
           const payrollyear = obj.payroll_year;
+        
           const basicpays = obj.basic_pay;
-         
 
           
           console.log('payrollyear', basicpays);
@@ -262,10 +262,9 @@ const Payrollmanagement = () => {
           api
             .post('/payrollmanagement/getCpfCalc', {
               employee_id: selectedEmployeeId,
-
-              payroll_year: payrollyear,
-              basic_pay: basicpays,
-         
+               payroll_year: payrollyear,
+              basic_pay: 10000,
+    
             })
             .then((res) => {
               const { byEmployee, byEmployer } = res.data.data[0];
