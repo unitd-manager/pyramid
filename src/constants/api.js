@@ -1,25 +1,26 @@
 import axios from 'axios';
+import dotenv from 'dotenv';
 
-// Define the base URL(s) conditionally
-// let baseURL;
 
-// if (process.env.NODE_ENV === 'production') {
-//   baseURL = 'http://43.228.126.245:3022';
-// } else {
-//   baseURL = 'http://localhost:6001';
-// }
-// // const baseURL = 'http://43.228.126.245:3022';
-// console.log('NODE_ENV:', process.env.NODE_ENV);
-// const api = axios.create({
-//   baseURL, // Use the baseURL variable here
-  
-// });
+dotenv.config();
+let baseURL;
 
+const { hostname } = window.location;
+console.log('prod',process.env.REACT_APP_PRODUCTION_URL)
+
+if (hostname === 'pyramid.unitdtechnologies.com') {
+  baseURL = process.env.REACT_APP_PRODUCTION_URL;
+} else if (hostname === 'pyramidtest.unitdtechnologies.com') { 
+  baseURL = process.env.REACT_APP_TEST_URL;
+} else {
+  baseURL = process.env.REACT_APP_LOCAL_URL;
+}
+
+console.log('Current Hostname:', hostname,baseURL);
 const api = axios.create({
-baseURL: 'http://43.228.126.245:3022',
-//baseURL: 'http://localhost:6001',
-  });
+  baseURL,
+});
 
-export default api
+export default api;
 
 

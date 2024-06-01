@@ -46,7 +46,7 @@ const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLi
                     <td data-label="Description">{e.description}</td>
                     <td data-label="Qty">{e.quantity}</td>
                     <td data-label="Unit Price">{e.unit_price}</td>
-                    <td data-label="Amount">{e.amount}</td>
+                    <td data-label="Amount">{e.total_amount}</td>
                     <td data-label="Updated By">{e.created_by}</td>
                     <td data-label="Action">
                       <div className="anchor">
@@ -62,7 +62,7 @@ const ViewLineJobItemmodal = ({ viewJobLineToggle,deleteJobItemRecord, viewjobLi
                       <div className="anchor">
                         <span
                           onClick={() => {
-                            deleteJobItemRecord(e.quote_items_id);
+                            deleteJobItemRecord(e.job_order_items_id);
                           }}
                         >
                           <Icon.Trash2 />
