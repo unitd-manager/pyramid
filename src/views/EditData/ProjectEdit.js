@@ -13,10 +13,13 @@ import EditQuotation from '../../components/ProjectModal/EditQuotation';
 import QuotationMoreDetails from '../../components/ProjectModal/QuotationMoreDetails';
 import CreateFinance from '../../components/ProjectModal/CreateFinance';
 import AddPurchaseOrderModal from '../../components/ProjectModal/AddPurchaseOrderModal';
+import AddMaterialRequestModal from '../../components/ProjectModal/AddMaterialRequestModal';
 import MaterialsusedTab from '../../components/ProjectModal/MaterialsusedTab';
 import EditDeliveryOrder from '../../components/ProjectModal/EditDeliveryOrder';
 import EditPoModal from '../../components/ProjectModal/EditPoModal';
 import EditPOLineItemsModal from '../../components/ProjectModal/EditPOLineItemsModal';
+import EditMRModal from '../../components/ProjectModal/EditMRModal';
+import EditMRLineItemsModal from '../../components/ProjectModal/EditMRLineItemsModal';
 import SubConWorkOrderPortal from '../../components/ProjectModal/SubConWorkOrderPortal';
 import MaterialsTransferred from '../../components/ProjectModal/MaterialsTransferred';
 import JobCompletionTab from '../../components/ProjectModal/JobCompletionTab';
@@ -59,16 +62,21 @@ const ProjectEdit = () => {
   const [viewLineModal, setViewLineModal] = useState(false);
   const [editQuoteModal, setEditQuoteModal] = useState(false);
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
+  const [addMaterialRequestModal, setAddMaterialRequestModal] = useState(false);
   const [attachmentModal, setAttachmentModal] = useState(false);
   const [tabdeliveryorder, setTabdeliveryorder] = useState([]);
   //const [tabPurchaseOrderLineItemTable, setTabPurchaseOrderLineItemTable] = useState();
   const [checkId, setCheckId] = useState([]);
   const [editDeliveryOrder, setEditDeliveryOrder] = useState(false);
   const [editPo, setEditPo] = useState(false);
+  const [editMR, setEditMR] = useState(false);
   const [editPOLineItemsModal, setEditPOLineItemsModal] = useState(false);
+  const [editMRLineItemsModal, setEditMRLineItemsModal] = useState(false);
   const [deliveryData, setDeliveryData] = useState('');
   const [POId, setPOId] = useState('');
+  const [MRId, setMRId] = useState('');
   const [testJsonData, setTestJsonData] = useState(null);
+  const [testJsonDatass, setTestJsonDatass] = useState(null);
   const [quotationsModal, setquotationsModal] = useState(false);
   const [lineItem, setLineItem] = useState([]);
   const [addnewjob, setAddNewJob] = useState(false);
@@ -85,7 +93,7 @@ const ProjectEdit = () => {
   const handleInputs = (e) => {
     setJob({ ...job, [e.target.name]: e.target.value });
   };
-
+console.log("as/",MRId)
   const [addNewJobVisible, setAddNewJobVisible] = useState(true);
 
   const handleAddNewJob = () => {
@@ -114,6 +122,16 @@ const ProjectEdit = () => {
       .post('/purchaseorder/testAPIendpoint', { project_id: id })
       .then((res) => {
         setTestJsonData(res?.data?.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id]);
+  useEffect(() => {
+    api
+      .post('/materialrequest/testAPIendpoint', { project_id: id })
+      .then((res) => {
+        setTestJsonDatass(res?.data?.data);
       })
       .catch((err) => {
         console.log(err);
@@ -344,6 +362,7 @@ console.log('elem',elem)
     }
   };
 
+  
   // deleteDeliveryOrder
   const deleteDeliveryOrder = (deliveryOrderId) => {
     Swal.fire({
@@ -584,7 +603,7 @@ console.log('elem',elem)
     setTimeout(() => {
      // TabPurchaseOrderLineItemTable();
     }, 2000);
-  }, [addPurchaseOrderModal]);
+  }, [addPurchaseOrderModal,addMaterialRequestModal]);
 
   const getTotalOfPurchase = (pItems) => {
     let total = 0;
@@ -628,6 +647,12 @@ console.log('elem',elem)
           addPurchaseOrderModal={addPurchaseOrderModal}
           setAddPurchaseOrderModal={setAddPurchaseOrderModal}
         />
+
+<AddMaterialRequestModal
+          projectId={id}
+          addMaterialRequestModal={addMaterialRequestModal}
+          setAddMaterialRequestModal={setAddMaterialRequestModal}
+        />
 {/* 
         {viewQuotationsModal && (
           <ViewQuoteLogModal
@@ -650,6 +675,14 @@ console.log('elem',elem)
             editPOLineItemsModal={editPOLineItemsModal}
             setEditPOLineItemsModal={setEditPOLineItemsModal}
             data={POId}
+          />
+        )} 
+        {editMR && <EditMRModal editMR={editMR} setEditMR={setEditMR} data={MRId} />}
+        {editMRLineItemsModal && (
+          <EditMRLineItemsModal
+            editMRLineItemsModal={editMRLineItemsModal}
+            setEditMRLineItemsModal={setEditMRLineItemsModal}
+            data={MRId}
           />
         )} 
         <CreateFinance financeModal={financeModal} setFinanceModal={setFinanceModal} />
@@ -678,19 +711,26 @@ console.log('elem',elem)
             <MaterialPurchased
               addPurchaseOrderModal={addPurchaseOrderModal}
               setAddPurchaseOrderModal={setAddPurchaseOrderModal}
+              addMaterialrequestModal={addMaterialRequestModal}
+              setAddMaterialrequestModal={setAddMaterialRequestModal}
               insertDelivery={insertDelivery}
               addQtytoStocks={addQtytoStocks}
              // tabPurchaseOrderLineItemTable={tabPurchaseOrderLineItemTable}
              // setTabPurchaseOrderLineItemTable={setTabPurchaseOrderLineItemTable}
               testJsonData={testJsonData}
+              testJsonDatass={testJsonDatass}
               setEditPo={setEditPo}
+              setEditMR={setEditMR}
               setPOId={setPOId}
+              setMRId={setMRId}
               setEditPOLineItemsModal={setEditPOLineItemsModal}
+              setEditMRLineItemsModal={setEditMRLineItemsModal}
               getTotalOfPurchase={getTotalOfPurchase}
               handleCheck={handleCheck}
               setTransferModal={setTransferModal}
               setTransferItem={setTransferItem}
               // getCheckedPoProducts={getCheckedPoProducts}
+              projectId={id}
               setViewLineModal={setViewLineModal}
             />
             {transferModal && (
