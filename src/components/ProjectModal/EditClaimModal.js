@@ -53,7 +53,7 @@ function EditClaimModal({ editClaimModal, setEditClaimModal, pc }) {
     api.post('/claim/editTabClaimPortal', claimUpdate).then(() => {
       message('Record editted successfully', 'success');
       setTimeout(() => {
-        window.location.reload();
+        //window.location.reload();
       }, 300);
     });
   };

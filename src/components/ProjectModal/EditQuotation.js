@@ -131,7 +131,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId, quoteData, 
     });
   };
 
-  //Insert order for finance module
+  
   const editQuotations = () => {
     const hasChanges =
       JSON.stringify(quotationeditDetails) !== JSON.stringify(previousquotationeditDetails);
@@ -152,16 +152,6 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId, quoteData, 
       });
   };
 
-  // const insertquote = () => {
-  //   api
-  //     .post('/projecttabquote/insertQuote', quotationeditDetails)
-  //     .then(() => {
-  //       message('quote inserted successfully.', 'success');
-  //     })
-  //     .catch(() => {
-  //       message('Network connection error.', 'error');
-  //     });
-  // };
 
   useEffect(() => {
     setQuotationeditDetails(quoteData);
@@ -216,25 +206,7 @@ const EditQuotation = ({ editQuoteModal, setEditQuoteModal, quoteId, quoteData, 
                 </Row>
 
                 <Row>
-                  {/* <Col md="4">
-                    <FormGroup>
-                      <Label>Drawing Nos</Label>
-                    </FormGroup>
-                    <Input
-                      className="form-check-input form-check-inline"
-                      type="radio"
-                      name="drawing_nos"
-                      value="1"
-                    />
-                    <Label for="inlineradio1">yes</Label>{' '}
-                    <Input
-                      className="form-check-input form-check-inline"
-                      type="radio"
-                      name="drawing_nos"
-                      value="0"
-                    />
-                    <Label for="inlineradio2">No</Label>{' '}
-                  </Col> */}
+                
                   <Col md="4">
                     <FormGroup>
                       <Label>Validity</Label>

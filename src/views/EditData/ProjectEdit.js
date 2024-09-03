@@ -215,14 +215,6 @@ console.log("as/",MRId)
   }
   };
 
-  // // Tab PurchaseOrder LineItem Table
-  // const TabPurchaseOrderLineItemTable = () => {
-  //   api.post('/purchaseorder/TabPurchaseOrderLineItemTable', { project_id: id }).then((res) => {
-  //     let arrayOfObj = Object.entries(res.data.data).map((e) => ({ id: e[0], data: e[1] }));
-  //     arrayOfObj = arrayOfObj.reverse();
-  //     setTabPurchaseOrderLineItemTable(arrayOfObj);
-  //   }).catch(()=>{});
-  // };
 
   // Tab Delivery Order
   const TabDeliveryOrder = () => {
@@ -270,7 +262,7 @@ console.log("as/",MRId)
           elem.item.qty_in_stock += parseFloat(elem.item.qty_delivered);
 console.log('elem',elem)
           api
-            .post('/inventory/editInventoryStock', elem.item)
+            .post('/inventory/editInventoryStock11', elem.item)
             .then(() => {
               message('Quantity added successfully.', 'success');
               setTimeout(() => {
@@ -288,23 +280,6 @@ console.log('elem',elem)
     }
   };
   
-  // const InsertJobOrder = () => {
-    
-  //     joborder.creation_date = creationdatetime
-  //     joborder.created_by = loggedInuser.first_name;
-  //     api
-  //       .post('/project/insertJobOrder', joborder)
-  //       .then(() => {
-  //         message('Opportunity inserted successfully.', 'success');
-  //         // setTimeout(() => {
-  //         // }, 300);
-  //       })
-  //       .catch(() => {
-  //         message('Network connection error.', 'error');
-  //       });
-  // };
-
- 
 
   const insertDeliveryHistoryOrder = (proId, deliveryOrderId) => {
     api
@@ -487,27 +462,7 @@ console.log('elem',elem)
     });
   };
 
-  // const deleteData = () => {
-  //   Swal.fire({
-  //     title: `Are you sure? $`,
-  //     text: "You won't be able to revert this!",
-  //     icon: 'warning',
-  //     showCancelButton: true,
-  //     confirmButtonColor: '#3085d6',
-  //     cancelButtonColor: '#d33',
-  //     confirmButtonText: 'Yes, delete it!',
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       api.post('/project/deleteProject', { project_id: id }).then(() => {
-  //         Swal.fire('Deleted!', 'Project has been deleted.', 'success');
-  //         setTimeout(() => {
-  //           window.location.reload();
-  //         }, 300);
-  //       });
-  //     }
-  //   });
-  // };
-
+ 
   const getLineItem = (quotationId) => {
     api.post('/project/getQuoteLineItemsById', { quote_id: quotationId }).then((res) => {
       setLineItem(res.data.data);
