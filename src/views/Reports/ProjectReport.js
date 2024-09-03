@@ -32,17 +32,24 @@ const ProjectReport = () => {
   };
 
   const handleSearch = () => {
-    const newData = projectReport
-      .filter((y) => y.category === (companyName === '' ? y.category : companyName))
-      .filter((z) => z.status === (projectStatus === '' ? z.status : projectStatus))
-      .filter(
-        (x) => endDate && startDate  ? (x.actual_finish_date <= (endDate === '' ? x.actual_finish_date : endDate) &&
-        x.start_date >= (startDate === '' ? x.start_date : startDate) ): startDate ? x.start_date === (startDate === '' ? x.start_date : startDate) :
-        x.actual_finish_date === (endDate === '' ? x.actual_finish_date : endDate ) 
-      );
-    setUserSearchData(newData);
+  console.log('Searching with:', { companyName, startDate, endDate, projectStatus });
 
-  };
+  const filteredData = projectReport
+    .filter((project) => project.category === (companyName === '' ? project.category : companyName))
+    .filter((project) => project.status === (projectStatus === '' ? project.status : projectStatus))
+    .filter((project) =>
+      endDate && startDate
+        ? project.estimated_finish_date <= (endDate === '' ? project.estimated_finish_date : endDate) &&
+          project.start_date >= (startDate === '' ? project.start_date : startDate)
+        : startDate
+        ? project.start_date === (startDate === '' ? project.start_date : startDate)
+        : project.estimated_finish_date === (endDate === '' ? project.estimated_finish_date : endDate),
+    );
+
+  console.log('Filtered data:', filteredData);  // Check the filtered data
+  setUserSearchData(filteredData);
+};
+
   useEffect(() => {
     getProject();
   }, []);
@@ -94,7 +101,7 @@ const ProjectReport = () => {
     },
     {
       name: 'End Date',
-      selector: 'actual_finish_date',
+      selector: 'estimated_finish_date',
       sortable: true,
       grow: 0,
     },
@@ -138,7 +145,7 @@ const ProjectReport = () => {
               <FormGroup>
                 <Label>End Date</Label>
                 <Input type="date" 
-                name="actual_finish_date" onChange={(e) => setEndDate(e.target.value)} />
+                name="estimated_finish_date" onChange={(e) => setEndDate(e.target.value)} />
               </FormGroup>
             </Col>
               <Col>
@@ -172,6 +179,8 @@ const ProjectReport = () => {
                     <option value="Cancelled">Cancelled</option>
                     <option value="On Hold">On Hold</option>
                     <option value="Latest">Latest</option>
+                    <option value="Converted to Project">Converted to Project</option>
+                    <option value="Awarded">Awarded</option>
                 </Input>
                 </FormGroup>
               </Col>

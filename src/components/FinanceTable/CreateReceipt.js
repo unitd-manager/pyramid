@@ -40,7 +40,7 @@ const CreateReceipt = ({ editCreateReceipt, setEditCreateReceipt ,getReceiptById
     receipt_date: moment,
     receipt_code: '',
     mode_of_payment: '',
-    cheque_no: '',
+    cheque_no: 0,
     cheque_date: '',
     bank_name: '',
     remarks: '',

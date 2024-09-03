@@ -30,8 +30,9 @@ const OverAllReport = () => {
   //Get data from Training table
   const getProject = () => {
     api
-      .get('/reports/getSalesReport')
+      .post('/reports/getSalesReport')
       .then((res) => {
+        console.log("qqqq",res.data.data);  
         setSalesReport(res.data.data);
         setUserSearchData(res.data.data);
         // let invoiceAmount = 0;
@@ -58,6 +59,7 @@ const OverAllReport = () => {
   };
 
   const handleSearch = () => {
+    console.log('Searching with:', { companyName, startDate, endDate });
     const newData = salesReport
       .filter((y) => y.company_name === (companyName === '' ? y.company_name : companyName))
       .filter((x) =>
@@ -68,8 +70,10 @@ const OverAllReport = () => {
           ? x.invoice_date === (startDate === '' ? x.invoice_date : startDate)
           : x.invoice_date === (endDate === '' ? x.invoice_date : endDate),
       );
+    console.log('Filtered data:', newData);  // Check the filtered data
     setUserSearchData(newData);
   };
+  
 
   useEffect(() => {
     getProject();
