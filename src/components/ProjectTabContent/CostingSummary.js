@@ -197,9 +197,7 @@ const formattedProfitMargin = isNaN(profitMargin) ? 0 : profitMargin;
               </div>
             </Label>
             <br />
-            <span>{chargesdetails && chargesdetails.labour_charges}(  {(getCostingSummary && getCostingSummary.no_of_days_worked) *
-                (getCostingSummary && getCostingSummary.labour_rates_per_day) *
-                (getCostingSummary && getCostingSummary.no_of_worker_used)})</span>
+            <span>{chargesdetails && chargesdetails.labour_charges}(  {(getCostingSummary && getCostingSummary.total_labour_charges) })</span>
           </FormGroup>
         </Col>
 
