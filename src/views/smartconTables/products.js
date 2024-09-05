@@ -51,11 +51,11 @@ setLoading(true)
       scrollX: true,
       lengthChange: false,
       pageLength: 50,
-      buttons: [],
+      buttons: [], 
       bDestroy: true,
       ajax: {
         type: 'POST',
-        url: 'http://43.228.126.245:4011/product/getPaginationForProducts',
+        url: 'https://pyramid.unitdtechnologies.com:2012/product/getPaginationForProducts',
       },
       lengthMenu: [
         [10, 100, -1],
