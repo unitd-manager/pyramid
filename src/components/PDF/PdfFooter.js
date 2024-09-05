@@ -1,8 +1,9 @@
+/*eslint-disable*/
 import PropTypes from 'prop-types';
 
 const PdfFooter = ({ findCompany }) => {
   PdfFooter.propTypes = {
-    findCompany: PropTypes.string,
+    findCompany: PropTypes.func,
   };
     return  {
       columns: [
@@ -32,13 +33,13 @@ const PdfFooter = ({ findCompany }) => {
                     width: 575, // Set canvas width to match the line width
                     height: 2 // Set canvas height to ensure line visibility
                 },
-                {
-                    text: `${findCompany('cp.companyAddress1')} ${findCompany('cp.companyAddress2')} ${findCompany('cp.companyAddress3')}`,
-                    alignment: 'center',
-                    bold: false,
-                    fontSize: 7,
-                    margin: [0, 0, 0, 10], // Add bottom margin for spacing
-                },
+                // {
+                //     text: `${findCompany('cp.companyAddress1')} ${findCompany('cp.companyAddress2')} ${findCompany('cp.companyAddress3')}`,
+                //     alignment: 'center',
+                //     bold: false,
+                //     fontSize: 7,
+                //     margin: [0, 0, 0, 10], // Add bottom margin for spacing
+                // },
             ],
         },
     ],

@@ -164,7 +164,7 @@ const Cards = () => {
                   onClick={`/EmployeeEdit/${blg.employee_id_duplicate}?tab=1`}
                   image={Image}
                   id={blg.employee_id_duplicate}
-                  title={blg.employee_name.split(' ').shift().toUpperCase()} // before: title={blg.employee_name.charAt(0).toUpperCase() + blg.employee_name.slice(1)}
+                  title={blg.employee_name?.split(' ').shift().toUpperCase()} // before: title={blg.employee_name.charAt(0).toUpperCase() + blg.employee_name.slice(1)}
                   dateOfBirth={blg.date_of_birth}
                   empId={blg.employee_id_duplicate}
                   projectDesignation={blg.project_designation}
