@@ -130,7 +130,7 @@ const InvoiceModal = ({ editInvoiceModal, editModal, setEditModal,invoiceDatas }
       .post('/Finance/editInvoicePortalDisplay', invoiceData)
       .then(() => {
         message('Invoice edited successfully.', 'success');
-        window.location.reload();
+        //window.location.reload();
       })
       .catch(() => {
         message('Network connection error.');

@@ -49,19 +49,11 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
       .post('/subcon/insertsub_con_payments_history', createSubConHistory)
       .then(() => {
         message('History inserted successfully.');
-        // setTimeout(() => {
-        //   console.log('Data saved successfully.');
-        //   // Reload the page after saving data
-        //   window.location.reload();
-        // }, 2000);
+    
       })
       .catch(() => {
         message('Network connection error.');
-        // setTimeout(() => {
-        //   console.log('Data saved successfully.');
-        //   // Reload the page after saving data
-        //   window.location.reload();
-        // }, 2000);
+      
       });
   };
   //Chaning subcon status
@@ -94,7 +86,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
         setTimeout(() => {
           console.log('Data saved successfully.');
           // Reload the page after saving data
-          window.location.reload();
+          //window.location.reload();
         }, 2000);
       })
       .catch(() => {
@@ -223,6 +215,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
                 created_by: 'admin',
                 modified_by: 'admin',
                 amount: paymentAmount,
+                mode_of_payment: createSubCon.mode_of_payment, // Ensure this is included
               });
   
               receiptAmount -= paymentAmount;
@@ -323,7 +316,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
                                 />
                                 <span>
                                   {singleInvoiceObj.sub_con_worker_code} (
-                                  {singleInvoiceObj.prev_inv_amount}) Paid -{' '}
+                                  {singleInvoiceObj.prev_inv_amount}) Paid - {' '}
                                   {singleInvoiceObj.prev_amount}
                                 </span>
                               </FormGroup>
@@ -357,7 +350,8 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
                               type="select"
                               name="mode_of_payment"
                               onChange={handleInputreceipt}
-                            >
+                              value={createSubCon.mode_of_payment || ''}
+                                                          >
                               <option value="" selected="selected">
                                 Please Select
                               </option>
@@ -381,7 +375,7 @@ const WorkOrderLinked = ({ editWorkOrderLinked, setEditWorkOrderLinked }) => {
                         </Col>
                       </Row>
                     ) : (
-                      <span>Sorry</span>
+                      <span>Sorry No invoice Available</span>
                     )}
                   </Form>
                 </CardBody>

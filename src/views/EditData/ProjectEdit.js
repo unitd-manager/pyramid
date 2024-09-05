@@ -555,9 +555,7 @@ console.log('elem',elem)
   }, [id]);
 
   useEffect(() => {
-    setTimeout(() => {
-     // TabPurchaseOrderLineItemTable();
-    }, 2000);
+   
   }, [addPurchaseOrderModal,addMaterialRequestModal]);
 
   const getTotalOfPurchase = (pItems) => {
