@@ -359,26 +359,76 @@ const clearNewProductForm = () => {
 };
 
   //Insert Product Data
-  const insertProductData = (ProductCode,ItemCode) => {
+  // const insertProductData = (ProductCode,ItemCode) => {
+  //   productDetails.product_code = ProductCode;
+  //   productDetails.item_code = ItemCode;
+  //   if (productDetails.title !== '' && productDetails.item_code !== ''  && productDetails.product_type !== '' ) {
+  //     api
+  //       .post('/product/insertProductss', productDetails)
+  //       .then(() => {
+  //         message('Product inserted successfully.', 'success');
+  //         getProduct();
+  //         clearNewProductForm('');
+  //         setAddNewProductModal(false);
+       
+  //       })
+  //       .catch(() => {
+  //         message('Unable to edit record.', 'error');
+  //       });
+  //   } else {
+  //     message('Please fill all required fields.', 'warning');
+  //   }
+  // };
+
+  const insertProductData = (ProductCode, ItemCode) => {
+    // Set product details
     productDetails.product_code = ProductCode;
     productDetails.item_code = ItemCode;
-    if (productDetails.title !== '' && productDetails.item_code !== ''  && productDetails.product_type !== '' ) {
+  
+    // Check if all required fields are filled
+    if (productDetails.title !== '' && productDetails.item_code !== '' && productDetails.product_type !== '') {
+      // Insert product data
       api
         .post('/product/insertProductss', productDetails)
-        .then(() => {
+        .then((res) => {
+          const insertedDataId = res.data.data.insertId; // Get the inserted product ID
           message('Product inserted successfully.', 'success');
-          getProduct();
-          clearNewProductForm('');
-          setAddNewProductModal(false);
-       
+  
+          // Get inventory code
+          api
+            .post('/product/getCodeValue', { type: 'InventoryCode' })
+            .then((res1) => {
+              const InventoryCode = res1.data.data;
+  
+              // Insert inventory record
+              api
+                .post('/inventory/insertinventory', { product_id: insertedDataId, inventory_code: InventoryCode })
+                .then(() => {
+                  message('Inventory created successfully.', 'success');
+                  getProduct();
+                  clearNewProductForm('');
+                  setAddNewProductModal(false); 
+                  // Navigate to the product edit page
+                  // setTimeout(() => {
+                  //   navigate(`/ProductEdit/${insertedDataId}`);
+                  // }, 300);
+                })
+                .catch(() => {
+                  message('Unable to create inventory.', 'error');
+                });
+            })
+            .catch(() => {
+              message('Unable to fetch inventory code.', 'error');
+            });
         })
         .catch(() => {
-          message('Unable to edit record.', 'error');
+          message('Unable to insert product.', 'error');
         });
     } else {
       message('Please fill all required fields.', 'warning');
     }
   };
+  
   const generateCode = () => {
     api
       .post('/product/getCodeValue', { type: 'ProductCode' })

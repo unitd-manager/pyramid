@@ -224,7 +224,7 @@ function Inventory() {
                 </Col>
                 <Col md="6">
                   <a
-                    href="http://43.228.126.245/pyramidapi/storage/excelsheets/Inventory.xlsx"
+                    href="https://pyramid.unitdtechnologies.com/storage/excelsheets/Inventory.xlsx"
                     download
                   >
                     <Button color="primary" className="shadow-none">
@@ -257,7 +257,7 @@ function Inventory() {
                     <td>{element.inventory_code}</td>
                     <td>{element.product_name}</td>
                     <td>{element.product_type}</td>
-                    <td>{element.item_code}</td>
+                    <td>{element.product_code}</td>
                     <td>{element.unit}</td>
                     <td>{element.stock}</td>
                     {stockinputOpen && stockChangeId === element.inventory_id ? (

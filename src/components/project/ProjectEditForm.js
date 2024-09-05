@@ -27,9 +27,21 @@ const ProjectEditForm = ({ projectDetail, setProjectDetail }) => {
       });
   };
   
+  const [employee, setEmployee] = useState();
+
+  const getEmployee = () => {
+    api.get('/project/getProjectManager')
+      .then((res) => {
+        setEmployee(res.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact:", error);
+      });
+  };
 
   useEffect(() => {
     getContact();
+    getEmployee();
   }, [projectDetail]); // Add projectDetail as a dependency
   
 
@@ -183,10 +195,18 @@ const ProjectEditForm = ({ projectDetail, setProjectDetail }) => {
                   <Input
                     type="select"
                     name="project_manager_id"
-                    defaultValue={projectDetail && projectDetail.project_manager_id}
+                    value={projectDetail && projectDetail.project_manager_id}
                     onChange={handleInputs}
                   >
-                    <option defaultValue="selected">Please Select</option>
+                      <option>Please Select</option>
+                      {employee &&
+                        employee.map((e) => {
+                          return (
+                            <option key={e.employee_id} value={e.employee_id}>
+                              {e.employee_name}
+                            </option>
+                          );
+                        })}
                   </Input>
                 </FormGroup>
               </Col>

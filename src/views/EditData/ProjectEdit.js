@@ -262,7 +262,7 @@ console.log("as/",MRId)
           elem.item.qty_in_stock += parseFloat(elem.item.qty_delivered);
 console.log('elem',elem)
           api
-            .post('/inventory/editInventoryStock11', elem.item)
+            .post('/inventory/editInventoryStock', elem.item)
             .then(() => {
               message('Quantity added successfully.', 'success');
               setTimeout(() => {
@@ -555,9 +555,7 @@ console.log('elem',elem)
   }, [id]);
 
   useEffect(() => {
-    setTimeout(() => {
-     // TabPurchaseOrderLineItemTable();
-    }, 2000);
+   
   }, [addPurchaseOrderModal,addMaterialRequestModal]);
 
   const getTotalOfPurchase = (pItems) => {

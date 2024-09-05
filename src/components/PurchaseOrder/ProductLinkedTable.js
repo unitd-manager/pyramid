@@ -63,7 +63,7 @@ function ProductLinkedTable({
                       />
                     </td>
                     <td>{index + 1}</td>
-                    <td>{element.item_code}</td>
+                    <td>{element.product_code}</td>
                     <td>{element.title}</td>
                     <td>{element.cost_price}</td>
                     <td>{element.selling_price}</td>
