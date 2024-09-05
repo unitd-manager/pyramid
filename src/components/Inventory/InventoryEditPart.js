@@ -131,8 +131,8 @@ function InventoryEditPart({ inventoryDetails, handleInputs, editinventoryData }
                     <Label>Item Code</Label>
                     <Input
                       type="text"
-                      value={inventoryDetails && inventoryDetails.item_code}
-                      name="item_code"
+                      value={inventoryDetails && inventoryDetails.product_code}
+                      name="product_code"
                       disabled
                     />
                   </FormGroup>

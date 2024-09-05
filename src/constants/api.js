@@ -13,7 +13,7 @@ if (hostname === 'pyramid.unitdtechnologies.com') {
 } else if (hostname === 'pyramidtest.unitdtechnologies.com') { 
   baseURL = process.env.REACT_APP_TEST_URL;
 } else {
-  baseURL = process.env.REACT_APP_LOCAL_URL;
+  baseURL = process.env.REACT_APP_PRODUCTION_URL;
 }
 
 console.log('Current Hostname:', hostname,baseURL);

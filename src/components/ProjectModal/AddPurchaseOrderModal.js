@@ -50,7 +50,6 @@ const AddPurchaseOrderModal = ({ projectId, addPurchaseOrderModal, setAddPurchas
     gst: 0,
     po_code: '',
   });
-  console.log("111111111111",purchaseDetails.supplier_id)
   const [addNewProductModal, setAddNewProductModal] = useState(false);
   //const [ItemCode, setItemcode] = useState();
   const [getProductValue, setProductValue] = useState();
