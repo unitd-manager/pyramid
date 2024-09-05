@@ -212,7 +212,6 @@ const AddMaterialRequestModal = ({ projectId, addMaterialRequestModal, setAddMat
         });
       })
       .catch(() => {
-        message('Tab Purchase Order not found', 'info');
       });
   };
 
@@ -220,7 +219,7 @@ const AddMaterialRequestModal = ({ projectId, addMaterialRequestModal, setAddMat
     
     api
       .post('/materialrequest/insertQuoteItems', {
-        material_request_id: MaterialRequestId,
+        materials_request_id: MaterialRequestId,
         item_title: itemObj.Item,
         quantity: Number(itemObj.qty).toFixed(2),
         unit: itemObj.unit,

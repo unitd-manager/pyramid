@@ -58,27 +58,45 @@ export default function MaterialPurchased({
   const handleCheckchange = (e, item) => {
     const isChecked = e.target.checked;
     setCheckedItems(prevState => 
-      isChecked ? [...prevState, item] : prevState.filter(i => i.material_request_line_items_id !== item.material_request_line_items_id)
+      isChecked 
+        ? [...prevState, item] 
+        : prevState.filter(i => i.materials_request_line_items_id !== item.materials_request_line_items_id)
     );
   };
+  
 
   const handleRequestForApproval = () => {
+    if (checkedItems.length === 0) {
+        Swal.fire('No items selected', 'Please select at least one item to request for approval.', 'warning');
+        return;
+    }
+
+    console.log('Selected items:', checkedItems);
+
     const promises = checkedItems.map((item) => {
-      return api.post('/materialrequest/updateMaterialRequestItem', { material_request_line_items_id: item.material_request_line_items_id, status: 'Sent for approval' });
+        if (!item.materials_request_line_items_id) {
+            console.error('Missing material_request_line_items_id for item:', item);
+            return Promise.reject('Missing material_request_line_items_id');
+        }
+        return api.post('/materialrequest/updateMaterialRequestItem', {
+            materials_request_line_items_id: item.materials_request_line_items_id,
+            status: 'Sent for approval'
+        });
     });
 
     Promise.all(promises)
-      .then(() => {
-        Swal.fire('Success', 'Selected items have been approved.', 'success');
-        // Optionally refresh data or update the UI here
-      })
-      .catch(() => {
-        message('Unable to update the status of selected items', 'error');
-      });
-  };
+        .then(() => {
+            Swal.fire('Success', 'Selected items have been sent for approval.', 'success');
+            // Optionally refresh data or update the UI here
+        })
+        .catch((error) => {
+            console.error('Error updating status:', error);
+            message('Unable to update the status of selected items', 'error');
+        });
+};
 
   const handleApproveMaterialRequest = () => {
-    const materialRequestIds = checkedItems.map(item => item.material_request_line_items_id);
+    const materialRequestIds = checkedItems.map(item => item.materials_request_line_items_id);
     
     api.post('/materialrequest/approvematerialrequest', {
         matReqProductChecked: materialRequestIds,
@@ -212,7 +230,7 @@ export default function MaterialPurchased({
                   color="primary"
                   className="shadow-none"
                   onClick={() => {
-                    deletePurchaseOrder(group[0].material_request_id);
+                    deletePurchaseOrder(group[0].materials_request_id);
                   }}
                 >
                   X
@@ -222,7 +240,7 @@ export default function MaterialPurchased({
           </CardTitle>
         </Row>
         <Table
-          key={group[0].material_request_id}
+          key={group[0].materials_request_id}
           id="example"
           className="display border border-secondary rounded"
         >
@@ -241,14 +259,14 @@ export default function MaterialPurchased({
           </thead>
           <tbody>
             {group.map((item, index) => (
-              <tr key={item.material_request_line_items_id}>
+              <tr key={item.materials_request_line_items_id}>
                 <td>
                   {' '}
                   <FormGroup>
           {item.status !== 'PO generated' && (
             <Input
               type="checkbox"
-              value={item.material_request_id}
+              value={item.materials_request_id}
               onChange={(e) => {
                 handleCheckchange(e, item);
               }}
