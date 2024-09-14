@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 //import PropTypes from 'prop-types';
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -8,10 +8,9 @@ import moment from 'moment';
 import api from '../../constants/api';
 import PdfHeader from './PdfHeader';
 
-const PdfProjectQuote = ({ id, quoteId }) => {
+const PdfProjectQuote = ({ id }) => {
   PdfProjectQuote.propTypes = {
     id: PropTypes.any,
-    quoteId: PropTypes.any,
   };
   const [hfdata, setHeaderFooterData] = React.useState();
   const [quote, setQuote] = React.useState([]);
@@ -56,71 +55,30 @@ const PdfProjectQuote = ({ id, quoteId }) => {
 
 //     return total;
 //   };
-  const getQuoteById = () => {
+const getQuoteById = () => {
+  if (projectDetail && projectDetail.job_order_id) {
     api
-      .post('/project/getJobLineItemsById', { job_order_id: quoteId })
+      .post('/project/getJobLineItemsById', { job_order_id: projectDetail.job_order_id })
       .then((res) => {
         setLineItem(res.data.data);
-        // let grandTotal = 0;
-        // res.data.data.forEach((elem) => {
-        //   grandTotal += elem.amount;
-        // });
-        // setGtotal(grandTotal);
         console.log('quote1', res.data.data);
-        //setViewLineModal(true);
       })
-      .catch(() => { });
-  };
-//   React.useEffect(() => {
-//     const parseHTMLContent = (htmlContent) => {
-//       if (htmlContent) {
-//         // Replace all occurrences of &nbsp; with an empty string
-//         const plainText = htmlContent.replace(/&nbsp;/g, '');
+      .catch(() => {});
+  }
+};
 
-//         // Remove HTML tags using a regular expression
-//         const plainTextWithoutTags = plainText.replace(/<[^>]*>?/gm, '');
+// Fetch project and quote details on component mount
+useEffect(() => {
+  getQuote();
+  getProjectById();
+}, []);
 
-//         setParsedQuoteCondition(plainTextWithoutTags);
-//       }
-//     };
-//     // Assuming quote.quote_condition contains your HTML content like "<p>Terms</p>"
-//     parseHTMLContent(quote.quote_condition);
-
-//     // Other logic you have here...
-//   }, [quote.quote_condition]);
-
-  //The quote_condition content and format it as bullet points
-//   const formatQuoteConditions = (conditionsText) => {
-//     const formattedConditions = conditionsText.split(':-').map((condition, index) => {
-//       const trimmedCondition = condition.trim();
-//       return index === 0 ? `${trimmedCondition}` : `:- ${trimmedCondition}`;
-//     });
-//     return formattedConditions;
-//   };
-
-  // Format the conditions content for PDF
-//   const conditions = formatQuoteConditions(parsedQuoteCondition);
-  // const conditionsContent = conditions.map((condition) => ({
-  //   text: `${condition}`,
-  //   fontSize: 10,
-  //   margin: [15, 5, 0, 0],
-  //   style: ['notesText', 'textSize'],
-  // }));
-  // / Format the conditions content for PDF
-//   const conditionsContent = conditions.map((condition) => ({
-//     text: `${condition}`,
-//     fontSize: 10,
-//     margin: [15, 5, 0, 0],
-//     style: ['notesText', 'textSize'],
-//     lineHeight: 1.2,
-//   }));
-
-
-  React.useEffect(() => {
-    getQuote();
+// Fetch line items once projectDetail is available
+useEffect(() => {
+  if (projectDetail) {
     getQuoteById();
-    getProjectById();
-  }, []);
+  }
+}, [projectDetail]);
 
   const GetPdf = () => {
     const lineItemBody = [
