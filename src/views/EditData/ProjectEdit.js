@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState, useEffect, useContext } from 'react';
 import { CardTitle, Row, Col, TabContent, TabPane, Button, Label } from 'reactstrap';
 import { ToastContainer } from 'react-toastify';
@@ -58,7 +59,7 @@ const ProjectEdit = () => {
   const [projectDetail, setProjectDetail] = useState();
   const [activeTab, setActiveTab] = useState('1');
   const [addDuctingCostModal, setAddDuctingCostModal] = useState(false);
-  //const [viewQuotationsModal, setViewQuotationsModal] = useState(false);
+  const [viewQuotationsModal, setViewQuotationsModal] = useState(false);
   const [viewLineModal, setViewLineModal] = useState(false);
   const [editQuoteModal, setEditQuoteModal] = useState(false);
   const [addPurchaseOrderModal, setAddPurchaseOrderModal] = useState(false);
@@ -117,26 +118,7 @@ console.log("as/",MRId)
     quote_date: '',
     quote_code: '',
   });
-  useEffect(() => {
-    api
-      .post('/purchaseorder/testAPIendpoint', { project_id: id })
-      .then((res) => {
-        setTestJsonData(res?.data?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [id]);
-  useEffect(() => {
-    api
-      .post('/materialrequest/testAPIendpoint', { project_id: id })
-      .then((res) => {
-        setTestJsonDatass(res?.data?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [id]);
+  
   const handleJobInputs = (e) => {
     setJobOrder({ ...joborder, [e.target.name]: e.target.value });
   };
@@ -178,7 +160,26 @@ console.log("as/",MRId)
     setActiveTab(tab);
   }; 
   // End for tab refresh navigation #Renuka 31-05-23
-
+  // useEffect(() => {
+  //   api
+  //     .post('/purchaseorder/testAPIendpoint', { project_id: id })
+  //     .then((res) => {
+  //       setTestJsonData(res?.data?.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, [id]);
+  // useEffect(() => {
+  //   api
+  //     .post('/materialrequest/testAPIendpoint', { project_id: id })
+  //     .then((res) => {
+  //       setTestJsonDatass(res?.data?.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, [id]);
   // Get Project By Id
   const getProjectById = () => {
     api
@@ -190,7 +191,9 @@ console.log("as/",MRId)
         message(' project not found', 'info');
       });
   };
-
+useEffect(()=>{
+  getProjectById();
+},[])
   const getContactById = () => {
     api
       .get('/project/getcontactById', contactLinked)
@@ -202,18 +205,7 @@ console.log("as/",MRId)
       });
   };
 
-  const UpdateData = () => {
-    if(projectDetail.category){
-    api.post('/project/edit-Project', projectDetail).then(() => {
-      message('Record editted successfully', 'success');
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 300);
-    });
-  }else{
-    message('Please Enter Category', 'warning');
-  }
-  };
+  
 
 
   // Tab Delivery Order
@@ -227,7 +219,89 @@ console.log("as/",MRId)
         message('Tab Delivery Order not found', 'info');
       });
   };
+  const SubConWorkOrder = () => {
+    api.post('/projecttabsubconworkorder/SubConWorkOrderPortal', { project_id: id }).then((res) => {
+      setSubConWorkOrdeData(res.data.data);
+    });
+  };
+  const getJob = () => {
+    api.post('/project/getJobByProjectId', { project_id: id }).then((res) => {
+      setJob(res.data.data[0]);
+      setJobOrder(res.data.data[0]);
+    });
+  };
+ 
+  const getJobLineItem = (JobId) => {
+    api
+      .post('/project/getJobLineItemsById', { job_order_id: JobId })
+      .then((res) => {
+        setJobLineItem(res.data.data);
+        console.log('joblineitems', res.data.data);
+        setViewJobLineModal(true);
+      })
+  };
+ 
+  console.log("qwqwww",job.job_order_id)
 
+  // useEffect(() => {
+  //   getJob();
+  // }, []);
+  // useEffect(() => {
+  //   SubConWorkOrder();
+  // }, [id]);
+  const fetchData = async () => {
+    try {
+      // Use Promise.all to handle multiple API calls concurrently
+      const [
+        projectResponse,
+        contactResponse,
+        deliveryOrderResponse,
+        subConWorkOrderResponse,
+        jobResponse,
+        purchaseResponse,
+        materialResponse
+      ] = await Promise.all([
+        api.post('/project/getProjectById', { project_id: id }),
+        api.get('/project/getcontactById', { params: { contactLinked } }),
+        api.post('/projecttabdeliveryorder/TabDeliveryOrder', { project_id: id }),
+        api.post('/projecttabsubconworkorder/SubConWorkOrderPortal', { project_id: id }),
+        api.post('/project/getJobByProjectId', { project_id: id }),
+        api.post('/purchaseorder/testAPIendpoint', { project_id: id }),
+        api.post('/materialrequest/testAPIendpoint', { project_id: id })
+      ]);
+
+      // Update state with the fetched data
+      setProjectDetail(projectResponse.data.data[0]);
+      setContactLinked(contactResponse.data.data);
+      setTabdeliveryorder(deliveryOrderResponse.data.data);
+      setSubConWorkOrdeData(subConWorkOrderResponse.data.data);
+      setJob(jobResponse.data.data[0]);
+      setJobOrder(jobResponse.data.data[0]);
+      setTestJsonData(purchaseResponse.data.data);
+      setTestJsonDatass(materialResponse.data.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error state if needed
+    }
+  };
+  useEffect(() => {
+    
+
+    fetchData();
+  }, []);
+
+  const UpdateData = () => {
+    if(projectDetail.category){
+    api.post('/project/edit-Project', projectDetail).then(() => {
+      message('Record editted successfully', 'success');
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 300);
+    });
+  }else{
+    message('Please Enter Category', 'warning');
+  }
+  };
   // handleCheck
   const handleCheck = (e, item) => {
     let updatedList = [...checkId];
@@ -404,26 +478,7 @@ console.log('elem',elem)
         InsertJobOrder('');
       });
   };
-  const getJobLineItem = (JobId) => {
-    api
-      .post('/project/getJobLineItemsById', { job_order_id: JobId })
-      .then((res) => {
-        setJobLineItem(res.data.data);
-        console.log('joblineitems', res.data.data);
-        setViewJobLineModal(true);
-      })
-  };
-  const getJob = () => {
-    api.post('/project/getJobByProjectId', { project_id: id }).then((res) => {
-      setJob(res.data.data[0]);
-      setJobOrder(res.data.data[0]);
-    });
-  };
-  console.log("qwqwww",job.job_order_id)
-
-  useEffect(() => {
-    getJob();
-  }, []);
+ 
   const EditJobDetails = () => {
     api
       .post('/project/editJoborder', job)
@@ -515,14 +570,7 @@ console.log('elem',elem)
         message('Network connection error.', 'error');
       });
   };
-  const SubConWorkOrder = () => {
-    api.post('/projecttabsubconworkorder/SubConWorkOrderPortal', { project_id: id }).then((res) => {
-      setSubConWorkOrdeData(res.data.data);
-    });
-  };
-  useEffect(() => {
-    SubConWorkOrder();
-  }, [id]);
+
   //generateCode
   const generateCodeQuote = (type) => {
     api
@@ -545,18 +593,18 @@ console.log('elem',elem)
         insertWorkOrder('');
       });
   };
-  useEffect(() => {
-    getProjectById();
-    TabDeliveryOrder();
-   // getLineItem();
-    //TabPurchaseOrderLineItemTable();
-    getContactById();
-    getJob();
-  }, [id]);
+  // useEffect(() => {
+  //   getProjectById();
+  //   TabDeliveryOrder();
+  //  // getLineItem();
+  //   //TabPurchaseOrderLineItemTable();
+  //   getContactById();
+  //   getJob();
+  // }, [id]);
 
-  useEffect(() => {
+  // useEffect(() => {
    
-  }, [addPurchaseOrderModal,addMaterialRequestModal]);
+  // }, [addPurchaseOrderModal,addMaterialRequestModal]);
 
   const getTotalOfPurchase = (pItems) => {
     let total = 0;
@@ -591,37 +639,37 @@ console.log('elem',elem)
 
         {/* Call Modal's */}
 
-        <DuctingCostModal
+        {addDuctingCostModal&&<DuctingCostModal
           addDuctingCostModal={addDuctingCostModal}
           setAddDuctingCostModal={setAddDuctingCostModal}
-        />
-        <AddPurchaseOrderModal
+        />}
+        {addPurchaseOrderModal&&<AddPurchaseOrderModal
           projectId={id}
           addPurchaseOrderModal={addPurchaseOrderModal}
           setAddPurchaseOrderModal={setAddPurchaseOrderModal}
-        />
+        />}
 
-<AddMaterialRequestModal
+{addMaterialRequestModal&&<AddMaterialRequestModal
           projectId={id}
           addMaterialRequestModal={addMaterialRequestModal}
           setAddMaterialRequestModal={setAddMaterialRequestModal}
-        />
-{/* 
+        />}
+
         {viewQuotationsModal && (
           <ViewQuoteLogModal
             viewQuotationsModal={viewQuotationsModal}
             setViewQuotationsModal={setViewQuotationsModal}
             id={id}
           />
-        )} */}
-        <ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />
-        <EditQuotation editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} />
-        <EditDeliveryOrder
+        )}
+        {viewLineModal&&<ViewLineItemModal viewLineModal={viewLineModal} setViewLineModal={setViewLineModal} />}
+        {editQuoteModal&&<EditQuotation editQuoteModal={editQuoteModal} setEditQuoteModal={setEditQuoteModal} />}
+        {editDeliveryOrder&&<EditDeliveryOrder
           editDeliveryOrder={editDeliveryOrder}
           setEditDeliveryOrder={setEditDeliveryOrder}
           data={deliveryData}
           tabdeliveryorder={tabdeliveryorder}
-        />
+        />}
         {editPo && <EditPoModal editPo={editPo} setEditPo={setEditPo} data={POId} />}
         {editPOLineItemsModal && (
           <EditPOLineItemsModal
@@ -638,16 +686,16 @@ console.log('elem',elem)
             data={MRId}
           />
         )} 
-        <CreateFinance financeModal={financeModal} setFinanceModal={setFinanceModal} />
+        {financeModal&&<CreateFinance financeModal={financeModal} setFinanceModal={setFinanceModal} /> }
         <Tab toggle={toggle} tabs={tabs} />
-        {/* Tab 1 */}
+        {/* /* Tab 1 */ }
         <TabContent className="p-4" activeTab={activeTab}>
           <TabPane tabId="1" eventkey="costingSummary">
-            <CostingSummary></CostingSummary>
+           {(activeTab==='1') && <CostingSummary></CostingSummary>}
           </TabPane>
           {/* Tab 2 */}
           <TabPane tabId="2" eventkey="quotationMoreDetails">
-            <QuotationMoreDetails
+          {(activeTab==='2') && <> <QuotationMoreDetails
               // setViewQuotationsModal={setViewQuotationsModal}
               insertQuote={insertQuote}
               handleQuoteForms={handleQuoteForms}
@@ -657,11 +705,11 @@ console.log('elem',elem)
               getLineItem={getLineItem}
               setquotationsModal={setquotationsModal}
               id={id}
-            ></QuotationMoreDetails>
+            ></QuotationMoreDetails></>}
           </TabPane>
           {/* Tab 3 Materials Purchased */}
           <TabPane tabId="3" eventkey="materialPurchased">
-            <MaterialPurchased
+          {(activeTab==='3') && <> <MaterialPurchased
               addPurchaseOrderModal={addPurchaseOrderModal}
               setAddPurchaseOrderModal={setAddPurchaseOrderModal}
               addMaterialrequestModal={addMaterialRequestModal}
@@ -692,22 +740,22 @@ console.log('elem',elem)
                 setTransferModal={setTransferModal}
                 transferItem={transferItem}
               />
-            )}
+            )}</>}
           </TabPane>
 
           {/* Tab 4 */}
           <TabPane tabId="4" eventkey="materialsusedTab">
-            <MaterialsusedTab projectId={id} />
+          {(activeTab==='4') && <MaterialsusedTab projectId={id} />}
           </TabPane>
 
           {/* Tab 5 */}
           <TabPane tabId="5" eventkey="materialsTransferred">
-            <MaterialsTransferred projectId={id} />
+          {(activeTab==='5') && <MaterialsTransferred projectId={id} />}
           </TabPane>
 
           {/* Start Tab Content 6  Delivery Order */}
           <TabPane tabId="6">
-            <DeliveryOrder
+          {(activeTab==='6') && <DeliveryOrder
               deleteDeliveryOrder={deleteDeliveryOrder}
               tabdeliveryorder={tabdeliveryorder}
               setTabdeliveryorder={setTabdeliveryorder}
@@ -715,12 +763,12 @@ console.log('elem',elem)
               setEditDeliveryOrder={setEditDeliveryOrder}
               deliveryData={deliveryData}
               editDeliveryOrder={editDeliveryOrder}
-            />
+            />}
           </TabPane>
 
           {/* Start Tab Content 7  Subcon Work Order */}
           <TabPane tabId="7" eventkey="subConWorkOrderPortal">
-            <Row className="mb-4">
+          {(activeTab==='7') && <> <Row className="mb-4">
               <Col md="2">
                 <Button
                   color="primary"
@@ -746,11 +794,12 @@ console.log('elem',elem)
             <SubConWorkOrderPortal projectId={id} SubConWorkOrder={SubConWorkOrder}
             subConWorkOrdeData={subConWorkOrdeData} />
             {/* <SubconWorkPaymentHistory projectId={id} /> */}
+            </>}
           </TabPane>
 
           {/* Start Tab Content 8 */}
           <TabPane tabId="8" eventkey="claim">
-            <Claim
+          {(activeTab==='8') &&  <Claim
               projectDetail={projectDetail}
               projectId={id}
               checkId={checkId}
@@ -765,17 +814,17 @@ console.log('elem',elem)
               setFileTypes={setFileTypes}
               attachmentData={attachmentData}
               dataForAttachment={dataForAttachment}
-            />
+            />}
           </TabPane>
 
           {/* Start Tab Content 9 */}
           <TabPane tabId="9" eventkey="financeTab">
-            <FinanceTab projectId={id} projectDetail={projectDetail}></FinanceTab>
+          {(activeTab==='9') && <FinanceTab projectId={id} projectDetail={projectDetail}></FinanceTab>}
           </TabPane>
 
          {/* Start Tab Content 10*/} 
           <TabPane tabId="10" eventkey="JobCompletion">
-            <Row>
+          {(activeTab==='10') && <> <Row>
             {(addNewJobVisible && (Object.keys(joborder).length === 0) )&& (  
           <Col md="3">
         <Button color="primary"
@@ -854,11 +903,12 @@ console.log('elem',elem)
       >
         {' '}
       </EditLineItemModal>
+      </>}
           </TabPane>
 
           {/* Start Tab Content 10 */}
           <TabPane tabId="11" eventkey="addEmployee">
-            <Row>
+          {(activeTab==='11') && <> <Row>
               <AddEmployee />
               <Col xs="12" md="3" className="mb-3">
                 <Button
@@ -891,6 +941,7 @@ console.log('elem',elem)
             />
             <ViewFileComponentV2 moduleId={id} roomName="ProjectAttach" recordType="Picture"   update={update}
               setUpdate={setUpdate}/>
+              </>}
           </TabPane>
 
           {/* End Tab Content 10 */}
