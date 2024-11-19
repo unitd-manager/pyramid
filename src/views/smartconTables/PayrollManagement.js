@@ -215,17 +215,22 @@ const Payrollmanagement = () => {
       obj.status = 'generated';
 
       // Calculate basic_per_month based on basic_pay, actual_working_days, and working_days_in_month
-      const totalBasicPay = parseFloat(obj.basic_pay);
-      const actualWorkingDays = parseFloat(obj.actual_working_days);
-      const workingDaysInMonth = parseFloat(obj.working_days_in_month);
-
+      const totalBasicPay = parseFloat(obj.basic_pay) || 0;
+      const actualWorkingDays = parseFloat(obj.actual_working_days) || 0;
+      const workingDaysInMonth = parseFloat(obj.working_days_in_month) || 0;
+      
       if (actualWorkingDays > 0 && workingDaysInMonth > 0) {
-        const basicPayPercentage = (
+        const basicPayPercentage = Number((
           (totalBasicPay / workingDaysInMonth) *
           actualWorkingDays
-        ).toFixed(2);
-        obj.total_basic_pay_for_month = basicPayPercentage;
+        ).toFixed(2));
+        console.log('3', basicPayPercentage);
+      
+        obj.total_basic_pay_for_month = Number.isNaN(basicPayPercentage) ? 0 : basicPayPercentage;
+      } else {
+        obj.total_basic_pay_for_month = 0;
       }
+      
 
       // // Example usage:
       // const totalBasicPayForMonth = 1000; // Replace with your value

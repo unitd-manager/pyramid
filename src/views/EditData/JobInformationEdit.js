@@ -65,7 +65,7 @@ const JobInformationEdit = () => {
   // Getting data from jobinformation By Id
   const editJobById = () => {
     api
-      .post('/jobinformation/EditjobinformationById', { job_information_id: parseFloat(id) })
+      .post('/jobinformation/EditjobinformationById', { job_information_id: id })
       .then((res) => {
         setJob(res.data.data[0]);
         setOverTimeRate(res.data.data[0].overtime_pay_rate);
@@ -74,7 +74,7 @@ const JobInformationEdit = () => {
         // message('JobInformation Data Not Found', 'info');
       });
   };
-
+console.log("aswdse",id,job,job && job.employee_name)
   //jobinformation data in jobinformationDetails
   const handleInputsJobInformation = (e) => {
     if (e.target.name === 'overtime') {
