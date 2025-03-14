@@ -278,6 +278,10 @@ const AddMaterialRequestModal = ({ projectId, addMaterialRequestModal, setAddMat
         } else {
           purchaseDetails.gst_percentage = null; // Set gst_percentage to null when gst is 0
         }
+        if (!purchaseDetails.mr_date || purchaseDetails.mr_date.trim() === '') {
+          message('Please fill the Material Request Date', 'warning');
+          return; // Stop execution if MR Date is missing
+      }
         purchaseDetails.mr_code=code;
       api.post('/materialrequest/insertMaterialRequest', purchaseDetails).then((res) => {
       //message('Purchase Order Added!', 'success');

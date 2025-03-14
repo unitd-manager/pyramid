@@ -1,7 +1,8 @@
 import React from 'react';
+import * as Icon from 'react-feather';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Form, Table } from 'reactstrap';
+import { Button, Form, Table } from 'reactstrap';
 //import PdfCreateInvoice from '../PDF/PdfCreateInvoicess';
 import PdfCreateInvoice from '../PDF/PdfCreateInvoice';
 import ComponentCard from '../ComponentCard';
@@ -84,14 +85,13 @@ export default function CustomerFinanceInvoice({
                             setInvoiceDatas(element.invoice_id);
                                 setInvoiceDatas(element)
                           }}
-                        >
-                          Edit
+                        ><Icon.Edit2 />
                         </span>
                       </td>
                       <td>
                       {element.status === 'due' && (
-                       
-                        <span
+                       <Button type="button" className="btn btn-dark mr-2"
+                        
                           onClick={() => {
                             if (
                               window.confirm(
@@ -103,7 +103,8 @@ export default function CustomerFinanceInvoice({
                           }}
                         >
                           Cancel
-                        </span>
+                          </Button>
+                        
                       )}
                       </td>
                     </tr>
