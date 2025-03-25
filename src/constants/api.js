@@ -6,14 +6,16 @@ dotenv.config();
 let baseURL;
 
 const { hostname } = window.location;
-console.log('prod',process.env.REACT_APP_PRODUCTION_URL)
+console.log('prod',process.env.REACT_APP_LOCAL_URL)
 
 if (hostname === 'pyramid.unitdtechnologies.com') {
   baseURL = process.env.REACT_APP_PRODUCTION_URL;
 } else if (hostname === 'pyramidtest.unitdtechnologies.com') { 
   baseURL = process.env.REACT_APP_TEST_URL;
 } else {
-  baseURL = process.env.REACT_APP_PRODUCTION_URL;
+  baseURL = "http://localhost:3022"
+  //baseURL = process.env.REACT_APP_PRODUCTION_URL;
+
 }
 
 console.log('Current Hostname:', hostname,baseURL);
