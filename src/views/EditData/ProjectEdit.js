@@ -246,9 +246,9 @@ useEffect(()=>{
   // useEffect(() => {
   //   getJob();
   // }, []);
-  // useEffect(() => {
-  //   SubConWorkOrder();
-  // }, [id]);
+  useEffect(() => {
+    SubConWorkOrder();
+  }, [id]);
   const fetchData = async () => {
     try {
       // Use Promise.all to handle multiple API calls concurrently

@@ -20,10 +20,25 @@ const Test = () => {
   const [supplier, setSupplier] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  //getting data from supplier
+ 
+const getSelectedLocationFromLocalStorage = () => {
+  const locations = localStorage.getItem('selectedLocation');
+  const loc=JSON.parse(locations);
+  return locations ? Number(loc) : null;
+};
+
+const selectedLocation = getSelectedLocationFromLocalStorage();
+
+const getSelected = () => {
+  return localStorage.getItem('selectedBranch') || '';
+};
+
+const branchId = getSelected()
+
+//getting data from supplier
   const getSupplier = () => {
     api
-      .get('/supplier/getSupplier')
+      .post('/supplier/getSupplierFromLocation', { site_id: selectedLocation, branch_id: branchId })
       .then((res) => {
         setSupplier(res.data.data);
         $('#example').DataTable({
@@ -48,7 +63,7 @@ const Test = () => {
 
   useEffect(() => {
     getSupplier();
-  }, []);
+  }, [selectedLocation]);
   //structure of supplier list view
   const columns = [
     {

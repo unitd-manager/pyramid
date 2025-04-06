@@ -56,7 +56,7 @@ const Test = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await api.get('https://pyramid.unitdtechnologies.com:2012/product/getProductsPagination');
+        const res = await api.get('https://pyramid.unitdtechnologies.com:2014/product/getProductsPagination');
 
         if (res.status === 200) {
           setProducts(res.data.data);
@@ -68,7 +68,7 @@ const Test = () => {
       } finally {
         setLoading(false);
       }
-    };
+    };   
 
     fetchData();
   }, []);
